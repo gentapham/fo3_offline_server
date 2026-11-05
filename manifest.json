@@ -1,8 +1,8 @@
 {
  "files": {
   "FO3 Offline Launcher.exe": {
-   "sha256": "01057484125bb6dfbec3643b02b90c0351e677743bc2298f28047674c2034289",
-   "size": 20886533
+   "sha256": "e46045057d44687e3a8ef3b4db1e1db6ddd636de2d12d86c56bf9d0871640626",
+   "size": 20885718
   },
   "HuongDan/images/gm_card.png": {
    "sha256": "f9af388e47552a8754425ce52c63d550c39c767fdc4554633f602efb9faf4bd4",
@@ -6393,6 +6393,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.05-2317",
- "notes": "Sửa lỗi 'File tải về bị lỗi' (giữ nguyên xuống dòng), GM Tool báo rõ khi chưa có HLV"
+ "version": "2026.11.05-2320",
+ "notes": "Launcher 1.2.1: sửa lỗi 'File tải về bị lỗi' do cache GitHub (tải theo mã commit)"
 }
