@@ -991,6 +991,8 @@ class Admin(http.server.BaseHTTPRequestHandler):
                     out = fn(params)
         except AdminError as e:
             out = {"error": str(e)}
+        except StopIteration:  # chua co HLV (acc moi / vua reset): moi ham tim HLV deu roi vao day
+            out = {"error": "Chưa có tài khoản HLV. Hãy vào game tạo HLV trước, rồi tải lại trang này."}
         except Exception as e:  # keep the page usable; the detail shows in its message bar
             out = {"error": f"{type(e).__name__}: {e}"}
         self._send(200, json.dumps(out).encode())
