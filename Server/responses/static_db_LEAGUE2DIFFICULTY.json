@@ -1,0 +1,73 @@
+{
+  "league2promote": {
+    "0": {
+      "promote_rank": 3,
+      "demote_rank": 8
+    },
+    "1": {
+      "promote_rank": 3,
+      "demote_rank": 8
+    },
+    "2": {
+      "promote_rank": 3,
+      "demote_rank": 8
+    }
+  },
+  "league2dynamic": {
+    "1": {
+      "ai_hiddenstat_min": 1,
+      "ai_hiddenstat_max": 3
+    },
+    "2": {
+      "ai_hiddenstat_min": 2,
+      "ai_hiddenstat_max": 5
+    }
+  },
+  "league2difficulty": {
+    "10": {
+      "groupId": 0
+    },
+    "11": {
+      "groupId": 0
+    },
+    "12": {
+      "groupId": 0
+    },
+    "13": {
+      "groupId": 0
+    },
+    "14": {
+      "groupId": 0
+    },
+    "15": {
+      "groupId": 0
+    },
+    "16": {
+      "groupId": 0
+    },
+    "17": {
+      "groupId": 0
+    },
+    "18": {
+      "groupId": 0
+    },
+    "19": {
+      "groupId": 0
+    },
+    "20": {
+      "groupId": 1
+    },
+    "21": {
+      "groupId": 1
+    },
+    "22": {
+      "groupId": 1
+    },
+    "23": {
+      "groupId": 1
+    },
+    "24": {
+      "groupId": 1
+    }
+  }
+}

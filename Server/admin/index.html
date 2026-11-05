@@ -1,0 +1,2272 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản trị FIFA Online 3</title>
+<script>
+  // Ap theme da luu truoc khi ve trang, tranh nhay mau
+  try { const t = localStorage.getItem("fo3-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<style>
+  /* ============ Mau sac: sang (mac dinh) ============ */
+  :root {
+    --page: #eef3ec;
+    --page-2: #e4ece1;
+    --card: #ffffff;
+    --card-2: #f6f9f4;
+    --line: #dbe5d6;
+    --line-strong: #c3d2bc;
+    --ink: #13231a;
+    --ink-2: #34483b;
+    --mute: #6a7d70;
+    --pitch-1: #1f9a4a;
+    --pitch-2: #23a853;
+    --pitch-ink: #ffffff;
+    --accent: #15803d;
+    --accent-2: #16a34a;
+    --accent-soft: #dcf5e3;
+    --accent-ink: #ffffff;
+    --gold: #f5b700;
+    --gold-soft: #fff4cc;
+    --gold-ink: #3d2c00;
+    --danger: #dc2626;
+    --danger-soft: #fde8e8;
+    --info: #2563eb;
+    --board: #0f1a14;
+    --board-ink: #ffd34d;
+    --nav: #ffffff;
+    --nav-active: #e7f6eb;
+    --shadow: 0 1px 2px rgba(19, 35, 26, .06), 0 6px 18px rgba(19, 35, 26, .07);
+    --shadow-lg: 0 10px 30px rgba(19, 35, 26, .14);
+    --input: #ffffff;
+    --row-alt: #f4f8f2;
+    --radius: 14px;
+    --radius-sm: 9px;
+    color-scheme: light;
+  }
+
+  /* ============ Mau sac: toi (san dem duoi den pha) ============ */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #08110c; --page-2: #0c1811; --card: #111f17; --card-2: #15261c;
+      --line: #1f3428; --line-strong: #2b4636; --ink: #e7f2ea; --ink-2: #c3d6c9; --mute: #86a090;
+      --pitch-1: #0f5a2b; --pitch-2: #126533; --accent: #22c55e; --accent-2: #4ade80;
+      --accent-soft: #123a22; --accent-ink: #04140a; --gold: #fbbf24; --gold-soft: #3a2e0c; --gold-ink: #1f1600;
+      --danger: #f87171; --danger-soft: #3a1414; --info: #60a5fa; --board: #050a07; --board-ink: #ffd34d;
+      --nav: #0d1912; --nav-active: #163323; --input: #0b1610; --row-alt: #13231a;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35); --shadow-lg: 0 14px 40px rgba(0,0,0,.55);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #08110c; --page-2: #0c1811; --card: #111f17; --card-2: #15261c;
+    --line: #1f3428; --line-strong: #2b4636; --ink: #e7f2ea; --ink-2: #c3d6c9; --mute: #86a090;
+    --pitch-1: #0f5a2b; --pitch-2: #126533; --accent: #22c55e; --accent-2: #4ade80;
+    --accent-soft: #123a22; --accent-ink: #04140a; --gold: #fbbf24; --gold-soft: #3a2e0c; --gold-ink: #1f1600;
+    --danger: #f87171; --danger-soft: #3a1414; --info: #60a5fa; --board: #050a07; --board-ink: #ffd34d;
+    --nav: #0d1912; --nav-active: #163323; --input: #0b1610; --row-alt: #13231a;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35); --shadow-lg: 0 14px 40px rgba(0,0,0,.55);
+    color-scheme: dark;
+  }
+
+  /* ============ Nen tang ============ */
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--ink); font-size: 15px; line-height: 1.5;
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
+    background:
+      radial-gradient(1200px 500px at 85% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+      linear-gradient(var(--page), var(--page-2));
+    background-attachment: fixed;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+  .display { font-family: Bahnschrift, "DIN Alternate", "Segoe UI", sans-serif; font-stretch: semi-condensed; letter-spacing: .01em; }
+  .muted { color: var(--mute); }
+  svg.i { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ============ Dau trang: mat san co ============ */
+  .hud {
+    position: relative; overflow: hidden; color: var(--pitch-ink);
+    background: repeating-linear-gradient(90deg, var(--pitch-1) 0 72px, var(--pitch-2) 72px 144px);
+    box-shadow: inset 0 -4px 0 rgba(255,255,255,.9), var(--shadow);
+  }
+  /* vach giua san + vong tron trung tam */
+  .hud::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 58%; width: 2px; background: rgba(255,255,255,.3); pointer-events: none;
+  }
+  .hud::after {
+    content: ""; position: absolute; left: 58%; top: 50%; width: 140px; height: 140px; transform: translate(-50%, -50%);
+    border: 2px solid rgba(255,255,255,.3); border-radius: 50%; pointer-events: none;
+  }
+  .hud-inner {
+    position: relative; z-index: 1; max-width: none; margin: 0; padding: 18px 24px 20px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px 28px;
+  }
+  .brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+  .ball {
+    width: 56px; height: 56px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.28);
+  }
+  .ball svg { width: 48px; height: 48px; }
+  .brand-text { display: grid; gap: 8px; min-width: 0; }
+  .hud h1 { margin: 0; font-size: 26px; font-weight: 700; line-height: 1.05; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+  .hud h1 small { display: block; margin-bottom: 2px; font-size: 11.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
+  .meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; }
+  .jersey {
+    display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px 0 3px; border-radius: 999px;
+    background: rgba(0,0,0,.24); font-weight: 600;
+  }
+  .jersey .shirt { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--pitch-1); }
+  .jersey .shirt svg { width: 15px; height: 15px; }
+  .badge { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: .06em; color: #fff; }
+  .badge.pc { background: #2563eb; } .badge.vip { background: linear-gradient(135deg, #f5b700, #e67e00); color: #2b1a00; }
+  .clock { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px; border-radius: 999px; background: rgba(0,0,0,.2); }
+  .clock svg { width: 15px; height: 15px; }
+  .hud-right { display: flex; align-items: center; gap: 12px; }
+  /* bang ti so hien EP */
+  .wallet {
+    display: flex; align-items: center; gap: 12px; padding: 9px 16px 9px 12px; border-radius: 14px;
+    background: var(--board); border: 2px solid rgba(255,255,255,.18); box-shadow: inset 0 0 20px rgba(0,0,0,.6), 0 4px 14px rgba(0,0,0,.3);
+  }
+  .wallet .lbl {
+    font-size: 11px; font-weight: 800; letter-spacing: .1em; color: #0f1a14; background: var(--board-ink);
+    padding: 4px 7px; border-radius: 6px; box-shadow: 0 0 8px rgba(255, 196, 0, .45);
+  }
+  .wallet .amt { display: grid; line-height: 1.1; }
+  .wallet .amt small { font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #9fb4a7; }
+  .wallet strong {
+    font-family: Consolas, "Cascadia Mono", "Courier New", monospace; font-size: 28px; font-weight: 700; color: var(--board-ink);
+    text-shadow: 0 0 10px rgba(255, 196, 0, .55); letter-spacing: .02em;
+  }
+  #playerRows td:nth-child(7), #playerRows td:nth-child(8), #searchRows td:last-child { white-space: nowrap; }
+  .title-row { display: inline-flex; align-items: center; gap: 12px; }
+  .theme-btn {
+    width: 32px; height: 32px; border-radius: 9px; border: 1px solid rgba(255,255,255,.35); cursor: pointer; padding: 0;
+    background: rgba(255,255,255,.14); color: #fff; display: grid; place-items: center; flex: none;
+    font: inherit; text-shadow: none; transition: background .15s, transform .15s;
+  }
+  .theme-btn svg.i { width: 17px; height: 17px; }
+  .theme-btn:hover { transform: rotate(-15deg); }
+  .theme-btn:hover { background: rgba(255,255,255,.26); }
+  .theme-btn .sun { display: none; }
+  :root[data-theme="dark"] .theme-btn .sun { display: block; } :root[data-theme="dark"] .theme-btn .moon { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-btn .sun { display: block; } :root:not([data-theme="light"]) .theme-btn .moon { display: none; }
+  }
+
+  /* ============ Bo cuc ============ */
+  .shell { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 18px; max-width: none; margin: 0; padding: 18px 24px 40px; }
+  nav {
+    position: sticky; top: 20px; align-self: start; display: grid; gap: 4px; padding: 10px;
+    background: var(--nav); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+  nav .nav-title { padding: 6px 12px 8px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+  nav button {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; border: 0; border-radius: 10px;
+    background: none; cursor: pointer; color: var(--ink-2); font-weight: 500; position: relative;
+  }
+  nav button:hover { background: var(--card-2); color: var(--ink); }
+  nav button[aria-selected="true"] { background: var(--nav-active); color: var(--accent); font-weight: 700; }
+  nav button[aria-selected="true"]::before {
+    content: ""; position: absolute; left: -10px; top: 8px; bottom: 8px; width: 4px; border-radius: 0 4px 4px 0; background: var(--accent);
+  }
+  main { min-width: 0; }
+  section[hidden] { display: none; }
+
+  /* thanh thong bao */
+  .status {
+    position: sticky; top: 12px; z-index: 5; display: flex; align-items: center; gap: 10px;
+    margin: 0 0 20px; padding: 11px 16px; border-radius: 12px; min-height: 44px;
+    background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(8px);
+    border: 1px solid var(--line); box-shadow: var(--shadow); color: var(--ink-2); font-size: 14px;
+  }
+  .status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--info); box-shadow: 0 0 0 4px color-mix(in srgb, var(--info) 20%, transparent); }
+  .status.ok { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--accent); }
+  .status.ok::before { background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .status.err { border-color: color-mix(in srgb, var(--danger) 45%, var(--line)); color: var(--danger); background: color-mix(in srgb, var(--danger-soft) 90%, transparent); }
+  .status.err::before { background: var(--danger); box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 22%, transparent); }
+
+  /* the noi dung */
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 20px 20px; margin-bottom: 18px;
+  }
+  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .card-head .ico {
+    width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; flex: none;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .card-head .ico.gold { background: var(--gold-soft); color: #b07d00; }
+  :root[data-theme="dark"] .card-head .ico.gold { color: var(--gold); }
+  h2 { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.2; }
+  h3 { margin: 22px 0 10px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  h3::before { content: ""; width: 14px; height: 3px; border-radius: 2px; background: var(--accent); }
+  .lead { margin: 6px 0 18px; color: var(--mute); max-width: 80ch; }
+  .card > p { margin: 8px 0; }
+
+  /* the thong so */
+  .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; margin: 0; }
+  .facts div {
+    position: relative; overflow: hidden; padding: 16px 18px 14px; border-radius: 12px;
+    background: var(--card-2); border: 1px solid var(--line);
+  }
+  .facts div::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  .facts div:nth-child(2)::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+  .facts div:nth-child(3)::before { background: linear-gradient(90deg, var(--gold), #ffd34d); }
+  .facts div:nth-child(4)::before { background: linear-gradient(90deg, #e11d48, #fb7185); }
+  .facts div:nth-child(5)::before { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+  .facts div:nth-child(6)::before { background: linear-gradient(90deg, #0891b2, #22d3ee); }
+  .facts dt { color: var(--mute); font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+  .facts dd { margin: 4px 0 0; font-size: 26px; font-weight: 700; font-family: Bahnschrift, "Segoe UI", sans-serif; font-stretch: semi-condensed; }
+
+  /* form */
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin: 10px 0; }
+  label.f { display: grid; gap: 5px; font-size: 12.5px; font-weight: 600; color: var(--mute); }
+  label.check { display: inline-flex; gap: 8px; align-items: center; color: var(--ink-2); font-size: 14px; cursor: pointer; }
+  label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+  input, select {
+    background: var(--input); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); padding: 9px 12px; min-width: 0; height: 40px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input:hover, select:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line-strong)); }
+  input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  input[type=number] { width: 140px; }
+  input.wide { width: min(360px, 100%); }
+  td input, td select { height: 34px; padding: 5px 9px; }
+  td input[type=number] { width: 120px; }
+
+  /* nut */
+  button.b {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; padding: 0 16px;
+    border: 1px solid var(--line-strong); background: var(--card); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600;
+    color: var(--ink-2); transition: transform .08s, background .15s, border-color .15s, box-shadow .15s;
+  }
+  button.b:hover { border-color: var(--accent); color: var(--accent); }
+  button.b:active { transform: translateY(1px); }
+  button.b.primary {
+    background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-color: var(--accent); color: var(--accent-ink);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  button.b.primary:hover { filter: brightness(1.06); color: var(--accent-ink); }
+  button.b.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--line-strong)); }
+  button.b.danger:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+  button.b.small { height: 32px; padding: 0 11px; font-size: 13px; border-radius: 8px; }
+  td button.b.small + button.b.small { margin-left: 6px; }
+
+  /* thanh truot ty le dap the: nut keo la qua bong */
+  .rate-wrap { display: flex; align-items: center; gap: 18px; margin: 14px 0 18px; }
+  .rate-big {
+    min-width: 92px; text-align: center; padding: 8px 12px; border-radius: 12px; background: var(--board); color: var(--board-ink);
+    font: 700 28px/1 Consolas, "Cascadia Mono", monospace; text-shadow: 0 0 10px rgba(255,196,0,.5);
+  }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none; flex: 1; height: 12px; padding: 0; border: 0; border-radius: 999px; cursor: pointer;
+    background: linear-gradient(90deg, var(--accent) 0 var(--fill, 50%), var(--line) var(--fill, 50%) 100%); box-shadow: none;
+  }
+  input[type=range]:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #1b1b1b;
+    background:
+      radial-gradient(circle at 50% 50%, #1b1b1b 0 4px, transparent 4.5px),
+      radial-gradient(circle at 20% 28%, #1b1b1b 0 2.5px, transparent 3px),
+      radial-gradient(circle at 80% 28%, #1b1b1b 0 2.5px, transparent 3px),
+      radial-gradient(circle at 25% 80%, #1b1b1b 0 2.5px, transparent 3px),
+      radial-gradient(circle at 75% 80%, #1b1b1b 0 2.5px, transparent 3px), #fff;
+    box-shadow: 0 3px 8px rgba(0,0,0,.3);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid #1b1b1b;
+    background: radial-gradient(circle, #1b1b1b 0 4px, #fff 4.5px); box-shadow: 0 3px 8px rgba(0,0,0,.3);
+  }
+  .hint { margin: 12px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--card-2); color: var(--mute); font-size: 13.5px; border-left: 3px solid var(--gold); }
+
+  /* bang */
+  .table-wrap { overflow: auto; max-height: 74vh; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+  th {
+    position: sticky; top: 0; z-index: 1; text-align: left; font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--pitch-ink); background: var(--pitch-1); padding: 11px 10px; white-space: nowrap;
+  }
+  th:nth-child(even) { background: var(--pitch-2); }
+  td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:nth-child(even) td { background: var(--row-alt); }
+  tbody tr:hover td { background: var(--accent-soft); }
+  td.num, th.num { text-align: right; }
+  td.num { font-weight: 600; }
+  .chip {
+    display: inline-block; min-width: 54px; text-align: center; padding: 3px 9px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 800; letter-spacing: .03em; background: var(--card-2); color: var(--ink-2); border: 1px solid var(--line);
+  }
+  .chip.MAIN { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  .chip.SUB { background: var(--gold-soft); color: #8a6200; border-color: color-mix(in srgb, var(--gold) 50%, transparent); }
+  :root[data-theme="dark"] .chip.SUB { color: var(--gold); }
+  .chip.RES { background: var(--card-2); color: var(--mute); }
+  .chip.t2 { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
+  :root[data-theme="dark"] .chip.t2 { background: #2a1f4a; color: #c4b5fd; border-color: #3b2d66; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .chip.SUB { color: var(--gold); }
+    :root:not([data-theme="light"]) .chip.t2 { background: #2a1f4a; color: #c4b5fd; border-color: #3b2d66; }
+    :root:not([data-theme="light"]) .card-head .ico.gold { color: var(--gold); }
+  }
+
+  /* nhat ky */
+  pre.log {
+    margin: 0; padding: 16px; max-height: 62vh; overflow: auto; font: 12.5px/1.6 Consolas, "Cascadia Mono", monospace;
+    background: #0a120d; color: #b9e6c6; border: 1px solid var(--line); border-radius: 12px; white-space: pre-wrap; word-break: break-all;
+  }
+
+  /* chan trang */
+  .foot { max-width: none; margin: 0; padding: 4px 24px 32px; text-align: center; color: var(--mute); font-size: 12.5px; }
+  .foot p { margin: 6px 0; }
+  .foot .support {
+    display: inline-block; margin-bottom: 8px; padding: 10px 20px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow);
+    color: var(--ink-2); font-size: 15px; font-weight: 600;
+  }
+  .foot .genta {
+    display: inline-block; margin: 0 2px; padding: 2px 12px; border-radius: 999px; text-decoration: none;
+    font-weight: 800; letter-spacing: .02em; color: #fff;
+    background: linear-gradient(135deg, #1877f2, #0b5ed7);
+    box-shadow: 0 3px 10px rgba(24, 119, 242, .4);
+    transition: transform .12s, box-shadow .12s, filter .12s;
+  }
+  .foot .genta:hover { transform: translateY(-1px) scale(1.04); filter: brightness(1.08); box-shadow: 0 6px 16px rgba(24, 119, 242, .5); }
+  .foot .genta:focus-visible { outline: 3px solid rgba(24, 119, 242, .5); outline-offset: 2px; }
+
+
+  /* thanh loc + sap xep */
+  .filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px 12px; align-items: end; margin: 6px 0 4px; }
+  .filters input { width: 100%; }
+  .filters .b { justify-self: start; }
+  #searchForm label.f input:not(.short) { width: 180px; }
+  input.short { width: 96px !important; }
+  .count { margin: 6px 0 10px; font-size: 13px; }
+  .pager { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+  .pager #pgInfo { min-width: 120px; text-align: center; font-weight: 600; }
+  .pager .b:disabled { opacity: .45; cursor: default; }
+  #playerRows td, #searchRows td { white-space: nowrap; }
+  #playerRows td .muted, #searchRows td .muted { font-size: 12px; }
+  th[data-sort] { cursor: pointer; user-select: none; }
+  th[data-sort]::after { content: "↕"; margin-left: 6px; opacity: .45; font-size: 11px; }
+  th[data-sort][data-dir="asc"]::after { content: "▲"; opacity: 1; }
+  th[data-sort][data-dir="desc"]::after { content: "▼"; opacity: 1; }
+  th[data-sort]:hover { filter: brightness(1.12); }
+  th.sorted { box-shadow: inset 0 -3px 0 var(--gold); }
+
+  /* dropdown tu ve (thay cho select mac dinh cua trinh duyet) */
+  .cs { position: relative; display: inline-flex; min-width: 0; max-width: 100%; }
+  .cs > select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
+  .cs-btn {
+    display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+    height: 40px; min-width: 130px; padding: 0 10px 0 13px; text-align: left; cursor: pointer;
+    background: var(--input); color: var(--ink); font-weight: 600;
+    border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+    transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  .cs-btn:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line-strong)); }
+  .cs-btn.open, .cs-btn:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .cs-btn:disabled { opacity: .55; cursor: not-allowed; }
+  .cs-val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cs-chev {
+    flex: none; width: 22px; height: 22px; padding: 3px; border-radius: 6px; fill: none; stroke: currentColor; stroke-width: 2.6;
+    stroke-linecap: round; stroke-linejoin: round; color: var(--accent); background: var(--accent-soft); transition: transform .18s;
+  }
+  .cs-btn.open .cs-chev { transform: rotate(180deg); }
+  .cs.cs-sm .cs-btn { height: 34px; min-width: 78px; padding: 0 6px 0 10px; }
+  .cs.cs-sm .cs-chev { width: 18px; height: 18px; padding: 2px; }
+  .filters .cs, .filters .cs-btn { width: 100%; }
+  .cs-pop {
+    position: fixed; z-index: 100; overflow-y: auto; max-height: 280px; padding: 6px;
+    background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow-lg); scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
+  }
+  .cs-opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    padding: 8px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 14px; color: var(--ink-2);
+  }
+  .cs-opt.act { background: var(--accent-soft); color: var(--ink); }
+  .cs-opt.on { color: var(--accent); font-weight: 700; }
+  .cs-opt.on::after { content: "✓"; font-weight: 800; }
+  @media (prefers-reduced-motion: no-preference) {
+    .cs-pop { animation: csIn .12s ease-out; }
+    @keyframes csIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  }
+
+  /* thao tac hang loat */
+  th.ck, td.ck { width: 38px; text-align: center; padding-left: 10px; padding-right: 4px; }
+  td.ck input, th.ck input { width: 17px; height: 17px; accent-color: var(--accent); cursor: pointer; vertical-align: middle; }
+  tbody tr.sel td { background: color-mix(in srgb, var(--accent) 16%, var(--card)) !important; }
+  .bulk {
+    position: sticky; top: 68px; z-index: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
+    margin: 10px 0 6px; padding: 10px 14px; border-radius: 12px; color: var(--ink);
+    background: color-mix(in srgb, var(--accent) 12%, var(--card)); border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+    box-shadow: var(--shadow);
+  }
+  .bulk[hidden] { display: none; }
+  .bulk-n { margin-right: 6px; }
+  .bulk-lbl { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--mute); }
+  .bulk .cs-btn, .cm-tools .cs-btn { height: 32px; min-width: 76px; }
+  button.b.ghost { background: transparent; }
+  /* ten cau thu bam duoc */
+  .linkish { border: 0; padding: 0; background: none; color: var(--ink); font-weight: 600; cursor: pointer; text-align: left; }
+  .linkish:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  /* hop chi tiet the */
+  body.modal-open { overflow: hidden; }
+  .modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px; background: rgba(5, 14, 9, .62); backdrop-filter: blur(3px); }
+  .modal[hidden] { display: none; }
+  .modal-box {
+    position: relative; width: min(880px, 100%); max-height: calc(100vh - 40px); overflow: auto; padding: 24px 26px;
+    background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-lg);
+  }
+  .modal-x { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--card-2); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
+  .modal-x:hover { border-color: var(--accent); color: var(--accent); }
+  .cm-head { display: flex; align-items: center; gap: 16px; margin: 0 40px 14px 0; }
+  .cm-ovr { flex: none; width: 74px; height: 80px; border-radius: 14px 14px 30px 30px; display: grid; place-content: center; text-align: center; color: #fff; box-shadow: var(--shadow); }
+  .cm-ovr b { font: 800 30px/1 Bahnschrift, "Segoe UI", sans-serif; }
+  .cm-ovr span { font-size: 12px; font-weight: 800; letter-spacing: .08em; opacity: .9; }
+  .cm-ovr.sm { width: 52px; height: 58px; } .cm-ovr.sm b { font-size: 21px; }
+  .cm-ovr.t1 { background: linear-gradient(160deg, #8a8f95, #5b6066); } .cm-ovr.t2 { background: linear-gradient(160deg, #b08d57, #7b5d2e); }
+  .cm-ovr.t3 { background: linear-gradient(160deg, #9aa7b5, #5d6b7a); } .cm-ovr.t4 { background: linear-gradient(160deg, #f2c200, #b07d00); color: #2b1a00; }
+  .cm-ovr.t5 { background: linear-gradient(160deg, #2bb673, #0f7a46); } .cm-ovr.t6 { background: linear-gradient(160deg, #e11d48, #7c3aed); }
+  .cm-title h2 { margin: 0; font-size: 24px; }
+  .cm-sub { color: var(--mute); font-size: 13px; margin-top: 2px; }
+  .cm-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 14px; font-size: 13px; }
+  .cm-info { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin: 0 0 16px; }
+  .cm-info div { padding: 8px 12px; border-radius: 10px; background: var(--card-2); border: 1px solid var(--line); }
+  .cm-info dt { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+  .cm-info dd { margin: 2px 0 0; font-weight: 700; }
+  .cm-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .cm-group { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--card-2); }
+  .cm-group h4, .cmp h4 { margin: 0 0 8px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .stat { display: grid; grid-template-columns: 96px 1fr 38px; align-items: center; gap: 8px; font-size: 13px; padding: 3px 0; }
+  .stat i, .cmp-row i { display: block; height: 7px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .stat em, .cmp-row em { display: block; height: 100%; border-radius: 999px; background: var(--mute); }
+  .stat b { text-align: right; font-size: 14px; }
+  em.t1, em.t2 { background: #dc2626; } em.t3 { background: #f59e0b; } em.t4 { background: #84cc16; } em.t5 { background: #16a34a; } em.t6 { background: #7c3aed; }
+  b.t1, b.t2 { color: #dc2626; } b.t3 { color: #d97706; } b.t4 { color: #65a30d; } b.t5 { color: #16a34a; } b.t6 { color: #7c3aed; }
+  .cm-foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .cmp-heads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .cmp-h { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: var(--card-2); border: 1px solid var(--line); }
+  .cmp-h:last-child { flex-direction: row-reverse; text-align: right; }
+  .cmp-row { display: grid; grid-template-columns: 110px 46px 1fr 1fr 46px; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; }
+  .cmp-row b { text-align: center; } .cmp-row b.win { color: var(--accent); } .cmp-row b.lose { color: var(--mute); font-weight: 500; }
+  .cmp-row.big { grid-template-columns: 110px 1fr 1fr; font-size: 14px; }
+  .cmp-row.big b:first-of-type { text-align: left; padding-left: 4px; } .cmp-row.big b:last-of-type { text-align: right; }
+  .cmp-row i.l { direction: rtl; } .cmp-row em.win { background: var(--accent); }
+  .cmp h4 { margin-top: 12px; }
+  /* the dang ghim */
+  .pin-chip { position: fixed; right: 18px; bottom: 18px; z-index: 55; display: flex; align-items: center; gap: 8px; padding: 9px 10px 9px 14px;
+    border-radius: 999px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-lg); font-size: 13px; color: var(--mute); }
+  .pin-chip[hidden] { display: none; }
+  .pin-x { width: 24px; height: 24px; border-radius: 50%; border: 0; background: var(--card-2); color: var(--ink); cursor: pointer; }
+  @media (max-width: 640px) {
+    .modal { padding: 0; align-items: end; } .modal-box { border-radius: 18px 18px 0 0; padding: 18px 16px; max-height: 92vh; }
+    .cmp-row { grid-template-columns: 76px 38px 1fr 1fr 38px; } .bulk { top: 8px; }
+  }
+
+  /* nhan mua */
+  .sb { display: inline-block; min-width: 34px; padding: 2px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 800;
+        letter-spacing: .02em; text-align: center; cursor: help; border: 1px solid transparent; white-space: nowrap; }
+  .sb.k-year { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
+  .sb.k-legend { background: #fef3c7; color: #a16207; border-color: #fde68a; }
+  .sb.k-cup { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+  .sb.k-special { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
+  .sb.k-base { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+  :root[data-theme="dark"] .sb.k-year { background: #172554; color: #93c5fd; border-color: #1e3a8a; }
+  :root[data-theme="dark"] .sb.k-legend { background: #3a2e0c; color: #fcd34d; border-color: #5a4410; }
+  :root[data-theme="dark"] .sb.k-cup { background: #123a22; color: #86efac; border-color: #14532d; }
+  :root[data-theme="dark"] .sb.k-special { background: #2a1f4a; color: #c4b5fd; border-color: #3b2d66; }
+  :root[data-theme="dark"] .sb.k-base { background: #1e293b; color: #94a3b8; border-color: #334155; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .sb.k-year { background: #172554; color: #93c5fd; border-color: #1e3a8a; }
+    :root:not([data-theme="light"]) .sb.k-legend { background: #3a2e0c; color: #fcd34d; border-color: #5a4410; }
+    :root:not([data-theme="light"]) .sb.k-cup { background: #123a22; color: #86efac; border-color: #14532d; }
+    :root:not([data-theme="light"]) .sb.k-special { background: #2a1f4a; color: #c4b5fd; border-color: #3b2d66; }
+    :root:not([data-theme="light"]) .sb.k-base { background: #1e293b; color: #94a3b8; border-color: #334155; }
+  }
+
+  /* dropdown co o tim kiem */
+  .ss-top { font-weight: 700; color: var(--ink); }
+  .ss-top::first-letter { color: var(--gold); }
+  .ss { display: block; min-width: 0; }
+  .ss .ss-btn { width: 100%; }
+  .ss .ss-btn.ss-on { border-color: color-mix(in srgb, var(--accent) 60%, var(--line-strong)); }
+  .ss-pop { display: flex; flex-direction: column; padding: 0; overflow: hidden; max-height: none; }
+  .ss-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--card-2); }
+  .ss-head svg { width: 17px; height: 17px; color: var(--mute); fill: none; stroke: currentColor; stroke-width: 2; }
+  .ss-search { flex: 1; height: 34px; border-radius: 8px; padding: 6px 10px; }
+  .ss-list { max-height: 270px; overflow-y: auto; padding: 6px; scrollbar-width: thin; }
+  .ss-name { overflow: hidden; text-overflow: ellipsis; }
+  .ss-free { font-style: italic; color: var(--accent); }
+  .ss-count { flex: none; font-size: 12px; font-weight: 600; color: var(--mute); background: var(--card-2); border-radius: 999px; padding: 1px 8px; }
+  .cs-opt.on .ss-count { color: var(--accent); }
+  .ss-pop .cs-opt.on::after { content: none; }
+  .ss-foot { padding: 7px 12px; font-size: 12px; border-top: 1px solid var(--line); }
+
+  /* ===== Donate (ban moi) ===== */
+  .dn { padding: 0; overflow: hidden; }
+  .dn-hero {
+    position: relative; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 26px 30px; color: #fff;
+    background: radial-gradient(600px 200px at 85% 0%, rgba(255,255,255,.18), transparent 60%),
+                repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 60px, transparent 60px 120px),
+                linear-gradient(120deg, #0f7a46, #16a34a 55%, #22c55e);
+  }
+  .dn-hero h2 { margin: 0; font-size: 26px; color: #fff; }
+  .dn-hero p { margin: 4px 0 0; color: rgba(255,255,255,.88); max-width: 60ch; }
+  .dn-hero-ico { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; flex: none;
+    background: rgba(255,255,255,.2); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
+  .dn-hero-ico svg { width: 28px; height: 28px; fill: #fff; stroke: #fff; }
+  .dn-pill { margin-left: auto; padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 700;
+    background: rgba(255,255,255,.18); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); white-space: nowrap; }
+
+  .dn-body { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 28px; align-items: center;
+    max-width: 1080px; margin: 0 auto; padding: 30px 30px 10px; }
+  .dn-bank { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .dn-logo { font: 800 22px/1 Bahnschrift, "Segoe UI", sans-serif; letter-spacing: .08em; padding: 10px 14px; border-radius: 12px;
+    background: #f7a600; color: #10284f; box-shadow: 0 6px 16px rgba(247, 166, 0, .35); }
+  .dn-bank strong { display: block; font-size: 17px; }
+  .dn-bank span { color: var(--mute); font-size: 13px; }
+  .dn-rows { margin: 0; display: grid; gap: 10px; }
+  .dn-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 12px; padding: 12px 16px;
+    border-radius: 12px; background: var(--card-2); border: 1px solid var(--line); }
+  .dn-row dt { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+  .dn-row dd { margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
+  .dn-val { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; }
+  .dn-row-main { background: color-mix(in srgb, var(--accent) 10%, var(--card)); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+  .dn-acc { font: 800 30px/1.1 Consolas, "Cascadia Mono", monospace; letter-spacing: .08em; color: var(--accent); user-select: all; }
+  .dn-copy { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 10px; flex: none;
+    border: 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--accent-ink);
+    background: linear-gradient(180deg, var(--accent-2), var(--accent)); box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 30%, transparent); }
+  .dn-copy svg { width: 16px; height: 16px; }
+  .dn-copy.ghost { width: 36px; padding: 0; justify-content: center; background: var(--card); color: var(--mute);
+    border: 1px solid var(--line-strong); box-shadow: none; }
+  .dn-copy.ghost:hover { color: var(--accent); border-color: var(--accent); }
+  .dn-copy.done { background: var(--accent); color: var(--accent-ink); }
+  .dn-copy.done svg { display: none; }
+  .dn-copy.done::before { content: "✓"; font-weight: 900; }
+  .dn-note { margin: 14px 2px 0; font-size: 13px; color: var(--mute); }
+
+  .dn-qr { margin: 0; padding: 22px; border-radius: 18px; text-align: center; background: var(--card-2); border: 1px solid var(--line);
+    display: grid; justify-items: center; gap: 14px; }
+  .dn-qr .qr-frame img { width: 240px; height: 240px; }
+  .dn-qr figcaption strong { font-size: 16px; }
+  .dn-steps { margin: 8px 0 0; padding: 0; list-style: none; counter-reset: st; display: grid; gap: 6px; text-align: left; }
+  .dn-steps li { counter-increment: st; display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--ink-2); }
+  .dn-steps li::before { content: counter(st); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex: none;
+    font-size: 12px; font-weight: 800; color: var(--accent-ink); background: var(--accent); }
+
+  .dn-thanks { margin: 20px 30px 26px; padding: 14px 18px; border-radius: 12px; text-align: center; font-weight: 600; color: var(--ink-2);
+    background: color-mix(in srgb, var(--gold) 12%, var(--card)); border: 1px dashed color-mix(in srgb, var(--gold) 55%, var(--line)); }
+  .dn-thanks span { margin-right: 6px; }
+  @media (max-width: 900px) {
+    .dn-body { grid-template-columns: 1fr; padding: 22px 18px 6px; }
+    .dn-hero { padding: 20px 18px; } .dn-pill { margin-left: 0; }
+    .dn-row { grid-template-columns: 1fr; gap: 6px; } .dn-acc { font-size: 26px; }
+    .dn-thanks { margin: 16px 18px 20px; }
+  }
+  .sm-opt { font-style: normal; font-weight: 500; color: var(--ink-3, var(--ink-2)); }
+  .qr-rm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 4px 0 12px; padding: 10px 14px; border-radius: 12px;
+    background: color-mix(in srgb, var(--danger) 6%, var(--card)); border: 1px dashed color-mix(in srgb, var(--danger) 35%, var(--line)); }
+  .qr-rm-title { font-weight: 700; color: var(--danger); }
+  .qr-rm .cs { min-width: 260px; }
+  .qr-rm #qrNote { font-size: 12.5px; }
+  /* them theo mua */
+  .sm-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin: 4px 0 12px; }
+  .sm-step > span { display: inline-flex; align-items: center; gap: 6px; }
+  .sm-step > span b { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px;
+    background: var(--accent); color: var(--accent-ink); }
+  .sm-step input { width: 100%; }
+  .sm-step .cs, .sm-step .cs-btn { width: 100%; }
+  .sm-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0 10px;
+    padding: 10px 14px; border-radius: 12px; background: var(--card-2); border: 1px solid var(--line); }
+  .sm-bar[hidden], .sm-go[hidden], #smWrap[hidden] { display: none; }
+  .sm-info { font-size: 14px; }
+  .sm-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sm-go { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px; }
+  .sm-go-btn { height: 46px; padding: 0 22px; font-size: 15px; }
+  .sm-go-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .sm-warn { color: var(--danger); font-weight: 600; }
+  #smRows td { white-space: nowrap; }
+  .sm-filters { margin: 0 0 10px; }
+  .sm-filters[hidden] { display: none; }
+  /* muc Donate */
+  nav button.nav-donate { color: #e11d48; }
+  nav button.nav-donate[aria-selected="true"] { background: #ffe4ea; color: #e11d48; }
+  nav button.nav-donate[aria-selected="true"]::before { background: #e11d48; }
+  :root[data-theme="dark"] nav button.nav-donate { color: #fb7185; }
+  :root[data-theme="dark"] nav button.nav-donate[aria-selected="true"] { background: #3a1420; color: #fb7185; }
+  .card-head .ico.heart { background: #ffe4ea; color: #e11d48; }
+  :root[data-theme="dark"] .card-head .ico.heart { background: #3a1420; color: #fb7185; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) nav button.nav-donate { color: #fb7185; }
+    :root:not([data-theme="light"]) nav button.nav-donate[aria-selected="true"] { background: #3a1420; color: #fb7185; }
+    :root:not([data-theme="light"]) .card-head .ico.heart { background: #3a1420; color: #fb7185; }
+  }
+  .bank-card {
+    position: relative; overflow: hidden; padding: 24px 26px; border-radius: 18px; color: #fff;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 22px; min-height: 250px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 40px, transparent 40px 80px),
+      linear-gradient(135deg, #0b5e3a, #138a4f 55%, #0f7a46);
+    box-shadow: 0 14px 30px rgba(11, 94, 58, .35);
+  }
+  .bank-card > * { position: relative; z-index: 1; }
+  .bank-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .bank-brand { display: flex; align-items: center; gap: 12px; }
+  .bank-name { font: 800 22px/1 Bahnschrift, "Segoe UI", sans-serif; letter-spacing: .08em; padding: 7px 12px; border-radius: 8px; background: #f7a600; color: #10284f; }
+  .bank-full { font-size: 13px; font-weight: 600; opacity: .85; letter-spacing: .02em; }
+  .bank-chip { width: 46px; height: 34px; border-radius: 7px; flex: none; background: linear-gradient(135deg, #f8e08e, #c9a227); box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); }
+  .bank-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .75; margin-bottom: 4px; }
+  .bank-acc-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; }
+  .bank-acc { font: 700 34px/1.1 Consolas, "Cascadia Mono", monospace; letter-spacing: .1em; user-select: all; cursor: text; }
+  .bank-copy {
+    display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.45); background: rgba(255,255,255,.16); color: #fff; font-weight: 700; font-size: 13px;
+    transition: background .15s, transform .08s;
+  }
+  .bank-copy svg { width: 16px; height: 16px; }
+  .bank-copy:hover { background: rgba(255,255,255,.28); }
+  .bank-copy:active { transform: translateY(1px); }
+  .bank-holder { font-size: 18px; font-weight: 700; letter-spacing: .06em; }
+  .bank-ball {
+    position: absolute; right: -36px; bottom: -36px; width: 140px; height: 140px; border-radius: 50%; z-index: 0;
+    border: 2px solid rgba(255,255,255,.2); pointer-events: none;
+  }
+  .donate-grid { display: flex; flex-wrap: wrap; align-items: stretch; gap: 20px; }
+  .donate-grid .bank-card { flex: 1 1 340px; max-width: 520px; }
+  .qr-box {
+    flex: 0 1 280px; margin: 0; padding: 18px; border-radius: 18px; text-align: center;
+    background: var(--card-2); border: 1px solid var(--line); display: grid; justify-items: center; gap: 12px; align-content: center;
+  }
+  .qr-frame { position: relative; padding: 12px; border-radius: 16px; background: #fff; box-shadow: 0 8px 22px rgba(0,0,0,.12); }
+  .qr-frame img { display: block; width: 220px; height: 220px; max-width: 100%; border-radius: 6px; }
+  .qr-corner { position: absolute; width: 22px; height: 22px; border: 4px solid var(--accent); pointer-events: none; }
+  .qr-corner.tl { top: -2px; left: -2px; border-right: 0; border-bottom: 0; border-radius: 10px 0 0 0; }
+  .qr-corner.tr { top: -2px; right: -2px; border-left: 0; border-bottom: 0; border-radius: 0 10px 0 0; }
+  .qr-corner.bl { bottom: -2px; left: -2px; border-right: 0; border-top: 0; border-radius: 0 0 0 10px; }
+  .qr-corner.br { bottom: -2px; right: -2px; border-left: 0; border-top: 0; border-radius: 0 0 10px 0; }
+  .qr-box figcaption { display: grid; gap: 2px; }
+  .qr-box figcaption strong { font-size: 15px; }
+  .qr-box figcaption span { font-size: 12.5px; color: var(--mute); }
+  @media (max-width: 520px) { .qr-box { flex-basis: 100%; } .bank-acc { font-size: 28px; } .bank-full { display: none; } .foot { padding: 4px 16px 28px; } }
+  .bank-ball::after { content: ""; position: absolute; inset: 24px; border-radius: 50%; border: 2px solid rgba(255,255,255,.12); }
+
+  /* ============ Man hinh vua (laptop): menu chi con bieu tuong, nhuong cho cho bang ============ */
+  @media (min-width: 861px) and (max-width: 1600px) {
+    .shell { grid-template-columns: 62px minmax(0, 1fr); gap: 14px; padding: 16px 16px 32px; }
+    nav { padding: 8px 6px; }
+    nav .nav-title { display: none; }
+    nav button { justify-content: center; padding: 11px 0; font-size: 0; gap: 0; }
+    nav button svg.i { width: 20px; height: 20px; }
+    nav button[aria-selected="true"]::before { left: -6px; }
+    #playerRows td .muted, #searchRows td .muted { display: none; }
+    td { padding: 7px 8px; } th { padding: 10px 8px; }
+    td button.b.small { padding: 0 7px; font-size: 12px; height: 30px; }
+    td button.b.small + button.b.small { margin-left: 4px; }
+    .chip { min-width: 44px; padding: 3px 6px; }
+    td .cs.cs-sm .cs-btn { min-width: 70px; }
+    th { letter-spacing: .03em; }
+    .card { padding: 18px 16px; }
+  }
+  /* ============ Man hinh nho ============ */
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
+    nav { position: static; display: flex; overflow-x: auto; padding: 6px; gap: 4px; scrollbar-width: none; }
+    nav .nav-title { display: none; }
+    nav button { width: auto; white-space: nowrap; padding: 8px 12px; }
+    nav button[aria-selected="true"]::before { left: 10px; right: 10px; top: auto; bottom: 0; width: auto; height: 3px; border-radius: 3px 3px 0 0; }
+    .hud-inner { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
+    .hud::before, .hud::after { left: 82%; }
+    .ball { width: 44px; height: 44px; } .ball svg { width: 38px; height: 38px; }
+    .hud h1 { font-size: 22px; }
+    .hud-right { justify-content: space-between; }
+    .card { padding: 18px 16px; }
+    .wallet strong { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    section:not([hidden]) { animation: rise .22s ease-out; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  }
+
+  /* ============ Giao dien navy - vang kim (theo key art / launcher v1.1) ============ */
+  :root {
+    --page: #eef1f7; --page-2: #e5e9f2; --card: #ffffff; --card-2: #f5f7fb;
+    --line: #dbe1ee; --line-strong: #c4cde0; --ink: #111a2e; --ink-2: #33415e; --mute: #6b7896;
+    --pitch-1: #16244a; --pitch-2: #1b2b57; --pitch-ink: #ffffff;
+    --accent: #1f3b80; --accent-2: #2a4ea6; --accent-soft: #e6ebf8; --accent-ink: #ffffff;
+    --gold: #c9973b; --gold-soft: #fbf1dc; --gold-ink: #3b2a08;
+    --board: #070d1a; --board-ink: #f3d48a; --nav: #ffffff; --nav-active: #e9eefa;
+    --row-alt: #f6f8fc; --input: #ffffff;
+    --shadow: 0 1px 2px rgba(17, 26, 46, .06), 0 6px 18px rgba(17, 26, 46, .08);
+    --shadow-lg: 0 10px 30px rgba(17, 26, 46, .16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #0a1222; --page-2: #0d1730; --card: #111c33; --card-2: #16233f;
+      --line: #22345a; --line-strong: #2e4572; --ink: #eef2fb; --ink-2: #c6cfe3; --mute: #93a3c2;
+      --pitch-1: #16244a; --pitch-2: #1b2b57; --accent: #e2bd6b; --accent-2: #f0d08a;
+      --accent-soft: #2a2a2a33; --accent-ink: #1a1306; --gold: #f0c96a; --gold-soft: #3a2f14; --gold-ink: #1a1306;
+      --board: #050a14; --board-ink: #f3d48a; --nav: #0f1930; --nav-active: #1b2a4d; --input: #0c1529; --row-alt: #13203b;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #0a1222; --page-2: #0d1730; --card: #111c33; --card-2: #16233f;
+    --line: #22345a; --line-strong: #2e4572; --ink: #eef2fb; --ink-2: #c6cfe3; --mute: #93a3c2;
+    --pitch-1: #16244a; --pitch-2: #1b2b57; --accent: #e2bd6b; --accent-2: #f0d08a;
+    --accent-soft: #2a2a2a33; --accent-ink: #1a1306; --gold: #f0c96a; --gold-soft: #3a2f14; --gold-ink: #1a1306;
+    --board: #050a14; --board-ink: #f3d48a; --nav: #0f1930; --nav-active: #1b2a4d; --input: #0c1529; --row-alt: #13203b;
+  }
+  /* chu tieng Viet ro rang: bo Bahnschrift (thieu dau) */
+  .display, .facts dd { font-family: "Segoe UI", system-ui, sans-serif !important; font-stretch: normal !important; font-weight: 700; }
+  /* dau trang: anh ba huyen thoai thay mat san */
+  .hud {
+    background:
+      linear-gradient(90deg, rgba(10,18,34,.97) 0%, rgba(10,18,34,.92) 32%, rgba(10,18,34,.45) 62%, rgba(10,18,34,.2) 100%),
+      url("/hud.jpg") right 30% / cover no-repeat, #0a1222;
+    box-shadow: inset 0 -3px 0 #c9973b, var(--shadow);
+  }
+  .hud::before, .hud::after { display: none; }
+  .hud h1 small { color: #f3d48a; opacity: 1; }
+  .jersey .shirt { color: #16244a; }
+  .wallet { border-color: rgba(243,212,138,.35); }
+  .wallet .lbl { color: #1a1306; box-shadow: 0 0 8px rgba(243,212,138,.45); }
+  .wallet .amt small { color: #a9b4cc; }
+  .wallet strong { text-shadow: 0 0 10px rgba(243,212,138,.5); }
+  th { background: var(--pitch-1); } th:nth-child(even) { background: var(--pitch-2); }
+  .sb.k-cup { background: #e6ebf8; color: #1f3b80; border-color: #c9d4f0; }
+  .dn-hero {
+    background: radial-gradient(600px 200px at 85% 0%, rgba(243,212,138,.22), transparent 60%),
+                linear-gradient(90deg, rgba(10,18,34,.95), rgba(10,18,34,.55)), url("/hud.jpg") right 30% / cover no-repeat, #16244a;
+  }
+  td.pname { white-space: nowrap; }
+  .pimg { width: 34px; height: 34px; object-fit: cover; object-position: top; border-radius: 50%; vertical-align: middle; margin-right: 9px;
+          background: var(--card-2); border: 1px solid var(--line); }
+  .cm-photo { width: 116px; height: 116px; object-fit: cover; object-position: top; border-radius: 18px; flex: none;
+              background: linear-gradient(180deg, var(--card-2), var(--line)); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  @media (max-width: 560px) { .cm-photo { width: 72px; height: 72px; border-radius: 12px; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></symbol>
+  <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3 3 6l2 5 3-1v11h8V10l3 1 2-5-5-3a4 4 0 0 1-8 0Z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M3 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13"/><path d="M12 8S10 3 7.5 4.5 9 8 12 8Zm0 0s2-5 4.5-3.5S15 8 12 8Z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></symbol>
+  <symbol id="i-scout" viewBox="0 0 24 24"><circle cx="6.5" cy="15.5" r="3.5"/><circle cx="17.5" cy="15.5" r="3.5"/><path d="M10 15h4M6.5 12 9 5h2l1 5 1-5h2l2.5 7"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7Z"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.8 0-3 .9-3 2s1 1.7 3 2 3 1 3 2.2-1.3 2-3 2c-1.5 0-2.6-.6-3-1.6M12 6v2M12 16v2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9.3-9.2C1.5 7.6 3.6 4.5 6.9 4.5c2 0 3.4 1.1 5.1 3 1.7-1.9 3.1-3 5.1-3 3.3 0 5.4 3.1 4.2 6.3C19.5 15.4 12 20 12 20Z"/></symbol>
+</svg>
+
+<header class="hud">
+  <div class="hud-inner">
+    <div class="brand">
+      <span class="ball" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fff" stroke="#1b1b1b" stroke-width="2"/><path d="M20 12.5l7 5.1-2.7 8.2h-8.6L13 17.6Z" fill="#1b1b1b"/><path d="M20 12.5V4.5M27 17.6l7.4-2.6M24.3 25.8l4.6 6.6M15.7 25.8l-4.6 6.6M13 17.6l-7.4-2.6" stroke="#1b1b1b" stroke-width="2"/></svg>
+      </span>
+      <div class="brand-text">
+        <h1 class="display"><small>FIFA Online 3 · Offline</small><span class="title-row">Quản trị CLB
+          <button class="theme-btn" id="themeBtn" type="button" aria-label="Đổi giao diện sáng / tối" title="Đổi giao diện sáng / tối">
+            <svg class="i moon"><use href="#i-moon"/></svg><svg class="i sun"><use href="#i-sun"/></svg>
+          </button></span></h1>
+        <div class="meta">
+          <span class="jersey"><span class="shirt"><svg class="i"><use href="#i-shirt"/></svg></span><span id="coachName">…</span></span>
+          <span class="badge pc">PC</span><span class="badge vip">VIP</span>
+          <span class="clock" title="Giờ server (giờ Việt Nam)"><svg class="i"><use href="#i-clock"/></svg><span id="serverTime"></span></span>
+        </div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="wallet" aria-label="Số dư EP"><span class="lbl">EP</span><span class="amt"><small>Số dư</small><strong id="epTop">…</strong></span></div>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav role="tablist" aria-label="Menu quản trị">
+    <div class="nav-title">Bảng điều khiển</div>
+    <button role="tab" data-tab="ringkasan" aria-selected="true"><svg class="i"><use href="#i-home"/></svg>Tổng quan</button>
+    <button role="tab" data-tab="pemain"><svg class="i"><use href="#i-shirt"/></svg>Cầu thủ CLB</button>
+    <button role="tab" data-tab="tambah"><svg class="i"><use href="#i-plus"/></svg>Thêm cầu thủ</button>
+    <button role="tab" data-tab="theomua"><svg class="i"><use href="#i-layers"/></svg>Thêm hàng loạt</button>
+    <button role="tab" data-tab="item"><svg class="i"><use href="#i-gift"/></svg>Gói thẻ &amp; Túi đồ</button>
+    <button role="tab" data-tab="harian"><svg class="i"><use href="#i-cal"/></svg>Quà hằng ngày</button>
+    <button role="tab" data-tab="hlv"><svg class="i"><use href="#i-scout"/></svg>HLV</button>
+    <button role="tab" data-tab="scout"><svg class="i"><use href="#i-scout"/></svg>Đổi cầu thủ</button>
+    <button role="tab" data-tab="log"><svg class="i"><use href="#i-log"/></svg>Nhật ký server</button>
+    <button role="tab" data-tab="donate" class="nav-donate"><svg class="i"><use href="#i-heart"/></svg>Donate</button>
+  </nav>
+
+  <main>
+    <div class="status" id="status" role="status" aria-live="polite">Thay đổi được lưu ngay. Vào lại game hoặc mở lại màn hình CLB để thấy.</div>
+
+    <section id="ringkasan">
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-chart"/></svg></span><div><h2 class="display">Tổng quan CLB</h2></div></div>
+        <p class="lead">Tình trạng tài khoản và CLB hiện tại.</p>
+        <dl class="facts" id="facts"></dl>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-plus"/></svg></span><h2 class="display">Thông tin HLV</h2></div>
+        <p class="lead">Đổi tên, cấp độ và kinh nghiệm của HLV. Vào lại game để thấy thay đổi.</p>
+        <form class="row" id="coachForm">
+          <label class="f">Tên HLV<input id="coachNameIn" maxlength="16" minlength="2" required></label>
+          <label class="f">Cấp độ<input type="number" id="coachLevel" min="1" max="100" required></label>
+          <label class="f">Kinh nghiệm<input type="number" id="coachExp" min="0" value="0"></label>
+          <button class="b primary">Lưu</button>
+        </form>
+        <p class="muted" id="coachHint"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"/></svg></span><h2 class="display">Giá EP thẻ cầu thủ</h2></div>
+        <p class="lead">Giá thẻ tính theo OVR và cấp thẻ. Ở bản gốc thẻ +0 có giá 0, nên đội khởi đầu có Giá trị đội 0 EP. Thay đổi ở đây áp dụng cho mọi thẻ: Giá trị đội, giá trong bảng và giá trị khi đổi cầu thủ.</p>
+        <label for="zeroPct" class="muted">Giá thẻ +0 bằng <strong id="zeroVal">0%</strong> giá thẻ +1 (0% = như bản gốc)</label>
+        <div class="rate-wrap">
+          <input id="zeroPct" type="range" min="0" max="100" step="5" value="0">
+          <span class="rate-big" id="zeroBig" aria-hidden="true">0%</span>
+        </div>
+        <div class="row">
+          <label class="f">Hệ số nhân giá (0,1 – 10)<input type="number" id="priceMult" min="0.1" max="10" step="0.1" value="1"></label>
+          <button class="b primary" id="priceSave" type="button">Lưu</button>
+          <button class="b" id="priceReset" type="button">Về mặc định</button>
+        </div>
+        <h3>Giá tự đặt cho từng thẻ</h3>
+        <p class="muted" style="margin:0 0 8px">Giá nhập là giá ở +1; các cấp khác tự tính theo hệ số cấp thẻ. SPID xem trong bảng cầu thủ hoặc trong chi tiết thẻ.</p>
+        <form class="row" id="ovForm">
+          <label class="f">SPID<input type="number" id="ovSpid" required placeholder="VD: 88020801"></label>
+          <label class="f">Giá EP ở +1<input type="number" id="ovPrice" min="0" step="1000" required></label>
+          <button class="b primary">Lưu giá</button>
+        </form>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Cầu thủ</th><th class="num">SPID</th><th class="num">Giá ở +1</th><th>Thao tác</th></tr></thead>
+          <tbody id="ovRows"><tr><td colspan="4" class="muted">Chưa có giá tự đặt.</td></tr></tbody>
+        </table></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"/></svg></span><h2 class="display">Số dư EP</h2></div>
+        <p class="lead">Cộng, trừ hoặc đặt thẳng số EP của bạn.</p>
+        <form class="row" id="epForm">
+          <label class="f">Số EP<input type="number" id="epValue" min="0" step="1000" required placeholder="VD: 1000000"></label>
+          <button class="b primary" data-mode="add">Cộng EP</button>
+          <button class="b" data-mode="sub">Trừ EP</button>
+          <button class="b" data-mode="set">Đặt số dư</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"/></svg></span><h2 class="display">Tỷ lệ đập thẻ</h2></div>
+        <p id="enhanceStatus" class="lead">Đang tải thiết lập…</p>
+        <label for="enhanceRate" class="muted">Tỷ lệ thành công: <strong id="enhanceValue">50%</strong></label>
+        <div class="rate-wrap">
+          <input id="enhanceRate" type="range" min="1" max="100" step="1" value="50">
+          <span class="rate-big" id="enhanceBig" aria-hidden="true">50%</span>
+        </div>
+        <div class="row">
+          <button id="enhanceSave" class="b primary">Lưu tỷ lệ</button>
+          <button id="enhanceDefault" class="b">Dùng tỷ lệ gốc</button>
+        </div>
+        <p class="hint">Áp dụng cho các lần đập tiếp theo của mọi HLV. Không thay đổi thẻ đã có hoặc dữ liệu profile.</p>
+      </div>
+    </section>
+
+    <section id="pemain" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-shirt"/></svg></span><h2 class="display">Cầu thủ CLB</h2></div>
+        <p class="lead">Đổi cấp thẻ, chuyển cầu thủ dự bị sang Đội phụ (dùng để đổi cầu thủ) hoặc thanh lý. 18 cầu thủ trong đội hình (Chính/Thay) không thanh lý được ở đây.</p>
+        <div class="filters" id="playerFilters">
+          <label class="f">Tên cầu thủ<input id="playerFilter" placeholder="VD: Ronaldo"></label>
+          <label class="f">Đội bóng<input type="hidden" id="pfTeam"><span class="ss" data-for="pfTeam" data-src="clubTeams" data-all="Tất cả đội bóng"></span></label>
+          <label class="f">Quốc gia<input type="hidden" id="pfNation"><span class="ss" data-for="pfNation" data-src="clubNations" data-all="Tất cả quốc gia"></span></label>
+          <label class="f">Vị trí<select id="pfPos"><option value="">Tất cả</option><option value="GK">Thủ môn</option><option value="DEF">Hậu vệ</option><option value="MID">Tiền vệ</option><option value="FWD">Tiền đạo</option></select></label>
+          <label class="f">Vai trò<select id="pfRole"><option value="">Tất cả</option><option value="MAIN">Chính</option><option value="SUB">Thay</option><option value="RES">Dự bị</option><option value="T2">Đội phụ</option></select></label>
+          <label class="f">Mùa<select id="pfSeason"><option value="">Tất cả</option></select></label>
+          <button class="b" type="button" id="pfClear">Xóa lọc</button>
+        </div>
+        <div class="qr-rm">
+          <span class="qr-rm-title">Thanh lý nhanh theo mùa</span>
+          <select id="qrSeason"><option value="">— Chọn mùa —</option></select>
+          <button class="b small danger" type="button" id="qrGo" disabled>Thanh lý</button>
+          <span class="muted" id="qrNote">Chỉ thanh lý thẻ dự bị (kể cả Đội phụ); cầu thủ trong đội hình 18 người được giữ lại.</span>
+        </div>
+        <div class="bulk" id="bulkClub" hidden>
+          <span class="bulk-n"><strong id="bulkClubN">0</strong> cầu thủ đã chọn</span>
+          <label class="bulk-lbl">Cấp thẻ <select id="bulkGrade"></select></label>
+          <button class="b small primary" type="button" data-bulk="grade">Đặt cấp thẻ</button>
+          <label class="bulk-lbl">Cấp độ <select id="bulkLevel"></select></label>
+          <button class="b small primary" type="button" data-bulk="level">Đặt cấp độ</button>
+          <button class="b small" type="button" data-bulk="second">Sang đội phụ</button>
+          <button class="b small" type="button" data-bulk="first">Về đội chính</button>
+          <button class="b small danger" type="button" data-bulk="remove">Thanh lý</button>
+          <button class="b small ghost" type="button" data-bulk="clear">Bỏ chọn</button>
+        </div>
+        <p class="count muted" id="playerCount"></p>
+        <div class="table-wrap"><table>
+          <thead id="playerHead"><tr><th class="ck"><input type="checkbox" id="selAllClub" aria-label="Chọn tất cả cầu thủ đang hiện"></th><th data-sort="roleRank">Vai trò</th><th data-sort="name">Tên</th><th data-sort="pos">Vị trí</th><th data-sort="team">Đội bóng</th><th data-sort="nation">Quốc gia</th><th data-sort="season">Mùa</th><th class="num" data-sort="ovr">OVR</th><th data-sort="grade">Cấp thẻ</th><th data-sort="level">Cấp độ</th><th class="num" data-sort="price">Giá EP</th><th>Đội</th><th>Thao tác</th></tr></thead>
+          <tbody id="playerRows"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="tambah" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-plus"/></svg></span><h2 class="display">Thêm cầu thủ</h2></div>
+        <p class="lead">Toàn bộ thẻ cầu thủ trong game. Gõ để lọc ngay, bấm tiêu đề cột để sắp xếp, rồi thêm thẳng vào CLB hoặc gửi vào Túi đồ.</p>
+        <form class="row" id="searchForm">
+          <label class="f">Tên cầu thủ<input id="searchQ" placeholder="VD: Messi, Ronaldo"></label>
+          <label class="f">Giải đấu<input type="hidden" id="searchLeague"><span class="ss" data-for="searchLeague" data-src="leagues" data-all="Tất cả giải đấu"></span></label>
+          <label class="f">Đội bóng<input type="hidden" id="searchTeam"><span class="ss" data-for="searchTeam" data-src="teams" data-all="Tất cả đội bóng"></span></label>
+          <label class="f">Quốc gia<input type="hidden" id="searchNation"><span class="ss" data-for="searchNation" data-src="nations" data-all="Tất cả quốc gia"></span></label>
+          <label class="f">Vị trí<select id="searchPos"></select></label>
+          <label class="f">Mùa<select id="searchSeason"><option value="">Tất cả</option></select></label>
+          <label class="f">Cấp thẻ<select id="searchGrade"></select></label>
+          <button class="b" type="button" id="searchClear">Xóa lọc</button>
+        </form>
+        <div class="bulk" id="bulkSearch" hidden>
+          <span class="bulk-n"><strong id="bulkSearchN">0</strong> thẻ đã chọn</span>
+          <button class="b small primary" type="button" data-sbulk="add">Thêm tất cả vào CLB</button>
+          <span class="muted">(cấp thẻ theo ô Cấp thẻ ở trên)</span>
+          <button class="b small ghost" type="button" data-sbulk="clear">Bỏ chọn</button>
+        </div>
+        <p class="count muted" id="searchCount">Đang tải danh sách thẻ…</p>
+        <div class="table-wrap"><table>
+          <thead id="searchHead"><tr><th class="ck"><input type="checkbox" id="selAllSearch" aria-label="Chọn tất cả thẻ tìm được"></th><th data-sort="name">Tên</th><th data-sort="team">Đội bóng</th><th data-sort="nation">Quốc gia</th><th data-sort="season">Mùa</th><th data-sort="pos">Vị trí</th><th class="num" data-sort="ovr">OVR</th><th class="num" data-sort="price">Giá EP</th><th data-sort="market">Chợ</th><th>Thao tác</th></tr></thead>
+          <tbody id="searchRows"><tr><td colspan="10" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+        <div class="pager" id="searchPager">
+          <button class="b small" type="button" data-pg="first" aria-label="Trang đầu">«</button>
+          <button class="b small" type="button" data-pg="prev">‹ Trước</button>
+          <span id="pgInfo" class="muted">Trang 1 / 1</span>
+          <button class="b small" type="button" data-pg="next">Sau ›</button>
+          <button class="b small" type="button" data-pg="last" aria-label="Trang cuối">»</button>
+          <label class="bulk-lbl">Mỗi trang <select id="pgSize"><option>25</option><option selected>50</option><option>100</option><option>200</option></select></label>
+        </div>
+      </div>
+    </section>
+
+    <section id="theomua" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-layers"/></svg></span><h2 class="display">Thêm hàng loạt</h2></div>
+        <p class="lead">Chọn <b>một mùa</b>, <b>một đội bóng</b>, hoặc cả hai (giải đấu giúp thu hẹp danh sách đội), rồi chọn cấp độ và cấp thẻ. Tích chọn các cầu thủ muốn thêm (mặc định chọn tất cả thẻ chưa có). Thẻ được thêm vào CLB ở mục dự bị.</p>
+        <div class="sm-steps">
+          <label class="f sm-step" id="smLeaguePick"><span><b>1</b> Giải đấu</span><input type="hidden" id="smLeagueMain"><span class="ss" data-for="smLeagueMain" data-src="allLeagues" data-all="Tất cả giải đấu" data-ph="giải đấu"></span></label>
+          <label class="f sm-step" id="smTeamPick"><span><b>2</b> Đội bóng <i class="sm-opt">(tuỳ chọn)</i></span><input type="hidden" id="smTeamMain"><span class="ss" data-for="smTeamMain" data-src="allTeams" data-all="Tất cả đội bóng" data-ph="đội bóng"></span></label>
+          <label class="f sm-step"><span><b>3</b> Mùa <i class="sm-opt">(tuỳ chọn)</i></span><select id="smSeason"><option value="">Tất cả mùa</option></select></label>
+          <label class="f sm-step"><span><b>4</b> Cấp độ</span><select id="smLevel"></select></label>
+          <label class="f sm-step"><span><b>5</b> Cấp thẻ</span><select id="smGrade"></select></label>
+          <label class="f sm-step"><span><b>6</b> Lọc tên</span><input id="smFilter" placeholder="Gõ tên để lọc danh sách"></label>
+        </div>
+        <div class="filters sm-filters" id="smFilters" hidden>
+          <label class="f">Quốc gia<input type="hidden" id="smNation"><span class="ss" data-for="smNation" data-src="smNations" data-all="Tất cả quốc gia"></span></label>
+          <label class="f">Vị trí<select id="smPos"><option value="">Tất cả</option><option value="GK">Thủ môn</option><option value="DEF">Hậu vệ</option><option value="MID">Tiền vệ</option><option value="FWD">Tiền đạo</option></select></label>
+          <button class="b" type="button" id="smClear">Xóa lọc</button>
+        </div>
+        <div class="sm-bar" id="smBar" hidden>
+          <div class="sm-info" id="smInfo"></div>
+          <div class="sm-actions">
+            <button class="b small" type="button" data-sm="all">Chọn tất cả</button>
+            <button class="b small" type="button" data-sm="none">Bỏ chọn</button>
+            <button class="b small" type="button" data-sm="fit">Chọn vừa chỗ trống</button>
+            <button class="b small" type="button" data-sm="new">Bỏ thẻ đã có</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="smWrap" hidden><table>
+          <thead><tr><th class="ck"><input type="checkbox" id="smAll" aria-label="Chọn tất cả thẻ đang hiện"></th><th>Tên</th><th>Mùa</th><th>Đội bóng</th><th>Quốc gia</th><th>Vị trí</th>
+            <th class="num">OVR gốc</th><th class="num">OVR sau khi thêm</th><th class="num">Giá EP</th><th>Ghi chú</th></tr></thead>
+          <tbody id="smRows"></tbody>
+        </table></div>
+        <p class="muted" id="smEmpty">Chọn một mùa hoặc một đội bóng (hoặc cả hai) để xem danh sách thẻ.</p>
+        <div class="sm-go" id="smGoWrap" hidden>
+          <button class="b primary sm-go-btn" type="button" id="smGo">Thêm cầu thủ đã chọn vào CLB</button>
+          <span class="muted" id="smGoNote"></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="item" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-gift"/></svg></span><h2 class="display">Gói thẻ &amp; Túi đồ</h2></div>
+        <p class="lead">Gói thẻ được thêm vào kho đồ (mục Gói cầu thủ). Quà gửi vào Túi đồ, vào game bấm Nhận để lấy.</p>
+        <h3>Tặng gói thẻ</h3>
+        <form class="row" id="packForm">
+          <label class="f">Gói<select id="packSel"></select></label>
+          <label class="f">Số lượng<input type="number" id="packCount" min="1" max="999" value="1"></label>
+          <button class="b primary">Tặng</button>
+        </form>
+        <h3>Gửi quà vào Túi đồ</h3>
+        <form class="row" id="bagForm">
+          <label class="f">Tên quà<input class="wide" id="bagTitle" value="Quà Admin" maxlength="60"></label>
+          <label class="f">EP<input type="number" id="bagEp" min="0" step="1000" value="0"></label>
+          <label class="f">Gói<select id="bagPack"><option value="">Không kèm gói</option></select></label>
+          <label class="f">Số gói<input type="number" id="bagCount" min="1" max="999" value="1"></label>
+          <label class="f">SPID cầu thủ<input type="number" id="bagSpid" placeholder="Không bắt buộc"></label>
+          <label class="f">Cấp thẻ<select id="bagGrade"></select></label>
+          <button class="b primary">Gửi quà</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Các gói trong cửa hàng</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tên gói</th><th class="num">Mã gói</th><th class="num">Giá EP</th></tr></thead>
+          <tbody id="packRows"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="harian" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-cal"/></svg></span><h2 class="display">Quà đăng nhập hằng ngày</h2></div>
+        <p class="lead">Lần vào game đầu tiên mỗi ngày sẽ nhận quà vào Túi đồ. Vào liên tục để lên ngày tiếp theo; bỏ một ngày sẽ quay về Ngày 1. Hết vòng thì bắt đầu lại từ Ngày 1.</p>
+        <dl class="facts" id="dailyFacts"></dl>
+        <div class="row" style="margin-top:16px">
+          <button class="b" id="dailyGrant">Nhận quà ngày kế tiếp ngay</button>
+          <button class="b danger" id="dailyReset">Đặt lại chuỗi ngày</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Bảng quà</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Ngày</th><th>EP</th><th>Gói</th><th>Số lượng</th><th>Thao tác</th></tr></thead>
+          <tbody id="dailyRows"></tbody>
+        </table></div>
+        <div class="row">
+          <button class="b" id="dailyAdd">Thêm ngày</button>
+          <button class="b primary" id="dailySave">Lưu bảng</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="hlv" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"/></svg></span><h2 class="display">Thêm HLV</h2></div>
+        <p class="lead">Chọn HLV, số sao (tối đa 5 sao, có nửa sao như trong game) và số lượng rồi bấm <b>Thêm</b>. HLV được gửi thẳng vào game, không cần tuyển. Vào game: <b>Quản lý đội → Quản lý HLV → HLV của tôi</b> để bổ nhiệm.</p>
+        <div class="row">
+          <select id="hlvPos"><option value="">Tất cả vị trí</option></select>
+          <input id="hlvFind" placeholder="Gõ tên HLV để lọc" style="max-width:260px">
+          <span class="muted" id="hlvCount"></span>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th></th><th>Tên</th><th>Vị trí</th><th>Chỉ số hỗ trợ</th><th>Sao</th><th>Số lượng</th><th></th></tr></thead>
+          <tbody id="hlvCat"></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-head" style="flex-wrap:wrap"><h2 class="display" style="margin:0">HLV của CLB</h2><span class="muted" id="hlvMine"></span>
+          <button class="b primary" id="hlvFullAll" style="margin-left:auto">Full tất cả HLV (5 sao, mỗi dòng +5)</button></div>
+        <p class="lead">Đổi số sao trực tiếp ở cột <b>Sao</b>, chọn chỉ số ở các dòng có ô chọn. HLV đang bổ nhiệm thì phải bỏ bổ nhiệm trong game trước khi xoá.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th></th><th>Tên</th><th>Vị trí</th><th>Sao</th><th>Chỉ số đang cộng</th><th>Trạng thái</th><th></th></tr></thead>
+          <tbody id="hlvRows"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <section id="scout" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"/></svg></span><h2 class="display">Đổi cầu thủ</h2></div>
+        <p class="lead">Đưa 2–10 cầu thủ trong Đội phụ cho tuyển trạch viên để đổi lấy thẻ mới có giá trị tương đương hoặc cao hơn. Đạt điều kiện thưởng thêm thì thẻ nhận về sẽ có giá trị cao hơn.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tuyển trạch viên</th><th>Trạng thái</th><th>Dùng lại lúc</th><th>Điều kiện thưởng thêm</th></tr></thead>
+          <tbody id="scoutRows"></tbody>
+        </table></div>
+        <div class="row"><button class="b primary" id="scoutReset">Mở khóa tất cả tuyển trạch viên</button></div>
+      </div>
+    </section>
+
+    <section id="log" hidden>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-log"/></svg></span><h2 class="display">Nhật ký server</h2></div>
+        <p class="lead">Các dòng mới nhất trong captures/http_config.log.</p>
+        <div class="row">
+          <button class="b" id="logRefresh">Tải lại</button>
+          <label class="check"><input type="checkbox" id="logAuto"> Tự tải lại mỗi 3 giây</label>
+        </div>
+        <pre class="log" id="logBox"></pre>
+      </div>
+    </section>
+
+    <section id="donate" hidden>
+      <div class="card dn">
+        <div class="dn-hero">
+          <div class="dn-hero-ico"><svg class="i"><use href="#i-heart"/></svg></div>
+          <div>
+            <h2 class="display">Ủng hộ FO3 Offline</h2>
+            <p>Nếu bản offline giúp bạn sống lại những trận cầu ngày xưa, hãy mời mình một ly cà phê nhé ☕</p>
+          </div>
+        </div>
+
+        <div class="dn-body">
+          <div class="dn-info">
+            <div class="dn-bank">
+              <span class="dn-logo">VIB</span>
+              <div><strong>Ngân hàng Quốc Tế</strong><span>Vietnam International Bank</span></div>
+            </div>
+            <dl class="dn-rows">
+              <div class="dn-row dn-row-main">
+                <dt>Số tài khoản</dt>
+                <dd><span class="dn-acc" id="donateAcc">777661179</span>
+                  <button class="dn-copy" id="donateCopy" type="button" data-copy="777661179" data-what="số tài khoản"><svg class="i"><use href="#i-copy"/></svg>Sao chép</button></dd>
+              </div>
+              <div class="dn-row">
+                <dt>Chủ tài khoản</dt>
+                <dd><span class="dn-val">PHAM HUYNH NGOC HIEU</span>
+                  <button class="dn-copy ghost" type="button" data-copy="PHAM HUYNH NGOC HIEU" data-what="tên chủ tài khoản"><svg class="i"><use href="#i-copy"/></svg></button></dd>
+              </div>
+              <div class="dn-row">
+                <dt>Nội dung gợi ý</dt>
+                <dd><span class="dn-val">Ung ho FO3 Offline</span>
+                  <button class="dn-copy ghost" type="button" data-copy="Ung ho FO3 Offline" data-what="nội dung chuyển khoản"><svg class="i"><use href="#i-copy"/></svg></button></dd>
+              </div>
+            </dl>
+            <p class="dn-note">Số tiền tùy tâm. Ủng hộ không đổi lại vật phẩm hay quyền lợi nào trong game. Bạn vẫn dùng đầy đủ mọi tính năng như bình thường.</p>
+          </div>
+
+          <figure class="dn-qr">
+            <div class="qr-frame">
+              <img src="data:image/png;base64,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" alt="Mã QR chuyển khoản VIB 777661179 - PHAM HUYNH NGOC HIEU" width="240" height="240">
+              <span class="qr-corner tl"></span><span class="qr-corner tr"></span><span class="qr-corner bl"></span><span class="qr-corner br"></span>
+            </div>
+            <figcaption>
+              <strong>Quét mã để chuyển khoản</strong>
+              <ol class="dn-steps"><li>Mở app ngân hàng bất kỳ</li><li>Chọn <b>Quét QR</b></li><li>Nhập số tiền tùy tâm và xác nhận</li></ol>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="dn-thanks"><span>💚</span> Cảm ơn bạn đã đồng hành cùng FO3 Offline! Mỗi ly cà phê đều là động lực để bản này tốt hơn mỗi ngày.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<div class="modal" id="cardModal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <button class="modal-x" id="cmClose" type="button" aria-label="Đóng">×</button>
+    <div id="cmBody"></div>
+  </div>
+</div>
+<div class="pin-chip" id="pinChip" hidden></div>
+
+<footer class="foot">
+  <p class="support">Cần Hỗ Trợ Cứ Nhắn <a class="genta" href="https://www.facebook.com/mynameisgenta/" target="_blank" rel="noopener noreferrer">Genta</a> Nhé !!</p>
+</footer>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const fmt = n => Number(n || 0).toLocaleString("vi-VN");
+// "2026-11-04 23:44:01 (giờ VN)" -> "04/11/2026 23:44:01"; giu nguyen neu khong phai ngay
+const dmy = s => s ? String(s).replace(/^(\d{4})-(\d{2})-(\d{2})/, "$3/$2/$1").replace(/\s*\(giờ VN\)|\s*WIB/, "") : s;
+const pad = n => String(n).padStart(2, "0");
+const dmyTime = t => { const d = new Date(t); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const pimg = spid => `<img class="pimg" src="/pimg/${spid}.png" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const SCOUT_NAMES = {default_A01: "Tuyển trạch viên nghiệp dư", default_B01: "Tuyển trạch viên chuyên nghiệp", igr: "Tuyển trạch viên quán net (PC)", vip: "Tuyển trạch viên VIP"};
+const QUEST_TEXT = {require_value: "giá trị cầu thủ ≥", require_grade: "cấp thẻ ≥", require_grade_count: "số lượng", require_season: "mùa", require_season_count: "số lượng"};
+const ROLE_VI = {MAIN: "Chính", SUB: "Thay", RES: "Dự bị"};
+const POS_GROUP = {GK: "GK", SW: "DEF", RWB: "DEF", RB: "DEF", RCB: "DEF", CB: "DEF", LCB: "DEF", LB: "DEF", LWB: "DEF",
+  RDM: "MID", CDM: "MID", LDM: "MID", RM: "MID", RCM: "MID", CM: "MID", LCM: "MID", LM: "MID", RAM: "MID", CAM: "MID", LAM: "MID",
+  RF: "FWD", CF: "FWD", LF: "FWD", RW: "FWD", RS: "FWD", ST: "FWD", LS: "FWD", LW: "FWD"};
+const POS_ORDER = Object.keys(POS_GROUP);
+// Sap xep bang: bam tieu de cot de doi tang / giam
+const sortState = {playerHead: {key: "ovr", dir: -1}, searchHead: {key: "ovr", dir: -1}};
+function sortRows(rows, st) {
+  if (!st || !st.key) return rows;
+  const k = st.key;
+  return [...rows].sort((a, b) => {
+    let x = a[k], y = b[k];
+    if (k === "pos") { x = POS_ORDER.indexOf(x); y = POS_ORDER.indexOf(y); }
+    if (typeof x === "string" || typeof y === "string") {
+      const r = String(x ?? "").localeCompare(String(y ?? ""), "vi", {sensitivity: "base"});
+      return r ? st.dir * r : (b.ovr || 0) - (a.ovr || 0);
+    }
+    return st.dir * ((Number(x) || 0) - (Number(y) || 0)) || (b.ovr || 0) - (a.ovr || 0);
+  });
+}
+function paintSort(headId) {
+  const st = sortState[headId];
+  document.querySelectorAll(`#${headId} th[data-sort]`).forEach(th => {
+    const on = th.dataset.sort === st.key;
+    th.classList.toggle("sorted", on);
+    th.setAttribute("aria-sort", on ? (st.dir > 0 ? "ascending" : "descending") : "none");
+    th.dataset.dir = on ? (st.dir > 0 ? "asc" : "desc") : "";
+  });
+}
+let clubPlayers = [], searchResults = [];
+// Ten mua: ma mua (88, 93...) -> nhan mau ngan + ten day du (tu /api/seasons)
+let SEASONS = {};
+const seasonName = c => (SEASONS[c] && SEASONS[c].name) || `Mùa ${c}`;
+const seasonBadge = c => { const x = SEASONS[c];
+  return `<span class="sb k-${x ? x.kind : "special"}" title="${esc(x ? x.name + " · mã " + c : "Mã mùa " + c)}">${esc(x ? x.tag : c)}</span>`; };
+function applySeasons(seasons) {
+  SEASONS = Object.fromEntries(seasons.map(x => [x.code, x]));
+  if ($("#searchSeason").options.length <= 1) $("#searchSeason").innerHTML = '<option value="">Tất cả</option>' + seasons.map(x =>
+    `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
+}
+(function () { const c = listCacheGet(); if (c.seasons) applySeasons(c.seasons); })();
+async function loadSeasons() {
+  try {
+    const {seasons} = await api("seasons");
+    listCacheSet({seasons});
+    SEASONS = Object.fromEntries(seasons.map(x => [x.code, x]));
+    const groups = {year: "Mùa giải", legend: "Huyền thoại", cup: "World Cup / Châu lục", special: "Đặc biệt", base: "Thẻ gốc"};
+    $("#searchSeason").innerHTML = '<option value="">Tất cả</option>' + seasons.map(x =>
+      `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
+    if (clubPlayers.length) renderClub();
+    if (searchResults.length) renderSearch();
+  } catch (e) { /* server cu: giu so mua */ }
+}
+const selClub = new Set(), selSearch = new Set();
+let shownClubIds = [];
+let packs = [], packsReady;
+
+// ===== Goi API + nho du lieu (hien ngay ban da nho, cap nhat ngam tu server) =====
+// STATIC: it doi (danh sach mua/doi/goi), DYNAMIC: du lieu tai khoan. Ca hai luu localStorage (nho gon).
+// Moi thao tac thay doi (POST) xoa du lieu DYNAMIC da nho -> lan tai sau luon lay ban moi, khong hien so cu.
+const API_STATIC = new Set(["seasons", "facets", "packs"]);
+const API_DYNAMIC = new Set(["summary", "players", "daily", "coach_info", "price_settings", "enhancement_settings"]);
+const API_MEM = new Map(), API_BG = new Map();
+let apiBypass = false, apiRerenderTimer = null;
+function apiStoreGet() { try { return JSON.parse(localStorage.getItem("fo3-api-v1") || "{}"); } catch (e) { return {}; } }
+function apiStoreSet(key, val) {
+  try { const st = apiStoreGet(); if (val === undefined) delete st[key]; else st[key] = val; localStorage.setItem("fo3-api-v1", JSON.stringify(st)); } catch (e) {}
+}
+(function () { const st = apiStoreGet(); for (const k in st) API_MEM.set(k, st[k]); })();
+async function apiFetch(name, body) {
+  const opt = body === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json", "X-FO3-Admin": "1"}, body: JSON.stringify(body)};
+  const r = await fetch("/api/" + name, opt);
+  const j = await r.json();
+  if (j.error) throw new Error(j.error === "Không tìm thấy" ? "server đang chạy bản cũ. Hãy tắt rồi mở lại server (chạy lại game/Launcher) để cập nhật." : j.error);
+  return j;
+}
+function apiCacheable(name) { const b = name.split("?")[0]; return (API_STATIC.has(b) || API_DYNAMIC.has(b)) && b === name.split("&")[0].split("?")[0]; }
+function apiRemember(name, j) { API_MEM.set(name, j); apiStoreSet(name, j); }
+function apiForgetDynamic() {
+  for (const k of [...API_MEM.keys()]) if (API_DYNAMIC.has(k.split("?")[0])) { API_MEM.delete(k); apiStoreSet(k, undefined); }
+}
+function apiRerender() {
+  clearTimeout(apiRerenderTimer);
+  apiRerenderTimer = setTimeout(async () => {
+    const tab = (document.querySelector("nav [aria-selected=true]") || {}).dataset;
+    apiBypass = true;
+    try { await refreshTop(); if (tab && loaders[tab.tab]) await loaders[tab.tab](); } catch (e) {} finally { apiBypass = false; }
+  }, 60);
+}
+async function api(name, body) {
+  if (body !== undefined) {  // thay doi du lieu
+    const j = await apiFetch(name, body);
+    apiForgetDynamic();
+    return j;
+  }
+  if (!apiCacheable(name)) return apiFetch(name);
+  const had = API_MEM.has(name);
+  if (had && !apiBypass) {
+    if (!API_BG.has(name)) {  // cap nhat ngam; khac ban da nho -> ve lai tab dang mo
+      const before = JSON.stringify(API_MEM.get(name));
+      API_BG.set(name, apiFetch(name).then(j => {
+        apiRemember(name, j);
+        if (JSON.stringify(j) !== before) apiRerender();
+      }).catch(() => {}).finally(() => setTimeout(() => API_BG.delete(name), 1500)));
+    }
+    return API_MEM.get(name);
+  }
+  const j = await apiFetch(name);
+  apiRemember(name, j);
+  return j;
+}
+function say(msg, kind) { const s = $("#status"); s.textContent = msg; s.className = "status " + (kind || ""); }
+async function act(fn, okMsg) {
+  try { await fn(); if (okMsg) say(okMsg, "ok"); await refreshTop(); }
+  catch (e) { say("Lỗi: " + e.message, "err"); }
+}
+const gradeOpts = (val, lo = 1) => Array.from({length: 11 - lo}, (_, i) => i + lo)
+  .map(g => `<option value="${g}"${g == val ? " selected" : ""}>+${g}</option>`).join("");
+const levelOpts = val => Array.from({length: 23}, (_, i) => i + 1)
+  .map(l => `<option value="${l}"${l == val ? " selected" : ""}>LV ${l}</option>`).join("");
+const packOpts = val => packs.map(p => `<option value="${p.itemid}"${p.itemid == val ? " selected" : ""}>${esc(p.name)}</option>`).join("");
+const facts = list => list.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
+
+async function refreshTop() {
+  const s = await api("summary");
+  $("#coachName").textContent = `${s.coach.name} · Đội ${s.coach.teamid}`;
+  $("#epTop").textContent = fmt(s.coach.ep);
+  $("#serverTime").textContent = dmy(s.server_time);
+  return s;
+}
+
+const HLV = {cat: [], max: 10};
+// cap HLV 1-10 = 0,5-5 sao nhu trong game
+const starLabel = g => "★".repeat(Math.floor(g / 2)) + (g % 2 ? "½" : "") + ` (${g / 2} sao)`;
+function hlvPaint() {
+  const pos = $("#hlvPos").value, q = $("#hlvFind").value.trim().toLowerCase();
+  const rows = HLV.cat.filter(x => (!pos || x.position === pos) && (!q || x.name.toLowerCase().includes(q)));
+  const stars = Array.from({length: HLV.max}, (_, i) => `<option value="${i + 1}"${i + 1 == HLV.max ? " selected" : ""}>${starLabel(i + 1)}</option>`).join("");
+  $("#hlvCount").textContent = `${rows.length} HLV`;
+  $("#hlvCat").innerHTML = rows.map(x => `<tr>
+    <td><img src="/staffimg/${x.stfid}.png" alt="" loading="lazy" style="width:44px;height:44px;object-fit:cover;border-radius:8px" onerror="this.style.visibility='hidden'"></td>
+    <td><b>${esc(x.name)}</b></td><td>${esc(x.pos_name)}</td><td class="muted">${x.boosts.map(esc).join("<br>")}</td>
+    <td><select data-hlvstar="${x.stfid}">${stars}</select></td>
+    <td><input type="number" min="1" max="30" value="1" data-hlvn="${x.stfid}" style="width:70px"></td>
+    <td><button class="b primary" data-hlvadd="${x.stfid}">Thêm</button></td></tr>`).join("");
+}
+document.addEventListener("input", e => { if (e.target.id === "hlvFind") hlvPaint(); });
+document.addEventListener("change", e => {
+  if (e.target.id === "hlvPos") hlvPaint();
+  const ef = e.target.dataset && e.target.dataset.hlveff;
+  if (ef) act(async () => { await api("staff_effect", {id: ef, idx: +e.target.dataset.idx, key: e.target.value}); await loaders.hlv(); }, "Đã đổi chỉ số HLV.");
+  const g = e.target.dataset && e.target.dataset.hlvgrade;
+  if (g) act(async () => { await api("staff_grade", {id: g, grade: +e.target.value}); await loaders.hlv(); }, "Đã đổi số sao. Vào lại màn HLV trong game để thấy.");
+});
+document.addEventListener("click", e => {
+  if (e.target.id === "hlvFullAll") { act(async () => { const r = await api("staff_full", {}); await loaders.hlv(); say(`Đã full ${r.done} HLV: 5 sao, mỗi dòng chỉ số +5. Vào lại màn HLV trong game để thấy.`, "ok"); }); return; }
+  const b = e.target.closest && e.target.closest("[data-hlvadd],[data-hlvdel]");
+  if (!b) return;
+  if (b.dataset.hlvadd) {
+    const id = b.dataset.hlvadd, grade = +document.querySelector(`[data-hlvstar="${id}"]`).value, count = +document.querySelector(`[data-hlvn="${id}"]`).value || 1;
+    act(async () => { const r = await api("staff_add", {stfid: +id, grade, count}); say(`Đã thêm ${r.added} HLV (${r.total} trong CLB). Vào lại màn HLV trong game để thấy.`, "ok"); await loaders.hlv(); });
+  } else if (confirm("Xoá HLV này khỏi CLB?")) {
+    act(async () => { await api("staff_remove", {id: b.dataset.hlvdel}); await loaders.hlv(); }, "Đã xoá HLV.");
+  }
+});
+
+const loaders = {
+  async ringkasan() {
+    loadCoach(); loadPrices();  // tai song song, khong cho phan tong quan
+    const s = await refreshTop(), d = s.daily;
+    $("#facts").innerHTML = facts([
+      ["Cầu thủ trong CLB", `${s.players} / ${s.max_players}`],
+      ["Gói thẻ trong kho", fmt(s.packs)],
+      ["Quà chưa nhận trong Túi", fmt(s.bag)],
+      ["Chuỗi đăng nhập", `${d.streak || 0} ngày`],
+      ["Quà hôm nay", d.granted_today ? "Đã nhận" : "Chờ vào game"],
+      ["VIP + quán net đến hết", dmy(s.vip_until)],
+    ]);
+  },
+  async pemain() {
+    const {players} = await api("players");
+    clubPlayers = players.map(p => ({...p, roleRank: p.team2 ? 3 : {MAIN: 0, SUB: 1, RES: 2}[p.role] ?? 4}));
+    clubFacets();
+    qrFill();
+    const cur = $("#pfSeason").value, have = [...new Set(clubPlayers.map(p => p.season))].sort((a, b) => a - b);
+    $("#pfSeason").innerHTML = '<option value="">Tất cả</option>' + have.map(c =>
+      `<option value="${c}"${String(c) === cur ? " selected" : ""}>${esc((SEASONS[c] || {}).tag || c)} — ${esc(seasonName(c))}</option>`).join("");
+    renderClub();
+  },
+  async tambah() { if (!searchLoaded) runSearch(0); },
+  async donate() {},
+};
+
+function renderClub() {
+  const low = v => v.trim().toLowerCase();
+  const q = low($("#playerFilter").value), tq = low($("#pfTeam").value), nq = low($("#pfNation").value);
+  const pos = $("#pfPos").value, role = $("#pfRole").value, sea = $("#pfSeason").value;
+  const hit = clubPlayers.filter(p =>
+    (!q || p.name.toLowerCase().includes(q)) && (!tq || ($("#pfTeam").dataset.exact ? (p.team || "").toLowerCase() === tq : (p.team || "").toLowerCase().includes(tq))) &&
+    (!nq || ($("#pfNation").dataset.exact ? (p.nation || "").toLowerCase() === nq : (p.nation || "").toLowerCase().includes(nq))) && (!pos || POS_GROUP[p.pos] === pos) &&
+    (!role || (role === "T2" ? p.team2 : p.role === role && !p.team2)) && (!sea || String(p.season) === sea));
+  const rows = sortRows(hit, sortState.playerHead);
+  paintSort("playerHead");
+  $("#playerCount").textContent = `Hiển thị ${rows.length} / ${clubPlayers.length} cầu thủ`;
+  {
+    shownClubIds = rows.map(p => p.id);
+    $("#playerRows").innerHTML = rows.map(p => `<tr class="${selClub.has(p.id) ? "sel" : ""}">
+      <td class="ck"><input type="checkbox" data-sel="${p.id}" ${selClub.has(p.id) ? "checked" : ""} aria-label="Chọn ${esc(p.name)}"></td>
+      <td><span class="chip ${p.role}">${ROLE_VI[p.role] || p.role}</span>${p.team2 ? ' <span class="chip t2">Đội phụ</span>' : ""}</td>
+      <td class="pname">${pimg(p.spid)}<button type="button" class="linkish" data-card="${p.spid}" data-cgrade="${p.grade}" data-clevel="${p.level || 1}">${esc(p.name)}</button> <span class="muted">${p.spid}</span></td>
+      <td>${esc(p.pos || "")}</td><td>${esc(p.team || "")}</td><td>${esc(p.nation || "")}</td>
+      <td>${seasonBadge(p.season)}</td><td class="num">${p.ovr}</td>
+      <td><select data-grade="${p.id}" aria-label="Cấp thẻ ${esc(p.name)}">${gradeOpts(p.grade, 0)}</select></td>
+      <td><select data-level="${p.id}" aria-label="Cấp độ ${esc(p.name)}">${levelOpts(p.level)}</select></td>
+      <td class="num">${fmt(p.price)}</td>
+      <td>${p.role === "RES" ? `<button class="b small" data-team="${p.id}" data-to="${p.team2 ? "first" : "second"}">${p.team2 ? "Về đội chính" : "Sang đội phụ"}</button>` : '<span class="muted">Đội chính</span>'}</td>
+      <td>${p.role === "RES" ? `<button class="b small danger" data-remove="${p.id}" data-name="${esc(p.name)}">Thanh lý</button>` : ""}</td>
+    </tr>`).join("") || `<tr><td colspan="13" class="muted">Không có cầu thủ phù hợp.</td></tr>`;
+  }
+  updateBulk();
+}
+
+const _loadersRest = {
+  async item() {
+    await packsReady;
+    $("#packRows").innerHTML = packs.map(p => `<tr><td>${esc(p.name)}</td><td class="num">${p.itemid}</td><td class="num">${fmt(p.price)}</td></tr>`).join("");
+  },
+  async harian() {
+    await packsReady;
+    const d = await api("daily"), st = d.status;
+    $("#dailyFacts").innerHTML = facts([
+      ["Chuỗi đăng nhập", `${st.streak || 0} ngày`], ["Tổng ngày đăng nhập", fmt(st.total)],
+      ["Lần nhận quà gần nhất", dmy(st.last) || "Chưa có"], ["Ngày trên server", dmy(d.today)],
+    ]);
+    renderDaily(d.table);
+  },
+  async hlv() {
+    const [{staff, max_grade}, mine] = await Promise.all([apiFetch("staff_catalog"), apiFetch("staffs")]);
+    HLV.cat = staff; HLV.max = max_grade;
+    const pos = $("#hlvPos"), cur = pos.value;
+    const kinds = [...new Map(staff.map(x => [x.position, x.pos_name])).entries()];
+    pos.innerHTML = '<option value="">Tất cả vị trí</option>' + kinds.map(([k, n]) => `<option value="${k}"${k === cur ? " selected" : ""}>${esc(n)}</option>`).join("");
+    hlvPaint();
+    const stars = g => Array.from({length: HLV.max}, (_, i) => `<option value="${i + 1}"${i + 1 == g ? " selected" : ""}>${starLabel(i + 1)}</option>`).join("");
+    const st = {appointed: "Đang bổ nhiệm", idle: "Chờ", studying: "Đang tập huấn"};
+    $("#hlvMine").textContent = `${mine.staffs.length} / ${mine.max} HLV`;
+    $("#hlvRows").innerHTML = mine.staffs.length ? mine.staffs.map(x => `<tr>
+      <td><img src="/staffimg/${x.stfid}.png" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:8px" onerror="this.style.visibility='hidden'"></td>
+      <td><b>${esc(x.name)}</b></td><td>${esc(x.pos_name)}</td>
+      <td><select data-hlvgrade="${x.id}">${stars(x.grade)}</select></td>
+      <td>${x.effect.map(e => (e.choices || []).length
+          ? `<select data-hlveff="${x.id}" data-idx="${e.idx}">${e.choices.map(c => `<option value="${c.key}"${c.key === e.key ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> +${e.amount}`
+          : `${esc(e.effect)} +${e.amount}`).join("<br>") || "—"}</td>
+      <td>${st[x.status] || esc(x.status)}</td>
+      <td><button class="b danger" data-hlvdel="${x.id}">Xoá</button></td></tr>`).join("")
+      : '<tr><td colspan="7" class="muted">CLB chưa có HLV nào.</td></tr>';
+  },
+  async scout() {
+    const s = await api("summary");
+    $("#scoutRows").innerHTML = s.scouts.map(sc => {
+      const qq = sc.quest || {}, parts = [];
+      if (qq.require_value) parts.push(`Tổng giá trị cầu thủ đưa ≥ ${fmt(qq.require_value)} EP`);
+      if (qq.require_grade) parts.push(`${qq.require_grade_count || 1} thẻ cấp +${qq.require_grade} trở lên`);
+      if (qq.require_season) parts.push(`${qq.require_season_count || 1} thẻ mùa ${qq.require_season}`);
+      const known = ["require_value", "require_grade", "require_grade_count", "require_season", "require_season_count"];
+      Object.entries(qq).filter(([k]) => !known.includes(k)).forEach(([k, v]) => parts.push(`${QUEST_TEXT[k] || k} ${typeof v === "number" ? fmt(v) : v}`));
+      const q = parts.length ? parts.join(", ") : "Không có";
+      return `<tr><td>${esc(SCOUT_NAMES[sc.key] || sc.key)}</td><td>${sc.lock ? "Đang khóa" : "Sẵn sàng"}</td>
+        <td>${sc.cooltime ? dmyTime(sc.cooltime) : "Ngay bây giờ"}</td><td class="muted">${esc(q)}</td></tr>`;
+    }).join("");
+  },
+  async log() {
+    const {lines} = await api("log?n=150");
+    const box = $("#logBox"); box.textContent = lines.join("\n"); box.scrollTop = box.scrollHeight;
+  },
+};
+Object.assign(loaders, _loadersRest);
+// ===================== Thanh ly nhanh theo mua =====================
+function qrFill() {
+  const res = clubPlayers.filter(p => p.role === "RES"), cnt = {};
+  res.forEach(p => { cnt[p.season] = (cnt[p.season] || 0) + 1; });
+  const cur = $("#qrSeason").value;
+  $("#qrSeason").innerHTML = '<option value="">— Chọn mùa —</option>' + Object.keys(cnt).map(Number).sort((a, b) => a - b).map(c =>
+    `<option value="${c}"${String(c) === cur ? " selected" : ""}>${esc((SEASONS[c] || {}).tag || c)} — ${esc(seasonName(c))} (${cnt[c]} thẻ dự bị)</option>`).join("");
+  qrNote();
+}
+function qrNote() {
+  const c = $("#qrSeason").value, n = c ? clubPlayers.filter(p => p.role === "RES" && String(p.season) === c).length : 0;
+  $("#qrGo").disabled = !n;
+  $("#qrGo").textContent = n ? `Thanh lý ${n} thẻ` : "Thanh lý";
+}
+$("#qrSeason").addEventListener("change", qrNote);
+$("#qrGo").addEventListener("click", () => {
+  const c = $("#qrSeason").value; if (!c) return;
+  const ids = clubPlayers.filter(p => p.role === "RES" && String(p.season) === c).map(p => p.id);
+  if (!ids.length || !confirm(`Thanh lý ${ids.length} thẻ dự bị (${seasonName(c)})? Không thể hoàn tác.`)) return;
+  act(async () => {
+    const r = await api("player_bulk", {ids, action: "remove"});
+    selClub.clear(); await loaders.pemain();
+    say(`Đã thanh lý ${r.done} thẻ (${seasonName(c)}).${skippedText(r)}`, r.skipped && r.skipped.length ? "err" : "ok");
+  });
+});
+
+// ===================== Them theo mua =====================
+const SM = {rows: [], sel: new Set(), players: 0, max: 200, loaded: false};
+const smFree = () => Math.max(0, SM.max - SM.players);
+function smMatch(r, sel, key) {
+  const v = $(sel).value; if (!v) return true;
+  return $(sel).dataset.exact ? r[key] === v : fold(r[key]).includes(fold(v));
+}
+function smShown() {
+  const q = fold($("#smFilter").value.trim()), pos = $("#smPos").value;
+  return SM.rows.filter(r => (!q || fold(r.name).includes(q)) && smMatch(r, "#smLeagueMain", "league")
+    && smMatch(r, "#smNation", "nation") && (!pos || POS_GROUP[r.pos] === pos));
+}
+function smFacets() {
+  const cnt = (rows, k) => {
+    const m = {};
+    rows.forEach(r => { if (r[k]) m[r[k]] = (m[r[k]] || 0) + 1; });
+    return Object.entries(m).map(([name, count]) => ({name, count}));
+  };
+  const inLeague = SM.rows.filter(r => smMatch(r, "#smLeagueMain", "league"));
+  const byName = (a, b) => fold(a.name).localeCompare(fold(b.name));
+  SS_SRC.smNations = cnt(inLeague, "nation").sort(byName);
+}
+function smPaint() {
+  const rows = smShown(), free = smFree(), n = rows.filter(r => SM.sel.has(r.spid)).length;
+  const LIMIT = 400;
+  $("#smRows").innerHTML = rows.slice(0, LIMIT).map(r => `<tr class="${SM.sel.has(r.spid) ? "sel" : ""}">
+    <td class="ck"><input type="checkbox" data-smsel="${r.spid}" ${SM.sel.has(r.spid) ? "checked" : ""} aria-label="Chọn ${esc(r.name)}"></td>
+    <td class="pname">${pimg(r.spid)}<button type="button" class="linkish" data-card="${r.spid}" data-cgrade="${$("#smGrade").value}" data-clevel="${$("#smLevel").value}">${esc(r.name)}</button></td>
+    <td>${seasonBadge(r.season)}</td><td>${esc(r.team)}</td><td>${esc(r.nation)}</td><td>${esc(r.pos)}</td>
+    <td class="num">${r.ovr}</td><td class="num"><b>${r.ovr_now}</b></td><td class="num">${fmt(r.price)}</td>
+    <td>${r.owned ? '<span class="chip t2">Đã có</span>' : ""}</td></tr>`).join("")
+    + (rows.length > LIMIT ? `<tr><td colspan="10" class="muted">… và ${fmt(rows.length - LIMIT)} thẻ nữa (vẫn được tính khi chọn và thêm). Dùng bộ lọc để thu hẹp danh sách.</td></tr>` : "")
+    || `<tr><td colspan="10" class="muted">Không có thẻ khớp.</td></tr>`;
+  const on = rows.filter(r => SM.sel.has(r.spid)).length, a = $("#smAll");
+  a.checked = rows.length > 0 && on === rows.length; a.indeterminate = on > 0 && !a.checked;
+  const x = SEASONS[$("#smSeason").value], tm = $("#smTeamMain").value, lgm = $("#smLeagueMain").value;
+  const filtered = rows.length !== SM.rows.length;
+  $("#smInfo").innerHTML = `${tm ? "<b>" + esc(tm) + "</b> · " : (lgm ? "<b>" + esc(lgm) + "</b> · " : "")}${x ? seasonBadge(x.code) + " <b>" + esc(x.name) + "</b> · " : (tm ? "mọi mùa · " : "")}${fmt(SM.rows.length)} thẻ`
+    + (filtered ? ` · đang hiện <b>${fmt(rows.length)}</b>` : "") + ` · đã chọn <b>${fmt(n)}</b> · CLB còn <b>${fmt(free)}</b> / ${SM.max} chỗ`;
+  const over = n > free;
+  $("#smGo").textContent = n ? `Thêm ${fmt(Math.min(n, free))} cầu thủ vào CLB (LV ${$("#smLevel").value}, +${$("#smGrade").value})` : "Chưa chọn cầu thủ nào";
+  $("#smGo").disabled = !n || !free;
+  $("#smGoNote").innerHTML = !free ? '<span class="sm-warn">CLB đã đầy. Hãy thanh lý bớt ở tab Cầu thủ CLB.</span>'
+    : over ? `<span class="sm-warn">Đã chọn ${fmt(n)} nhưng CLB chỉ còn ${fmt(free)} chỗ: chỉ thêm ${fmt(free)} thẻ OVR cao nhất trong số đã chọn.</span>` : "";
+}
+async function smLoad() {
+  const season = $("#smSeason").value, teamMain = $("#smTeamMain").value;
+  const ready = !!(season || teamMain);
+  $("#smBar").hidden = $("#smWrap").hidden = $("#smGoWrap").hidden = $("#smFilters").hidden = !ready;
+  $("#smEmpty").hidden = ready;
+  $("#smEmpty").textContent = "Chọn một mùa hoặc một đội bóng (hoặc cả hai) để xem danh sách thẻ.";
+  if (!ready) return;
+  $("#smEmpty").hidden = false; $("#smEmpty").textContent = "Đang tải danh sách thẻ…";
+  const key = season + "|" + teamMain;
+  try {
+    const q = new URLSearchParams({season, team: teamMain, grade: $("#smGrade").value, level: $("#smLevel").value});
+    const d = await api("season_cards?" + q.toString());
+    const keepSel = SM.loaded && SM.season === key;
+    if (!keepSel) { ssSet("#smNation", "", false, true); $("#smPos").value = ""; $("#smPos").dispatchEvent(new Event("change")); }
+    SM.rows = d.rows; SM.players = d.players; SM.max = d.max; SM.season = key; SM.loaded = true;
+    if (!keepSel) SM.sel = new Set(d.rows.filter(r => !r.owned).map(r => r.spid));  // mac dinh: tat ca the chua co
+    else d.rows.forEach(r => { if (r.owned && SM.justAdded && SM.justAdded.has(r.spid)) SM.sel.delete(r.spid); });
+    $("#smEmpty").hidden = true;
+    smFacets();
+    smPaint();
+    if (d.total > d.rows.length) say(`Có ${fmt(d.total)} thẻ, chỉ tải ${fmt(d.rows.length)} thẻ OVR cao nhất.`, "");
+  } catch (e) { $("#smEmpty").textContent = "Không tải được: " + e.message; }
+}
+$("#smLevel").innerHTML = levelOpts(1);
+$("#smGrade").innerHTML = gradeOpts(1);
+$("#smSeason").addEventListener("change", smLoad);
+["#smLevel", "#smGrade"].forEach(id => $(id).addEventListener("change", () => { if ($("#smSeason").value || $("#smTeamMain").value) smLoad(); }));
+$("#smFilter").addEventListener("input", smPaint);
+$("#smNation").addEventListener("input", smPaint);
+$("#smPos").addEventListener("change", () => { if (SM.loaded) smPaint(); });
+$("#smClear").addEventListener("click", () => {
+  $("#smFilter").value = "";
+  ssSet("#smNation", "", false, true);
+  $("#smPos").value = ""; $("#smPos").dispatchEvent(new Event("change"));
+  smFacets(); smPaint();
+});
+$("#smRows").addEventListener("change", e => {
+  const id = e.target.dataset.smsel; if (!id) return;
+  e.target.checked ? SM.sel.add(Number(id)) : SM.sel.delete(Number(id)); smPaint();
+});
+$("#smAll").addEventListener("change", e => { smShown().forEach(r => e.target.checked ? SM.sel.add(r.spid) : SM.sel.delete(r.spid)); smPaint(); });
+$("#smBar").addEventListener("click", e => {
+  const a = e.target.dataset.sm; if (!a) return;
+  const shown = smShown();
+  if (a === "all") shown.forEach(r => SM.sel.add(r.spid));
+  if (a === "none") shown.forEach(r => SM.sel.delete(r.spid));
+  if (a === "fit") { shown.forEach(r => SM.sel.delete(r.spid)); shown.filter(r => !r.owned).slice(0, smFree()).forEach(r => SM.sel.add(r.spid)); }
+  if (a === "new") shown.forEach(r => { if (r.owned) SM.sel.delete(r.spid); });
+  smPaint();
+});
+$("#smGo").addEventListener("click", () => {
+  const free = smFree(), picked = smShown().filter(r => SM.sel.has(r.spid)).slice(0, free).map(r => r.spid);  // chi the dang hien, OVR giam dan
+  if (!picked.length) return;
+  const lv = Number($("#smLevel").value), gr = Number($("#smGrade").value);
+  if (!confirm(`Thêm ${picked.length} cầu thủ (LV ${lv}, +${gr}) vào CLB?`)) return;
+  act(async () => {
+    const r = await api("player_add_bulk", {spids: picked, grade: gr, level: lv});
+    SM.justAdded = new Set(picked);
+    await smLoad();
+    SM.justAdded = null;
+    say(`Đã thêm ${r.done} cầu thủ vào CLB (dự bị). CLB hiện có ${r.players}/${r.max}.${skippedText(r)}`, r.skipped && r.skipped.length ? "err" : "ok");
+  });
+});
+$("#smTeamMain").addEventListener("input", smLoad);
+let allTeamsFresh = false;
+async function loadAllTeams() {
+  const lg = $("#smLeagueMain") ? $("#smLeagueMain").value : "";
+  if (allTeamsFresh && !lg) return;
+  try {
+    const f = await api("facets" + (lg ? "?" + new URLSearchParams({league: lg, league_exact: $("#smLeagueMain").dataset.exact || ""}) : ""));
+    SS_SRC.allTeams = f.teams;
+    if (f.leagues && !lg) SS_SRC.allLeagues = f.leagues;
+    if (!lg) allTeamsFresh = true;
+  } catch (e) {}
+}
+// doi giai -> xoa doi da chon, tai lai danh sach doi cua giai do; neu dang xem theo mua thi chi loc lai
+$("#smLeagueMain").addEventListener("input", async () => {
+  const hadTeam = !!$("#smTeamMain").value;
+  ssSet("#smTeamMain", "", false, true);
+  SS_SRC.allTeams = []; allTeamsFresh = false;
+  if (hadTeam || !SM.loaded) smLoad(); else { ssSet("#smNation", "", false, true); smFacets(); smPaint(); }
+  await loadAllTeams();
+});
+loaders.theomua = async () => {
+  loadAllTeams();
+  if (!Object.keys(SEASONS).length) await loadSeasons();
+  if ($("#smSeason").options.length <= 1) {
+    const order = Object.values(SEASONS).sort((a, b) => (a.kind === "year") - (b.kind === "year") || a.code - b.code);
+    $("#smSeason").innerHTML = '<option value="">Tất cả mùa</option>' + Object.values(SEASONS)
+      .filter(x => x.code !== 0).map(x => `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
+  }
+  if ($("#smSeason").value || $("#smTeamMain").value) smLoad();
+};
+
+
+function renderDaily(table) {
+  $("#dailyRows").innerHTML = table.map((r, i) => `<tr>
+    <td>Ngày ${i + 1}</td>
+    <td><input type="number" min="0" step="1000" value="${r.ep || 0}" data-k="ep" aria-label="EP ngày ${i + 1}"></td>
+    <td><select data-k="pack" aria-label="Gói ngày ${i + 1}"><option value="">Không kèm gói</option>${packOpts(r.pack)}</select></td>
+    <td><input type="number" min="1" max="99" value="${r.count || 1}" data-k="count" aria-label="Số gói ngày ${i + 1}"></td>
+    <td><button class="b small danger" data-drop="${i}">Xóa</button></td>
+  </tr>`).join("");
+}
+function readDaily() {
+  return [...$("#dailyRows").rows].map(tr => {
+    const v = k => tr.querySelector(`[data-k="${k}"]`).value;
+    return {ep: Number(v("ep")) || 0, pack: v("pack") ? Number(v("pack")) : null, count: Number(v("count")) || 1};
+  });
+}
+
+function show(tab) {
+  document.querySelectorAll("nav [role=tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  document.querySelectorAll("main section").forEach(s => s.hidden = s.id !== tab);
+  try { history.replaceState(null, "", "#" + tab); } catch (e) {}
+  loaders[tab]().catch(e => say("Không tải được: " + e.message, "err"));
+}
+document.querySelectorAll("nav [role=tab]").forEach(b => b.addEventListener("click", () => show(b.dataset.tab)));
+document.querySelectorAll("nav [role=tab]").forEach(b => b.title = b.textContent.trim());
+
+$("#epForm").addEventListener("submit", e => e.preventDefault());
+$("#epForm").addEventListener("click", e => {
+  const mode = e.target.dataset.mode; if (!mode) return;
+  e.preventDefault();
+  const raw = $("#epValue").value, n = Number(raw);
+  if (raw === "" || !Number.isFinite(n) || n < 0) return say("Vui lòng nhập số EP hợp lệ.", "err");
+  const body = mode === "set" ? {set: n} : {add: mode === "sub" ? -n : n};
+  act(async () => { const r = await api("ep", body); await loaders.ringkasan(); say(`Số dư EP mới: ${fmt(r.ep)}.`, "ok"); });
+});
+
+["#playerFilter", "#pfTeam", "#pfNation"].forEach(id => $(id).addEventListener("input", renderClub));
+["#pfPos", "#pfRole", "#pfSeason"].forEach(id => $(id).addEventListener("change", renderClub));
+$("#pfClear").addEventListener("click", () => {
+  $("#playerFilter").value = ""; ["#pfTeam", "#pfNation"].forEach(id => ssSet(id, "", false));
+  ["#pfPos", "#pfRole", "#pfSeason"].forEach(id => { $(id).value = ""; $(id).dispatchEvent(new Event("change")); });
+  renderClub();
+});
+document.querySelectorAll("th[data-sort]").forEach(th => th.addEventListener("click", () => {
+  const headId = th.closest("thead").id, st = sortState[headId], k = th.dataset.sort;
+  if (st.key === k) st.dir = -st.dir;
+  else { st.key = k; st.dir = ["name", "team", "nation", "pos", "roleRank", "market"].includes(k) ? 1 : -1; }
+  headId === "playerHead" ? renderClub() : runSearch(0);
+}));
+$("#playerRows").addEventListener("change", e => {
+  const lid = e.target.dataset.level;
+  if (lid) return act(async () => { await api("player_level", {id: lid, level: Number(e.target.value)}); await loaders.pemain(); }, "Đã đổi cấp độ cầu thủ.");
+  const id = e.target.dataset.grade; if (!id) return;
+  act(async () => { await api("player_grade", {id, grade: Number(e.target.value)}); await loaders.pemain(); }, "Đã đổi cấp thẻ.");
+});
+$("#playerRows").addEventListener("click", e => {
+  const t = e.target;
+  if (t.dataset.team) act(async () => { await api("player_team", {id: t.dataset.team, team: t.dataset.to}); await loaders.pemain(); },
+                          t.dataset.to === "second" ? "Đã chuyển sang đội phụ." : "Đã đưa về đội chính.");
+  if (t.dataset.remove && confirm(`Thanh lý ${t.dataset.name} khỏi CLB? Không thể hoàn tác.`))
+    act(async () => { await api("player_remove", {id: t.dataset.remove}); await loaders.pemain(); }, `Đã thanh lý ${t.dataset.name}.`);
+});
+
+// Cong OVR / he so gia theo cap the (= GRADE_BOOST / GRADE_PRICE trong http_config.py).
+// OVR luu trong danh sach la OVR goc (+0); game hien OVR da cong cap the (vd Pele WL: 89 + 5 = 94 o +1).
+const GRADE_BOOST = [0, 5, 6, 7, 8, 10, 12, 14, 17, 20, 24];
+const GRADE_PRICE = [0, 1, 2.65, 7.1, 19.6, 53, 162, 420, 1090, 2680, 6290];
+function sig3(x) { x = Math.round(x); const n = String(x).length; return x >= 1000 ? Math.round(x / 10 ** (n - 3)) * 10 ** (n - 3) : x; }
+function renderSearch() {
+  const rows = searchResults;  // server da sap xep
+  const g = Math.min(10, Math.max(0, Number($("#searchGrade").value) || 1));
+  paintSort("searchHead");
+  $("#searchRows").innerHTML = rows.map(r => `<tr class="${selSearch.has(r.spid) ? "sel" : ""}">
+    <td class="ck"><input type="checkbox" data-ssel="${r.spid}" ${selSearch.has(r.spid) ? "checked" : ""} aria-label="Chọn ${esc(r.name)}"></td>
+    <td class="pname">${pimg(r.spid)}<button type="button" class="linkish" data-card="${r.spid}" data-cgrade="${$("#searchGrade").value || 1}">${esc(r.name)}</button> <span class="muted">${r.spid}</span></td><td>${esc(r.team || "")}</td><td>${esc(r.nation || "")}</td>
+    <td>${seasonBadge(r.season)}</td><td>${r.pos}</td>
+    <td class="num" title="OVR gốc (+0): ${r.ovr}">${r.ovr + GRADE_BOOST[g]}</td><td class="num">${fmt(g === 1 ? r.price : sig3(r.price * GRADE_PRICE[g]))}</td><td>${r.market ? "Có bán" : '<span class="muted">Không bán</span>'}</td>
+    <td><button class="b small primary" data-add="${r.spid}" data-name="${esc(r.name)}">Thêm vào CLB</button>
+        <button class="b small" data-gift="${r.spid}" data-name="${esc(r.name)}">Gửi vào Túi</button></td>
+  </tr>`).join("") || `<tr><td colspan="10" class="muted">Không tìm thấy cầu thủ nào.</td></tr>`;
+  updateBulk();
+}
+$("#searchPos").innerHTML = '<option value="">Tất cả</option><option value="GK">Thủ môn</option><option value="DEF">Hậu vệ</option><option value="MID">Tiền vệ</option><option value="FWD">Tiền đạo</option>'
+  + POS_ORDER.map(p => `<option value="${p}">${p}</option>`).join("");
+// Danh sach the: loc tren server (toan bo ~60.000 the), phan trang, nho ket qua da xem
+const searchCache = new Map();
+let searchPage = 0, searchPages = 1, searchLoaded = false, searchTimer = null, searchSeq = 0;
+function searchParams(page) {
+  const v = id => $(id).value.trim(), st = sortState.searchHead;
+  return new URLSearchParams({q: v("#searchQ"), team: v("#searchTeam"), nation: v("#searchNation"), pos: $("#searchPos").value,
+    team_exact: $("#searchTeam").dataset.exact || "", nation_exact: $("#searchNation").dataset.exact || "",
+    league: v("#searchLeague"), league_exact: $("#searchLeague").dataset.exact || "",
+    season: v("#searchSeason"), sort: st.key || "ovr", dir: st.dir > 0 ? "asc" : "desc", page, size: $("#pgSize").value}).toString();
+}
+async function runSearch(page = 0) {
+  const key = searchParams(page), seq = ++searchSeq;
+  $("#searchCount").textContent = "Đang tải…";
+  try {
+    let d = searchCache.get(key);
+    if (!d) {
+      d = await api("search?" + key);
+      searchCache.set(key, d);
+      if (searchCache.size > 80) searchCache.delete(searchCache.keys().next().value);
+    }
+    if (seq !== searchSeq) return;  // da co lan tim moi hon
+    searchLoaded = true; searchResults = d.rows; searchPage = d.page; searchPages = d.pages;
+    renderSearch();
+    const from = d.total ? d.page * d.size + 1 : 0, to = d.page * d.size + d.rows.length;
+    $("#searchCount").textContent = d.total ? `Hiển thị ${fmt(from)}–${fmt(to)} / ${fmt(d.total)} thẻ` : "Không có thẻ nào khớp bộ lọc.";
+    $("#pgInfo").textContent = `Trang ${fmt(d.page + 1)} / ${fmt(d.pages)}`;
+    $("#searchPager").querySelectorAll("[data-pg]").forEach(b => {
+      b.disabled = ["first", "prev"].includes(b.dataset.pg) ? d.page <= 0 : d.page >= d.pages - 1;
+    });
+  } catch (err) { if (seq === searchSeq) { $("#searchCount").textContent = ""; say("Không tải được danh sách thẻ: " + err.message, "err"); } }
+}
+const searchSoon = () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => runSearch(0), 280); };
+["#searchQ", "#searchTeam", "#searchNation"].forEach(id => $(id).addEventListener("input", searchSoon));
+$("#searchSeason").addEventListener("change", () => runSearch(0));
+$("#searchLeague").addEventListener("input", async () => {
+  ["#searchTeam", "#searchNation"].forEach(id => ssSet(id, "", false, true));
+  SS_SRC.teams = []; SS_SRC.nations = [];
+  runSearch(0);
+  await loadFacets();
+});
+["#searchPos", "#pgSize"].forEach(id => $(id).addEventListener("change", () => runSearch(0)));
+$("#searchForm").addEventListener("submit", e => { e.preventDefault(); runSearch(0); });
+$("#searchClear").addEventListener("click", () => {
+  $("#searchQ").value = ""; ["#searchTeam", "#searchNation"].forEach(id => ssSet(id, "", false, true));
+  if ($("#searchLeague").value) { ssSet("#searchLeague", "", false, true); loadFacets(); }
+  $("#searchSeason").value = ""; $("#searchSeason").dispatchEvent(new Event("change"));
+  $("#searchPos").value = ""; $("#searchPos").dispatchEvent(new Event("change"));
+});
+$("#searchPager").addEventListener("click", e => {
+  const g = e.target.dataset.pg; if (!g) return;
+  runSearch({first: 0, prev: searchPage - 1, next: searchPage + 1, last: searchPages - 1}[g]);
+  $("#searchHead").scrollIntoView({block: "nearest"});
+});
+$("#searchRows").addEventListener("click", e => {
+  const t = e.target, grade = Number($("#searchGrade").value);
+  if (t.dataset.add) act(() => api("player_add", {spid: Number(t.dataset.add), grade}), `Đã thêm ${t.dataset.name} +${grade} vào CLB (dự bị).`);
+  if (t.dataset.gift) act(() => api("bag_send", {title: `Cầu thủ: ${t.dataset.name}`, spid: Number(t.dataset.gift), grade}), `Đã gửi ${t.dataset.name} +${grade} vào Túi.`);
+});
+
+$("#packForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("#packSel").selectedOptions[0].text, count = Number($("#packCount").value);
+  act(() => api("give_pack", {itemid: Number($("#packSel").value), count}), `Đã thêm ${count}× ${name} vào kho đồ.`);
+});
+$("#bagForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const body = {title: $("#bagTitle").value, ep: Number($("#bagEp").value) || 0, pack: $("#bagPack").value ? Number($("#bagPack").value) : null,
+                count: Number($("#bagCount").value) || 1, spid: $("#bagSpid").value ? Number($("#bagSpid").value) : null, grade: Number($("#bagGrade").value)};
+  act(() => api("bag_send", body), `Đã gửi quà "${body.title}" vào Túi.`);
+});
+
+$("#dailyRows").addEventListener("click", e => {
+  const i = e.target.dataset.drop; if (i === undefined) return;
+  const t = readDaily(); t.splice(Number(i), 1); renderDaily(t);
+});
+$("#dailyAdd").addEventListener("click", () => { const t = readDaily(); t.push({ep: 10000}); renderDaily(t); });
+$("#dailySave").addEventListener("click", () => act(async () => { await api("daily_set", {table: readDaily()}); await loaders.harian(); }, "Đã lưu bảng quà."));
+$("#dailyGrant").addEventListener("click", () => act(async () => { const r = await api("daily_grant", {}); await loaders.harian(); say(`Đã gửi "${r.title}" vào Túi.`, "ok"); }));
+$("#dailyReset").addEventListener("click", () => { if (confirm("Đặt lại chuỗi đăng nhập về 0?")) act(async () => { await api("daily_reset", {}); await loaders.harian(); }, "Đã đặt lại chuỗi ngày."); });
+$("#scoutReset").addEventListener("click", () => act(async () => { await api("scouts_reset", {}); await loaders.scout(); }, "Tất cả tuyển trạch viên đã sẵn sàng."));
+$("#logRefresh").addEventListener("click", () => loaders.log());
+setInterval(() => { if ($("#logAuto").checked && !$("#log").hidden) loaders.log(); }, 3000);
+
+
+// ===================== Thao tac hang loat =====================
+function updateBulk() {
+  $("#bulkClub").hidden = !selClub.size; $("#bulkClubN").textContent = selClub.size;
+  $("#bulkSearch").hidden = !selSearch.size; $("#bulkSearchN").textContent = selSearch.size;
+  const a = $("#selAllClub"), on = shownClubIds.filter(i => selClub.has(i)).length;
+  a.checked = shownClubIds.length > 0 && on === shownClubIds.length; a.indeterminate = on > 0 && !a.checked;
+  const b = $("#selAllSearch"), ids = searchResults.map(r => r.spid), on2 = ids.filter(i => selSearch.has(i)).length;
+  b.checked = ids.length > 0 && on2 === ids.length; b.indeterminate = on2 > 0 && !b.checked;
+}
+function skippedText(r) {
+  if (!r.skipped || !r.skipped.length) return "";
+  const names = r.skipped.slice(0, 4).map(x => `${x.name} (${x.reason})`).join(", ");
+  return ` Bỏ qua ${r.skipped.length}: ${names}${r.skipped.length > 4 ? "…" : ""}.`;
+}
+$("#bulkGrade").innerHTML = gradeOpts(1, 0);
+$("#bulkLevel").innerHTML = levelOpts(23);
+$("#playerRows").addEventListener("change", e => {
+  const id = e.target.dataset.sel; if (!id) return;
+  e.target.checked ? selClub.add(id) : selClub.delete(id);
+  e.target.closest("tr").classList.toggle("sel", e.target.checked); updateBulk();
+});
+$("#selAllClub").addEventListener("change", e => {
+  shownClubIds.forEach(i => e.target.checked ? selClub.add(i) : selClub.delete(i)); renderClub();
+});
+$("#bulkClub").addEventListener("click", e => {
+  const action = e.target.dataset.bulk; if (!action) return;
+  if (action === "clear") { selClub.clear(); renderClub(); return; }
+  const ids = [...selClub];
+  if (action === "remove" && !confirm(`Thanh lý ${ids.length} cầu thủ đã chọn khỏi CLB? Không thể hoàn tác.`)) return;
+  const label = {level: `Đã đặt cấp độ LV ${$("#bulkLevel").value} cho`, grade: `Đã đặt cấp +${$("#bulkGrade").value} cho`, second: "Đã chuyển sang đội phụ", first: "Đã đưa về đội chính", remove: "Đã thanh lý"}[action];
+  act(async () => {
+    const r = await api("player_bulk", {ids, action, grade: Number($("#bulkGrade").value), level: Number($("#bulkLevel").value)});
+    selClub.clear(); await loaders.pemain();
+    say(`${label} ${r.done} cầu thủ.${skippedText(r)}`, r.skipped && r.skipped.length ? "err" : "ok");
+  });
+});
+$("#searchRows").addEventListener("change", e => {
+  const id = e.target.dataset.ssel; if (!id) return;
+  e.target.checked ? selSearch.add(Number(id)) : selSearch.delete(Number(id));
+  e.target.closest("tr").classList.toggle("sel", e.target.checked); updateBulk();
+});
+$("#selAllSearch").addEventListener("change", e => {
+  searchResults.forEach(r => e.target.checked ? selSearch.add(r.spid) : selSearch.delete(r.spid)); renderSearch();
+});
+$("#bulkSearch").addEventListener("click", e => {
+  const action = e.target.dataset.sbulk; if (!action) return;
+  if (action === "clear") { selSearch.clear(); renderSearch(); return; }
+  const grade = Number($("#searchGrade").value) || 1, spids = [...selSearch];
+  act(async () => {
+    const r = await api("player_add_bulk", {spids, grade});
+    selSearch.clear(); renderSearch();
+    say(`Đã thêm ${r.done} thẻ +${grade} vào CLB (dự bị).${skippedText(r)}`, r.skipped && r.skipped.length ? "err" : "ok");
+  });
+});
+
+// ===================== Thong tin HLV =====================
+async function loadCoach() {
+  try {
+    const c = await api("coach_info");
+    $("#coachNameIn").value = c.name; $("#coachLevel").value = c.level; $("#coachLevel").max = c.max_level;
+    $("#coachExp").value = c.exp;
+    $("#coachHint").textContent = `Cấp ${c.level}: ${fmt(c.exp)} / ${fmt(c.to)} kinh nghiệm để lên cấp. Cấp tối đa ${c.max_level}. Giá trị đội hiện tại: ${fmt(c.teamvalue)} EP.`;
+  } catch (e) { $("#coachHint").textContent = "Không tải được thông tin HLV: " + e.message; }
+}
+$("#coachForm").addEventListener("submit", e => {
+  e.preventDefault();
+  act(async () => {
+    await api("coach_set", {name: $("#coachNameIn").value.trim(), level: Number($("#coachLevel").value), exp: Number($("#coachExp").value) || 0});
+    await loadCoach();
+  }, "Đã lưu thông tin HLV. Vào lại game để thấy thay đổi.");
+});
+
+// ===================== Gia EP =====================
+function paintZero() {
+  const z = $("#zeroPct"), v = z.value;
+  $("#zeroVal").textContent = v + "%"; $("#zeroBig").textContent = v + "%";
+  z.style.setProperty("--fill", v + "%");
+}
+async function loadPrices() {
+  try {
+    const d = await api("price_settings");
+    $("#zeroPct").value = d.zero_percent; $("#priceMult").value = d.multiplier; paintZero();
+    $("#ovRows").innerHTML = d.overrides.map(o => `<tr>
+      <td><button type="button" class="linkish" data-card="${o.spid}" data-cgrade="1">${esc(o.name)}</button></td>
+      <td class="num">${o.spid}</td><td class="num">${fmt(o.price)}</td>
+      <td><button class="b small danger" type="button" data-ovdel="${o.spid}">Xóa</button></td></tr>`).join("")
+      || `<tr><td colspan="4" class="muted">Chưa có giá tự đặt.</td></tr>`;
+  } catch (e) { say("Không tải được cài đặt giá: " + e.message, "err"); }
+}
+$("#zeroPct").addEventListener("input", paintZero);
+$("#priceSave").addEventListener("click", () => act(async () => {
+  await api("price_settings_set", {zero_percent: Number($("#zeroPct").value), multiplier: Number($("#priceMult").value)});
+  await loadPrices(); searchCache.clear(); await loaders.ringkasan();
+}, "Đã lưu cài đặt giá EP."));
+$("#priceReset").addEventListener("click", () => act(async () => {
+  await api("price_settings_set", {zero_percent: 0, multiplier: 1});
+  await loadPrices(); searchCache.clear(); await loaders.ringkasan();
+}, "Đã trả giá về mặc định (giá tự đặt từng thẻ vẫn giữ)."));
+$("#ovForm").addEventListener("submit", e => {
+  e.preventDefault();
+  act(async () => {
+    await api("price_settings_set", {override_spid: Number($("#ovSpid").value), override_price: Number($("#ovPrice").value)});
+    $("#ovSpid").value = ""; $("#ovPrice").value = ""; await loadPrices();
+  }, "Đã lưu giá tự đặt.");
+});
+$("#ovRows").addEventListener("click", e => {
+  const s = e.target.dataset.ovdel; if (!s) return;
+  act(async () => { await api("price_settings_set", {override_spid: Number(s), override_price: ""}); await loadPrices(); }, "Đã xóa giá tự đặt.");
+});
+
+// ===================== Chi tiet + so sanh the =====================
+const STAT_GROUPS = [
+  ["Tốc độ", [["acceleration", "Tăng tốc"], ["sprintspeed", "Tốc độ chạy"]]],
+  ["Sút", [["finishing", "Dứt điểm"], ["shotpower", "Lực sút"], ["longshots", "Sút xa"], ["volleys", "Vô lê"], ["penalties", "Penalty"], ["positioning", "Chọn vị trí"]]],
+  ["Chuyền", [["shortpassing", "Chuyền ngắn"], ["longpassing", "Chuyền dài"], ["crossing", "Tạt bóng"], ["vision", "Tầm nhìn"], ["curve", "Sút xoáy"], ["freekickaccuracy", "Đá phạt"]]],
+  ["Rê bóng", [["dribbling", "Rê bóng"], ["ballcontrol", "Giữ bóng"], ["agility", "Khéo léo"], ["balance", "Thăng bằng"], ["reactions", "Phản ứng"]]],
+  ["Phòng ngự", [["marking", "Kèm người"], ["standingtackle", "Tắc bóng"], ["slidingtackle", "Xoạc bóng"], ["interceptions", "Cắt bóng"], ["headingaccuracy", "Đánh đầu"]]],
+  ["Thể chất", [["stamina", "Thể lực"], ["strength", "Sức mạnh"], ["jumping", "Bật nhảy"], ["aggression", "Quyết đoán"]]],
+  ["Thủ môn", [["gkdiving", "Đổ người"], ["gkhandling", "Bắt bóng"], ["gkkicking", "Phát bóng"], ["gkpositioning", "Chọn vị trí"], ["gkreflexes", "Phản xạ"]]],
+];
+let cmCard = null, pinned = null, cmCompare = false;
+const tier = v => v >= 100 ? "t6" : v >= 90 ? "t5" : v >= 80 ? "t4" : v >= 70 ? "t3" : v >= 60 ? "t2" : "t1";
+const stars = n => "★".repeat(Math.max(0, Math.min(5, n))) + "☆".repeat(Math.max(0, 5 - Math.min(5, n)));
+const groupsFor = c => (c.positions[0] === "GK" ? [STAT_GROUPS[6], ...STAT_GROUPS.slice(0, 6)] : STAT_GROUPS.slice(0, 6));
+const barW = v => Math.max(4, Math.min(100, v / 1.3)) + "%";
+
+function cardHead(c) {
+  return `<div class="cm-head">
+    <img class="cm-photo" src="/pimg/${c.spid}.png" alt="" onerror="this.remove()">
+    <div class="cm-ovr ${tier(c.ovr)}"><b>${c.ovr}</b><span>${esc(c.positions[0] || "")}</span></div>
+    <div class="cm-title"><h2 id="cmTitle" class="display">${esc(c.name)}</h2>
+      <div class="cm-sub">${esc(c.team)} · ${esc(c.nation)} · ${seasonBadge(c.season)} ${esc(seasonName(c.season))} · SPID ${c.spid}</div></div>
+  </div>`;
+}
+function renderCard() {
+  const c = cmCard, body = $("#cmBody");
+  if (cmCompare && pinned) return renderCompare(pinned, c);
+  const info = [["Vị trí", c.positions.join(", ")], ["Chiều cao", c.height ? c.height + " cm" : "?"], ["Cân nặng", c.weight ? c.weight + " kg" : "?"],
+    ["Chân thuận", c.foot], ["Ngày sinh", c.born || "?"], ["Kỹ thuật", stars(c.skillmoves)], ["Chân yếu", stars(c.weakfoot)],
+    ["Công / Thủ", c.workrate], ["Giá EP", fmt(c.price)]];
+  body.innerHTML = cardHead(c) + `
+    <div class="cm-tools">
+      <label class="bulk-lbl">Cấp thẻ <select id="cmGrade">${gradeOpts(c.grade, 0)}</select></label>
+      <label class="bulk-lbl">Cấp độ <select id="cmLevel">${levelOpts(c.level || 1)}</select></label>
+      <span class="muted">OVR gốc ${c.base_ovr} + cấp thẻ/cấp độ cộng ${c.ovr - c.base_ovr} vào mọi chỉ số (chưa tính Team Color)</span>
+    </div>
+    <dl class="cm-info">${info.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+    <div class="cm-groups">${groupsFor(c).map(([g, items]) => `<section class="cm-group"><h4>${g}</h4>${items.map(([k, lab]) => `
+      <div class="stat"><span>${lab}</span><i><em class="${tier(c.stats[k])}" style="width:${barW(c.stats[k])}"></em></i><b class="${tier(c.stats[k])}">${c.stats[k]}</b></div>`).join("")}</section>`).join("")}</div>
+    <div class="cm-foot">
+      ${pinned && pinned.spid !== c.spid ? `<button class="b primary" type="button" id="cmCmp">So sánh với ${esc(pinned.name)}</button>` : ""}
+      <button class="b" type="button" id="cmPin">${pinned && pinned.spid === c.spid ? "Bỏ ghim" : "Ghim để so sánh"}</button>
+    </div>`;
+}
+function renderCompare(a, b) {
+  const rows = [["OVR", a.ovr, b.ovr], ["Giá EP", a.price, b.price, true]];
+  const groups = groupsFor(a.positions[0] === "GK" || b.positions[0] === "GK" ? {positions: ["GK"]} : a);
+  const cell = (v, o, money) => `<b class="${v > o ? "win" : v < o ? "lose" : ""}">${money ? fmt(v) : v}</b>`;
+  $("#cmBody").innerHTML = `<h2 id="cmTitle" class="display" style="margin:0 0 14px">So sánh thẻ</h2>
+    <div class="cmp-heads">${[a, b].map(c => `<div class="cmp-h"><div class="cm-ovr ${tier(c.ovr)} sm"><b>${c.ovr}</b><span>${esc(c.positions[0] || "")}</span></div>
+      <div><strong>${esc(c.name)}</strong><div class="cm-sub">+${c.grade} · ${esc(c.team)} · ${seasonBadge(c.season)}</div></div></div>`).join("")}</div>
+    <div class="cmp">
+      ${rows.map(([lab, x, y, money]) => `<div class="cmp-row big"><span class="cmp-l">${lab}</span>${cell(x, y, money)}${cell(y, x, money)}</div>`).join("")}
+      ${groups.map(([g, items]) => `<h4>${g}</h4>` + items.map(([k, lab]) => {
+        const x = a.stats[k], y = b.stats[k];
+        return `<div class="cmp-row"><span class="cmp-l">${lab}</span>${cell(x, y)}
+          <i class="l"><em class="${x >= y ? "win" : ""}" style="width:${barW(x)}"></em></i><i><em class="${y >= x ? "win" : ""}" style="width:${barW(y)}"></em></i>${cell(y, x)}</div>`;
+      }).join("")).join("")}
+    </div>
+    <div class="cm-foot"><button class="b" type="button" id="cmBack">Quay lại thẻ ${esc(b.name)}</button></div>`;
+}
+function paintPin() {
+  const chip = $("#pinChip");
+  chip.hidden = !pinned;
+  if (pinned) chip.innerHTML = `Đang ghim: <button type="button" class="linkish" data-card="${pinned.spid}" data-cgrade="${pinned.grade}">${esc(pinned.name)} +${pinned.grade}</button><button type="button" class="pin-x" aria-label="Bỏ ghim">×</button>`;
+}
+async function openCard(spid, grade, level) {
+  try {
+    cmCard = await api(`card?spid=${spid}&grade=${grade || 0}&level=${level || 1}`);
+    cmCompare = false; renderCard();
+    const m = $("#cardModal"); m.hidden = false; document.body.classList.add("modal-open");
+    $("#cmClose").focus();
+  } catch (e) { say("Không mở được thẻ: " + e.message, "err"); }
+}
+function closeCard() { $("#cardModal").hidden = true; document.body.classList.remove("modal-open"); }
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-card]");
+  if (t && !t.closest(".cs-pop")) { e.preventDefault(); openCard(t.dataset.card, t.dataset.cgrade, t.dataset.clevel); return; }
+  if (e.target.closest(".pin-x")) { pinned = null; paintPin(); if (!$("#cardModal").hidden) renderCard(); }
+});
+$("#cardModal").addEventListener("click", async e => {
+  if (e.target === e.currentTarget || e.target.id === "cmClose") return closeCard();
+  if (e.target.id === "cmPin") { pinned = pinned && pinned.spid === cmCard.spid ? null : cmCard; paintPin(); renderCard(); }
+  if (e.target.id === "cmCmp") { cmCompare = true; renderCard(); }
+  if (e.target.id === "cmBack") { cmCompare = false; renderCard(); }
+});
+$("#cardModal").addEventListener("change", async e => {
+  if (e.target.id !== "cmGrade" && e.target.id !== "cmLevel") return;
+  try { cmCard = await api(`card?spid=${cmCard.spid}&grade=${$("#cmGrade").value}&level=${$("#cmLevel").value}`); renderCard(); } catch (err) { say(err.message, "err"); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#cardModal").hidden && !document.querySelector(".cs-pop")) closeCard(); });
+
+// ===== Dropdown co o tim kiem (Doi bong / Quoc gia) =====
+const fold = t => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+const SS_SRC = {leagues: [], teams: [], nations: [], allTeams: [], allLeagues: [], clubTeams: [], clubNations: [], smLeagues: [], smTeams: [], smNations: []};
+function ssSet(sel, value, exact, silent) {
+  const inp = $(sel); inp.value = value; inp.dataset.exact = exact ? "1" : "";
+  const w = document.querySelector(`.ss[data-for="${inp.id}"]`); if (w && w._sync) w._sync();
+  if (!silent) inp.dispatchEvent(new Event("input", {bubbles: true}));
+}
+// Nho danh sach doi / nuoc / giai / mua trong trinh duyet: mo dropdown la co ngay, server cap nhat ngam.
+// (dung ten khoa truc tiep: ham duoc goi som hon dong nay khi nap danh sach mua)
+function listCacheGet() { try { return JSON.parse(localStorage.getItem("fo3-lists-v1") || "null") || {}; } catch (e) { return {}; } }
+function listCacheSet(part) { try { localStorage.setItem("fo3-lists-v1", JSON.stringify(Object.assign(listCacheGet(), part))); } catch (e) {} }
+(function () {
+  const c = listCacheGet();
+  if (c.teams) { SS_SRC.teams = c.teams; SS_SRC.allTeams = c.teams; }
+  if (c.nations) SS_SRC.nations = c.nations;
+  if (c.leagues) { SS_SRC.leagues = c.leagues; SS_SRC.allLeagues = c.leagues; }
+})();
+async function loadFacets() {
+  const lg = $("#searchLeague").value, q = lg ? "?" + new URLSearchParams({league: lg, league_exact: $("#searchLeague").dataset.exact || ""}) : "";
+  try {
+    const f = await api("facets" + q); SS_SRC.teams = f.teams; SS_SRC.nations = f.nations; if (f.leagues) SS_SRC.leagues = f.leagues; SS_SRC.err = "";
+    if (!lg) { if (!$("#smLeagueMain").value) SS_SRC.allTeams = f.teams; SS_SRC.allLeagues = f.leagues; listCacheSet({teams: f.teams, nations: f.nations, leagues: f.leagues}); }
+  }
+  catch (e) { SS_SRC.err = "Không tải được danh sách: " + e.message; }
+}
+function clubFacets() {
+  const cnt = k => {
+    const m = {};
+    clubPlayers.forEach(p => { if (p[k]) m[p[k]] = (m[p[k]] || 0) + 1; });
+    return Object.entries(m).map(([name, count]) => ({name, count})).sort((a, b) => fold(a.name).localeCompare(fold(b.name)));
+  };
+  SS_SRC.clubTeams = cnt("team"); SS_SRC.clubNations = cnt("nation");
+}
+(function () {
+  let open = null;
+  function close() { if (open) { open.pop.remove(); open.btn.classList.remove("open"); open = null; } }
+  function build(w) {
+    const inp = document.getElementById(w.dataset.for);
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "cs-btn ss-btn";
+    btn.innerHTML = '<span class="cs-val"></span><svg class="cs-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    w.appendChild(btn);
+    w._sync = () => {
+      const v = inp.value;
+      btn.querySelector(".cs-val").textContent = v ? (inp.dataset.exact ? v : `Chứa “${v}”`) : w.dataset.all;
+      btn.classList.toggle("ss-on", !!v);
+    };
+    w._sync();
+    btn.addEventListener("click", () => (open && open.w === w ? close() : show(w, inp, btn)));
+    btn.addEventListener("keydown", e => { if (!open && ["ArrowDown", "Enter", " "].includes(e.key)) { e.preventDefault(); show(w, inp, btn); } });
+  }
+  function show(w, inp, btn) {
+    close();
+    const pop = document.createElement("div");
+    pop.className = "cs-pop ss-pop";
+    pop.innerHTML = '<div class="ss-head"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>'
+      + `<input class="ss-search" placeholder="Tìm ${w.dataset.ph || w.dataset.all.replace("Tất cả ", "")}…" autocomplete="off"></div>`
+      + '<div class="ss-list" role="listbox"></div><div class="ss-foot muted"></div>';
+    document.body.appendChild(pop);
+    const r = btn.getBoundingClientRect(), width = Math.max(r.width, 300), H = 360;
+    pop.style.width = width + "px";
+    pop.style.left = Math.max(8, Math.min(r.left, innerWidth - width - 8)) + "px";
+    const below = innerHeight - r.bottom;
+    pop.style.top = (below < H + 12 && r.top > below ? Math.max(8, r.top - H - 6) : r.bottom + 6) + "px";
+    btn.classList.add("open");
+    const search = pop.querySelector(".ss-search"), list = pop.querySelector(".ss-list"), foot = pop.querySelector(".ss-foot");
+    open = {w, inp, btn, pop, items: [], active: 0};
+    function render() {
+      const raw = search.value.trim(), q = fold(raw), src = SS_SRC[w.dataset.src] || [];
+      const hit = q ? src.filter(x => fold(x.name).includes(q)) : src;
+      const items = [{name: "", label: w.dataset.all, all: true}];
+      if (q) items.push({name: raw, label: `Tìm tất cả tên chứa “${raw}”`, free: true});
+      const MAX = 400;
+      hit.slice(0, MAX).forEach(x => items.push({name: x.name, label: (x.top ? "★ " : "") + x.name, count: x.count, top: x.top}));
+      open.items = items;
+      open.active = Math.min(open.active, items.length - 1);
+      list.innerHTML = items.map((x, i) => {
+        const on = x.all ? !inp.value : (!x.free && inp.dataset.exact && x.name === inp.value);
+        return `<div class="cs-opt${on ? " on" : ""}${i === open.active ? " act" : ""}" data-i="${i}">`
+          + `<span class="ss-name${x.free ? " ss-free" : ""}${x.top ? " ss-top" : ""}">${esc(x.label)}</span>`
+          + (x.count != null ? `<span class="ss-count">${fmt(x.count)}</span>` : "") + "</div>";
+      }).join("");
+      foot.textContent = src.length
+        ? (hit.length > MAX ? `Hiện ${MAX} / ${fmt(hit.length)} kết quả, gõ thêm để thu hẹp` : `${fmt(hit.length)} kết quả`)
+        : (["teams", "nations", "leagues", "allTeams", "allLeagues"].includes(w.dataset.src) ? (SS_SRC.err || "Đang tải danh sách…") : "Chưa có dữ liệu");
+    }
+    function paintActive() {
+      list.querySelectorAll(".cs-opt").forEach((el, i) => el.classList.toggle("act", i === open.active));
+      const a = list.children[open.active];
+      if (a) a.scrollIntoView({block: "nearest"});
+    }
+    function pick(i) {
+      const x = open.items[i];
+      if (!x) return;
+      close();
+      ssSet("#" + inp.id, x.name, !x.all && !x.free);
+      btn.focus();
+    }
+    search.addEventListener("input", () => { open.active = 0; render(); });
+    search.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); open.active = Math.min(open.items.length - 1, open.active + 1); paintActive(); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); open.active = Math.max(0, open.active - 1); paintActive(); }
+      else if (e.key === "Enter") { e.preventDefault(); pick(open.active); }
+      else if (e.key === "Escape") { e.preventDefault(); close(); btn.focus(); }
+      else if (e.key === "Tab") close();
+    });
+    list.addEventListener("mousedown", e => e.preventDefault());
+    list.addEventListener("click", e => { const it = e.target.closest(".cs-opt"); if (it) pick(+it.dataset.i); });
+    list.addEventListener("mousemove", e => {
+      const it = e.target.closest(".cs-opt");
+      if (it && +it.dataset.i !== open.active) { open.active = +it.dataset.i; list.querySelectorAll(".cs-opt").forEach((el, i) => el.classList.toggle("act", i === open.active)); }
+    });
+    render();
+    setTimeout(() => search.focus(), 0);
+    if (!SS_SRC[w.dataset.src].length && ["teams", "nations", "leagues"].includes(w.dataset.src)) loadFacets().then(() => { if (open && open.w === w) render(); });
+    if (!SS_SRC[w.dataset.src].length && (w.dataset.src === "allTeams" || w.dataset.src === "allLeagues")) loadAllTeams().then(() => { if (open && open.w === w) render(); });
+  }
+  document.addEventListener("mousedown", e => { if (open && !open.pop.contains(e.target) && !open.btn.contains(e.target)) close(); });
+  addEventListener("resize", close);
+  addEventListener("scroll", e => { if (open && !open.pop.contains(e.target)) close(); }, true);
+  document.querySelectorAll(".ss").forEach(build);
+})();
+loadFacets();
+
+loadSeasons();
+loadAllTeams();
+$("#searchGrade").innerHTML = gradeOpts(1); $("#searchGrade").addEventListener("change", () => renderSearch()); $("#bagGrade").innerHTML = gradeOpts(1);
+packsReady = api("packs").then(j => {
+  packs = j.packs;
+  $("#packSel").innerHTML = packOpts();
+  $("#bagPack").innerHTML = '<option value="">Không kèm gói</option>' + packOpts();
+}).catch(e => say("Không tải được danh sách gói: " + e.message, "err"));
+
+function renderEnhance(j) {
+  const rate = j.success_percent;
+  $("#enhanceRate").value = rate === null ? 50 : rate;
+  $("#enhanceValue").textContent = $("#enhanceRate").value + "%";
+  $("#enhanceStatus").textContent = rate === null ? "Đang dùng tỷ lệ gốc theo cấp thẻ và nguyên liệu." : "Đang áp dụng tỷ lệ thành công: " + rate + "%";
+}
+$("#enhanceRate").addEventListener("input", () => { $("#enhanceValue").textContent = $("#enhanceRate").value + "%"; });
+$("#enhanceSave").addEventListener("click", () => act(async () => {
+  renderEnhance(await api("enhancement_settings_set", {success_percent: Number($("#enhanceRate").value)}));
+}, "Đã lưu tỷ lệ đập thẻ."));
+$("#enhanceDefault").addEventListener("click", () => act(async () => {
+  renderEnhance(await api("enhancement_settings_set", {success_percent: null}));
+}, "Đã khôi phục tỷ lệ gốc."));
+api("enhancement_settings").then(renderEnhance).catch(e => { $("#enhanceStatus").textContent = e.message; });
+show(((location.hash || "").slice(1) in loaders) ? location.hash.slice(1) : "ringkasan");
+</script>
+<script>
+// Doi giao dien sang / toi, nho lua chon trong trinh duyet
+(function () {
+  const root = document.documentElement;
+  const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.getElementById("themeBtn").addEventListener("click", () => {
+    const next = isDark() ? "light" : "dark";
+    root.dataset.theme = next;
+    try { localStorage.setItem("fo3-theme", next); } catch (e) {}
+  });
+  // Dong bo thanh truot (mau phan da keo + so lon ben canh)
+  const rate = document.getElementById("enhanceRate"), big = document.getElementById("enhanceBig");
+  const sync = () => { const v = rate.value; big.textContent = v + "%"; rate.style.setProperty("--fill", ((v - rate.min) / (rate.max - rate.min) * 100) + "%"); };
+  rate.addEventListener("input", sync);
+  new MutationObserver(sync).observe(document.getElementById("enhanceValue"), {childList: true, characterData: true, subtree: true});
+  sync();
+
+
+  // ===== Dropdown tu ve: thay giao dien cua moi <select> (ca select tao sau nay) =====
+  (function () {
+    let open = null;
+    const text = sel => { const o = sel.options[sel.selectedIndex]; return o ? o.text : ""; };
+    function enhance(sel) {
+      if (sel.dataset.cs) return;
+      sel.dataset.cs = "1";
+      const wrap = document.createElement("span");
+      wrap.className = "cs" + (sel.closest("td") ? " cs-sm" : "");
+      sel.parentNode.insertBefore(wrap, sel);
+      wrap.appendChild(sel);
+      sel.tabIndex = -1;
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "cs-btn"; btn.setAttribute("aria-haspopup", "listbox");
+      const lab = sel.getAttribute("aria-label") || (sel.closest("label") && sel.closest("label").firstChild.textContent.trim());
+      if (lab) btn.setAttribute("aria-label", lab);
+      btn.innerHTML = '<span class="cs-val"></span><svg class="cs-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+      wrap.appendChild(btn);
+      const sync = () => { btn.querySelector(".cs-val").textContent = text(sel); btn.disabled = sel.disabled; };
+      sel._csSync = sync; sync();
+      sel.addEventListener("change", sync);
+      new MutationObserver(sync).observe(sel, {childList: true, subtree: true, attributes: true, attributeFilter: ["disabled"]});
+      btn.addEventListener("click", e => { e.preventDefault(); open && open.sel === sel ? close() : show(sel, btn); });
+      btn.addEventListener("keydown", e => {
+        if (!open && ["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) { e.preventDefault(); e.stopPropagation(); show(sel, btn); }
+      });
+    }
+    function show(sel, btn) {
+      close();
+      if (!sel.options.length) return;
+      const pop = document.createElement("div");
+      pop.className = "cs-pop"; pop.setAttribute("role", "listbox");
+      [...sel.options].forEach((o, i) => {
+        const it = document.createElement("div");
+        it.className = "cs-opt" + (i === sel.selectedIndex ? " on" : "");
+        it.setAttribute("role", "option"); it.setAttribute("aria-selected", i === sel.selectedIndex);
+        it.textContent = o.text; it.dataset.i = i;
+        pop.appendChild(it);
+      });
+      document.body.appendChild(pop);
+      const r = btn.getBoundingClientRect();
+      pop.style.minWidth = r.width + "px";
+      const h = Math.min(pop.scrollHeight, 280), below = innerHeight - r.bottom;
+      pop.style.top = (below < h + 12 && r.top > below ? r.top - h - 6 : r.bottom + 6) + "px";
+      pop.style.left = Math.max(8, Math.min(r.left, innerWidth - pop.offsetWidth - 8)) + "px";
+      open = {sel, btn, pop, active: Math.max(0, sel.selectedIndex)};
+      btn.classList.add("open"); btn.setAttribute("aria-expanded", "true");
+      pop.addEventListener("mousedown", e => e.preventDefault());
+      pop.addEventListener("click", e => { const it = e.target.closest(".cs-opt"); if (it) pick(+it.dataset.i); });
+      pop.addEventListener("mousemove", e => { const it = e.target.closest(".cs-opt"); if (it) setActive(+it.dataset.i, false); });
+      setActive(open.active, true);
+    }
+    function setActive(i, scroll) {
+      if (!open) return;
+      const items = open.pop.children;
+      if (i < 0 || i >= items.length) return;
+      for (const x of items) x.classList.remove("act");
+      items[i].classList.add("act"); open.active = i;
+      if (scroll) items[i].scrollIntoView({block: "nearest"});
+    }
+    function pick(i) {
+      const {sel, btn} = open;
+      close();
+      if (sel.selectedIndex !== i) {
+        sel.selectedIndex = i;
+        sel.dispatchEvent(new Event("input", {bubbles: true}));
+        sel.dispatchEvent(new Event("change", {bubbles: true}));
+      }
+      sel._csSync(); btn.focus();
+    }
+    function close() {
+      if (!open) return;
+      open.pop.remove(); open.btn.classList.remove("open"); open.btn.setAttribute("aria-expanded", "false");
+      open = null;
+    }
+    document.addEventListener("keydown", e => {
+      if (!open) return;
+      if (e.key === "Escape") { e.preventDefault(); const b = open.btn; close(); b.focus(); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); setActive(open.active + 1, true); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); setActive(open.active - 1, true); }
+      else if (e.key === "Home") { e.preventDefault(); setActive(0, true); }
+      else if (e.key === "End") { e.preventDefault(); setActive(open.pop.children.length - 1, true); }
+      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(open.active); }
+      else if (e.key === "Tab") close();
+    });
+    document.addEventListener("mousedown", e => { if (open && !open.pop.contains(e.target) && !open.btn.contains(e.target)) close(); });
+    addEventListener("resize", close);
+    addEventListener("scroll", e => { if (open && !open.pop.contains(e.target)) close(); }, true);
+    const scan = root => {
+      if (root.nodeType !== 1) return;
+      if (root.matches("select")) enhance(root);
+      root.querySelectorAll("select").forEach(enhance);
+    };
+    new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(scan))).observe(document.body, {childList: true, subtree: true});
+    scan(document.body);
+  })();
+  
+  // Sao chep (Donate): moi nut co data-copy
+  document.querySelectorAll("#donate [data-copy]").forEach(btn => btn.addEventListener("click", async () => {
+    const val = btn.dataset.copy, what = btn.dataset.what || "nội dung";
+    let ok = false;
+    try { await navigator.clipboard.writeText(val); ok = true; } catch (e) {
+      try {
+        const t = document.createElement("textarea"); t.value = val; document.body.appendChild(t);
+        t.select(); ok = document.execCommand("copy"); t.remove();
+      } catch (e2) {}
+    }
+    if (ok) { btn.classList.add("done"); setTimeout(() => btn.classList.remove("done"), 1400); }
+    say(ok ? `Đã sao chép ${what}: ${val}` : `Không sao chép được, hãy ghi lại: ${val}`, ok ? "ok" : "err");
+  }));
+})();
+</script>
+</body>
+</html>
