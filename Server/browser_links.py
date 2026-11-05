@@ -4,8 +4,8 @@ import time
 import webbrowser
 
 URLS={
-    '/game/inweburl/worldcup':'https://www.facebook.com/mynameisgenta/',
-    '/game/inweburl/webevent':'https://www.facebook.com/mynameisgenta/',
+    '/game/inweburl/worldcup':'https://www.fo3th.online/',
+    '/game/inweburl/webevent':'https://www.fo3th.online/',
 }
 _last={}
 

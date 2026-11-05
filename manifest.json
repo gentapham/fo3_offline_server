@@ -1,72 +1,68 @@
 {
  "files": {
   "FO3 Offline Launcher.exe": {
-   "sha256": "c2e70edcb14fda1d8fceddf2bb3a784e4026dd19c841f4dd99fc2408ecc71553",
-   "size": 20884602
+   "sha256": "01057484125bb6dfbec3643b02b90c0351e677743bc2298f28047674c2034289",
+   "size": 20886533
   },
   "HuongDan/images/gm_card.png": {
-   "sha256": "4e905b38e9d471bba0b5e9da02abea42b7eba16f11de252fc32c9b12c71f6987",
-   "size": 232109
+   "sha256": "f9af388e47552a8754425ce52c63d550c39c767fdc4554633f602efb9faf4bd4",
+   "size": 231480
   },
   "HuongDan/images/gm_dark.png": {
-   "sha256": "08ee29e673cf8b4f73da468c1863ea2e73935f8449553b4db070bcd121d564f4",
-   "size": 276811
-  },
-  "HuongDan/images/gm_donate.png": {
-   "sha256": "c590cbbec686d92a6c6ba25371f86014cb5f45fec87f5476d1ef0b9346509b79",
-   "size": 447395
+   "sha256": "f8683d3cbba56220aceb0541b15c7cd47af7be4f6f55822e46c309467f79709e",
+   "size": 276199
   },
   "HuongDan/images/gm_harian.png": {
-   "sha256": "f07404919222dfaa4110577caa33b14362d2fe0499f46cbca17b04f17cf3bf9a",
-   "size": 272222
+   "sha256": "d3139b23619c7f2535cdde8e1755c95b6ef8a11c69cd256cdfb6a2ac211197e7",
+   "size": 271438
   },
   "HuongDan/images/gm_header.png": {
-   "sha256": "06e00577feeded43244c3dcff3c81f1603be5dcf4810547c4131d5aef2ab6775",
-   "size": 159618
+   "sha256": "7fd92a409a5cacbfd333d7110f8a615eaf4403abf6765c07653c7add9aa14bf1",
+   "size": 159626
   },
   "HuongDan/images/gm_hlv.png": {
-   "sha256": "c80e5048e4cf0f3e4b702dd3e9b113b429abef770fae37fa7571fb9d0bf98f17",
-   "size": 316491
+   "sha256": "e80b564d0372859d71fe5425f35693a446847eff4b5081e457834ef65fb6c848",
+   "size": 315716
   },
   "HuongDan/images/gm_hlv_clb.png": {
-   "sha256": "2e762e52a42488b7afd24ca2a56b3df610703a4bd5f5624aab56d1878e3e243a",
-   "size": 166254
+   "sha256": "c36fc8c6bc0ce61a22747529741dd507c0891715d52a8cc7e8117891157b77c2",
+   "size": 165424
   },
   "HuongDan/images/gm_item.png": {
-   "sha256": "8a604a43ab9f4b7ce22fedcee760a7fc886ad87ac17c9dfc79c903bd5e8ed86f",
-   "size": 256617
+   "sha256": "5e3d4a4dfbfd2427d8c68a1475f9d23569b654d0cdfd92de30477f1744273597",
+   "size": 255563
   },
   "HuongDan/images/gm_log.png": {
-   "sha256": "83e7da45b14c4e12c301e51602030053a03d79118df8ecadd061b299bf9b6fc7",
-   "size": 301208
+   "sha256": "883b035841663fcb4146ff172390a4b695d8dba2892073ff9d67943be176b552",
+   "size": 298914
   },
   "HuongDan/images/gm_pemain.png": {
-   "sha256": "eeb547c17b9a4eb55cc79877e907f48aa78731c0e381da9247cb538b7eaf0f2f",
-   "size": 317601
+   "sha256": "80bc54630fa7aab6439a8343d108648c7c7d2b272348a5732b64799f652af9ea",
+   "size": 316867
   },
   "HuongDan/images/gm_ringkasan.png": {
-   "sha256": "5e5ba98914e87d373bf58eee93e3bfc27dbfe4a057480fb5b48b0b638a23fb1e",
-   "size": 272839
+   "sha256": "e1a6d2278cc6e97dc3bac58c3a47069b5df0467d08a6c983a3364c54531d55bc",
+   "size": 272115
   },
   "HuongDan/images/gm_scout.png": {
-   "sha256": "cfc060bd7cff8bcd9f1d0cbe8e873270c9f7e8faf83b1470ec5ad5494537d683",
-   "size": 248287
+   "sha256": "fc1f573699da8c33075214187270725e9d7a26292fbc03f8ff8c89285724ad2f",
+   "size": 237308
   },
   "HuongDan/images/gm_tambah.png": {
-   "sha256": "00d0d7f8ca407989d7439732adaa152df390ae6b96faa7e79cb0dfc7fa590e16",
-   "size": 352150
+   "sha256": "9a6c915104afa0449ad97a83d22526c5f456e798d665c24612d90ae3e59b31f0",
+   "size": 351637
   },
   "HuongDan/images/gm_theomua.png": {
-   "sha256": "4cfec5f5699231ca3ba059c38a6c695b89ca845f7850e1ec4b6e5c51726ec3fa",
-   "size": 242762
+   "sha256": "0266e3f02c30885030a86b7a10a5268c79fd1f3e7e1577c98070892202b154e2",
+   "size": 290638
   },
   "HuongDan/images/launcher.png": {
-   "sha256": "f91564ffb71c3400da8fb7b603e003113bb66e5062fc3fe3523526c41499f443",
-   "size": 346741
+   "sha256": "d705c40b3c714d40f1f17404db48196024122b92c9259e8dbc0965c6dc6ad6e8",
+   "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "90748505c86fa19c3062455e0d59811e8e7547261ef773fae3aac6472c31b2a9",
-   "size": 40087
+   "sha256": "e3b9a1f0ecf10c1f7729a4ae594e792f2f78d033d81c3a3a97213385f35e2597",
+   "size": 40289
   },
   "Server/admin.py": {
    "sha256": "3a4395a2efb241c326420a1f1addf03bdbfd330e092975ab9aa57f2b79a60cd2",
@@ -77,16 +73,16 @@
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "7df36d673e3e6ae4bc1345b8c83bacd75e104583e2bf6e5e3fa6a5643a1e0985",
-   "size": 180703
+   "sha256": "64a6f41aa5e461518be96ccb4cd825002667480a658b66ab4a8679740bcccc4e",
+   "size": 139817
   },
   "Server/admin/notice.html": {
-   "sha256": "caffb246ba5f50673a71888a8c0f85424316a9d8a510333f0613df2eb9fe3b3c",
-   "size": 3038
+   "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
+   "size": 3037
   },
   "Server/browser_links.py": {
-   "sha256": "cfb75ed2dbb179d245eb665c5b997b09fd8a72eb1669ad3b1fd377fbc8da7590",
-   "size": 620
+   "sha256": "fdf216320a741048a4b063051bb365a1aa6a9e21735e7c055665bd9e0b4af82f",
+   "size": 592
   },
   "Server/enhancement_settings.py": {
    "sha256": "29bc13fa493bbf612d6e1060d19673c05865cf5da2d9f74ac82d139418a81093",
@@ -145,24 +141,24 @@
    "size": 65
   },
   "Server/responses/game_inweburl_cookieWCBroad.json": {
-   "sha256": "45c25703e8d0a1d49a34e90854d4d2dd7e0229b1d30e6d6d03a2bbb3ff58bc3d",
-   "size": 63
+   "sha256": "7f0e7ba5e001bacea0e8ef1d382d0c668024baefc8aa77fc499b9f53d50ae4a5",
+   "size": 49
   },
   "Server/responses/game_inweburl_cookieWebEvent.json": {
-   "sha256": "45c25703e8d0a1d49a34e90854d4d2dd7e0229b1d30e6d6d03a2bbb3ff58bc3d",
-   "size": 63
+   "sha256": "7f0e7ba5e001bacea0e8ef1d382d0c668024baefc8aa77fc499b9f53d50ae4a5",
+   "size": 49
   },
   "Server/responses/game_inweburl_notice.json": {
    "sha256": "884850d0ae7fe170fcc91c695d198d91b1b66ae7da255d2d658c47d6514d3612",
    "size": 44
   },
   "Server/responses/game_inweburl_webevent.json": {
-   "sha256": "45c25703e8d0a1d49a34e90854d4d2dd7e0229b1d30e6d6d03a2bbb3ff58bc3d",
-   "size": 63
+   "sha256": "7f0e7ba5e001bacea0e8ef1d382d0c668024baefc8aa77fc499b9f53d50ae4a5",
+   "size": 49
   },
   "Server/responses/game_inweburl_worldcup.json": {
-   "sha256": "45c25703e8d0a1d49a34e90854d4d2dd7e0229b1d30e6d6d03a2bbb3ff58bc3d",
-   "size": 63
+   "sha256": "7f0e7ba5e001bacea0e8ef1d382d0c668024baefc8aa77fc499b9f53d50ae4a5",
+   "size": 49
   },
   "Server/responses/info_my_services_messenger_2.json": {
    "sha256": "c1c49bcb596762a48af1f3f8a4ad2da65c7fcbf42fe2d4f52ca3d1430c19a77c",
@@ -6389,14 +6385,14 @@
    "size": 711936
   },
   "data/ui/localization/LANGUAGESTRING_ENG.json": {
-   "sha256": "5cbbe40e49309bd585efed39ac6a5f09fb2c2886cb4de9da4c4c9cf95691de3d",
-   "size": 836599
+   "sha256": "bd03e29185b4f038b0468eb4f99df50322117edd38dd9577f09cbcd70eea1a39",
+   "size": 836693
   },
   "fifalauncher_offline.exe": {
    "sha256": "a170505dd39aa4dbf182ec32a8b117e479655c346d9cd57fb8dc83d3879eaacd",
    "size": 6656
   }
  },
- "version": "2026.11.05-2113",
- "notes": "Bản vá đầu tiên: World Cup, HLV, đội hình A/B/C, COM +10, tự bù miniface, launcher v1.2.0 có cập nhật và hướng dẫn mới"
+ "version": "2026.11.05-2130",
+ "notes": "Màn hình khởi động mới, link fo3th.online, đổi tên hỗ trợ thành Siêu Nhân Hồng, bỏ Donate và dòng hỗ trợ trong GM Tool, ảnh hướng dẫn mới, launcher cập nhật được file chỉ đọc"
 }
