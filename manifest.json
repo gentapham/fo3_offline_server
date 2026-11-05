@@ -65,8 +65,8 @@
    "size": 40289
   },
   "Server/admin.py": {
-   "sha256": "3a4395a2efb241c326420a1f1addf03bdbfd330e092975ab9aa57f2b79a60cd2",
-   "size": 43248
+   "sha256": "71558ebeea41cc5b5768e0f0813bb9496f5cee2fab4cc7bc59ec63f1b8241011",
+   "size": 43436
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
@@ -6393,6 +6393,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.05-2130",
- "notes": "Màn hình khởi động mới, link fo3th.online, đổi tên hỗ trợ thành Siêu Nhân Hồng, bỏ Donate và dòng hỗ trợ trong GM Tool, ảnh hướng dẫn mới, launcher cập nhật được file chỉ đọc"
+ "version": "2026.11.05-2317",
+ "notes": "Sửa lỗi 'File tải về bị lỗi' (giữ nguyên xuống dòng), GM Tool báo rõ khi chưa có HLV"
 }

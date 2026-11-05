@@ -40,10 +40,14 @@ def api(name):
 
 
 def coach(st):
-    return hc.my_coach(st)
+    try:
+        return hc.my_coach(st)
+    except StopIteration:
+        raise AdminError("Chưa có tài khoản HLV. Hãy vào game tạo HLV trước, rồi tải lại trang này.") from None
 
 
 def team(st):
+    coach(st)
     return st["teams"][str(hc._default_slot(st))]
 
 
