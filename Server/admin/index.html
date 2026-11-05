@@ -741,6 +741,15 @@
         </div>
         <p class="hint">Áp dụng cho các lần đập tiếp theo của mọi HLV. Không thay đổi thẻ đã có hoặc dữ liệu profile.</p>
       </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"/></svg></span><h2 class="display">Reset nhân vật</h2></div>
+        <p class="lead">Xoá HLV, CLB, cầu thủ, EP và túi đồ hiện tại để vào game tạo lại nhân vật mới từ đầu. Thoát game trước khi bấm.</p>
+        <div class="row">
+          <button id="resetCoach" class="b danger" type="button">Reset nhân vật</button>
+        </div>
+        <p class="hint">Dữ liệu cũ được sao lưu tự động vào <code>Server\gamedata\backup</code> trước khi xoá. Thiết lập GM (tỷ lệ đập thẻ, giá EP, quà hằng ngày) giữ nguyên.</p>
+      </div>
     </section>
 
     <section id="pemain" hidden>
@@ -957,7 +966,7 @@
         <pre class="log" id="logBox"></pre>
       </div>
     </section>
-
+
 
   </main>
 </div>
@@ -1941,6 +1950,16 @@ $("#enhanceDefault").addEventListener("click", () => act(async () => {
   renderEnhance(await api("enhancement_settings_set", {success_percent: null}));
 }, "Đã khôi phục tỷ lệ gốc."));
 api("enhancement_settings").then(renderEnhance).catch(e => { $("#enhanceStatus").textContent = e.message; });
+$("#resetCoach").addEventListener("click", async () => {
+  if (!confirm("Xoá toàn bộ nhân vật hiện tại (HLV, CLB, cầu thủ, EP, túi đồ) để tạo lại từ đầu?\n\nHãy thoát game trước. Dữ liệu cũ sẽ được sao lưu.")) return;
+  if (prompt('Gõ chữ RESET để xác nhận:') !== "RESET") { say("Đã huỷ reset nhân vật.", ""); return; }
+  try {
+    const r = await api("reset_coach", {confirm: "RESET"});
+    say("Đã reset nhân vật. Vào game để tạo HLV mới." + (r.backup ? ` Bản sao lưu: ${r.backup}` : ""), "ok");
+    $("#coachName").textContent = "Chưa có HLV";
+  } catch (e) { say("Lỗi: " + e.message, "err"); }
+});
+
 show(((location.hash || "").slice(1) in loaders) ? location.hash.slice(1) : "ringkasan");
 </script>
 <script>

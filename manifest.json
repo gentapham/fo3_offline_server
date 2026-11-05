@@ -65,16 +65,16 @@
    "size": 40289
   },
   "Server/admin.py": {
-   "sha256": "71558ebeea41cc5b5768e0f0813bb9496f5cee2fab4cc7bc59ec63f1b8241011",
-   "size": 43436
+   "sha256": "d963d1c65fcefb27d84e7dc2c5b68e3cb2b0cdd1c0e72af34e67612eed523b33",
+   "size": 44650
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "64a6f41aa5e461518be96ccb4cd825002667480a658b66ab4a8679740bcccc4e",
-   "size": 139817
+   "sha256": "a3db7eee0bb319a8c90a6439857803a8f857e4b72b7368116ce16377882a4201",
+   "size": 141241
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -6393,6 +6393,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.05-2320",
- "notes": "Launcher 1.2.1: sửa lỗi 'File tải về bị lỗi' do cache GitHub (tải theo mã commit)"
+ "version": "2026.11.05-2330",
+ "notes": "GM Tool: thêm nút Reset nhân vật (tab Tổng quan) để xoá nhân vật và tạo lại từ đầu, tự sao lưu acc cũ"
 }

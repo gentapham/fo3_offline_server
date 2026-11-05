@@ -132,6 +132,32 @@ def summary(p):
             "server_time": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(time.time() + hc.WIB)) + " (giờ VN)"}
 
 
+@api("reset_coach")
+def reset_coach(p):
+    """Xoa nhan vat (HLV + CLB) de vao game tao lai tu dau. state.json cu duoc chep vao gamedata/backup."""
+    if p.get("confirm") != "RESET":
+        raise AdminError("Thiếu xác nhận")
+    try:
+        import subprocess
+        out = subprocess.run(["tasklist", "/FI", "IMAGENAME eq fifazf.exe", "/NH"], capture_output=True, text=True,
+                             timeout=10, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0)).stdout
+        if "fifazf.exe" in out.lower():
+            raise AdminError("Game đang mở. Hãy thoát game trước rồi bấm lại.")
+    except AdminError:
+        raise
+    except Exception:
+        pass
+    saved = ""
+    if os.path.isfile(hc.STATE):
+        bdir = os.path.join(os.path.dirname(hc.STATE), "backup")
+        os.makedirs(bdir, exist_ok=True)
+        saved = os.path.join(bdir, time.strftime("state_truoc_reset_%Y%m%d_%H%M%S.json"))
+        import shutil
+        shutil.copyfile(hc.STATE, saved)
+    hc._save({"coaches": [], "defaultcoachid": "", "teams": {}})
+    return {"ok": True, "backup": os.path.relpath(saved, os.path.dirname(os.path.dirname(hc.STATE))) if saved else ""}
+
+
 @api("players")
 def players(p):
     st = hc._state(); t = team(st)
