@@ -1,8 +1,8 @@
 {
  "files": {
   "FO3 Offline Launcher.exe": {
-   "sha256": "acbc20016d4cac7aa66c0d4f060256e7f13f3e756ec3101f13f7e7070f9e7eb9",
-   "size": 20962088
+   "sha256": "6f2062e34b7d229f7bdc9958b9d073e6afe654d9a1df53ad59b9a102650305a7",
+   "size": 20962514
   },
   "HuongDan/images/gm_card.png": {
    "sha256": "f9af388e47552a8754425ce52c63d550c39c767fdc4554633f602efb9faf4bd4",
@@ -65,20 +65,24 @@
    "size": 39764
   },
   "Server/admin.py": {
-   "sha256": "86489f9bd27b04941aa48aed189b64170f0a88b4a08b1142e53699f52a58ac05",
-   "size": 44876
+   "sha256": "1531adb3d74649e4bbe08af1b0a41ca6e4146b610e28dfc416f4e9d7b1324796",
+   "size": 45357
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "a3db7eee0bb319a8c90a6439857803a8f857e4b72b7368116ce16377882a4201",
-   "size": 141241
+   "sha256": "3316ce11521d86dcada691c3a0393a2da8d7c9293b57fec6eae700ca29ec84d8",
+   "size": 143470
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
    "size": 3037
+  },
+  "Server/bot_settings.py": {
+   "sha256": "9b08d619fba294efdf9accac9abfa5953eceefa024e35d22fdb30d69eec33cd8",
+   "size": 2451
   },
   "Server/browser_links.py": {
    "sha256": "fdf216320a741048a4b063051bb365a1aa6a9e21735e7c055665bd9e0b4af82f",
@@ -113,12 +117,12 @@
    "size": 8882
   },
   "Server/http_config.py": {
-   "sha256": "d0b04ce19a389567317df5fbf7ba067d5eb00fff65352d7bc52ab25b9a2259d3",
-   "size": 220293
+   "sha256": "2fa9e03bd3c752962e53c83ec32c8122c15414fc3356090899edc96c429f2e70",
+   "size": 222051
   },
   "Server/messenger.py": {
-   "sha256": "fd04c8297cbcadd63b6233c5d9777624d7f1fc47b90cf37cdbeae3736e89fac7",
-   "size": 4566
+   "sha256": "5a54f25af48e3a34ff4f9fc894f9ffc51af6e0ba0b32a279d3651a0e43c182bc",
+   "size": 5048
   },
   "Server/price_settings.py": {
    "sha256": "8b38cbca98867c24d24976dbf302b5fd293ec46f53607d90cd1e0d1629a80d4a",
@@ -6389,14 +6393,14 @@
    "size": 711936
   },
   "data/ui/localization/LANGUAGESTRING_ENG.json": {
-   "sha256": "bd03e29185b4f038b0468eb4f99df50322117edd38dd9577f09cbcd70eea1a39",
-   "size": 836693
+   "sha256": "a3f6011eb75adff0f4271fccb805111d54fee49fbb2733eb8fbb36be9d6e7cf3",
+   "size": 836627
   },
   "fifalauncher_offline.exe": {
    "sha256": "a170505dd39aa4dbf182ec32a8b117e479655c346d9cd57fb8dc83d3879eaacd",
    "size": 6656
   }
  },
- "version": "2026.11.06-1023",
- "notes": "Khôi phục các dòng hỗ trợ Siêu Nhân Hồng trong game và trang Thông báo"
+ "version": "2026.11.06-2113",
+ "notes": "Launcher 1.2.4 (nhắc tắt bộ gõ); GM Tool: sức mạnh BOT theo chế độ, giới hạn EP 2 tỷ; chặn cầu thủ trùng trong đội hình; gói thẻ ra đủ các mùa; ảnh mặt dự phòng từ fifaaddict; sửa lỗi ConnectionResetError; chữ [F1] Hỗ Trợ - [F2] Chụp Ảnh Màn Hình"
 }

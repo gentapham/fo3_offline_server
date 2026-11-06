@@ -22,7 +22,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PAGE = os.path.join(HERE, "admin", "index.html")
 POS_NAMES = "GK SW RWB RB RCB CB LCB LB LWB RDM CDM LDM RM RCM CM LCM LM RAM CAM LAM RF CF LF RW RS ST LS LW".split()
 API = {}
-READ_ONLY = {"enhancement_settings", "summary", "players", "search", "packs", "daily", "log", "seasons", "facets", "season_cards",
+READ_ONLY = {"bot_settings", "enhancement_settings", "summary", "players", "search", "packs", "daily", "log", "seasons", "facets", "season_cards",
              "coach_info", "price_settings", "card", "staff_catalog", "staffs"}  # the rest must be POST + header
 NO_LOCK = {"search", "facets", "seasons", "packs", "staff_catalog", "log"}
 hc = None  # the http_config module, set by start() (or by tests)
@@ -400,10 +400,9 @@ def packs(p):
 def set_ep(p):
     st = hc._state(); c = coach(st)
     if "set" in p:
-        c["ep"] = as_int(p["set"], 0, 10 ** 13, "EP")
+        c["ep"] = as_int(p["set"], 0, hc.MAX_EP, "EP")
     else:
-        hc.add_ep(st, as_int(p.get("add"), -10 ** 13, 10 ** 13, "EP"))
-        c["ep"] = max(0, c["ep"])
+        hc.add_ep(st, as_int(p.get("add"), -hc.MAX_EP, hc.MAX_EP, "EP"))  # add_ep giu trong 0..MAX_EP
     hc._save(st)
     return {"ep": c["ep"]}
 
@@ -774,6 +773,22 @@ def card(p):
             "skillmoves": (r["skillmoves"] or 0) + 1, "weakfoot": r["weakfootabilitytypecode"] or 0,
             "workrate": f'{wr.get(r["attackingworkrate"], "?")} / {wr.get(r["defensiveworkrate"], "?")}',
             "stats": {k: (r[k] or 0) + boost for k in STAT_COLS}}
+
+
+@api("bot_settings")
+def bot_settings_get(p):
+    import bot_settings
+    return {"modes": bot_settings.MODES, "values": bot_settings.get(), "max_level": bot_settings.MAX_LEVEL}
+
+
+@api("bot_settings_set")
+def bot_settings_set(p):
+    import bot_settings
+    try:
+        vals = bot_settings.reset() if p.get("reset") else bot_settings.set_all(p.get("values"))
+    except ValueError as e:
+        raise AdminError(str(e))
+    return {"values": vals}
 
 
 @api("enhancement_settings")

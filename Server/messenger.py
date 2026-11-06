@@ -75,7 +75,10 @@ class H(socketserver.BaseRequestHandler):
         log(f"connect {self.client_address}")
         buf = b""
         while True:
-            data = self.request.recv(65536)
+            try:
+                data = self.request.recv(65536)
+            except (ConnectionResetError, ConnectionAbortedError, OSError):
+                data = b""  # game dong / bi tat dot ngot (WinError 10054): binh thuong, khong in loi
             if not data:
                 break
             buf += data
@@ -91,7 +94,11 @@ class H(socketserver.BaseRequestHandler):
                 if msg.get("cmd") != "ping":
                     log(f"<- {msg}")
                 for out in replies(msg):
-                    self.request.sendall(encode(out))
+                    try:
+                        self.request.sendall(encode(out))
+                    except OSError:
+                        log(f"closed {self.client_address}")
+                        return
                     if out["cmd"] != "ping":
                         log(f"-> {str(out)[:300]}")
         log(f"closed {self.client_address}")

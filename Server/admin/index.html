@@ -720,7 +720,7 @@
         <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"/></svg></span><h2 class="display">Số dư EP</h2></div>
         <p class="lead">Cộng, trừ hoặc đặt thẳng số EP của bạn.</p>
         <form class="row" id="epForm">
-          <label class="f">Số EP<input type="number" id="epValue" min="0" step="1000" required placeholder="VD: 1000000"></label>
+          <label class="f">Số EP (tối đa 2.000.000.000)<input type="number" id="epValue" min="0" max="2000000000" step="1000" required placeholder="VD: 1000000"></label>
           <button class="b primary" data-mode="add">Cộng EP</button>
           <button class="b" data-mode="sub">Trừ EP</button>
           <button class="b" data-mode="set">Đặt số dư</button>
@@ -740,6 +740,19 @@
           <button id="enhanceDefault" class="b">Dùng tỷ lệ gốc</button>
         </div>
         <p class="hint">Áp dụng cho các lần đập tiếp theo của mọi HLV. Không thay đổi thẻ đã có hoặc dữ liệu profile.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"/></svg></span><h2 class="display">Sức mạnh BOT</h2></div>
+        <p class="lead">Thẻ cộng và cấp cầu thủ của đội máy (BOT) theo từng chế độ. Áp dụng từ trận tiếp theo, không cần khởi động lại.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Chế độ</th><th>Thẻ cộng</th><th>Cấp cầu thủ</th></tr></thead>
+          <tbody id="botRows"><tr><td colspan="3" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+        <div class="row">
+          <button id="botSave" class="b primary" type="button">Lưu</button>
+          <button id="botReset" class="b" type="button">Về mặc định (+10, LV 1)</button>
+        </div>
       </div>
 
       <div class="card">
@@ -1159,7 +1172,7 @@ document.addEventListener("click", e => {
 
 const loaders = {
   async ringkasan() {
-    loadCoach(); loadPrices();  // tai song song, khong cho phan tong quan
+    loadBot(); loadCoach(); loadPrices();  // tai song song, khong cho phan tong quan
     const s = await refreshTop(), d = s.daily;
     $("#facts").innerHTML = facts([
       ["Cầu thủ trong CLB", `${s.players} / ${s.max_players}`],
@@ -1950,6 +1963,28 @@ $("#enhanceDefault").addEventListener("click", () => act(async () => {
   renderEnhance(await api("enhancement_settings_set", {success_percent: null}));
 }, "Đã khôi phục tỷ lệ gốc."));
 api("enhancement_settings").then(renderEnhance).catch(e => { $("#enhanceStatus").textContent = e.message; });
+async function loadBot() {
+  try {
+    const r = await apiFetch("bot_settings");
+    $("#botRows").innerHTML = Object.entries(r.modes).map(([k, name]) => {
+      const v = r.values[k];
+      const lv = Array.from({length: r.max_level}, (_, i) => i + 1)
+        .map(l => `<option value="${l}"${l == v.level ? " selected" : ""}>LV ${l}</option>`).join("");
+      return `<tr data-mode="${k}"><td>${esc(name)}</td><td><select class="botGrade">${gradeOpts(v.grade, 0)}</select></td>`
+        + `<td><select class="botLevel">${lv}</select></td></tr>`;
+    }).join("");
+  } catch (e) { $("#botRows").innerHTML = `<tr><td colspan="3" class="muted">Không tải được: ${esc(e.message)}</td></tr>`; }
+}
+$("#botSave").addEventListener("click", () => act(async () => {
+  const values = {};
+  for (const tr of document.querySelectorAll("#botRows tr[data-mode]"))
+    values[tr.dataset.mode] = {grade: +tr.querySelector(".botGrade").value, level: +tr.querySelector(".botLevel").value};
+  await api("bot_settings_set", {values}); await loadBot();
+}, "Đã lưu sức mạnh BOT. Áp dụng từ trận tiếp theo."));
+$("#botReset").addEventListener("click", () => act(async () => {
+  await api("bot_settings_set", {reset: true}); await loadBot();
+}, "Đã đưa BOT về mặc định (+10, LV 1)."));
+
 $("#resetCoach").addEventListener("click", async () => {
   if (!confirm("Xoá toàn bộ nhân vật hiện tại (HLV, CLB, cầu thủ, EP, túi đồ) để tạo lại từ đầu?\n\nHãy thoát game trước. Dữ liệu cũ sẽ được sao lưu.")) return;
   if (prompt('Gõ chữ RESET để xác nhận:') !== "RESET") { say("Đã huỷ reset nhân vật.", ""); return; }

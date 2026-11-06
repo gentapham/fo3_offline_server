@@ -117,7 +117,10 @@ CDN_PREFIX = "cdn/"
 
 # Mini face thieu trong kho: tai 1 lan tu CDN cong khai (cung ma cau thu EA pid, anh 128x128)
 # roi luu vao externalAssets/players; that bai -> _noface.png. Tat: FO3_FACE_FETCH=0.
-FACE_SOURCES = ("https://fo4.dn.nexoncdn.co.kr/live/externalAssets/common/players/p{pid}.png",)
+# Nguon 2 (du phong): anh mini FO3 cua fifaaddict (JPEG 40x40, co ca cau thu cu/huyen thoai ma CDN
+# tren khong co); luu nguyen JPEG duoi ten p<pid>.png (trinh duyet va game nhan dang theo noi dung).
+FACE_SOURCES = ("https://fo4.dn.nexoncdn.co.kr/live/externalAssets/common/players/p{pid}.png",
+                "https://fifaaddict.com/fo3img/players/small/p{pid}.jpg")
 _FACE_MISS = set()
 _FACE_LOCK = threading.Lock()
 
@@ -135,10 +138,11 @@ def fetch_face(path):
             return path
         for src in FACE_SOURCES:
             try:
-                req = urllib.request.Request(src.format(pid=pid), headers={"User-Agent": "FO3Offline/1.0"})
+                req = urllib.request.Request(src.format(pid=pid), headers={
+                    "User-Agent": "FO3Offline/1.0", "Referer": "https://vn.fifaaddict.com/"})
                 with urllib.request.urlopen(req, timeout=5) as r:
                     data = r.read(2_000_000)
-                if data[:8] == b"\x89PNG\r\n\x1a\n":
+                if data[:8] == b"\x89PNG\r\n\x1a\n" or data[:3] == b"\xff\xd8\xff":
                     tmp = path + ".part"
                     with open(tmp, "wb") as fh:
                         fh.write(data)
@@ -435,6 +439,15 @@ def ep_account_option(query, body):
     return _json({"result": True, "resources": [{"uri": "/account/option", "body": options}]})
 
 
+DUP_PLAYER_REASON = "Không được đưa cùng một cầu thủ (dù khác mùa thẻ) vào đội hình 2 lần."
+
+
+def has_dup_player(positions):
+    """Cung mot cau thu that (spid % 1000000 = playerid, khac mua the) xuat hien 2 lan trong 18 nguoi."""
+    pids = [int(p["spid"]) % 1000000 for p in positions if p.get("spid") is not None]
+    return len(pids) != len(set(pids))
+
+
 def ep_coach_squad(query, body):
     """PUT /coach/me/squad {squad:{positions,formation,...}, kickers, captain} from Tim > Formasi.
     Player ids are instance ids (iid)."""
@@ -450,6 +463,8 @@ def ep_coach_squad(query, body):
     if (sum(p["pos"] < POS_SUB for p in positions) == 11
             and len({p["id"] for p in positions}) == len(positions)
             and len({p["pos"] for p in positions if p["pos"] < POS_SUB}) == 11):
+        if has_dup_player(positions):
+            return _json({"result": False, "reason": DUP_PLAYER_REASON, "resources": coach_me_resources(st, slot)})
         squad_presets(team)
         selected = req.get('presetidx', team.get('presetidx', 0))
         if type(selected) is not int or not 0 <= selected < 3:
@@ -525,7 +540,7 @@ def roster_team(teamid):
 COM_GRADE = min(10, max(0, int(os.environ.get("FO3_COM_GRADE", "10"))))
 
 
-def match_side(raw, teamid, user=None, tactics=None):
+def match_side(raw, teamid, user=None, tactics=None, mode="friendly"):
     """match.side.<left|right>: PlayerListUtil.generateCaptainFromMatchInfo reads side.team
     {teamid, squad, players}, side.players (the users: id, name, levelinfo), MatchProxy
     fetchMatchSide* read squad, tactics, ready. tactics is the preset ARRAY (as
@@ -534,10 +549,13 @@ def match_side(raw, teamid, user=None, tactics=None):
     # Lobby/freeroam resources retain their separate ten-bit encoding.
     kit = {"availables": {k: {"id": int(teamid) << 5 | t}
                           for k, t in (("home", 0), ("away", 1), ("goalie", 2))}}
-    if user is None and COM_GRADE:
-        # AI side: every card at +COM_GRADE (default +10) so the COM stays a match for a
-        # fully enhanced squad (League, Cup, World Cup)
-        raw = {**raw, "players": [{**p, "grade": COM_GRADE} for p in raw.get("players", [])]}
+    if user is None:
+        # AI side: the cong + cap cau thu theo che do (GM Tool > Suc manh BOT, bot_settings.py;
+        # mac dinh +10, LV 1) de BOT van du suc voi doi da nang the
+        import bot_settings
+        bs = bot_settings.for_mode(mode)
+        raw = {**raw, "players": [{**p, "grade": bs["grade"], "levelinfo": {"level": bs["level"], "exp": 0}}
+                                  for p in raw.get("players", [])]}
     team = owned_team(raw)
     team.update(teamid=teamid, summary=team_summary(team, teamid), kit=kit)
     # "Doi doi hinh" truoc tran (SquadScreenHandler.initializeFormationComboBox) doc
@@ -610,7 +628,7 @@ def ep_match_campaign(query, body):
     # stage "created" call connectToTheSession -> native LobbyManager::ConnectSession, which
     # needs relayServer.address (crash without it).
     match = new_match("League_league", match_side(st["teams"][str(slot)], me["teamid"], user, _tactics(st)[1]),
-                      match_side(roster_team(ai), ai))
+                      match_side(roster_team(ai), ai, mode="friendly"))
     return _json({"result": True, "resources": [{"uri": f"/match/{match['id']}", "body": match}]})
 
 
@@ -1153,10 +1171,14 @@ VIP_DETAIL = 2 | 4  # VIP + VVIP mien phi (ban offline); doi ve 2 neu VVIP gay l
 VIP_UNTIL = 2051222400000  # 2035-01-01, ms
 
 
+# Tran EP: client doc EP qua kieu int 32-bit o vai cho (toi da 2.147.483.647) -> vuot la am/loi.
+MAX_EP = 2_000_000_000
+
+
 def add_ep(st, n):
     """Credit match/season/cup EP to the active coach (shown by /coach/me money.ep)."""
     coach = next(c for c in st["coaches"] if c["slot"] == _default_slot(st))
-    coach["ep"] = coach.get("ep", START_EP) + int(n)
+    coach["ep"] = max(0, min(MAX_EP, coach.get("ep", START_EP) + int(n)))
 
 
 def _deep_merge(base, extra):
@@ -1200,7 +1222,7 @@ def coach_me(st, slot):
         "id": coach["_id"], "name": coach["name"], "slot": slot, "teamid": coach["teamid"], "team": team,
         # CoachProxy.expandMoney parses money.mpdata.until as a W3C date; an exception there
         # silently aborts onChangeCoachMeResource before squad/players are read.
-        "money": {"ep": coach.get("ep", START_EP), "cash": 0, "mp": 0, "useable_mp": 0,
+        "money": {"ep": min(MAX_EP, coach.get("ep", START_EP)), "cash": 0, "mp": 0, "useable_mp": 0,
                   "mpdata": {"point": 0, "until": "2030-01-01T00:00:00.000Z"}},
         # always a VIP member playing from an official PC warnet (IGR / GCA): CoachProxy.igr,
         # isVip() = vipDetail > 0 and vipExpireAt in the future; vipStatus.VIP1 = VIP expiry
@@ -1699,7 +1721,7 @@ def league_match_body(st, req, playtype):
     lg = st["league2"]
     match = new_match("League_2_league_MGR" if playtype == "mgr" else "League_2_league",
                       match_side(st["teams"][str(_default_slot(st))], teamid, user, _tactics(st)[1]),
-                      match_side(roster_team(opp), opp))
+                      match_side(roster_team(opp), opp, mode="league"))
     gs = match["gamesettings"]
     gs["home"] = req["home"] == teamid  # I am always the left side
     gs["kit"] = ["home", "away"] if gs["home"] else ["away", "home"]
@@ -1876,6 +1898,9 @@ def ep_match_squad(mid, side, query, body):
             or len({p["id"] for p in positions}) != len(positions)
             or len(positions) > 18 or not any(p["pos"] == 0 for p in starters)):
         return _json({"result": False})
+    if has_dup_player(positions):
+        return _json({"result": False, "reason": DUP_PLAYER_REASON,
+                      "resources": [{"uri": f"/match/{mid}", "body": match}]})
     team = copy.deepcopy(current["team"])
     team["squad"].update({k: sq[k] for k in ("formation", "workrate") if k in sq})
     team["squad"]["positions"] = positions
@@ -2364,7 +2389,7 @@ def ep_cup_match(cupid, query, body):
     user = {"id": me["id"], "name": me["name"], "levelinfo": me["levelinfo"]}
     mine = roster_team(teamid) if wc else st["teams"][str(_default_slot(st))]  # World Cup: doi tuyen da chon
     match = new_match("WorldCup_PvE" if wc else "Cup_PvE", match_side(mine, teamid, user, _tactics(st)[1]),
-                      match_side(roster_team(opp), opp))
+                      match_side(roster_team(opp), opp, mode="worldcup" if wc else "cup"))
     gs = match["gamesettings"]
     gs["home"] = home == teamid
     gs["kit"] = ["home", "away"] if gs["home"] else ["away", "home"]
@@ -3098,7 +3123,10 @@ def pack_pool(itemid):
                                  WHERE ovr >= ?1 AND p.preferredposition1 BETWEEN ?2 AND ?3
                                  AND (?4 IS NULL OR p.leagueid = ?4) AND (?5 OR m.licensed = 1)""",
                              (f.get("ovr", 0) - GRADE_BOOST[1], lo, hi, f.get("league"), True)).fetchall()  # mo khoa: moi the
-        rows = sorted(((s, o) for s, o in rows if on_market(s) and (not seasons or s // 1000000 in seasons)),
+        # spid < 1.000.000 = the goc khong co mua (game hien huy hieu '17): bo khoi goi, neu khong cac
+        # goi "moi mua" (Top 300, Best 30, All Season...) chi ra toan the nay -> nguoi choi thay toan '17
+        rows = sorted(((s, o) for s, o in rows if on_market(s) and s >= 1000000
+                       and (not seasons or s // 1000000 in seasons)),
                       key=lambda r: -r[1])[:f.get("top")]
         # a price far below the pool's (odd fifaaddict data, e.g. a 120k World Best card among 20M+
         # ones) would win almost every draw: weigh anything under a tenth of the median as that tenth
