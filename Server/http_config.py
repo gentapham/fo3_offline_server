@@ -116,7 +116,8 @@ CDN_PREFIX = "cdn/"
 
 
 # Mini face thieu trong kho: tai 1 lan tu CDN cong khai (cung ma cau thu EA pid, anh 128x128)
-# roi luu vao externalAssets/players; that bai -> _noface.png. Tat: FO3_FACE_FETCH=0.
+# roi luu vao externalAssets/players; that bai -> _noface.png. BAN OFFLINE: mac dinh TAT (moi anh da nam san
+# trong may); chi bat khi can bang FO3_FACE_FETCH=1.
 # Nguon 2 (du phong): anh mini FO3 cua fifaaddict (JPEG 40x40, co ca cau thu cu/huyen thoai ma CDN
 # tren khong co); luu nguyen JPEG duoi ten p<pid>.png (trinh duyet va game nhan dang theo noi dung).
 FACE_SOURCES = ("https://fo4.dn.nexoncdn.co.kr/live/externalAssets/common/players/p{pid}.png",
@@ -129,7 +130,7 @@ def fetch_face(path):
     """path = .../players/p<pid>.png that is not on disk -> path after downloading, or None."""
     name = os.path.basename(path)
     m = re.fullmatch(r"p(\d+)\.png", name.lower())
-    if not m or os.environ.get("FO3_FACE_FETCH", "1") == "0" or name in _FACE_MISS:
+    if not m or os.environ.get("FO3_FACE_FETCH", "0") != "1" or name in _FACE_MISS:
         return None
     import urllib.request
     pid = int(m.group(1)) % 1000000
@@ -356,8 +357,9 @@ def purge_deleted_coaches(st):
         st["teams"].pop(str(c["slot"]), None)
         if c["_id"] == st["defaultcoachid"]:
             st["defaultcoachid"] = ""
-            for k in ("league2", "cups", "offers", "match", "trade"):
+            for k in COACH_CONTEXT_KEYS:
                 st.pop(k, None)
+        st.get("coachcontexts", {}).pop(str(c["slot"]), None)
     return gone
 
 
@@ -734,7 +736,7 @@ def player_ovr(p):
 
 def sig3(x):
     x = int(x)
-    return round(x, 2 - len(str(x))) if x >= 1000 else x
+    return round(x, 3 - len(str(x))) if x >= 1000 else x  # 3 chu so co nghia (23,6 ty giu nguyen)
 
 
 def price_formula(ovr):
@@ -778,15 +780,32 @@ def stat_price(ovr):
     return t[max(lo, ovr)]
 
 
+# Gia that cua the tu fifaaddict (FO3 VN) theo spid, gia o +1: gamedata/player_price_overrides.json
+# ({"spid": gia}). The khong co trong file -> tinh theo chi so (stat_price) nhu cu.
+PLAYER_PRICE_OVERRIDES = os.path.join(HERE, "gamedata", "player_price_overrides.json")
+_PLAYER_PRICE_OVERRIDES = None
+
+
+def player_price_overrides():
+    global _PLAYER_PRICE_OVERRIDES
+    if _PLAYER_PRICE_OVERRIDES is None:
+        try:
+            with open(PLAYER_PRICE_OVERRIDES, encoding="utf-8") as f:
+                _PLAYER_PRICE_OVERRIDES = {int(k): int(v) for k, v in json.load(f).items() if int(v) > 0}
+        except (OSError, ValueError, TypeError, AttributeError):
+            _PLAYER_PRICE_OVERRIDES = {}
+    return _PLAYER_PRICE_OVERRIDES
+
+
 def card_price(spid, grade=1):
-    """EP value from the card's rating and grade only (user: "fix harga yang tidak sesua
-    statsnya"): fifaaddict's own prices put scarce seasons (Legend, EL, UL, WL, CC, LP...) at up
-    to 50,000x a card of the same rating, and some '17 cards rated 76 at 1,000 EP."""
+    """EP value of a card: GM Tool price (price_settings) > fifaaddict price file
+    (player_price_overrides.json) > from its rating (stat_price)."""
     # Cai dat tren trang admin (price_settings.json): gia tu dat theo the, gia the +0, he so nhan gia.
     import price_settings
     ps = price_settings.get()
     g = min(10, max(0, int(grade)))
-    base = ps["overrides"].get(str(int(spid))) or stat_price(card_ovr(spid))
+    base = (ps["overrides"].get(str(int(spid))) or player_price_overrides().get(int(spid))
+            or stat_price(card_ovr(spid)))
     factor = GRADE_PRICE[g] if g > 0 else ps["zero_percent"] / 100  # +0 = 0 EP o ban goc
     return sig3(base * factor * ps["multiplier"])
 
@@ -1167,12 +1186,14 @@ def team_kit(teamid):
 
 START_EP = 1000000
 # Enums.VIP_DETAIL_*: NONE 0, VIP 1<<1, VVIP 1<<2, VVIP_SEA 1<<4
-VIP_DETAIL = 2 | 4  # VIP + VVIP mien phi (ban offline); doi ve 2 neu VVIP gay loi
-VIP_UNTIL = 2051222400000  # 2035-01-01, ms
+VIP_DETAIL = 16  # VVIP (ban SEA = VIP_DETAIL_VVIP_SEA 1<<4). Client coi VIP/VVIP la 1 gia tri (khong cong bit): 16 = VVIP,
+# het han VVIP (vipStatus.VIP4) thi tu lui ve VIP theo vipStatus.VIP1 -> ca hai deu 9999 ngay.
+VIP_UNTIL = int((time.time() // 86400 + 10000) * 86400 * 1000)  # VIP + VVIP luon con 9999 ngay (tinh tu hom nay), ms
 
 
-# Tran EP: client doc EP qua kieu int 32-bit o vai cho (toi da 2.147.483.647) -> vuot la am/loi.
-MAX_EP = 2_000_000_000
+# Tran EP: game hien dung so tien hang tram ty (gia tri doi 126 ty, the dat nhat 40,9 ty) nhung so qua
+# lon (vd 10^13 tu GM Tool) se loi hien thi/tran so -> gioi han ~1.000 ty.
+MAX_EP = 999_999_999_999
 
 
 def add_ep(st, n):
@@ -1227,7 +1248,7 @@ def coach_me(st, slot):
         # always a VIP member playing from an official PC warnet (IGR / GCA): CoachProxy.igr,
         # isVip() = vipDetail > 0 and vipExpireAt in the future; vipStatus.VIP1 = VIP expiry
         # after a VVIP period (updateVipExpireAt)
-        "igr": True, "vipDetail": VIP_DETAIL, "vipExpireAt": VIP_UNTIL, "vipStatus": {"VIP1": VIP_UNTIL},
+        "igr": True, "vipDetail": VIP_DETAIL, "vipExpireAt": VIP_UNTIL, "vipStatus": {"VIP1": VIP_UNTIL, "VIP2": VIP_UNTIL, "VIP4": VIP_UNTIL},
         "sp": {"point": 0}, "gpdata": {"gp": 0}, "badges": [], "currentbadge": 0,
         # league.leagueid -> CoachProxy.leagueId: Single > Liga builds the league from it
         "levelinfo": coach_levelinfo(coach), "statistics": coach_statistics(coach),
@@ -1319,6 +1340,12 @@ def ep_coach_onready(query, body):
     return _json({"result": True, "resources": coach_me_resources(st, _default_slot(st))})
 
 
+# Du lieu rieng cua tung HLV (cung tai khoan co 2 HLV): giai dau, cup/World Cup, tran dang da, chien
+# thuat, de nghi chuyen nhuong... Thieu "tactics"/"wc_record" -> HLV 2 nhan chien thuat/ky luc cua HLV 1.
+COACH_CONTEXT_KEYS = ('league2', 'league2_archives', 'cups', 'offers', 'match', 'trade', 'cup_pending',
+                      'tactics', 'wc_record')
+
+
 def ep_default_coach(slot, query, body):
     # PUT /coach/<slot>/default: the client calls setLocalCoachId(body.resources[0].body.id);
     # resources are also fed to cached resources, so /coach/me (CoachProxy) goes first.
@@ -1328,7 +1355,7 @@ def ep_default_coach(slot, query, body):
     import copy
     previous = _default_slot(st)
     if previous != slot:
-        context_keys = ('league2', 'cups', 'offers', 'match', 'trade', 'cup_pending')
+        context_keys = COACH_CONTEXT_KEYS
         contexts = st.setdefault('coachcontexts', {})
         contexts[str(previous)] = {k: copy.deepcopy(st[k]) for k in context_keys if k in st}
         for key in context_keys:
