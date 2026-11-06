@@ -61,8 +61,8 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "e3b9a1f0ecf10c1f7729a4ae594e792f2f78d033d81c3a3a97213385f35e2597",
-   "size": 40289
+   "sha256": "8ab552acbae9c41435971173d304ce8124a17d1232581bfaade207eeaab4f00d",
+   "size": 39764
   },
   "Server/admin.py": {
    "sha256": "86489f9bd27b04941aa48aed189b64170f0a88b4a08b1142e53699f52a58ac05",
@@ -113,8 +113,8 @@
    "size": 8882
   },
   "Server/http_config.py": {
-   "sha256": "c66908a1bb337fd7e0ce30aa8d3b3a1b7a477757e6b2aeb287683f14fba89ce7",
-   "size": 219263
+   "sha256": "b3a2a1211f8f7b7423afcb7c3392ce69947c56e2f2dde2dc5db78b287d6a73b7",
+   "size": 215934
   },
   "Server/messenger.py": {
    "sha256": "fd04c8297cbcadd63b6233c5d9777624d7f1fc47b90cf37cdbeae3736e89fac7",
@@ -6397,6 +6397,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.05-2336",
- "notes": "Sửa lỗi 'Tính năng này chưa chạy được' khi vào trận Cúp châu Âu (bảng luật thẻ phạt), GM Tool không còn báo StopIteration khi chưa có HLV"
+ "version": "2026.11.06-0924",
+ "notes": "Giới hạn CLB 200 cầu thủ; lưu mũi tên công/thủ chỉnh trước trận vào đội hình CLB"
 }

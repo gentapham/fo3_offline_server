@@ -1885,6 +1885,17 @@ def ep_match_squad(mid, side, query, body):
     team["summary"] = team_summary(team, team["teamid"])
     current["team"] = team
     current["squad"] = team["squad"]
+    # Mui ten cong/thu (starting[0..1]) chi chinh duoc o man hinh doi hinh truoc tran
+    # (SquadScreenHandler.updateFormationMode: menu Doi hinh chi hien, khong cho sua) ->
+    # ghi lai vao doi hinh CLB de tran sau va menu Doi hinh deu giu muc da chinh.
+    if "WorldCup" not in str(match.get("type", "")):
+        mine = st.get("teams", {}).get(str(_default_slot(st)))
+        if mine:
+            wr = {p["id"]: p["starting"][:2] for p in positions if isinstance(p.get("starting"), list) and len(p["starting"]) >= 2}
+            for p in mine["squad"]["positions"]:
+                s = wr.get(str(p.get("id")))
+                if s and isinstance(p.get("starting"), list) and len(p["starting"]) >= 2:
+                    p["starting"][:2] = s
     _save(st)
     return _json({"result": True, "resources": [{"uri": f"/match/{mid}", "body": match}]})
 
@@ -2471,7 +2482,7 @@ def ep_cup_record(query, body):
 # the client fills staticdata (names, position, ratings) from its own DB via `expandme`.
 # --------------------------------------------------------------------------- #
 LINES = {"GK": range(0, 1), "DF": range(1, 9), "MF": range(9, 20), "FW": range(20, 28)}  # Enums.PLAYERPOSITION
-MAX_PLAYERS = 999  # coach.limits.players (squad size; was 60 -> 200 -> 500; nang len 999 theo yeu cau - doi lai 200 neu game loi)
+MAX_PLAYERS = 200  # coach.limits.players (gioi han cau thu trong CLB; theo yeu cau 200)
 # Tim inti (player state "first": Formasi lists only these) holds 36 ("Tim inti x/36" in Skuad);
 # cards beyond that wait in Tim Cadangan, which Tukar Scout trades from.
 FIRST_TEAM_MAX = 36
