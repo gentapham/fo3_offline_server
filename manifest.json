@@ -1,8 +1,8 @@
 {
  "files": {
   "FO3 Offline Launcher.exe": {
-   "sha256": "09dc03e140fc765e3e15cd443e03aab98af31e9dc58604f3195c4e969ade2281",
-   "size": 20955500
+   "sha256": "acbc20016d4cac7aa66c0d4f060256e7f13f3e756ec3101f13f7e7070f9e7eb9",
+   "size": 20962088
   },
   "HuongDan/images/gm_card.png": {
    "sha256": "f9af388e47552a8754425ce52c63d550c39c767fdc4554633f602efb9faf4bd4",
@@ -6397,6 +6397,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.06-0932",
- "notes": "Launcher 1.2.2: nút Xuất log lỗi; cho chỉnh mũi tên công/thủ; sửa danh sách sơ đồ trống khi đổi đội hình trước trận"
+ "version": "2026.11.06-0935",
+ "notes": "Launcher 1.2.3: sửa các link nhật ký không bấm được, bỏ link Hỗ trợ, chặn cập nhật hạ cấp, sửa lỗi Access is denied khi tự cập nhật"
 }
