@@ -77,8 +77,8 @@
    "size": 141241
   },
   "Server/admin/notice.html": {
-   "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
-   "size": 3037
+   "sha256": "cda2a49ae7ea9dbbe3336cc4c6fb87689795fdf26039d8782c4204a91a437ff2",
+   "size": 2835
   },
   "Server/browser_links.py": {
    "sha256": "fdf216320a741048a4b063051bb365a1aa6a9e21735e7c055665bd9e0b4af82f",
@@ -6389,14 +6389,14 @@
    "size": 711936
   },
   "data/ui/localization/LANGUAGESTRING_ENG.json": {
-   "sha256": "bd03e29185b4f038b0468eb4f99df50322117edd38dd9577f09cbcd70eea1a39",
-   "size": 836693
+   "sha256": "18bb0817274f58b669c01c5a2a7b9fe0654aab8fee49a783d18d97c10d1a17ec",
+   "size": 836468
   },
   "fifalauncher_offline.exe": {
    "sha256": "a170505dd39aa4dbf182ec32a8b117e479655c346d9cd57fb8dc83d3879eaacd",
    "size": 6656
   }
  },
- "version": "2026.11.06-0935",
- "notes": "Launcher 1.2.3: sửa các link nhật ký không bấm được, bỏ link Hỗ trợ, chặn cập nhật hạ cấp, sửa lỗi Access is denied khi tự cập nhật"
+ "version": "2026.11.06-1001",
+ "notes": "Bỏ các dòng 'Cần hỗ trợ liên hệ Siêu Nhân Hồng' trong game và trang Thông báo; gợi ý F1 rút gọn thành '[F1] - Bật Hỗ Trợ'"
 }
