@@ -1,8 +1,8 @@
 {
  "files": {
   "FO3 Offline Launcher.exe": {
-   "sha256": "e46045057d44687e3a8ef3b4db1e1db6ddd636de2d12d86c56bf9d0871640626",
-   "size": 20885718
+   "sha256": "09dc03e140fc765e3e15cd443e03aab98af31e9dc58604f3195c4e969ade2281",
+   "size": 20955500
   },
   "HuongDan/images/gm_card.png": {
    "sha256": "f9af388e47552a8754425ce52c63d550c39c767fdc4554633f602efb9faf4bd4",
@@ -113,8 +113,8 @@
    "size": 8882
   },
   "Server/http_config.py": {
-   "sha256": "b3a2a1211f8f7b7423afcb7c3392ce69947c56e2f2dde2dc5db78b287d6a73b7",
-   "size": 215934
+   "sha256": "d0b04ce19a389567317df5fbf7ba067d5eb00fff65352d7bc52ab25b9a2259d3",
+   "size": 220293
   },
   "Server/messenger.py": {
    "sha256": "fd04c8297cbcadd63b6233c5d9777624d7f1fc47b90cf37cdbeae3736e89fac7",
@@ -125,8 +125,8 @@
    "size": 2411
   },
   "Server/responses/account_base.json": {
-   "sha256": "09cff258e2cd5ca53d737bdca542253ae7e276e2ba46398fdb481184188c55d3",
-   "size": 3285
+   "sha256": "fb5bf09c7fff465c91577588c391ce188acd1133fb503f006919d76798ee9b2b",
+   "size": 3312
   },
   "Server/responses/achievement_me.json": {
    "sha256": "f61697eadfb95a27b5ca9521092b723d9d0d39fe9377b59b429cf41166a91802",
@@ -6397,6 +6397,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.06-0924",
- "notes": "Giới hạn CLB 200 cầu thủ; lưu mũi tên công/thủ chỉnh trước trận vào đội hình CLB"
+ "version": "2026.11.06-0932",
+ "notes": "Launcher 1.2.2: nút Xuất log lỗi; cho chỉnh mũi tên công/thủ; sửa danh sách sơ đồ trống khi đổi đội hình trước trận"
 }

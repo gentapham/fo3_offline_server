@@ -540,6 +540,10 @@ def match_side(raw, teamid, user=None, tactics=None):
         raw = {**raw, "players": [{**p, "grade": COM_GRADE} for p in raw.get("players", [])]}
     team = owned_team(raw)
     team.update(teamid=teamid, summary=team_summary(team, teamid), kit=kit)
+    # "Doi doi hinh" truoc tran (SquadScreenHandler.initializeFormationComboBox) doc
+    # side.team.formations: owned_team de [] -> danh sach so do trong rong.
+    if len(team.get("formations") or []) < 2:  # doi COM/World Cup chi co 1 so do tu gen_teams
+        team["formations"] = team_formations(teamid)
     # team color for the user's side only: an AI side is a whole club (+4 for free)
     team["teamcolors"] = active_teamcolors(team) if user else []
     # ready: a user side starts unready -- MatchController.sendReady skips the PUT .../ready
