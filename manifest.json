@@ -257,8 +257,8 @@
    "size": 1537
   },
   "Server/manager.py": {
-   "sha256": "f224c8bd4b5a4f4e9c4b8d84c9b112b309af5fa056ab0c77b914d7e31d342e30",
-   "size": 28964
+   "sha256": "77027a9cab8c309e76fb968718daf9efb1801cfb3bfc4358897327c8a262e108",
+   "size": 29410
   },
   "Server/market.py": {
    "sha256": "a7f92fede80f6e4c8509c20329e6ad4bb87f0960861c4107286730fb3a3925c6",
@@ -173292,6 +173292,26 @@
    "sha256": "5eb0997f733f005c55b1288366512b21c0b3f3d5a0ee587b5d4534d6a66f4d3e",
    "size": 187674
   },
+  "_cache/games/fo3sg/externalAssets/shop/Q28007.png": {
+   "sha256": "d88278b2cffaea5e3ac9b475e1d07438a8773bd9007bf24fe3d82bf07da4217b",
+   "size": 10441
+  },
+  "_cache/games/fo3sg/externalAssets/shop/Q50021.png": {
+   "sha256": "9cc60d3d650f2679fbaa91cd1064f1a4399171d0dd9b354eadb5b03e82044281",
+   "size": 12631
+  },
+  "_cache/games/fo3sg/externalAssets/shop/Q501.png": {
+   "sha256": "557f1bc5d3e9116a59f169a0e662b46c1ffac3a7347bc48561b612ba743f3484",
+   "size": 20909
+  },
+  "_cache/games/fo3sg/externalAssets/shop/Q50122.png": {
+   "sha256": "62e68ba47e579441d54fc92eb2dc4a89172b7b923ad785d6b28b21e73d10cc90",
+   "size": 12521
+  },
+  "_cache/games/fo3sg/externalAssets/shop/Q8223601.png": {
+   "sha256": "76bed00d2497ffcac34b2bef8781d4a43d31bcb608ae2addbbe2222d5c157c87",
+   "size": 14636
+  },
   "_cache/games/fo3sg/externalAssets/shop/_fallback.png": {
    "sha256": "75d113c62c05e6c32f292cf4ce1a3507fe1c5d676f6f7eeb2b1324637eddcde9",
    "size": 11987
@@ -180485,6 +180505,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.08-0228",
- "notes": "Nhiệm vụ hằng ngày/tuần + nút Quest; Info Manager có số liệu; xếp hạng giá trị đội; Shop tính phí (tuỳ chọn GM Tool); 900 câu chat HLV ảo; sửa trọng tài biên; cúp CLB cho chọn CLB; ảnh vật phẩm mới; ảnh cầu thủ mới"
+ "version": "2026.11.08-0232",
+ "notes": "Ảnh hộp quà Quest gọn hơn, không đè lên tên vật phẩm"
 }

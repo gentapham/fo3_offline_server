@@ -394,7 +394,14 @@ def gp_shop_list():
     out = []
     for itemid, gp in GP_SHOP:
         e = hc.shop_entry(itemid, "GPSHOP", GP_SHOPID + itemid)
-        e["product"]["staticdata"]["bunches"] = [{"bunch": 1, "price": gp}]
+        sd = e["product"]["staticdata"]
+        sd["bunches"] = [{"bunch": 1, "price": gp}]
+        # anh rieng cho cua so Quest (shop/Q<id>.png): hinh thu nho sat tren, chua cho ten vat pham game in de
+        # len 1/4 duoi o anh
+        sd["itemicon"] = sd["bundleicon"] = f"Q{itemid}"
+        for it in sd.get("items") or ():
+            if it.get("itemid") == itemid and isinstance(it.get("staticdata"), dict):
+                it["staticdata"] = dict(it["staticdata"], itemicon=f"Q{itemid}", bundleicon=f"Q{itemid}")
         out.append(e)
     return out
 
