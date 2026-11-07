@@ -1,0 +1,31 @@
+{
+  "config": {
+    "point": {
+      "coach_limit": 800,
+      "player_limit": 40,
+      "conversion": 100,
+      "match_limit": 0,
+      "igr": "0",
+      "vip": "0"
+    }
+  },
+  "statgroups": {
+    "strength": "1", "stamina": "1", "acceleration": "1", "sprintspeed": "1", "jumping": "1",
+    "agility": "1", "balance": "1", "slidingtackle": "1", "dribbling": "1", "ballcontrol": "1",
+    "marking": "1", "standingtackle": "1", "crossing": "1", "shortpassing": "1", "finishing": "1",
+    "longpassing": "1", "shotpower": "1", "headingaccuracy": "1", "longshots": "1", "volleys": "1",
+    "curve": "1", "freekickaccuracy": "1", "penalties": "1", "interceptions": "1", "positioning": "1",
+    "vision": "1", "reactions": "1", "aggression": "1", "gkkicking": "1", "gkdiving": "1",
+    "gkhandling": "1", "gkpositioning": "1", "gkreflexes": "1"
+  },
+  "growth": {
+    "1": [
+      {"min": 0, "max": 89, "require": 1},
+      {"min": 90, "max": 104, "require": 2},
+      {"min": 105, "max": 119, "require": 3},
+      {"min": 120, "max": 134, "require": 4},
+      {"min": 135, "max": 9999, "require": 5}
+    ]
+  },
+  "records": {}
+}

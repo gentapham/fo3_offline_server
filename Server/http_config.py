@@ -171,6 +171,9 @@ def cdn_file(rel):
         elif len(parts) >= 2 and parts[-2] == "players" and re.fullmatch(r"p\d{7,}\.png", parts[-1].lower()):
             pid = int(parts[-1][1:-4]) % 1000000
             f = os.path.join(os.path.dirname(f), f"p{pid}.png")
+        # icon Team Color khong co (mau co ten / dac biet chua co hinh) -> huy hieu chung, khong de "NOT FOUND"
+        elif len(parts) >= 2 and parts[-2] == "teamcolor" and f.lower().endswith(".png"):
+            f = os.path.join(os.path.dirname(f), "_special.png")
         if len(parts) >= 2 and parts[-2] == "players" and not os.path.isfile(f):
             f = fetch_face(f) or os.path.join(os.path.dirname(f), "_noface.png")
         if not os.path.isfile(f):
@@ -234,9 +237,31 @@ def _state():
 
 
 def _save(st):
+    """Ghi state.json: dumps 1 lan (nhanh hon json.dump ghi tung manh) vao file tam roi thay the -> may
+    tat / Launcher khoi dong lai giua luc ghi khong de lai state.json cut ngan (mat ban luu)."""
     os.makedirs(os.path.dirname(STATE), exist_ok=True)
-    with open(STATE, "w") as f:
-        json.dump(st, f)
+    # coach_me lay ngay tao HLV cu (khong co createdat) tu ctime cua state.json; thay file lam doi ctime
+    # -> ghi lai gia tri do vao HLV truoc (1 lan)
+    if any(not c.get("createdat") for c in st.get("coaches") or ()) and os.path.exists(STATE):
+        made = w3c(os.path.getctime(STATE))
+        for c in st["coaches"]:
+            if not c.get("createdat"):
+                c["createdat"] = made
+    data = json.dumps(st)
+    tmp = STATE + ".tmp"
+    try:
+        with open(tmp, "w") as f:
+            f.write(data)
+        for i in range(5):
+            try:
+                os.replace(tmp, STATE)
+                return
+            except PermissionError:  # Windows: file dang bi mo (antivirus / sao luu) -> thu lai
+                time.sleep(0.02 * (i + 1))
+    except OSError:
+        pass
+    with open(STATE, "w") as f:  # du phong: ghi thang nhu truoc
+        f.write(data)
 
 
 def coach_id(slot):
@@ -309,9 +334,9 @@ def ep_new_team(slot, query, body):
         teamid = int(req.get('id') or 0)
         team = new_manager_team(teamid, req.get('spids') or [])
     except (ValueError, TypeError):
-        return _json({'result': False, 'reason': 'invalid team'})
+        return _json({'result': False, 'reason': 'Đội không hợp lệ'})
     if len(team['players']) < 18:
-        return _json({'result': False, 'reason': 'invalid team'})
+        return _json({'result': False, 'reason': 'Đội không hợp lệ'})
     st.setdefault('pendingteams', {})[str(slot)] = {'teamid': teamid, 'team': team}
     _save(st)
     return _json({'result': True, 'team': owned_team(team)})
@@ -331,9 +356,9 @@ def ep_create_coach(slot, query, body):
         pending = st.get('pendingteams', {}).get(str(slot))
         team = pending['team'] if pending and pending['teamid'] == teamid else new_manager_team(teamid)
     except (ValueError, TypeError):
-        return _json({'result': False, 'reason': 'invalid team'})
+        return _json({'result': False, 'reason': 'Đội không hợp lệ'})
     if len(team['players']) < 18:
-        return _json({'result': False, 'reason': 'invalid team'})
+        return _json({'result': False, 'reason': 'Đội không hợp lệ'})
     st['teams'][str(slot)] = team
     st.setdefault('pendingteams', {}).pop(str(slot), None)
     st['coaches'].append({'_id': coach_id(slot), 'slot': slot, 'name': name.strip(), 'state': 'active',
@@ -417,16 +442,67 @@ def control_options(saved=None):
     return out
 
 
+# Cai dat ho tro mac dinh (OptionAISettingScreen): textList theo thu tu
+# NewbieCustom [Nguoi moi, Tu chinh] | AutoSwitching [Tu chinh, Chi bong bong, Tu dong]
+# AutoSwitchMoveing/PassAssist/ShotAssist/CrossAssist [Tu chinh, TB, Tu dong]
+# PassPowerAssist/ThroughPassAssist/LobPassAssist [Tu chinh, Tu dong]
+AI_DEFAULTS = {"NewbieCustom": 1, "AutoSwitching": 1, "AutoSwitchMoveing": 2, "PassAssist": 2,
+               "PassPowerAssist": 0, "ThroughPassAssist": 1, "LobPassAssist": 1, "ShotAssist": 2, "CrossAssist": 1}
+AI_DEFAULTS_VERSION = 1
+
+
+def ai_defaults_once(st):
+    """Ap AI_DEFAULTS mot lan cho ho so (ke ca ho so cu); sau do nguoi choi tu chinh tu do."""
+    if st.get("ai_defaults_v") == AI_DEFAULTS_VERSION:
+        return False
+    opt = st.setdefault("option", {})
+    ai = dict(opt.get("aiOption") or {})
+    ai.update(AI_DEFAULTS)
+    ai["Custom"] = {**(ai.get("Custom") or {}), **{k: v for k, v in AI_DEFAULTS.items() if k != "NewbieCustom"}}
+    opt["aiOption"] = ai
+    st["ai_defaults_v"] = AI_DEFAULTS_VERSION
+    return True
+
+
 def ep_account(query, body):
     """GET /account (AccountProxy.accountData): responses/account_base.json, with the options
     the client saved through PUT /account/option layered over `option`."""
     with open(os.path.join(RESPONSES, "account_base.json"), encoding="utf-8") as f:
         acc = json.load(f)
-    acc["option"].update(_state().get("option", {}))
+    st = _state()
+    if ai_defaults_once(st):
+        _save(st)
+    acc["option"]["aiOption"] = {**AI_DEFAULTS, **(acc["option"].get("aiOption") or {})}
+    acc["option"].update(st.get("option", {}))
     acc["option"]["controlOption"] = control_options(acc["option"].get("controlOption"))
     acc["option"]["soundOption"] = {**SOUND_DEFAULTS, **(acc["option"].get("soundOption") or {})}
     acc["option"]["cameraOption"] = {**CAMERA_DEFAULTS, **(acc["option"].get("cameraOption") or {})}
     return _json(acc)
+
+
+# Moi thiet bi giu kieu dieu khien rieng (ban phim "FO2 moi", tay cam "Wing"... truoc day reset lan
+# nhau). controlOption chi co MOT Type = kieu cua thiet bi dang dung: ban phim 0..7, tay cam 0..2.
+# Man Dieu khien (OptionControlSettingScreen.onControllerSelectorChanged) dat Type 0 o lan doi thiet
+# bi dau tien moi lan mo; huong dan tan thu doi Controller ma giu Type cua thiet bi kia. Server nho
+# st["controlType"] {thiet bi: kieu cuoi} va tra lai kieu do khi gap mot lan "reset" nhu vay.
+CONTROL_TYPE_MAX = {0: 7, 1: 2}
+
+
+def remember_control_type(st, ctl, prev, raw_type=None):
+    """ctl (controlOption da chuan hoa tu client) voi kieu da nho cua thiet bi nay khi man hinh vua
+    reset no; prev = controlOption da luu truoc do; raw_type = Type client gui (truoc khi kep)."""
+    types = st.setdefault("controlType", {})
+    types.setdefault(str(prev["Controller"]), prev["Type"])
+    c, t = ctl["Controller"], ctl["Type"]
+    top = CONTROL_TYPE_MAX.get(c, 0)
+    keys = lambda o: [o.get(f"{'Key' if c == 0 else 'Joy'}{k}Type1") for k in ("Att", "Def", "Mov")]
+    reset = c != prev["Controller"] and t == 0 and keys(ctl) == keys(prev)  # khong phai sua phim kieu 0
+    out_of_range = raw_type is not None and not (type(raw_type) is int and 0 <= raw_type <= top)
+    if reset or out_of_range:
+        t = types.get(str(c), 0)
+    t = t if type(t) is int and 0 <= t <= top else 0
+    types[str(c)] = t
+    return {**ctl, "Type": t}
 
 
 def ep_account_option(query, body):
@@ -434,8 +510,12 @@ def ep_account_option(query, body):
     req = json.loads(body or b"{}")
     st = _state()
     options = st.setdefault("option", {})
+    prev_ctl = control_options(options.get("controlOption"))
     options.update({k: v for k, v in req.items() if k.endswith("Option") and isinstance(v, dict)})
     options["controlOption"] = control_options(options.get("controlOption"))
+    if isinstance(req.get("controlOption"), dict):
+        options["controlOption"] = remember_control_type(st, options["controlOption"], prev_ctl,
+                                                         req["controlOption"].get("Type"))
     options["cameraOption"] = {**CAMERA_DEFAULTS, **(options.get("cameraOption") or {})}
     _save(st)
     return _json({"result": True, "resources": [{"uri": "/account/option", "body": options}]})
@@ -519,7 +599,11 @@ def roster(teamid):
     the same way straight from fifadb (league opponents)."""
     if teamid in _NATIONAL_TEAMS:
         with closing(_db()) as c:
-            r = gen_teams.team(c, teamid, nationality=_NATIONAL_TEAMS[teamid])
+            # doi tuyen that (cau thu co nationalteamid = doi nay, phan lon dang o CLB); it hon 18
+            # nguoi thi nhu truoc: cac cau thu manh nhat cung quoc tich
+            r = gen_teams.team(c, teamid, nationalteam=True)
+            if r is None or len(r["team"]["players"]) < gen_teams.SELECTABLE:
+                r = gen_teams.team(c, teamid, nationality=_NATIONAL_TEAMS[teamid])
         if r is not None:
             info = _CLUB_TEAMS[teamid]
             nation = _CLUB_NATIONS[_NATIONAL_TEAMS[teamid]]
@@ -539,10 +623,11 @@ def roster_team(teamid):
     return roster(teamid)["team"]
 
 
-COM_GRADE = min(10, max(0, int(os.environ.get("FO3_COM_GRADE", "10"))))
+MAX_GRADE = 20  # cap the toi da (+0..+20); PLAYERGRADE.json co 21 dong
+COM_GRADE = min(MAX_GRADE, max(0, int(os.environ.get("FO3_COM_GRADE", "10"))))
 
 
-def match_side(raw, teamid, user=None, tactics=None, mode="friendly"):
+def match_side(raw, teamid, user=None, tactics=None, mode="friendly", keep_grades=False):
     """match.side.<left|right>: PlayerListUtil.generateCaptainFromMatchInfo reads side.team
     {teamid, squad, players}, side.players (the users: id, name, levelinfo), MatchProxy
     fetchMatchSide* read squad, tactics, ready. tactics is the preset ARRAY (as
@@ -551,9 +636,9 @@ def match_side(raw, teamid, user=None, tactics=None, mode="friendly"):
     # Lobby/freeroam resources retain their separate ten-bit encoding.
     kit = {"availables": {k: {"id": int(teamid) << 5 | t}
                           for k, t in (("home", 0), ("away", 1), ("goalie", 2))}}
-    if user is None:
+    if user is None and not keep_grades:
         # AI side: the cong + cap cau thu theo che do (GM Tool > Suc manh BOT, bot_settings.py;
-        # mac dinh +10, LV 1) de BOT van du suc voi doi da nang the
+        # mac dinh +10, LV 23) de BOT van du suc voi doi da nang the
         import bot_settings
         bs = bot_settings.for_mode(mode)
         raw = {**raw, "players": [{**p, "grade": bs["grade"], "levelinfo": {"level": bs["level"], "exp": 0}}
@@ -609,13 +694,154 @@ def new_match(mtype, left, right, **extra):
                               "halfLength": HALF_LENGTH,
                               # the rest is what native ApplyGameSettings (0x946FD0) reads; values are
                               # its own defaults (0x959050). Missing gameSpeed broke the match clock.
-                              "gameSpeed": 1, "crowd": 100, "pitchWear": 1, "refereeIdSelector": 845,
-                              "subRefereeIds": [0, 0], "disableMomentum": False, "bookingsOn": True,
+                              "gameSpeed": 1, "crowd": 100, "pitchWear": 1, "refereeIdSelector": 112,
+                              "subRefereeIds": [178, 157], "disableMomentum": False, "bookingsOn": True,
                               "offsidesOn": True, "injuriesOn": True, "foulsOn": True, "fatigueOn": True,
                               "subOnBench": 5, "availableSubs": 3, "drawMode": 0, "gameType": mtype,
                               "shootoutmode": False, "prevScore": {"home": 0, "away": 0}}}
     match.update(extra)
     return match
+
+
+# --------------------------------------------------------------------------- #
+# Cai dat truoc tran: san, thoi diem (ngay/dem), thoi tiet, thoi luong hiep, bong. Chi man cai dat
+# cua che do Xep hang (MultiplayGameSettingScreen) co nut doi (gamesettings stadiumchange/timechange/
+# weatherchange/matchtimechange, danh sach san = GET /stadium/list, doi = PUT /match/<id>/gamesettings);
+# Giai dau/Cup/World Cup/Giao huu chi hien nhan -> lay theo lua chon gan nhat (st["matchprefs"],
+# chinh o GM Tool > Tran dau). Gia tri (theo ban port fo3-indo-server, kiem tra tren client):
+# - san can model + texture ngay/dem + khan gia + stadiumdb + dong DB; native khong kiem tra id.
+STADIUMS_SAFE = (1, 2, 5, 13, 14, 26, 28, 29, 30, 32, 33, 34, 35, 41, 100, 112, 113, 115, 116, 135, 137,
+                 147, 149, 153, 156, 157, 158, 175, 176, 178, 179, 180, 181, 182, 183, 192, 193, 194, 195,
+                 196, 197, 212, 228, 229, 246, 247, 248, 249, 261, 262, 264, 265, 326, 327, 329, 330, 331,
+                 332, 333, 335, 336, 337, 341, 343, 344, 345, 347, 348, 349, 355)
+STADIUM_DEFAULT = 112  # san o sanh: moi tran deu dung san nay truoc day
+# - tod: 1 ban ngay, 3 ban dem (moi san chi co 2 bo anh sang nay)
+TODS = (1, 3)
+# - weather: 0 dep troi, 1 mua, 2 tuyet, 3 am u (ngay) / chang vang (dem)
+WEATHERS = (0, 1, 2, 3)
+WEATHERS_RANDOM = (0, 1, 3)  # "ngau nhien": dep, mua hoac am u (tuyet chi khi chon)
+HALF_LENGTHS = tuple(sorted({30, 40, 50, 60, HALF_LENGTH}))  # 6, 8, 10, 12 phut (+ FO3_HALF_LENGTH)
+# bong co model (data_2.big ball_<id>.rx3), ten (BALL_NAME_TYPE<id>) va anh (externalAssets/balls)
+BALLS = (0, 6, 23, 34, 39, 40, 41, 45, 69)
+MATCH_PREFS = {"stadium": STADIUMS_SAFE + ("home", "random"), "tod": TODS + ("random",),
+               "weather": WEATHERS + ("random",), "halfLength": HALF_LENGTHS, "ball": BALLS}
+
+
+def match_prefs(st):
+    """Lua chon truoc tran: stadium id | "home" (san doi chu nha) | "random", tod | "random",
+    weather | "random", halfLength, ball. Chua dat = nhu truoc day (112, ngay, dep troi, HALF_LENGTH, bong 0)."""
+    p = {"stadium": STADIUM_DEFAULT, "tod": TODS[0], "weather": 0, "halfLength": HALF_LENGTH, "ball": 0}
+    p.update({k: v for k, v in (st.get("matchprefs") or {}).items()
+              if not isinstance(v, bool) and v in MATCH_PREFS.get(k, ())})
+    return p
+
+
+def apply_prematch(st, match, rnd=random):
+    """San / thoi diem / thoi tiet / thoi luong / bong cua tran moi theo match_prefs. Goi sau khi da
+    dat gamesettings.home ("home" = san cua doi chu nha)."""
+    p, gs = match_prefs(st), match["gamesettings"]
+    stadium = p["stadium"]
+    if stadium == "home":
+        stadium = club_stadium(match["side"]["left" if gs.get("home", True) else "right"]["team"]["teamid"])
+    elif stadium == "random":
+        stadium = rnd.choice(STADIUMS_SAFE)
+    pick = lambda v, opts: rnd.choice(opts) if v == "random" else v
+    gs.update(stadium=stadium if stadium in STADIUMS_SAFE else STADIUM_DEFAULT,
+              tod=pick(p["tod"], TODS), weather=pick(p["weather"], WEATHERS_RANDOM), halfLength=p["halfLength"],
+              ball={"id": p["ball"], "availables": list(BALLS)},  # so nguyen: MatchProxy doi thanh BALL_NAME_TYPE<id>
+              stadiumchange=True, timechange=True, weatherchange=True, matchtimechange=True)
+
+
+def ep_stadium_list(query, body):
+    """GET /stadium/list (MatchProxy.requestStadiumInfo): [{id, name, todWeatherAvailables}]."""
+    return _json(stadium_choices())
+
+
+def stadium_choices():
+    """[{id, name, todWeatherAvailables}] cua STADIUMS_SAFE theo ten: ten trong client
+    (STADIUMNAMES_ENG), neu khong co thi ten trong DB cua client."""
+    names, db = client_stadium_names(), stadium_table()[0]
+    rows = [{"id": s, "name": names.get(str(s)) or re.sub(r"\s*\(.*\)$", "", (db.get(s) or {}).get("name") or f"Sân {s}"),
+             "todWeatherAvailables": {str(t): list(WEATHERS) for t in TODS}} for s in STADIUMS_SAFE]
+    return sorted(rows, key=lambda r: r["name"].lower())
+
+
+def client_big(path, name):
+    """Mot file trong kho .big cua client (tools/re/bigdir.py), hoac None."""
+    try:
+        if os.path.join(HERE, "tools", "re") not in sys.path:
+            sys.path.append(os.path.join(HERE, "tools", "re"))  # append: tools/re/abc.py khong de len thu vien abc
+        import bigdir
+        return bigdir.read(path, name)
+    except (OSError, KeyError, ValueError, ImportError) as e:
+        print(f"client archive {name}: {e!r}", flush=True)
+        return None
+
+
+def client_localization(name):
+    """{key: text} cua data/ui/localization/<name> (file roi neu co, khong thi trong <lang>.big)."""
+    loose = os.path.join(GAME, "data", "ui", "localization", name)
+    try:
+        if os.path.isfile(loose):
+            with open(loose, "rb") as f:
+                return json.loads(f.read().decode("utf-8-sig"))
+        raw = client_big(os.path.join(GAME, "data", "ui", "localization", LANGUAGE + ".big"),
+                         "data/ui/localization/" + name)
+        return json.loads(raw.decode("utf-8-sig")) if raw else {}
+    except (OSError, ValueError) as e:
+        print(f"localization {name}: {e!r}", flush=True)
+        return {}
+
+
+@functools.lru_cache(maxsize=None)
+def ball_names():
+    """{ball id: ten trong goi ngon ngu cua client (BALL_NAME_TYPE<id>)} cua BALLS."""
+    s = client_localization(f"LANGUAGESTRING_{LANGUAGE.upper()}.json")
+    return {b: s.get(f"BALL_NAME_TYPE{b}") or f"Bóng {b}" for b in BALLS}
+
+
+@functools.lru_cache(maxsize=None)
+def client_stadium_names():
+    """{"<id>": ten} cua STADIUMNAMES_<LANG>.json (Localization.STADIUMNAME)."""
+    return client_localization(f"STADIUMNAMES_{LANGUAGE.upper()}.json")
+
+
+STADIUMS_CACHE = os.path.join(HERE, "gamedata", "stadiums.json")
+
+
+@functools.lru_cache(maxsize=None)
+def stadium_table():
+    """({stadium id: {name, yearbuilt, capacity}}, {club teamid: stadium id}) tu fifa_ng_db cua
+    client (data/data_0.big), luu cache gamedata/stadiums.json. San cua CLB = san co hometeamid,
+    neu khong thi dong teamstadiumlinks (teamid o do = id that - 1)."""
+    try:
+        with open(STADIUMS_CACHE, encoding="utf-8") as f:
+            t = json.load(f)
+    except (OSError, ValueError):
+        try:
+            if os.path.join(HERE, "tools", "re") not in sys.path:
+                sys.path.append(os.path.join(HERE, "tools", "re"))  # append: tools/re/abc.py khong de len thu vien abc
+            import bigdir, eadb
+            big = os.path.join(GAME, "data", "data_0.big")
+            db = bigdir.read(big, "data/db/fifa_ng_db.db")
+            meta = bigdir.read(big, "data/db/fifa_ng_db-meta.xml").decode("utf-8", "replace")
+            rows, links = eadb.rows(db, meta, "stadiums"), eadb.rows(db, meta, "teamstadiumlinks")
+        except (OSError, KeyError, ValueError, ImportError) as e:
+            print("stadiums unavailable:", e, flush=True)
+            return {}, {}
+        t = {"stadiums": {str(r["stadiumid"]): {"name": r["name"].lstrip("_"), "yearbuilt": 1800 + r["yearbuilt"],
+                                                "capacity": r["capacity"]} for r in rows},
+             "teams": {**{str(r["teamid"] + 1): r["stadiumid"] for r in links},
+                       **{str(r["hometeamid"]): r["stadiumid"] for r in rows if r["hometeamid"]}}}
+        os.makedirs(os.path.dirname(STADIUMS_CACHE), exist_ok=True)
+        with open(STADIUMS_CACHE, "w", encoding="utf-8") as f:
+            json.dump(t, f, ensure_ascii=False)
+    return {int(k): v for k, v in t["stadiums"].items()}, {int(k): v for k, v in t["teams"].items()}
+
+
+def club_stadium(teamid):
+    """San nha cua CLB (0: khong co trong DB client, vd. doi tuyen quoc gia)."""
+    return stadium_table()[1].get(int(teamid or 0), 0)
 
 
 def ep_match_campaign(query, body):
@@ -631,6 +857,7 @@ def ep_match_campaign(query, body):
     # needs relayServer.address (crash without it).
     match = new_match("League_league", match_side(st["teams"][str(slot)], me["teamid"], user, _tactics(st)[1]),
                       match_side(roster_team(ai), ai, mode="friendly"))
+    apply_prematch(st, match)
     return _json({"result": True, "resources": [{"uri": f"/match/{match['id']}", "body": match}]})
 
 
@@ -644,14 +871,18 @@ def roster_summary(teamid):
 # Player cards. Ratings come from the client's own fifadb, EP prices from fifaaddict.com's
 # FO3 DB (Indonesia server, grade +1; gamedata/fa_prices.json, see tools/fa_sync.py).
 # --------------------------------------------------------------------------- #
-# all-attribute boost by grade +0..+10 (= responses/static_db_PLAYERGRADE.json): fifaaddict's
-# playerEnchantList, e.g. World Best Neymar 83 base shows 88 at +1 and 93 at +5
-GRADE_BOOST = (0, 5, 6, 7, 8, 10, 12, 14, 17, 20, 24)
-# EP price of grade g relative to +1: geometric mean over 16 fifaaddict cards (Indonesia server)
-GRADE_PRICE = (0, 1, 2.65, 7.1, 19.6, 53, 162, 420, 1090, 2680, 6290)
+# all-attribute boost by grade +0..+20 (= responses/static_db_PLAYERGRADE.json): fifaaddict's
+# playerEnchantList, e.g. World Best Neymar 83 base shows 88 at +1 and 93 at +5; +11..+20 ours
+GRADE_BOOST = (0, 5, 6, 7, 8, 10, 12, 14, 17, 20, 24, 28, 32, 36, 40, 44, 48, 52, 55, 58, 60)
+# EP price of grade g relative to +1: geometric mean over 16 fifaaddict cards (Indonesia server);
+# +11..+20: x2.3 per grade (ours), card_price caps them under a rising ceiling (price_ladder: strictly increasing)
+GRADE_PRICE = (0, 1, 2.65, 7.1, 19.6, 53, 162, 420, 1090, 2680, 6290,
+               14500, 33300, 76500, 176000, 405000, 931000, 2140000, 4930000, 11300000, 26100000)
 FA_PRICES = os.path.join(HERE, "gamedata", "fa_prices.json")
 _FA = None
 _OVR = {}
+_OVR_ALL = []  # [True] khi _OVR da nap ca bang players
+_OVR_LOCK = threading.Lock()
 
 
 def fa_prices():
@@ -704,7 +935,17 @@ def card_ratings(spids):
     """{spid: (client rating, fifadb overallrating)} (cached)."""
     spids = [int(s) for s in spids]
     need = [s for s in set(spids) if s not in _OVR]
-    if need:
+    if need and not _OVR_ALL:
+        # lan dau: nap ca bang 1 lan (~60k dong, <1 s). Truoc day moi the 1 ket noi + 1 truy van ->
+        # Cua hang / /coaches luc may lanh mat 10-30 s (gia goi, draft_top) va giu STATE_LOCK.
+        with _OVR_LOCK:
+            if not _OVR_ALL:
+                with closing(_db()) as c:
+                    _OVR.update({s: (o, d) for s, o, d in c.execute(
+                        f"SELECT p.spid, {POSOVR}, p.overallrating FROM players p")})
+                _OVR_ALL.append(True)
+        need = [s for s in need if s not in _OVR]
+    if need:  # khong co trong fifadb: (0, 0) nhu truoc
         with closing(_db()) as c:
             for i in range(0, len(need), 500):
                 chunk = need[i:i + 500]
@@ -724,9 +965,9 @@ def card_ovr(spid):
 
 
 def grade_of(p):
-    """+0..+10. A club's starting players (stored without a grade) are +0: no market value
+    """+0..+20. A club's starting players (stored without a grade) are +0: no market value
     (CoachProxy.expandTeam counts only grade > 0), not sellable; bought/packed cards start at +1."""
-    return min(10, max(0, int(p.get("grade") or 0)))
+    return min(MAX_GRADE, max(0, int(p.get("grade") or 0)))
 
 
 def player_ovr(p):
@@ -803,11 +1044,36 @@ def card_price(spid, grade=1):
     # Cai dat tren trang admin (price_settings.json): gia tu dat theo the, gia the +0, he so nhan gia.
     import price_settings
     ps = price_settings.get()
-    g = min(10, max(0, int(grade)))
+    g = min(MAX_GRADE, max(0, int(grade)))
     base = (ps["overrides"].get(str(int(spid))) or player_price_overrides().get(int(spid))
             or stat_price(card_ovr(spid)))
-    factor = GRADE_PRICE[g] if g > 0 else ps["zero_percent"] / 100  # +0 = 0 EP o ban goc
-    return sig3(base * factor * ps["multiplier"])
+    if g == 0:  # +0 = 0 EP o ban goc
+        return sig3(base * ps["zero_percent"] / 100 * ps["multiplier"])
+    return price_ladder(base * ps["multiplier"])[g]
+
+
+PRICE_TOP = 999_000_000_000  # gia cao nhat cua 1 the (+20); < MAX_EP (de hien thi/tong khong tran)
+PRICE_CAP_STEP = 1.2  # tran gia moi cap +11..+20: PRICE_TOP / 1.2^(20 - cap)
+
+
+def next_price(x):
+    """Gia 3 chu so co nghia ngay tren x."""
+    x = int(x)
+    return x + (10 ** (len(str(x)) - 3) if x >= 1000 else 1)
+
+
+@functools.lru_cache(maxsize=65536)
+def price_ladder(unit):
+    """[gia +0 (bo qua), +1 .. +20] cua the co gia +1 = unit: tang dan NGHIEM NGAT theo cap. +11..+20 bi
+    chan boi tran tang dan (PRICE_TOP / PRICE_CAP_STEP^(20 - cap)) thay vi cung 1 muc MAX_EP (truoc day
+    +16..+20 cua the dat cung gia 999.999.999.999 -> bang gia Thi truong xep lon xon)."""
+    out = [0] * (MAX_GRADE + 1)
+    for g in range(1, MAX_GRADE + 1):
+        p = sig3(unit * GRADE_PRICE[g])
+        if g > 10:
+            p = min(p, sig3(PRICE_TOP / PRICE_CAP_STEP ** (MAX_GRADE - g)))
+        out[g] = p if g == 1 else max(p, next_price(out[g - 1]))
+    return tuple(out)
 
 
 def iid(p):
@@ -823,10 +1089,10 @@ def new_iid():
 # Levels (user: "akun dan pemain belum bisa dilevel up"). Both levelinfo = {level, exp within
 # the level, to = exp the level needs}. Players: the client adds level - 1 to every attribute
 # (PlayerListUtil.fillPlayerStaticData: totalBonus = level - 1 + grade boost; fifaaddict lists
-# LV.1-23); EXPPLAYER {level: {requiredplayerexp}}, max level = rows - 1 (getMaxLevel). Coach:
+# LV.1-30); EXPPLAYER {level: {requiredplayerexp}}, max level = rows - 1 (getMaxLevel). Coach:
 # EXPCOACH {level: {totalexp}} = exp to finish levels 1..level (TeamManagementCoachExpScreen),
 # max from STATICVALUES/max_coachlevel. The original tables were server data; curves made up.
-PLAYER_MAX_LEVEL, COACH_MAX_LEVEL = 23, 100
+PLAYER_MAX_LEVEL, COACH_MAX_LEVEL = 30, 100  # cau thu LV.1-30 (yeu cau)
 EXP_WIN, EXP_DRAW, EXP_LOSS = (300, 150), (200, 100), (100, 60)  # (coach, each player who played)
 
 
@@ -888,7 +1154,7 @@ def formation_table():
         except OSError:
             _FORMATIONS = {"common": [], "teams": {}}
             try:
-                sys.path.insert(0, os.path.join(HERE, "tools", "re"))
+                sys.path.append(os.path.join(HERE, "tools", "re"))  # append: tools/re/abc.py khong de len thu vien abc
                 import bigdir, eadb
                 big = os.path.join(GAME, "data", "data_0.big")
                 rows = eadb.rows(bigdir.read(big, "data/db/fifa_ng_db.db"),
@@ -946,6 +1212,23 @@ def _tc_groups(*tiers):
 
 TC_CLUB_GROUPS = _tc_groups((4, 5, 1), (6, 7, 2), (8, 9, 3), (10, 11, 4))
 TC_GROUPS = _tc_groups((5, 6, 1), (7, 8, 2), (9, 11, 3))  # nation, season
+# Team color nang cap (type "grade": the trong doi hinh chinh co hang >= color.grade;
+# availableTeamColor: player.grade >= color.grade, native 0x94EB70 doc grade la so, khong teamid).
+# Moi cau thu chi nhan 1 mau nang cap tot nhat (ChooseTeamColorBoostsPerPlayer giu 1 __gradeTeamColor)
+# CONG THEM vao mau CLB / quoc gia / mua / dac biet tot nhat. Ban nay co the +0..+20 (GRADE_BOOST toi
+# +60 chi so) nen bac tang deu toi +20: muc theo khoang (5-6 / 7-8 / 9-11 nguoi) va muc "ca 11 nguoi
+# >= +N". Ten = khoa client (EVOLVE*: "Team Color nâng cấp (+2)", "Thẻ +3".. "Thẻ +10"); +11..+20 khong
+# co khoa trong client -> ten tieng Viet (getLocalizedString tra lai chuoi la nguyen van).
+TC_GRADE = (  # (teamcolorid, grade, name key | ten, boostgroups)
+    (10002, 2, "TEAMCOLOR_ATTRIBUTES_EVOLVE24", TC_GROUPS),
+    (10005, 5, "TEAMCOLOR_ATTRIBUTES_EVOLVE10011", _tc_groups((5, 6, 2), (7, 8, 3), (9, 11, 4))),
+    (10008, 8, "TEAMCOLOR_ATTRIBUTES_EVOLVE810", _tc_groups((5, 6, 3), (7, 8, 4), (9, 11, 5))),
+    (10012, 12, "Team Color nâng cấp (+12)", _tc_groups((5, 6, 4), (7, 8, 5), (9, 11, 6))),
+    (10016, 16, "Team Color nâng cấp (+16)", _tc_groups((5, 6, 5), (7, 8, 6), (9, 11, 7))),
+)
+TC_GRADE += tuple((10100 + g, g, f"TEAMCOLOR_ATTRIBUTES_EVOLVE{g}" if g <= 10 else f"Thẻ +{g}", _tc_groups((11, 11, n)))
+                  for g, n in ((3, 4), (4, 4), (5, 5), (6, 5), (7, 5), (8, 6), (9, 6), (10, 7), (11, 7), (12, 8),
+                               (13, 8), (14, 9), (15, 9), (16, 10), (17, 10), (18, 11), (19, 11), (20, 12)))
 
 
 def tc_seasons():
@@ -958,27 +1241,231 @@ def tc_season_of(code):
     return next((TC_SEASON + codes[0] for _, codes in tc_seasons() if code in codes), None)
 
 
+def tc_season_key(cid):
+    """teamid of a season color = its key in teamColorSpecials. The transfer market filter "TC đặc
+    biệt" (TransferPurchaseFilterSmoothPanel.configUI) labels its rows with those keys as-is, so
+    the key is the color's name ("Season 07"), not its numeric id."""
+    return next(f"Season {label}" for label, codes in tc_seasons() if TC_SEASON + codes[0] == cid)
+
+
+# Mau co ten cua client (khoa TEAMCOLOR_ATTRIBUTES_TEAM<id>, da Viet hoa trong LANGUAGESTRING_ENG):
+# danh sach cau thu/chi so goc cua chung la du lieu server da mat; client chi con 1 dong TOOLTIP<id>
+# -> moi mau co ten = bac co ban + chi so cua tooltip, va thang mau chung no trung (moi cau thu lay mau
+# CLB / quoc gia / dac biet tot nhat: getBoostStatPoint cong cac boost hop vi tri, 1 boost OVR tinh 1
+# lan moi chi so). Boost {type, amount, target}: cong amount vao chi so (type "ovr" = moi chi so) cua
+# cau thu nhom vi tri fw/mf/df/gk (khong target = tat ca; ApplyTeamColorBoostStat). Boost =
+# (target, chi so, so); tooltip "Cap +N" / "{0} +{1}" (khong ro chi so) tinh la OVR.
+TC_NAMED_CLUBS = (  # (TEAM<id>, CLB; cau thu tinh neu dang o hoac tung o CLB)
+    (1, 243, ("fw", "sprintspeed", 2)), (2, 241, ("mf", "agility", 3)), (3, 9, ("fw", "balance", 1)),
+    (4, 10, ("fw", "longpassing", 2)), (5, 11, ("fw", "reactions", 2)), (6, 1, ("mf", "stamina", 2)),
+    (7, 5, ("mf", "dribbling", 1)), (8, 18, ("mf", "acceleration", 2)), (9, 22, ("mf", "positioning", 2)),
+    (10, 32, ("fw", "sprintspeed", 8)), (11, 21, ("mf", "finishing", 2)), (12, 47, ("fw", "positioning", 1)),
+    (13, 45, ("df", "stamina", 2)), (14, 44, ("fw", "dribbling", 1)), (15, 73, ("fw", "ballcontrol", 2)),
+    (16, 982, ("mf", "stamina", 12)), (43, 240, ("", "ovr", 1)), (44, 52, ("", "ovr", 1)),
+    (45, 236, ("", "ballcontrol", 3)), (46, 69, ("", "stamina", 2)), (47, 110374, ("", "positioning", 3)),
+    (48, 48, ("", "dribbling", 2)), (146, 981, ("", "ovr", 1)), (885, 110955, ("", "headingaccuracy", 4)),
+    (20054, 112172, ("", "ovr", 1)), (20059, 72, ("", "ovr", 1)), (20060, 1477, ("", "ovr", 1)),
+)
+TC_NAMED_NATIONS = (  # (TEAM<id>, quoc tich)
+    (101, 45, ("mf", "ballcontrol", 2)), (102, 21, ("fw", "positioning", 3)), (103, 54, ("fw", "dribbling", 2)),
+    (104, 38, ("fw", "dribbling", 2)), (105, 52, ("fw", "balance", 2)), (106, 60, ("fw", "agility", 2)),
+    (107, 56, ("mf", "shotpower", 3)), (108, 27, ("mf", "shortpassing", 3)), (109, 14, ("mf", "stamina", 1)),
+    (110, 7, ("mf", "ballcontrol", 2)), (111, 95, ("fw", "jumping", 2)), (112, 34, ("fw", "reactions", 1)),
+    (113, 18, ("fw", "positioning", 2)), (114, 10, ("fw", "headingaccuracy", 2)), (115, 40, ("fw", "ballcontrol", 2)),
+    (116, 83, ("fw", "reactions", 2)), (117, 108, ("mf", "reactions", 2)), (118, 117, ("mf", "shortpassing", 2)),
+    (119, 167, ("mf", "aggression", 2)), (120, 163, ("mf", "shortpassing", 2)), (121, 195, ("fw", "positioning", 2)),
+    (122, 55, ("fw", "sprintspeed", 2)), (123, 49, ("fw", "finishing", 1)), (124, 50, ("fw", "reactions", 2)),
+    (125, 46, ("fw", "shotpower", 2)), (126, 13, ("fw", "headingaccuracy", 2)), (127, 51, ("fw", "jumping", 2)),
+    (128, 103, ("fw", "acceleration", 2)), (129, 133, ("fw", "sprintspeed", 1)), (130, 12, ("fw", "positioning", 2)),
+)
+# mau mua co ten trong client: ma mua -> (TEAM<id>, boost); mau mua giu toi thieu +3
+TC_SEASON_NAMES = {91: (18, ("", "ovr", 5)), 93: (100, ("", "ovr", 3)), 95: (19, ("", "ovr", 3)),
+                   77: (42, ("", "reactions", 1)), 65: (140, ("", "ovr", 3)), 53: (141, ("", "ovr", 3)),
+                   47: (142, ("", "ovr", 3)), 63: (143, ("", "ovr", 3)), 69: (137, ("", "ovr", 3)),
+                   67: (138, ("", "ovr", 3)), 35: (145, ("", "ovr", 3)), 27: (20044, ("", "ovr", 3))}
+TC_LEGENDS = (93, 30, 27, 71, 51, 61, 89, 48, 55, 49)  # WL UL EL ML TL VL CL MUL MUA TCO92
+TC_YEARS = (6, 7, 8, 9, 10, 11, 14, 15, 16, 88, 325, 300)  # + FO4 25 LIVE / 26 LIVE
+
+
+def _in(ids):
+    return ",".join(map(str, ids))
+
+
+def _S(*codes):  # mua cua the
+    return f"p.spid / 1000000 IN ({_in(codes)})"
+
+
+def _CLUB(*ids):  # CLB hien tai hoac tung choi
+    return f"(p.teamid IN ({_in(ids)}) OR p.playerid IN (SELECT playerid FROM playerhistory WHERE teamid IN ({_in(ids)})))"
+
+
+def _PIDS(*ids):  # cac cau thu nay, the nao cung duoc
+    return f"p.playerid IN ({_in(ids)})"
+
+
+_SPECIAL = f"p.spid >= 1000000 AND p.spid / 1000000 NOT IN ({_in(TC_YEARS + TC_LEGENDS)})"  # mua dac biet
+_TC_OVR = ("", "ovr", 3)
+# (TEAM<id>, khoa teamColorSpecials = nhan o bo loc "TC đặc biệt" Chuyen nhuong, mo ta, dieu kien SQL tren
+# cau thu p, boost, N the tot nhat | None). Nhan = ten client (LANGUAGESTRING_ENG da Viet hoa).
+TC_NAMED_SPECIALS = (
+    *((tid, label, "Cầu thủ 14 WC của quốc gia này", f"{_S(77)} AND p.nationality = {n}", b, None) for tid, label, n, b in (
+        (20, "14 WC TBN", 45, ("", "ovr", 2)), (21, "14 WC Đức", 21, ("", "ovr", 3)),
+        (22, "14 WC Brazil", 54, ("", "ballcontrol", 2)), (23, "14 WC BĐN", 38, ("", "positioning", 2)),
+        (24, "14 WC Argentina", 52, ("", "dribbling", 2)), (25, "14 WC Uruguay", 60, ("fw", "longshots", 3)),
+        (26, "14 WC Colombia", 56, ("", "strength", 1)), (27, "14 WC Ý", 27, ("", "agility", 2)),
+        (28, "14 WC Anh", 14, ("", "longpassing", 2)), (29, "14 WC Bỉ", 7, ("", "shortpassing", 2)),
+        (30, "14 WC Mỹ", 95, ("mf", "stamina", 2)), (31, "14 WC Hà Lan", 34, ("", "ballcontrol", 2)),
+        (32, "14 WC Pháp", 18, ("", "strength", 1)), (33, "14 WC Croatia", 10, ("fw", "acceleration", 2)),
+        (34, "14 WC Nga", 40, ("", "positioning", 2)), (35, "14 WC Mexico", 83, ("", "headingaccuracy", 2)),
+        (36, "14 WC Bờ Biển Ngà", 108, ("", "marking", 3)), (37, "14 WC Ghana", 117, ("", "reactions", 2)),
+        (38, "14 WC Hàn Quốc", 167, ("", "reactions", 2)), (39, "14 WC Nhật Bản", 163, ("", "shortpassing", 2)))),
+    *((tid, label, "50 thẻ tốt nhất của quốc gia này", f"p.nationality = {n}", _TC_OVR, 50) for tid, label, n in (
+        (20007, "BEST Đức", 21), (20008, "BEST TBN", 45), (20009, "BEST Pháp", 18), (20010, "BEST Ý", 27),
+        (20011, "BEST Anh", 14), (20012, "BEST Brazil", 54), (20013, "BEST Argentina", 52), (20014, "BEST Bỉ", 7),
+        (20015, "BEST BĐN", 38), (20016, "BEST Colombia", 56), (20017, "BEST Uruguay", 60))),
+    *((tid, label, "Cầu thủ EC / Copa của quốc gia này", f"{_S(35, 24)} AND p.nationality = {n}", _TC_OVR, None)
+      for tid, label, n in (
+        (20018, "EC Đức", 21), (20019, "EC TBN", 45), (20020, "EC Pháp", 18), (20021, "EC Ý", 27), (20022, "EC Anh", 14),
+        (20023, "EC Brazil", 54), (20024, "EC Argentina", 52), (20025, "EC Bỉ", 7), (20026, "EC BĐN", 38),
+        (20027, "EC Colombia", 56))),
+    *((tid, label, "Cầu thủ mùa '10 của CLB này", f"{_S(10)} AND {_CLUB(club)}", b, None) for tid, label, club, b in (
+        (133, "Barcelona '10", 241, ("fw", "positioning", 5)), (134, "AC Milan '10", 47, ("fw", "sprintspeed", 5)),
+        (135, "Dortmund '10", 22, ("mf", "aggression", 5)), (136, "Atletico Madrid '10", 240, ("mf", "vision", 5)))),
+    (132, "Cầu thủ đặc biệt", "Cầu thủ mùa đặc biệt (không phải mùa thường, không phải huyền thoại)", _SPECIAL, ("", "ovr", 2), None),
+    (139, "Vô địch Championship", "Nhà vô địch các giải 2016/17 (mùa '17)", f"{_S(88)} AND p.teamid IN (5, 243, 21, 45, 69)", ("", "ovr", 3), None),
+    (41, "Cầu thủ xuất sắc", "30 thẻ tốt nhất", "p.spid >= 1000000", ("", "shortpassing", 2), 30),
+    (2014, "Cầu thủ Premium", "Thẻ chỉ số 85 trở lên", f"p.spid >= 1000000 AND {POSOVR} >= 85", ("", "ovr", 4), None),
+    (886, "(CN) Huyền Thoại", "Huyền thoại Trung Quốc", f"p.nationality = 155 AND {_S(*TC_LEGENDS)}", ("", "ovr", 3), None),
+    (20002, "Bộ ba MSN", "Messi, Suarez, Neymar", _PIDS(158023, 176580, 190871), _TC_OVR, None),
+    (20003, "Bộ ba BBC", "Bale, Benzema, Cristiano Ronaldo", _PIDS(173731, 165153, 20801), _TC_OVR, None),
+    (3059, "Pháo hai nòng", "Messi và Cristiano Ronaldo", _PIDS(158023, 20801), _TC_OVR, None),
+    (3060, "Bức tường Turin", "Ramos, Pepe, Marcelo, Carvajal, Varane, Navas",
+     _PIDS(155862, 120533, 176676, 204963, 201535, 193041), _TC_OVR, None),
+    (3058, "Mùa giải thần thánh", "Leicester City vô địch 2015/16", _PIDS(208830, 204485, 215914, 186132, 136113, 137785,
+                                                                         163587, 183130, 194365, 169600, 139313), _TC_OVR, None),
+    (3064, "Derby Milano", "Cầu thủ AC Milan và Inter", f"p.spid >= 1000000 AND {_CLUB(47, 44)}", _TC_OVR, None),
+    (34024, "Rossoneri", "Cầu thủ AC Milan", f"p.spid >= 1000000 AND {_CLUB(47)}", _TC_OVR, None),
+    (20030, "Arsenal vô đối 03/04", "Arsenal bất bại 2003/04", _PIDS(805, 388, 119152, 34079, 6975, 1419, 1605, 4000, 1625,
+                                                                     140526, 111093), _TC_OVR, None),
+    (20031, "Song sát AC Milan", "Shevchenko và Kaka", _PIDS(13128, 138449), _TC_OVR, None),
+    (20032, "Trái tim màu xanh", "Terry, Lampard, Drogba, Cech", _PIDS(13732, 5471, 31432, 48940), _TC_OVR, None),
+    (20033, "Galaticos", "Figo, Ronaldo, Beckham, Raul, Roberto Carlos, Casillas", _PIDS(5589, 37576, 250, 45661, 1040, 5479),
+     _TC_OVR, None),
+    (20028, "Ngày Quỷ Đỏ (Mùa hiện tại)", "Cầu thủ Man Utd mùa '17", f"{_S(88)} AND {_CLUB(11)}", _TC_OVR, None),
+    (20029, "Ngày Quỷ Đỏ (Các mùa)", "Cầu thủ Man Utd (hiện tại hoặc từng thi đấu), mọi mùa",
+     f"p.spid >= 1000000 AND {_CLUB(11)}", ("", "ovr", 2), None),
+    (20043, "Huyền thoại", "Cầu thủ mùa huyền thoại", _S(*TC_LEGENDS), ("", "ovr", 4), None),
+    (40001, "MASTERS", "50 thẻ tốt nhất", "p.spid >= 1000000", _TC_OVR, 50),
+    (40002, "PREMIUM TOP 100", "100 thẻ tốt nhất", "p.spid >= 1000000", _TC_OVR, 100),
+    (40003, "SPECIAL TOP 100", "100 thẻ mùa đặc biệt tốt nhất", _SPECIAL, _TC_OVR, 100),
+    (40004, "CURRENT TOP 100", "100 thẻ mùa '17 tốt nhất", _S(88), _TC_OVR, 100),
+    (40005, "LEGACY TOP 100", "100 thẻ huyền thoại tốt nhất", _S(*TC_LEGENDS), _TC_OVR, 100),
+    (20063, "Vũ công Samba", "Cầu thủ Brazil kỹ thuật 4 sao trở lên", "p.spid >= 1000000 AND p.nationality = 54 AND p.skillmoves >= 3",
+     ("", "ballcontrol", 5), None),
+    (20064, "Bộ tứ kiến tạo", "Chuyền ngắn và tầm nhìn 85 trở lên", "p.spid >= 1000000 AND p.shortpassing >= 85 AND p.vision >= 85",
+     ("", "shortpassing", 5), None),
+    (20065, "2 thế hệ", "Cầu thủ Real Madrid và Barcelona", f"p.spid >= 1000000 AND {_CLUB(243, 241)}", ("", "dribbling", 5), None),
+    (20066, "Bức tường thép", "Cướp bóng 85 trở lên", "p.spid >= 1000000 AND p.standingtackle >= 85", ("", "aggression", 5), None),
+    (20067, "Bộ tứ siêu đẳng", "Tinh thần tấn công và phòng ngự đều cao",
+     "p.spid >= 1000000 AND p.attackingworkrate = 2 AND p.defensiveworkrate = 2", ("", "positioning", 5), None),
+    (20068, "Hộ pháp", "Hậu vệ cao 188 cm trở lên", "p.spid >= 1000000 AND p.height >= 188 AND p.preferredposition1 BETWEEN 1 AND 8",
+     ("", "strength", 5), None),
+    (20069, "Ngôi sao đương đại", "Sinh từ năm 1995 trở về sau",
+     "p.spid >= 1000000 AND CAST(substr(p.birthdate, instr(p.birthdate, ' ') - 4, 4) AS INTEGER) >= 1995", ("", "longshots", 5), None),
+    (20070, "Thiết đầu công", "Đánh đầu 85 trở lên", "p.spid >= 1000000 AND p.headingaccuracy >= 85", ("", "strength", 5), None),
+    (20071, "Danh tiếng quốc tế", "Danh tiếng quốc tế 4 sao trở lên", "p.spid >= 1000000 AND p.internationalrep >= 4",
+     ("", "ovr", 4), None),
+)
+# Ten: khoa TEAMCOLOR_ATTRIBUTES_TEAM<id> co trong LANGUAGESTRING_ENG cua ban nay; khoa thieu -> ten viet san
+TC_NAMES = {146: "Seongnam FC", 20054: "RB Leipzig", 20059: "OGC Nice", 20060: "Jeonbuk Hyundai", 20044: "Huyền thoại Châu Âu",
+            3064: "Derby Milano", 34024: "Rossoneri", 20071: "Danh tiếng quốc tế"}
+# bo loc "TC đặc biệt" cua Chuyen nhuong loc theo danh sach the trong teamColorSpecials: mau dac biet co
+# toi da TC_FULL_MAX the gui du danh sach (loc duoc moi the), lon hon chi gui the minh co (tinh boost).
+TC_FULL_MAX = 3000
+
+
+def tc_name(cid):
+    return TC_NAMES.get(cid) or f"TEAMCOLOR_ATTRIBUTES_TEAM{cid}"
+
+
+def _tc_boost(groups, boost):
+    """groups voi boost tooltip (target, chi so, so) them vao moi bac."""
+    target, stat, n = boost
+    extra = {"type": stat, "amount": n, **({"target": target} if target else {})}
+    return [dict(g, boosts=g["boosts"] + [extra]) for g in groups]
+
+
+def _tc_special_groups(boost, players=5):
+    """Bac cua mau dac biet: 5-6 / 7-8 / 9-11 nguoi, OVR toi muc tooltip (else +3, kem chi so tooltip).
+    Bo it hon 5 cau thu: 1 bac = du ca bo."""
+    target, stat, n = boost
+    top = n if stat == "ovr" else 3
+    groups = (_tc_groups((players, 11, top)) if players < 5
+              else _tc_groups((5, 6, max(1, top - 2)), (7, 8, max(1, top - 1)), (9, 11, top)))
+    return groups if stat == "ovr" else _tc_boost(groups, boost)
+
+
+@functools.lru_cache(maxsize=None)
+def tc_special_sets():
+    """{teamcolorid dac biet: (frozenset spid, so cau thu)}: mau mua theo ma mua, mau co ten theo dieu
+    kien ("N tot nhat": theo chi so)."""
+    sets = {}
+    with closing(_db()) as c:
+        rows = c.execute("SELECT spid, playerid FROM players").fetchall()
+        for _, codes in tc_seasons():
+            sets[TC_SEASON + codes[0]] = [(s, p) for s, p in rows if s // 1000000 in codes]
+        for cid, _, _, cond, _, best in TC_NAMED_SPECIALS:
+            got = c.execute(f"SELECT p.spid, p.playerid FROM players p WHERE {cond} ORDER BY {POSOVR} DESC, p.spid").fetchall()
+            sets[cid] = [r for r in got if on_market(r[0])][:best] if best else got
+    return {cid: (frozenset(s for s, _ in got), len({p for _, p in got})) for cid, got in sets.items()}
+
+
+@functools.lru_cache(maxsize=None)
 def tc_colors():
-    club = {"teamcolorid": TC_CLUB, "type": "club", "teamid": -1, "name": f"TEAMCOLOR_ATTRIBUTES_TEAM{TC_CLUB}",
+    """Moi mau (GET /static/info/teamcolor teamColors): CLB / quoc gia chung, nang cap, CLB va quoc gia
+    co ten, mau mua, mau dac biet co ten (mau khong co the nao trong fifadb bi bo)."""
+    club = {"teamcolorid": TC_CLUB, "type": "club", "teamid": -1, "name": tc_name(TC_CLUB),
             "description": "Cầu thủ cùng câu lạc bộ", "boostgroups": TC_CLUB_GROUPS}
-    nation = {"teamcolorid": TC_NATION, "type": "nation", "teamid": -1, "name": f"TEAMCOLOR_ATTRIBUTES_TEAM{TC_NATION}",
+    nation = {"teamcolorid": TC_NATION, "type": "nation", "teamid": -1, "name": tc_name(TC_NATION),
               "description": "Cầu thủ cùng quốc gia", "boostgroups": TC_GROUPS}
-    return [club, nation] + [{"teamcolorid": TC_SEASON + codes[0], "type": "special", "teamid": str(TC_SEASON + codes[0]),
-                              "name": f"Season {label}", "description": f"Cầu thủ mùa {label}", "boostgroups": TC_GROUPS}
-                             for label, codes in tc_seasons()]
+    grades = [{"teamcolorid": cid, "type": "grade", "grade": g, "teamid": -1, "name": name,
+               "description": (f"Cả 11 cầu thủ đá chính từ +{g} trở lên" if cid > 10100 else f"Cầu thủ đá chính từ +{g} trở lên"),
+               "boostgroups": groups} for cid, g, name, groups in TC_GRADE]
+    clubs = [{"teamcolorid": cid, "type": "club", "teamid": t, "name": tc_name(cid),
+              "description": "Cầu thủ của CLB này (hiện tại hoặc từng thi đấu)", "boostgroups": _tc_boost(TC_CLUB_GROUPS, b)}
+             for cid, t, b in TC_NAMED_CLUBS]
+    nations = [{"teamcolorid": cid, "type": "nation", "teamid": n, "name": tc_name(cid), "description": "Cầu thủ của quốc gia này",
+                "boostgroups": _tc_boost(TC_GROUPS, b)} for cid, n, b in TC_NAMED_NATIONS]
+    # mau dac biet: teamid la CHUOI (TeamColorController chep sang __teamid, native doc bang asCString o
+    # hiep 2 - so o day lam crash). = khoa teamColorSpecials = nhan bo loc Chuyen nhuong.
+    sets = tc_special_sets()
+    specials = []
+    for label, codes in tc_seasons():
+        cid = TC_SEASON + codes[0]
+        tid, b = TC_SEASON_NAMES.get(codes[0], (None, None))
+        specials.append({"teamcolorid": cid, "type": "special", "teamid": f"Season {label}",
+                         "name": tc_name(tid) if tid else f"Season {label}",
+                         "description": f"Cầu thủ mùa {label}", "boostgroups": _tc_special_groups(b) if b else TC_GROUPS})
+    for cid, key, desc, _, b, _ in TC_NAMED_SPECIALS:
+        if sets[cid][1]:
+            specials.append({"teamcolorid": cid, "type": "special", "teamid": key, "name": tc_name(cid),
+                             "description": desc, "boostgroups": _tc_special_groups(b, min(5, sets[cid][1]))})
+    return [club, nation] + grades + clubs + nations + specials
 
 
 def ep_teamcolor(query, body):
-    """GET /static/info/teamcolor (once per login). A season color lists its cards by spid; only
-    the cards I own are listed (every card would be ~500 KB): one bought later counts on the
-    server at once and gets its boost in the client from the next login."""
+    """GET /static/info/teamcolor (1 lan moi lan dang nhap). Mau dac biet liet ke the theo spid: mau mua
+    va mau dac biet nho (<= TC_FULL_MAX) gui du (bo loc "TC đặc biệt" o Chuyen nhuong), mau lon chi gui
+    the minh co (mua them the: server tinh ngay, client cong boost tu lan dang nhap sau)."""
     st = _state()
     owned = {int(p["spid"]) for p in st["teams"].get(str(_default_slot(st)), {}).get("players", [])}
-    specials = {str(c["teamid"]): [] for c in tc_colors() if c["type"] == "special"}
-    for s in sorted(owned):
-        cid = tc_season_of(s // 1000000)
-        if cid:
-            specials[str(cid)].append(s)
+    sets = tc_special_sets()
+    specials = {}
+    for c in tc_colors():
+        if c["type"] == "special":
+            spids = sets[c["teamcolorid"]][0]
+            full = c["teamcolorid"] >= TC_SEASON or len(spids) <= TC_FULL_MAX
+            specials[c["teamid"]] = sorted(spids if full else owned & spids)
     return _json({"teamColors": tc_colors(), "teamColorSpecials": specials})
 
 
@@ -993,52 +1480,113 @@ def tc_static():
     return cards, hist
 
 
-def tc_bonus(team):
-    """{spid: diem cong team color} cho doi hinh chinh (lay muc cao nhat, khong cong don)."""
-    try:
-        cards, hist = tc_static()
-        act = active_teamcolors(team)
-    except Exception:
-        return {}
-    amt = {}
-    for c in act:
-        groups = TC_CLUB_GROUPS if c["teamcolorid"] == TC_CLUB else TC_GROUPS
-        amt[(c["teamcolorid"], int(c["teamid"]))] = groups[c["boostindex"]]["boosts"][0]["amount"]
-    out = {}
-    for p in team["squad"]["positions"]:
-        spid = int(p["spid"]); c = cards.get(spid)
-        if c is None or p.get("pos", POS_SUB) >= POS_SUB:
+def _tc_tier(groups, n):
+    return next((i for i, g in enumerate(groups) if g["count_min"] <= n <= g["count_max"]), None)
+
+
+@functools.lru_cache(maxsize=None)
+def _tc_by_id():
+    return {c["teamcolorid"]: c for c in tc_colors()}
+
+
+def _tc_xi(team):
+    """[(o doi hinh, the)] cua 11 cau thu chinh (khong trung cau thu, nhu updatePlayerCount)."""
+    cards = {iid(p): p for p in team.get("players", [])}
+    out, seen = [], set()
+    static = tc_static()[0]
+    for s in team["squad"]["positions"]:
+        if s.get("pos", POS_SUB) >= POS_SUB:
             continue
-        pid, teamid, nation = c
-        keys = [(TC_CLUB, t) for t in {teamid} | hist.get(pid, set())] + [(TC_NATION, nation)]
-        sid = tc_season_of(spid // 1000000)
-        keys += [(sid, sid)] if sid else []
-        out[spid] = max([amt.get(k, 0) for k in keys] + [0])
-    return out
-
-
-def active_teamcolors(team):
-    """team.teamcolors: the colors the starting XI meets, one per club / nation / season with
-    enough distinct players (as TeamColorController.updatePlayerCount counts them)."""
-    cards, hist = tc_static()
-    counts, seen = {}, set()
-    for p in team["squad"]["positions"]:
-        c = cards.get(int(p["spid"])) if p.get("pos", POS_SUB) < POS_SUB else None
+        c = static.get(int(s["spid"]))
         if c is None or c[0] in seen:
             continue
         seen.add(c[0])
-        pid, teamid, nation = c
-        keys = [(TC_CLUB, t) for t in {teamid} | hist.get(pid, set())] + [(TC_NATION, nation)]
-        sid = tc_season_of(int(p["spid"]) // 1000000)
-        keys += [(sid, sid)] if sid else []
-        for k in keys:
+        out.append((s, cards.get(str(s.get("id") or s["spid"]), {"spid": s["spid"]})))
+    return out
+
+
+def _tc_keys(spid, sets):
+    """Cac khoa mau ma 1 the dap ung: (TC_CLUB, CLB), (TC_NATION, quoc tich), ("special", id)."""
+    cards, hist = tc_static()
+    c = cards.get(int(spid))
+    if c is None:
+        return []
+    pid, teamid, nation = c
+    keys = [(TC_CLUB, t) for t in {teamid} | hist.get(pid, set())] + [(TC_NATION, nation)]
+    return keys + [("special", cid) for cid, (spids, _) in sets.items() if int(spid) in spids]
+
+
+def active_teamcolors(team):
+    """team.teamcolors: cac mau doi hinh chinh dat du so cau thu khac nhau (nhu TeamColorController
+    .updatePlayerCount): 1 mau CLB / quoc gia chung moi CLB va quoc gia, mau co ten, mau dac biet,
+    mau nang cap."""
+    sets = tc_special_sets()
+    counts = {}
+    xi = _tc_xi(team)
+    for s, _ in xi:
+        for k in _tc_keys(s["spid"], sets):
             counts[k] = counts.get(k, 0) + 1
     out = []
-    for (cid, teamid), n in sorted(counts.items()):
-        groups = TC_CLUB_GROUPS if cid == TC_CLUB else TC_GROUPS
-        i = next((i for i, g in enumerate(groups) if g["count_min"] <= n <= g["count_max"]), None)
+    for (cid, teamid), n in sorted((k, n) for k, n in counts.items() if k[0] != "special"):
+        i = _tc_tier(TC_CLUB_GROUPS if cid == TC_CLUB else TC_GROUPS, n)
         if i is not None and teamid > 0:
-            out.append({"teamcolorid": cid, "boostindex": i, "teamid": str(teamid) if cid >= TC_SEASON else teamid})
+            out.append({"teamcolorid": cid, "boostindex": i, "teamid": teamid})
+    for c in tc_colors():
+        if c["type"] == "grade" or c["teamid"] == -1:
+            continue
+        n = counts.get(("special", c["teamcolorid"]) if c["type"] == "special"
+                       else (TC_CLUB if c["type"] == "club" else TC_NATION, c["teamid"]), 0)
+        i = _tc_tier(c["boostgroups"], n)
+        if i is not None:
+            out.append({"teamcolorid": c["teamcolorid"], "boostindex": i, "teamid": c["teamid"]})
+    grades = [grade_of(p) for _, p in xi] if server_options().get("tc_grade", True) else []
+    for cid, g, _, groups in TC_GRADE:
+        i = _tc_tier(groups, sum(x >= g for x in grades))
+        if i is not None:
+            out.append({"teamcolorid": cid, "boostindex": i, "teamid": -1})
+    return out
+
+
+def _tc_line(pos):
+    return "gk" if pos == 0 else "df" if pos <= 8 else "mf" if pos <= 19 else "fw"
+
+
+def _tc_ovr(color, idx, pos):
+    """Diem OVR (boost type "ovr" hop vi tri) cua 1 bac mau; boost chi so le khong tinh vao OVR."""
+    return sum(b["amount"] for b in color["boostgroups"][idx]["boosts"]
+               if b["type"] == "ovr" and b.get("target", _tc_line(pos)) == _tc_line(pos))
+
+
+def tc_bonus(team):
+    """{spid: diem OVR team color} cho doi hinh chinh: mau CLB / quoc gia / dac biet tot nhat (khong cong
+    don) + mau nang cap tot nhat (cong them, ChooseTeamColorBoostsPerPlayer). Chi tinh boost OVR."""
+    try:
+        act = active_teamcolors(team)
+        sets = tc_special_sets()
+        by_id = _tc_by_id()
+    except Exception:
+        return {}
+    generic = {(c["teamcolorid"], c["teamid"]): c["boostindex"] for c in act if c["teamcolorid"] in (TC_CLUB, TC_NATION)}
+    named = {c["teamcolorid"]: c["boostindex"] for c in act if c["teamcolorid"] not in (TC_CLUB, TC_NATION)}
+    grade_cols = [(by_id[cid], named[cid], g) for cid, g, _, _ in TC_GRADE if cid in named]
+    out = {}
+    for s, p in _tc_xi(team):
+        spid, pos = int(s["spid"]), s.get("pos", 0)
+        keys = set(_tc_keys(spid, sets))
+        best = 0
+        for (cid, t), i in generic.items():
+            if (cid, t) in keys:
+                best = max(best, _tc_ovr(by_id[cid], i, pos))
+        for cid, i in named.items():
+            c = by_id[cid]
+            if c["type"] == "grade":
+                continue
+            k = ("special", cid) if c["type"] == "special" else (TC_CLUB if c["type"] == "club" else TC_NATION, c["teamid"])
+            if k in keys:
+                best = max(best, _tc_ovr(c, i, pos))
+        g = grade_of(p)
+        best += max([_tc_ovr(c, i, pos) for c, i, need in grade_cols if g >= need] + [0])
+        out[spid] = best
     return out
 
 
@@ -1177,6 +1725,9 @@ def team_summary(team, teamid):
 
 
 def team_kit(teamid):
+    # Chi dung cho /coach/me (cau thu FREEROAM) va frontplayer o man chon HLV: hai cho nay da kiem
+    # chung voi << 10 (FREEROAM lay doi o cho khac, chi doc loai ao o 5 bit thap nen << 5 cung chay).
+    # Tran dau (match_side), Doi doi (club_summary_response) va World Cup dung teamid << 5.
     # kit ids go to native as-is (freeroam kicker, 3D previews); {} = default goalie kit.
     # kit id = teamid << 10 | kittype (0 home, 1 away, 2 goalie): Enums.GOALIE_DEFAULT_KIT_ID
     # 45058 = 44 << 10 | 2; checked in FREEROAM (Barca home kit). id = teamid alone renders
@@ -1243,8 +1794,11 @@ def coach_me(st, slot):
         "id": coach["_id"], "name": coach["name"], "slot": slot, "teamid": coach["teamid"], "team": team,
         # CoachProxy.expandMoney parses money.mpdata.until as a W3C date; an exception there
         # silently aborts onChangeCoachMeResource before squad/players are read.
-        "money": {"ep": min(MAX_EP, coach.get("ep", START_EP)), "cash": 0, "mp": 0, "useable_mp": 0,
-                  "mpdata": {"point": 0, "until": "2030-01-01T00:00:00.000Z"}},
+        # es = diem nang cap (nang cap v2.5: CoachProxy.expandMoney money.es)
+        "money": {"ep": min(MAX_EP, coach.get("ep", START_EP)), "es": int(coach.get("es", 0)),
+                  # MP + Cash luon day (ban offline): Cua hang MP / nut Nap cash khong bi chan
+                  "cash": MAX_CASH, "mp": MAX_CASH, "useable_mp": MAX_CASH,
+                  "mpdata": {"point": MAX_CASH, "until": "2035-01-01T00:00:00.000Z"}},
         # always a VIP member playing from an official PC warnet (IGR / GCA): CoachProxy.igr,
         # isVip() = vipDetail > 0 and vipExpireAt in the future; vipStatus.VIP1 = VIP expiry
         # after a VVIP period (updateVipExpireAt)
@@ -1261,7 +1815,7 @@ def coach_me(st, slot):
         # -> the market's player-slot check (TransferPurchaseTabPage._limitPlayerCount)
         # limits.firstTeam: Skuad tab moveToFirstTeam reads it first and silently gives up when
         # it is missing, so Tim Cadangan cards (packs, trades) could never reach Tim inti/Formasi
-        "club": {}, "uimode": 0, "limits": {"cups": 3, "players": MAX_PLAYERS, "baseplayers": MAX_PLAYERS,
+        "club": {}, "uimode": 0, "limits": {"cups": 5, "players": MAX_PLAYERS, "baseplayers": MAX_PLAYERS,
                                              "firstTeam": FIRST_TEAM_MAX},
         "transferfavorites": [{"spid": f[0], "grade": f[1], "expandme": "player"} for f in coach.get("favorites", [])],
         "currdivision": "",
@@ -1336,14 +1890,28 @@ def ep_coach_me(query, body):
 def ep_coach_onready(query, body):
     # POST /coach/me/onready comes right after CoachProxy.invalidate() -> reset() (which nulls
     # _squad); without /coach/me in this reply the menu is built with squad null (black FREEROAM).
+    # /inbox/my/notifications (mang) lam SystemMessageProxy san sang - nguon du lieu duy nhat cua no:
+    # thieu thi MenuScreenMediator.onReady khong chay, man Tin nhan khong gan va nut Tin nhan khong lam gi.
     st = _state()
-    return _json({"result": True, "resources": coach_me_resources(st, _default_slot(st))})
+    return _json({"result": True, "resources": coach_me_resources(st, _default_slot(st))
+                  + [{"uri": "/inbox/my/notifications", "body": []}]})
+
+
+NOTE_MS = [0]  # thoi diem thong bao cuoi: AlarmWindow bo thong bao khong muon hon thong bao truoc
+
+
+def note(category, kind, details, now=None):
+    """Mot thong bao he thong (SystemMessageProxy: /inbox/my/notifications[/latest]); date tang dan.
+    details.title = dong chu trong danh sach (khoa ngon ngu hoac chu)."""
+    ms = NOTE_MS[0] = max(int((time.time() if now is None else now) * 1000), NOTE_MS[0] + 1)
+    date = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(ms // 1000)) + f".{ms % 1000:03d}Z"
+    return {"_id": new_iid(), "category": category, "type": kind, "date": date, "details": details}
 
 
 # Du lieu rieng cua tung HLV (cung tai khoan co 2 HLV): giai dau, cup/World Cup, tran dang da, chien
 # thuat, de nghi chuyen nhuong... Thieu "tactics"/"wc_record" -> HLV 2 nhan chien thuat/ky luc cua HLV 1.
 COACH_CONTEXT_KEYS = ('league2', 'league2_archives', 'cups', 'offers', 'match', 'trade', 'cup_pending',
-                      'tactics', 'wc_record')
+                      'tactics', 'wc_record', 'cup_records', 'room', 'ladder_pending')
 
 
 def ep_default_coach(slot, query, body):
@@ -1535,7 +2103,7 @@ def repair_league_context(st):
         return False
     # Preserve the previous season rather than relabel its fixtures as a different team.
     st.setdefault("league2_archives", []).append({"slot": _default_slot(st),
-        "reason": "team_changed", "archivedat": int(time.time()*1000), "season": lg})
+        "reason": "Đội đã thay đổi", "archivedat": int(time.time()*1000), "season": lg})
     st["league2"] = {"difficultyselect": lg.get("difficultyselect", 10)}
     return True
 
@@ -1631,14 +2199,20 @@ def club_summary_response(teamid):
         nationid = next((n["nationid"] for n in _CLUB_CATALOG.get("rowteamnationlinks", []) if n["teamid"] == teamid), 0)
     summary.update(id=teamid, teamid=teamid,
                    name=info.get("teamname") or summary.get("name", ""),
-                   league={"id": leagueid, "name": league.get("leaguename", "")},
+                   # nationid: man chon doi cua Cup (CupCreationTeamSelectionScene) doc summary.league.nationid
+                   # cho ten + co quoc gia (thieu -> "World" + co trong)
+                   league={"id": leagueid, "name": league.get("leaguename", ""), "nationid": nationid},
                    nation={"id": nationid, "name": _CLUB_NATIONS.get(nationid, {}).get("nationname", "")},
                    rival={"name": _CLUB_TEAMS.get(info.get("rivalteam"), {}).get("teamname", "")})
     stadiumid = _CLUB_STADIUM_LINKS.get(teamid)
     stadium = _CLUB_STADIUMS.get(stadiumid, {})
     stadium = {"id": stadiumid or 0, "name": stadium.get("name", "N/A"),
                "yearbuilt": stadium.get("yearbuilt", "N/A"), "capacity": stadium.get("capacity", "N/A")}
-    return {**summary, "summary": summary, "stadium": stadium, "kit": team_kit(teamid)}
+    # Doi doi (TeamChangeScreenSelectPage.update3DPlayerInfo) dua kit.availables.<home|away|goalie>.id
+    # vao native changeRight3DPlayerOnTheFly - cung ham voi man chon doi World Cup, noi id = teamid << 5
+    # da duoc kiem chung (14001370 << 5 -> ao ca ro). teamid << 10 o day = doi (teamid << 5) khong ton tai.
+    kit = {"availables": {k: {"id": int(teamid) << 5 | t} for k, t in (("home", 0), ("away", 1), ("goalie", 2))}}
+    return {**summary, "summary": summary, "stadium": stadium, "kit": kit}
 
 
 def club_index():
@@ -1696,7 +2270,13 @@ def ep_authentic_team(kind, teamid, query, body):
     (after "Tim lain") looks up team.captain among team.players by id and dresses its 3D player
     in kit.availables.home/goalie."""
     r = roster(int(teamid))
-    team = dict(r["team"], players=[dict(p, id=str(p["spid"])) for p in r["team"]["players"]])
+    # state "first": man chon doi Cup chi liet ke cau thu doi hinh chinh (Enums.isFirstTeam(state)) o o
+    # xem cau thu 3D; thieu -> danh sach rong, loi #1009 va con sot ten cau thu cua doi truoc
+    first = {str(x.get("id") or x.get("spid")) for x in r["team"]["squad"].get("positions", [])
+             if x.get("pos") is not None and int(x.get("pos") or 0) < 28}
+    team = dict(r["team"], players=[dict(p, id=str(p["spid"]), **({"state": "first"} if not first or str(p.get("id") or p["spid"]) in first
+                                                                     or str(p["spid"]) in first else {}))
+                                    for p in r["team"]["players"]])
     team["captain"] = str(team["squad"].get("captain") or "")
     return _json({**r, **club_summary_response(int(teamid)), "team": team, "teamid": int(teamid)})
 
@@ -1732,6 +2312,8 @@ def league_play_round(st, rnd, mine=None, seed=None):
             gh, ga = mine
         else:
             gh, ga = sim_score(rng, team_strength(st, h), team_strength(st, a))
+        if me in (h, a):  # da hoac gia lap: thanh tich Giai dau trong Info Manager
+            record_match(st, "league", *((gh, ga) if h == me else (ga, gh)))
         played.append({"type": "league", "matchtype": "league", "round": rnd, "home": h, "away": a,
                        "goals": {"home": gh, "away": ga}})
     league["matchrecords"] += played
@@ -1752,6 +2334,7 @@ def league_match_body(st, req, playtype):
     gs = match["gamesettings"]
     gs["home"] = req["home"] == teamid  # I am always the left side
     gs["kit"] = ["home", "away"] if gs["home"] else ["away", "home"]
+    apply_prematch(st, match)
     # league level 10..24: the in-match overlay shows LEAGUE2_DIFFICULTY_<difficulty - 9>
     gs["difficulty"] = lg.get("difficultyselect", 10)
     # MatchProxy.leagueparam: LeagueCupGameSettingScreen.onPlaying reads leagueparam.matchtype
@@ -1759,6 +2342,90 @@ def league_match_body(st, req, playtype):
     match["leagueparam"] = {"matchtype": req.get("matchtype", "league"), "round": req.get("round", 0),
                             "home": req["home"], "away": req["away"], "leagueid": lg.get("leagueid")}
     return match
+
+
+def sim_events(match, mine, opp, rng=random):
+    """eventlist cho man mo phong Giai dau (LeagueCupFrontScreenSimulation.rebuildSimulationEvent):
+    [{time 1..90, team 0 = minh / 1, player = spid cau thu da chinh, event}] theo thoi gian. Moi
+    GOAL_EVENT cong vao ti so hien tren man (co ASSIST_EVENT truoc mot so ban); SHOT_ON_GOAL_EVENT la
+    sut truot neu khong co SAVE_EVENT cua thu mon theo sau; YELLOW_CARD_EVENT thu hai = the do.
+    Truoc day gui rong -> tran mo phong luon hien 0-0, khong dien bien."""
+    xi = [[(int(p["spid"]), p["pos"]) for p in match["side"][s]["team"]["squad"]["positions"] if p["pos"] < POS_SUB]
+          for s in ("left", "right")]
+    keeper = [next((s for s, pos in x if pos == 0), x[0][0]) for x in xi]
+    def outfield(t, w=(1, 3, 6)):  # HV / TV / TD: tien dao ghi ban va sut nhieu nhat
+        field = [(s, w[0] if pos <= 8 else w[1] if pos <= 19 else w[2]) for s, pos in xi[t] if pos]
+        return rng.choices([s for s, _ in field], [n for _, n in field])[0]
+    ev = []
+    for t, goals in ((0, mine), (1, opp)):
+        for _ in range(goals):
+            minute, scorer = rng.randint(1, 90), outfield(t)
+            if rng.random() < 0.6:
+                ev.append({"time": minute, "team": t, "player": outfield(t, (2, 4, 2)), "event": "ASSIST_EVENT"})
+            ev.append({"time": minute, "team": t, "player": scorer, "event": "GOAL_EVENT"})
+    for _ in range(rng.randint(3, 7)):
+        t, minute = rng.randint(0, 1), rng.randint(1, 90)
+        ev.append({"time": minute, "team": t, "player": outfield(t), "event": "SHOT_ON_GOAL_EVENT"})
+        if rng.random() < 0.6:
+            ev.append({"time": minute, "team": 1 - t, "player": keeper[1 - t], "event": "SAVE_EVENT"})
+    for _ in range(rng.randint(0, 3)):
+        t = rng.randint(0, 1)
+        ev.append({"time": rng.randint(1, 90), "team": t, "player": outfield(t, (4, 3, 1)), "event": "YELLOW_CARD_EVENT"})
+    return sorted(ev, key=lambda e: e["time"])  # on dinh: kien tao truoc ban, cuu thua sau cu sut
+
+
+def sim_result(match, events, my_home, rng=random):
+    """match.result cho tran mo phong, cung dang bao cao ma tran da that gui o /match/<id>/end
+    (PostMatchResultDefaultScene.onResultReceived): ti so, chi so tung cau thu, kiem soat bong, MOTM.
+    id/dbid = id cau thu (spid % 1e6), spid = spid cua the; y tinh tu khung thanh xa."""
+    pair = lambda lo, hi, rate: (lambda n: [round(n * rate), n])(rng.randint(lo, hi))
+    teams = []
+    for t, s in ((0, "left"), (1, "right")):
+        pos = match["side"][s]["team"]["squad"]["positions"]
+        players = []
+        for p in (p for p in pos if p["pos"] < POS_SUB):
+            mine = [e["event"] for e in events if e["team"] == t and e["player"] == int(p["spid"])]
+            goals, assists, shots = mine.count("GOAL_EVENT"), mine.count("ASSIST_EVENT"), mine.count("SHOT_ON_GOAL_EVENT")
+            saves, yellow = mine.count("SAVE_EVENT"), mine.count("YELLOW_CARD_EVENT")
+            pid = int(p["spid"]) % 1000000
+            start = p.get("starting") if isinstance(p.get("starting"), list) and len(p["starting"]) >= 4 else [1, 1, 0.5, 0.5]
+            players.append({
+                "id": str(pid), "spid": int(p["spid"]), "dbid": pid, "role": p["pos"], "x": start[2], "y": round(1 - start[3], 4),
+                "rating": round(min(10.0, max(4.0, 6.0 + goals + 0.5 * assists + 0.3 * saves - 0.4 * yellow
+                                                   + rng.uniform(-0.4, 0.9))), 1),
+                "goals": goals, "assists": assists, "saves": saves, "shotsOnGoal": goals + shots,
+                "shotAttempt": goals + shots + rng.randint(0, 1) * bool(p["pos"]),
+                "passes": pair(20, 50, rng.uniform(0.7, 0.92)) if p["pos"] else pair(5, 15, 0.8),
+                "dribbles": pair(0, 6, 0.6), "tackles": pair(0, 5, 0.6) if p["pos"] else [0, 0],
+                "cards": [min(yellow, 1), int(yellow >= 2)], "injure": [0, 0],
+                "runDistanceMeter": round(rng.uniform(8000, 12000) if p["pos"] else rng.uniform(3000, 5000), 1),
+                "longTermStamina": 1})
+        total = lambda k: sum(p[k] for p in players)
+        sums = lambda k: [sum(p[k][0] for p in players), sum(p[k][1] for p in players)]
+        teams.append({
+            "id": match["side"][s]["team"]["teamid"], "score": total("goals"), "goals": total("goals"),
+            "assists": total("assists"), "saves": total("saves"), "shotsOnGoal": total("shotsOnGoal"),
+            "shotAttempt": total("shotAttempt"), "passes": sums("passes"), "dribbles": sums("dribbles"),
+            "tackles": sums("tackles"), "cards": sums("cards"), "crossPasses": pair(5, 20, 0.35),
+            "throughPasses": pair(2, 10, 0.4), "blocks": pair(0, 5, 0.5), "fouls": sums("cards")[0] + rng.randint(2, 8),
+            "offsides": rng.randint(0, 3), "clearances": rng.randint(5, 20), "intercepts": rng.randint(5, 20),
+            "tackles_inbox": 0, "passes_inbox": 0, "intercepts_inbox": 0, "dribble_inbox": 0,
+            "rating": round(sum(p["rating"] for p in players) / max(1, len(players)), 2),
+            "runDistanceKm": round(total("runDistanceMeter") / 1000, 1),
+            "players": players, "substitutes": [], "users": [], "shootout": 0, "injuredPlayers": 0,
+            "reserved": [{"id": str(int(p["spid"]) % 1000000), "rating": 0, "dbid": int(p["spid"]) % 1000000}
+                         for p in pos if p["pos"] == POS_SUB]})
+    mine_poss = rng.randint(40, 60)  # kiem soat bong cong lai = 100; trai/giua/phai cung vay
+    for team, share in zip(teams, (mine_poss, 100 - mine_poss)):
+        left = rng.randint(15, 45); center = rng.randint(20, 100 - left - 10)
+        team["possession"] = {"total": share, "left": left, "center": center, "right": 100 - left - center,
+                              "df": rng.randint(10, 30), "mf": rng.randint(40, 60), "fw": rng.randint(10, 30)}
+    me, opp = ("home", "away") if my_home else ("away", "home")
+    side = {me: teams[0], opp: teams[1]}
+    team_of, best = max(((name, p) for name, team in side.items() for p in team["players"]), key=lambda x: x[1]["rating"])
+    return {"myTeam": me, "opponentTeam": opp, "home": side["home"], "away": side["away"], "matchFinishedTime": 5400,
+            "forfeits": 0, "motm": {"team": team_of, "id": best["id"], "spid": best["spid"], "dbid": best["dbid"],
+                                    "rating": best["rating"], "name": "XXDISPLAYNAMEXX"}}
 
 
 def ep_l2_match(query, body, sim=False):
@@ -1783,20 +2450,19 @@ def ep_l2_match(query, body, sim=False):
         mine = next((m for m in param["leaguematches"] if my_teamid(st) in (m["home"], m["away"])), None)
         match.update(stage="closed", simulated=True)
         match["gamesettings"]["simulated"] = True
-        if mine:
-            # MatchResult reads the match resource, so keep the simulated fixture score here.
-            home_goals = int(mine["goals"]["home"])
-            away_goals = int(mine["goals"]["away"])
-            match["gamesettings"]["prevScore"] = {"home": home_goals, "away": away_goals}
-            is_home = req["home"] == my_teamid(st)
-            match["result"] = {
-                "home": {"id": req["home"], "score": home_goals, "players": []},
-                "away": {"id": req["away"], "score": away_goals, "players": []},
-                "myTeam": "home" if is_home else "away",
-                "opponentTeam": "away" if is_home else "home",
-                "motm": None,
-            }
-        out.update(leagueparam=param, eventlist=[], score=mine and mine["goals"])
+        g = mine["goals"] if mine else {"home": 0, "away": 0}
+        home_goals, away_goals = int(g["home"]), int(g["away"])
+        match["gamesettings"]["prevScore"] = {"home": home_goals, "away": away_goals}
+        is_home = bool(mine) and mine["home"] == my_teamid(st)
+        mine_g, opp_g = (home_goals, away_goals) if is_home else (away_goals, home_goals)
+        events = sim_events(match, mine_g, opp_g)
+        # man ket qua sau mo phong (doc match.result) roi man thuong (match.reward) nhu tran da that
+        match["result"] = sim_result(match, events, match["gamesettings"]["home"])
+        match["reward"] = match_reward(st, match["result"])
+        add_ep(st, match["reward"]["money"]["reward"]["total"])
+        league_record(st, match["result"])
+        lg.pop("pending", None)  # vong nay da da xong
+        out.update(leagueparam=param, eventlist=events, score=mine and mine["goals"])
         ticket['remains'] -= 1
         if ticket['remains'] == 0:
             coach['items'].remove(ticket)
@@ -1823,6 +2489,64 @@ def ep_l2_finish(query, body):
     st["league2"] = {"difficultyselect": lg.get("difficultyselect", 10)}
     _save(st)
     return _json({"result": True, "resources": l2_resources(st)})
+
+
+STAT_LEADERS = 3  # so cau thu moi chi so o tab "Thanh tich tong hop"
+
+
+def league_record(st, stats):
+    """Cong tran giai dau vua da vao thanh tich mua cua cau thu toi (st.league2.playerrecords, mua moi
+    thi xoa): tab Thanh tich giai dau > cua toi. Du bi khong vao san khong co rating; passes/tackles
+    la [thanh cong, thu]; role = vi tri da choi (Enums.PLAYERPOSITION)."""
+    lg = st.get("league2")
+    if not isinstance(lg, dict):
+        return
+    recs = lg.setdefault("playerrecords", {})
+    for p, s in match_cards(st, stats):
+        try:
+            rating = float(s.get("rating") or 0)
+        except (TypeError, ValueError):
+            rating = 0
+        if not rating:
+            continue
+        r = recs.setdefault(iid(p), dict.fromkeys(("matches", "ratings", "goals", "assists", "passes",
+                                                     "passtries", "tackles", "saves"), 0))
+        pair = lambda k: (list(s.get(k) or []) + [0, 0])[:2] if isinstance(s.get(k), list) else [0, 0]
+        r.update(id=iid(p), spid=p["spid"], role=_num(s.get("role")))
+        r["matches"] += 1
+        r["ratings"] = round(r["ratings"] + rating, 2)
+        for k in ("goals", "assists", "saves"):
+            r[k] += _num(s.get(k))
+        r["passes"] += _num(pair("passes")[0]); r["passtries"] += _num(pair("passes")[1])
+        r["tackles"] += _num(pair("tackles")[0])
+
+
+def ep_l2_history_players(query, body):
+    """GET /league2/history/players/league: [{id: _id the, matches, ratings (tong), goals, assists,
+    passes, tackles, saves}] (LeagueCupRecordTabPage.joinPlayerData; the khong co thi hien 0)."""
+    return _json(list(((_state().get("league2") or {}).get("playerrecords") or {}).values()))
+
+
+def ep_l2_leaders(query, body):
+    """PUT /league2/leader/league -> Thanh tich tong hop (LeagueCupTotalRecordTabPage): doi hinh tieu
+    bieu theo tuyen (so vi tri trong so do cua toi, rating TB cao nhat o vi tri do) va top cau thu
+    moi chi so, moi muc {spid, teamid, value}, tu thanh tich mua cua cau thu toi (cau thu AI khong
+    luu chi so). Trang gop moi khoa trong reply thanh 1 danh sach -> khong them khoa khac."""
+    st = _state(); me = my_teamid(st)
+    recs = [r for r in ((st.get("league2") or {}).get("playerrecords") or {}).values() if r["matches"]]
+    avg = lambda r: round(r["ratings"] / r["matches"], 1)
+    entry = lambda r, v: {"spid": r["spid"], "teamid": me, "value": v}
+    squad = (st["teams"].get(str(_default_slot(st))) or {"squad": {"positions": []}})["squad"]["positions"]
+    out = {}
+    for line, rng in LINES.items():
+        slots = sum(s["pos"] in rng for s in squad)
+        out[line] = [entry(r, avg(r)) for r in sorted((r for r in recs if r["role"] in rng), key=avg, reverse=True)[:slots]]
+    stat = {"ratings": avg, "goals": lambda r: r["goals"], "assists": lambda r: r["assists"],
+            "tackles": lambda r: r["tackles"], "saves": lambda r: r["saves"],
+            "passes": lambda r: round(r["passes"] / r["passtries"], 2) if r["passtries"] else 0}  # ti le chuyen dung
+    for k, f in stat.items():
+        out[k] = [entry(r, f(r)) for r in sorted(recs, key=f, reverse=True) if f(r)][:STAT_LEADERS]
+    return _json(out)
 
 
 def season_leaders(st, me, rank, goals):
@@ -1881,6 +2605,11 @@ def ep_l2_end(query, body):
            "sponsorRewards": {"sponsorid": str(lg.get("sponsor")), "level": 1, "achievement": done,
                               "missions": [{"mid": mid, "achievement": done, "progress": progress}]},
            "leaderRewards": leaders, "seasonRewards": {"items": []}}
+    if (lg.get("sponsoroffice") or {}).get("season", {}).get("status") != "finished":  # 1 lan / mua
+        r = coach_record(my_coach(st), "league")
+        track, best = ("ultimate", "ultimatebest") if cur >= 20 else ("normal", "noramlbest")
+        r[track + "wins"] = r.get(track + "wins", 0) + (rank == 1)
+        r[best] = max(r.get(best, 0), max(cur, nxt) + 1)  # Info Manager hien - 10 / - 20
     lg.update(difficultyselect=nxt, sponsoroffice={"season": {"status": "finished"}})
     add_ep(st, out["rewards"]["money"]["reward"]["total"])
     _save(st)
@@ -1957,15 +2686,37 @@ def ep_match_squad(mid, side, query, body):
 
 
 def ep_match_gamesettings(mid, query, body):
-    """Persist the pre-match shirt selection and return the updated match resource."""
+    """PUT /match/<id>/gamesettings tu man cai dat truoc tran: {kit: home|away, side: 0|1} (nut ao) va
+    (man Xep hang) {stadium}, {tod}, {weather}, {halfLength}, {ball: {id}}; nhieu khoa co the gop
+    trong mot body. San/thoi diem/thoi tiet/thoi luong/bong chon o day duoc nho cho cac tran sau."""
     req = json.loads(body or b"{}")
     st = _state()
     match = st.get("match")
-    side, kit = req.get("side"), req.get("kit")
-    if (not match or match["id"] != mid or match.get("stage") != "setting"
-            or type(side) is not int or side not in (0, 1) or kit not in ("home", "away")):
+    if not match or match["id"] != mid or match.get("stage") != "setting":
         return _json({"result": False})
-    match["gamesettings"]["kit"][side] = kit
+    gs = match["gamesettings"]
+    side, kit = req.get("side"), req.get("kit")
+    changed = False
+    if kit is not None or side is not None:
+        if type(side) is not int or side not in (0, 1) or kit not in ("home", "away"):
+            return _json({"result": False})
+        gs["kit"][side] = kit
+        changed = True
+    for key, ok in (("stadium", STADIUMS_SAFE), ("tod", TODS), ("weather", WEATHERS), ("halfLength", HALF_LENGTHS)):
+        v = req.get(key)
+        v = int(v) if (isinstance(v, (int, float)) and not isinstance(v, bool)) or str(v).isdigit() else None
+        if v in ok:
+            gs[key] = st.setdefault("matchprefs", {})[key] = v
+            changed = True
+    ball = req.get("ball").get("id") if isinstance(req.get("ball"), dict) else None
+    avail = [b.get("id") if isinstance(b, dict) else b for b in (gs.get("ball") or {}).get("availables", [])]
+    if not isinstance(ball, bool) and ball is not None and ball in avail:
+        gs["ball"]["id"] = ball
+        if ball in BALLS:
+            st.setdefault("matchprefs", {})["ball"] = ball
+        changed = True
+    if not changed:
+        return _json({"result": False})
     _save(st)
     return _json({"result": True, "resources": [{"uri": f"/match/{mid}", "body": match}]})
 
@@ -1999,31 +2750,95 @@ def ep_match_player_ready(mid, query, body):
     return match_step(mid, body, _player_ready)
 
 
+def match_cards(st, stats):
+    """[(the cua toi, dong matchStats cua no)] cho cac cau thu ben toi. spid trong tran = id cau thu
+    (spid % 1e6); the dang trong doi hinh duoc uu tien hon the khac cua cung cau thu."""
+    team, done, out = st["teams"].get(str(_default_slot(st))) or {"players": []}, set(), []
+    for s in (stats.get(stats.get("myTeam", "home")) or {}).get("players") or []:
+        pid = _num(s.get("spid")) % 1000000
+        mine = [p for p in team["players"] if int(p["spid"]) % 1000000 == pid and iid(p) not in done]
+        p = next((p for p in mine if in_squad(team, p)), mine[0] if mine else None)
+        if p is not None:
+            done.add(iid(p))
+            out.append((p, s))
+    return out
+
+
+# The thuong sau tran: PostMatchRewardDefaultScene chia 3 the ("normal"); the bam chon hien
+# extra.availables[extra.selected.normal[0]] (RewardCardFront.setItemData: staticdata name/unit/
+# itemicon, count), openRestCards lat cac the con lai; selected {type: [index]} bo the da chon.
+# GM Tool > Tran dau chinh tat ca (gamedata/match_rewards.json): EP + EXP (HLV, moi cau thu) theo
+# ket qua, va the [[trong so, itemid | {"ep": so EP}]].
+MATCH_REWARD_FILE = os.path.join(HERE, "gamedata", "match_rewards.json")
+MATCH_REWARD_DEFAULT = {  # = muc thuong truoc day (EP 2000/1000/500, EXP_WIN/DRAW/LOSS) + the thuong
+    "result": {"win": {"ep": 2000, "coach": EXP_WIN[0], "player": EXP_WIN[1]},
+               "draw": {"ep": 1000, "coach": EXP_DRAW[0], "player": EXP_DRAW[1]},
+               "loss": {"ep": 500, "coach": EXP_LOSS[0], "player": EXP_LOSS[1]}},
+    "cards": [[30, {"ep": 1000}], [25, {"ep": 3000}], [15, {"ep": 5000}], [8, {"ep": 10000}],
+              [10, 92000000], [7, 92000014], [5, 501]]}
+
+
+def match_reward_cfg():
+    try:
+        with open(MATCH_REWARD_FILE, encoding="utf-8") as f:
+            d = json.load(f)
+    except (OSError, ValueError):
+        return MATCH_REWARD_DEFAULT
+    # file sua tay / hong (khong phai dict, thieu win/draw/loss): khong de PUT /match/<id>/end vo
+    # (mat ket qua tran) - phan thieu lay mac dinh
+    d = d if isinstance(d, dict) else {}
+    res = d.get("result") if isinstance(d.get("result"), dict) else {}
+    result = {k: {**v, **(res.get(k) if isinstance(res.get(k), dict) else {})}
+              for k, v in MATCH_REWARD_DEFAULT["result"].items()}
+    cards = d.get("cards") if isinstance(d.get("cards"), list) else MATCH_REWARD_DEFAULT["cards"]
+    return {**MATCH_REWARD_DEFAULT, **d, "result": result, "cards": cards}
+
+
+def prize_item(p):
+    """Phan thuong ("ep", so) | itemid -> {itemid, count, staticdata}."""
+    if isinstance(p, tuple):
+        return {"itemid": EP_ITEM, "count": p[1], "staticdata": EP_ITEM_DEF}
+    return {"itemid": p, "count": 1, "staticdata": item_def(p)}
+
+
+def match_cards_reward(st):
+    """extra/selected cua match.reward: 3 the, the dau la cua toi (cong ngay tai day). The co vat
+    pham khong con trong cua hang bi bo qua (staticdata se loi)."""
+    rows = [r for r in match_reward_cfg().get("cards") or [] if isinstance(r, (list, tuple)) and len(r) == 2]
+    pool = [(w, ("ep", int(p["ep"])) if isinstance(p, dict) else p) for w, p in rows
+            if (isinstance(p, dict) and "ep" in p) or (isinstance(p, int) and (p in ITEMS or p in PACKS))]
+    pool = [(w, p) for w, p in pool if isinstance(w, (int, float)) and w > 0]
+    if not pool:
+        return {"extra": {"selected": {}, "availables": []}, "selected": {}}
+    cards = random.choices([p for _, p in pool], [w for w, _ in pool], k=3)
+    if isinstance(cards[0], tuple):
+        add_ep(st, cards[0][1])
+    else:
+        inventory_add(my_coach(st), cards[0], 1)
+    pick = {"normal": [0]}
+    return {"extra": {"selected": pick, "availables": [prize_item(p) for p in cards]}, "selected": pick}
+
+
 def match_reward(st, stats):
     """match.reward for PostMatchRewardDefaultScene.onRewardReceived (paths it reads) and its
     player list (PlayerRewardListItemRenderer: id, spid, prev, current, reward.detail.extra).
     Credits EP, coach exp and exp for every player of mine in matchStats (in-match spid = the
-    card's player id, i.e. spid % 1e6). ponytail: flat exp by result + goals/assists."""
+    card's player id, i.e. spid % 1e6) theo gamedata/match_rewards.json, cong 1 the thuong."""
     me, opp = stats.get("myTeam", "home"), stats.get("opponentTeam", "away")
-    g = lambda s: int((stats.get(s) or {}).get("score") or 0)
+    g = lambda s: _num((stats.get(s) or {}).get("score"))
     won, drew = g(me) > g(opp), g(me) == g(opp)
-    ep = 2000 if won else 1000 if drew else 500
-    cexp, pexp = EXP_WIN if won else EXP_DRAW if drew else EXP_LOSS
+    r = match_reward_cfg()["result"]["win" if won else "draw" if drew else "loss"]
+    ep, cexp, pexp = int(r["ep"]), int(r["coach"]), int(r["player"])
     reward = lambda n: {"total": n, "detail": {"base": n, "extra": 0}}
     prev, cur = gain_exp(my_coach(st), cexp, coach_need, COACH_MAX_LEVEL)
-    team, done, players = st["teams"].get(str(_default_slot(st))) or {"players": []}, set(), []
+    team = st["teams"].get(str(_default_slot(st))) or {"players": []}
     team['staffsmc'] = int(team.get('staffsmc') or 0) + 1
-    for s in (stats.get(me) or {}).get("players") or []:
-        pid = int(s.get("spid") or 0) % 1000000
-        mine = [p for p in team["players"] if int(p["spid"]) % 1000000 == pid and iid(p) not in done]
-        p = next((p for p in mine if in_squad(team, p)), mine[0] if mine else None)
-        if p is None:
-            continue
-        n = pexp + 20 * int(s.get("goals") or 0) + 10 * int(s.get("assists") or 0)
+    players = []
+    for p, s in match_cards(st, stats):
+        n = pexp + 20 * _num(s.get("goals")) + 10 * _num(s.get("assists"))
         pprev, pcur = gain_exp(p, n, player_need, PLAYER_MAX_LEVEL)
-        done.add(iid(p))
         players.append({"id": iid(p), "spid": p["spid"], "prev": pprev, "current": pcur, "reward": reward(n)})
-    return {"matchRewardBackType": 0, "extra": {"selected": {}, "availables": []}, "selected": [],
+    return {"matchRewardBackType": 0, **match_cards_reward(st),
             "coach": {"reward": reward(cexp), "prev": prev, "current": cur},
             "money": {"reward": reward(ep)},
             "players": players, "missions": [], "exptankinfo": {}}
@@ -2035,6 +2850,64 @@ def ep_match_get(mid, query, body):
     return _json(match if match.get("id") == mid else {})
 
 
+def _num(v):
+    """So tu matchStats (da nhanh PvE gui ti so dang chuoi, co the go sai) -> int, loi = 0."""
+    try:
+        return int(float(str(v).strip() or 0))
+    except (TypeError, ValueError):
+        return 0
+
+
+def fill_players(match, stats):
+    """Game gui matchStats voi role 0 va spid = id cau thu (spid % 1e6) du x/y dung. San trong man ket
+    qua (GameResultPlayerInfo) dat role 0 = GK o khung thanh -> ca 11 nguoi chong len nhau, va nhan
+    mua the lay tu spid (SeasonIcon.setSeasonBySpid) -> moi the hien mua hien tai. players[i] = vi tri
+    i trong doi hinh: role = pos cua vi tri do; spid = spid day du cua the (cau thu, du bi, MOTM)."""
+    sides = match.get("side") or {}
+    if not sides:
+        return
+    for key, default in (("home", "left"), ("away", "right")):
+        t = stats.get(key) or {}
+        if not isinstance(t, dict):
+            continue
+        hits = [s for s in sides if str(sides[s]["team"]["teamid"]) == str(t.get("id"))]
+        pos = sides[hits[0] if len(hits) == 1 else default]["squad"]["positions"]
+        for p, slot in zip(t.get("players") or [], pos):
+            if isinstance(p, dict) and not p.get("role"):
+                p["role"] = slot["pos"]
+        full = {int(s["spid"]) % 1000000: int(s["spid"]) for s in pos}
+        mine = list(t.get("players") or []) + list(t.get("substitutes") or [])
+        if (stats.get("motm") or {}).get("team") == key:
+            mine.append(stats["motm"])
+        for e in mine:
+            if isinstance(e, dict) and e.get("spid"):
+                e["spid"] = full.get(_num(e["spid"]) % 1000000, e["spid"])
+
+
+MATCH_END_HOOKS = []  # fn(st, match id, matchStats) sau khi tinh thuong 1 tran (module tinh nang them vao)
+
+
+# Thanh tich HLV + nhiem vu (manager.py thay cac ham nay khi cai dat; mac dinh khong lam gi)
+def coach_record(coach, part):
+    return coach.setdefault("record", {}).setdefault(part, {})
+
+
+def record_match(st, part, gf, ga):
+    pass
+
+
+def record_trade(coach, kind, spid, amount, now=None):
+    pass
+
+
+def mission_event(st, now=None, **counts):
+    pass
+
+
+def achievement_resources(st):
+    return []
+
+
 def ep_match_end(mid, query, body):
     """PUT /match/<id>/end matchStats {home:{id, score, players...}, away:{...}, myTeam,
     opponentTeam, motm, ...}. It comes back as match.result (PostMatchResultDefaultScene
@@ -2044,29 +2917,33 @@ def ep_match_end(mid, query, body):
     match = st.get("match") if (st.get("match") or {}).get("id") == mid else None
     out = {"result": True}
     if match is not None and match.get("stage") != "closed":  # credit once
+        fill_players(match, req)
         match["result"] = {k: v for k, v in req.items() if k != "_method"}
         match["reward"] = match_reward(st, req)
         add_ep(st, match["reward"]["money"]["reward"]["total"])
+        for hook in MATCH_END_HOOKS:  # rank.ladder_result ...
+            hook(st, mid, req)
     cp = st.get("cup_pending") or {}
     if cp.get("id") == mid and cp.get("cupid") in (st.get("cups") or {}):
         h, a = req.get("home") or {}, req.get("away") or {}
-        gh, ga = int(h.get("score") or 0), int(a.get("score") or 0)
-        sh, sa = int(h.get("shootout") or 0), int(a.get("shootout") or 0)
+        gh, ga = _num(h.get("score")), _num(a.get("score"))
+        sh, sa = _num(h.get("shootout")), _num(a.get("shootout"))
         if str(h.get("id")) == str(cp["away"]):
             gh, ga, sh, sa = ga, gh, sa, sh
         st["cups"][cp["cupid"]]["_mine"] = (gh, ga, sh, sa)  # applied by PUT /cup/<id>/next
         st.pop("cup_pending")
     if p and p["id"] == mid:
         h, a = req.get("home") or {}, req.get("away") or {}
-        gh, ga = int(h.get("score") or 0), int(a.get("score") or 0)
+        gh, ga = _num(h.get("score")), _num(a.get("score"))
         if str(h.get("id")) == str(p["away"]):  # matchStats home/away are match sides
             gh, ga = ga, gh
         out["leagueparam"] = league_play_round(st, p["round"], (gh, ga))
+        league_record(st, req)
         lg.pop("pending", None)
         out["resources"] = l2_resources(st)
     if match is not None:
         match["stage"] = "closed"
-        out["resources"] = [{"uri": f"/match/{mid}", "body": match}] + out.get("resources", [])
+        out["resources"] = [{"uri": f"/match/{mid}", "body": match}] + out.get("resources", []) + achievement_resources(st)
     _save(st)
     return _json(out)
 
@@ -2075,22 +2952,107 @@ def ep_match_end(mid, query, body):
 # Single > Cup (PvE cups; also the "Eropa/Amerika Selatan" shortcut). CupProxy/CupController.
 #   GET /cup/list -> metas the front screen lists; GET /cup/record -> my cup records.
 # --------------------------------------------------------------------------- #
-def cup_meta(metaid, name, trophy, quality, matchcount, teams, reward):
+def cup_meta(metaid, name, trophy, quality, matchcount, teams, reward, desc="PVECUP_INFO_OPTION_NO", skin=None):
     """A /cup/list entry: CupFrontScreen.onCupDetailInternal + CupProxy.onCupListReceived
     fields. difficulty = minimum AI level index (0 amateur .. 4 legendary)."""
     # visible: Boolean (isVisibleValue indexes it per condition otherwise); joinable.allteams
     # skips the teamids/leagueids whitelist ("Tim ini tidak dapat bergabung")
+    # name / proviso_desc / phases[].name go through Localization.getLocalizedString: a
+    # PVE_CUP_MATCH_TITLE_/DESC_/ROUND_ key shows the game's own text, plain text shows as is.
+    # skin: only externalAssets cupskin 1/2 exist (others -> notfound); trophy 13/66/300000.
     return {"metaid": metaid, "_id": str(metaid), "name": name, "type": "pve", "teamselect": "user", "visible": True,
             "difficulty": 0, "quality": quality, "matchcount": matchcount, "teamcount_desc": teams,
-            "proviso_desc": "PVECUP_INFO_OPTION_NO", "trophy": trophy, "skin": str(metaid),
+            "proviso_desc": desc, "trophy": trophy, "skin": skin or str(metaid),
             # onCupDetailInternal sums bestrewards[-1][*].count where itemid == 1 (EP)
             "bestrewards": [[{"itemid": 1, "count": reward}]],
             "startat": "2020-01-01T00:00:00.000Z", "endat": "2030-12-31T00:00:00.000Z",
             "joinable": {"fee": 0, "igr": False, "vip": 0, "allteams": True, "dayofweek": [1, 1, 1, 1, 1, 1, 1]}}
 
 
-CUPS = [cup_meta(1, "Cúp vô địch châu Âu", "66", 4, 6, 16, 60000),  # 3 group + QF/SF/F
-        cup_meta(2, "Cúp Nam Mỹ", "300000", 3, 6, 16, 40000)]
+# Cup formats (CUP_SPECS[metaid]["fmt"]): phases in order, each
+#   ("rr", groups, name)      round-robin groups of 4, top 2 go through (A1-B2, B1-A2, ...)
+#   ("ko", rounds|None, name) knock-out over `rounds` rounds (None = down to the final); the
+#                             winners of its last round start the next phase
+# The client (CupMainScreen / CupMainStandingTabPage / CupProxy) works off cup.phases[]
+# (system "round-robin"/"knock-out", name, maxrounds, groups[0].rounds) with no fixed phase
+# count: a knock-out-only cup is just phases = [knock-out]; the tournament tree is built from
+# groups[0].rounds (isFinalPhase = last phase).
+# Pools: ("lg", leagueids, n) = n strongest clubs of those leagues (club_index rosters);
+#        ("nt", teamids, n) = n strongest of those national teams.
+EURO_LEAGUES = (13, 53, 19, 31, 16, 68, 1, 41, 66, 50, 56, 65, 14, 54, 20, 32, 17, 60, 61, 2076)
+SAM_LEAGUES = (353, 336)  # Argentina, Colombia (no Brazil/Chile clubs in fifadb)
+NONEU_LEAGUES = (353, 336, 39, 83, 2111, 350)  # + MLS, K-League, Saudi
+CUP_SPECS = {}
+RR_KO = lambda key: [("rr", 4, f"PVE_CUP_MATCH_ROUND_{key}_1"), ("ko", None, f"PVE_CUP_MATCH_ROUND_{key}_2")]
+
+
+def def_cup(metaid, name, trophy, quality, reward, fmt, pool, desc="PVECUP_INFO_OPTION_NO", skin="1", nteams=16,
+            authentic=None):
+    """Register a cup: meta for /cup/list + its format/pool. authentic = national teamids the
+    player picks from (teamselect "authentic": CupCreationScreen nation/league/team steppers,
+    TeamSelectionUtil.rearrangeData keeps only joinable.leagueids/teamids)."""
+    n, matches = nteams, 0
+    for kind, k, _ in fmt:  # matches the winner plays
+        if kind == "rr":
+            matches += 3; n = 2 * k
+        else:
+            r = k or int(math.log2(n)); matches += r; n >>= r
+    meta = cup_meta(metaid, name, trophy, quality, matches, nteams, reward, desc, skin)
+    if authentic:
+        meta.update(teamselect="authentic")
+        meta["joinable"].update(allteams=False, leagueids=[78], teamids=list(authentic))
+    else:  # cup CLB: chon CLB o man tao cup (quoc gia -> giai -> CLB); chon dung CLB chinh = doi hinh the cua minh
+        meta.update(teamselect="authentic")
+        clubs = sorted(t for t, lg in _CLUB_LINKS.items() if lg != 78 and t not in _NATIONAL_TEAMS)
+        meta["joinable"].update(allteams=False, leagueids=sorted({_CLUB_LINKS[t] for t in clubs}), teamids=clubs)
+    CUP_SPECS[metaid] = {"fmt": fmt, "pool": pool, "n": nteams, "authentic": list(authentic or [])}
+    return meta
+
+
+def nat_cup(metaid, leagues, n, reward, fmt=None, quality=2):
+    """National club cup: knock-out, n clubs of the country (names/descs/rounds from the
+    game's PVE_CUP_MATCH_*_<metaid> strings)."""
+    return def_cup(metaid, f"PVE_CUP_MATCH_TITLE_{metaid}", "13", quality, reward,
+                   fmt or [("ko", None, f"PVE_CUP_MATCH_ROUND_{metaid}_1")], [("lg", leagues, n - 1)],
+                   desc=f"PVE_CUP_MATCH_DESC_{metaid}", skin="2", nteams=n)
+
+
+CUPS = [
+    # 1/2 keep their metaids (running saves in state.json resume by metaid)
+    def_cup(1, "UEFA Champions League", "1001", 4, 60000, [("rr", 4, "Vòng bảng"), ("ko", None, "Vòng loại trực tiếp")],
+            [("lg", EURO_LEAGUES, 15)], desc="PVE_CUP_MATCH_DESC_2", skin="3"),
+    def_cup(2, "PVE_CUP_MATCH_TITLE_7", "300000", 3, 40000, RR_KO(7), [("lg", SAM_LEAGUES, 15)],
+            desc="PVE_CUP_MATCH_DESC_7", skin="2"),
+    # continental club cups
+    def_cup(9, "UEFA Champions League – Vòng knock-out", "66", 4, 50000, [("ko", None, "PVE_CUP_MATCH_ROUND_9_1")],
+            [("lg", EURO_LEAGUES, 15)], desc="PVE_CUP_MATCH_DESC_9"),
+    def_cup(12, "PVE_CUP_MATCH_TITLE_12", "300000", 3, 40000, RR_KO(12), [("lg", NONEU_LEAGUES, 15)],
+            desc="PVE_CUP_MATCH_DESC_12", skin="2"),
+    def_cup(14, "FIFA Club World Cup", "66", 5, 80000, [("ko", None, "PVE_CUP_MATCH_ROUND_14_1")],
+            [("lg", EURO_LEAGUES, 9), ("lg", (353,), 2), ("lg", (336,), 1), ("lg", (39,), 1), ("lg", (83, 2111), 1),
+             ("lg", (350,), 1)], desc="PVE_CUP_MATCH_DESC_14"),
+    # national club cups (only countries with clubs in fifadb)
+    nat_cup(134, (13, 14, 60, 61), 32, 35000, [("ko", 1, "PVE_CUP_MATCH_ROUND_134_1"), ("ko", 1, "PVE_CUP_MATCH_ROUND_134_2"),
+                                                ("ko", None, "PVE_CUP_MATCH_ROUND_134_3")], quality=3),
+    nat_cup(144, (53, 54), 32, 35000, [("ko", 1, "PVE_CUP_MATCH_ROUND_144_1"), ("ko", None, "PVE_CUP_MATCH_ROUND_144_2")],
+            quality=3),
+    nat_cup(136, (19, 20, 2076), 32, 35000, quality=3),
+    nat_cup(137, (31, 32), 32, 35000, quality=3),
+    nat_cup(135, (16, 17), 32, 35000, [("ko", 1, "PVE_CUP_MATCH_ROUND_135_1"), ("ko", None, "PVE_CUP_MATCH_ROUND_135_2")],
+            quality=3),
+    nat_cup(158, (68,), 16, 25000),                     # Thổ Nhĩ Kỳ
+    nat_cup(151, (353,), 16, 25000),                    # Argentina
+    nat_cup(157, (336,), 16, 25000),                    # Colombia
+    nat_cup(153, (39,), 16, 25000),                     # Mỹ
+    nat_cup(148, (83, 2111), 16, 20000),                # Hàn Quốc
+    nat_cup(145, (56,), 16, 20000, RR_KO(145)),         # Thụy Điển: vòng bảng + loại trực tiếp
+    nat_cup(138, (41,), 16, 20000),                     # Nauy
+    nat_cup(139, (66,), 16, 20000),                     # Ba Lan
+    nat_cup(133, (1,), 8, 15000),                       # Đan Mạch
+    nat_cup(143, (50,), 8, 15000),                      # Scotland
+    nat_cup(141, (65,), 8, 15000),                      # Ai-len
+    nat_cup(149, (350,), 8, 15000),                     # Ả Rập Saudi
+]
 
 
 # World Cup PvE (WCFrontScreen / WCControllerImpl extends CupController): same /cup/* API as the
@@ -2116,7 +3078,29 @@ WC_METAS = [dict(cup_meta(WC_METAID + i, name, "66", 5, 7, 32, 200000), type="wc
             for i, name in enumerate(("World Cup 2014 Brazil", "World Cup (ngẫu nhiên theo châu lục)",
                                       "World Cup (hoàn toàn ngẫu nhiên)"))]
 WC_META = WC_METAS[0]
+# National-team cups in Single > Cup (teamselect "authentic": pick the national team in the
+# creation screen; International league 78 only, whitelisted teamids)
+CUPS += [
+    def_cup(602, "UEFA EURO", "66", 4, 80000, RR_KO(602), [("nt", WC_CONF[2], 15)],
+            desc="PVE_CUP_MATCH_DESC_602", authentic=WC_CONF[2]),
+    def_cup(610, "Copa América", "300000", 4, 60000,
+            [("rr", 2, "PVE_CUP_MATCH_ROUND_610_1"), ("ko", None, "PVE_CUP_MATCH_ROUND_610_2")],
+            [("nt", WC_CONF[4], 7)], desc="PVE_CUP_MATCH_DESC_610", skin="2", nteams=8, authentic=WC_CONF[4]),
+    def_cup(311, "FIFA World Cup", "66", 5, 100000, RR_KO(311), [("nt", WC_TEAMS, 15)],
+            desc="PVE_CUP_MATCH_DESC_311", authentic=WC_TEAMS),
+]
 ALL_CUP_METAS = CUPS + WC_METAS
+
+
+def _bot_cup_names():
+    """[(metaid, ten hien trong game)] cho GM Tool > Suc manh BOT (khoa PVE_CUP_* -> chu cua client)."""
+    loc = client_localization(f"LANGUAGESTRING_{LANGUAGE.upper()}.json")
+    return [(m["metaid"], str(loc.get(m["name"]) or m["name"]) if str(m["name"]).startswith("PVE_") else m["name"])
+            for m in CUPS]
+
+
+import bot_settings as _bot_settings  # noqa: E402
+_bot_settings.set_cups(_bot_cup_names)
 
 
 def cup_meta_of(metaid):
@@ -2139,14 +3123,43 @@ def ep_cup_list(query, body):
     return _json(CUPS)
 
 
+_CLUB_RATING = {}
+
+
+def club_rating(teamid):
+    """Average of the best 11 card ratings of a club this season (cached, one query)."""
+    if not _CLUB_RATING:
+        by = collections.defaultdict(list)
+        with closing(_db()) as c:
+            for tid, ovr in c.execute("""SELECT p.teamid, p.overallrating FROM players p
+                                         JOIN permid m ON m.spid = p.spid AND m.licensed = 1
+                                         WHERE p.spid / 1000000 = ?""", (gen_teams.CURRENT_SEASON,)):
+                by[tid].append(ovr)
+        for tid, v in by.items():
+            v.sort(reverse=True)
+            _CLUB_RATING[tid] = sum(v[:11]) / len(v[:11])
+    return _CLUB_RATING.get(teamid, 0)
+
+
 def cup_pool(metaid, mine):
-    """15 AI clubs: the strongest clubs in fifadb (cup 1) or the next tier (cup 2)."""
-    with closing(_db()) as c:
-        rows = c.execute("""SELECT p.teamid FROM players p JOIN permid m ON m.spid = p.spid AND m.licensed = 1
-                            WHERE p.spid < 1000000 GROUP BY p.teamid HAVING COUNT(*) >= 16
-                            ORDER BY MAX(p.overallrating) DESC LIMIT 60""").fetchall()
-    ids = [r[0] for r in rows if r[0] != mine]
-    return ids[:15] if metaid == 1 else ids[15:30]
+    """The AI teams of a new cup (CUP_SPECS pool, strongest first, never `mine`)."""
+    spec = CUP_SPECS.get(int(metaid)) or CUP_SPECS[1]
+    leagues = dict(lid_ts for _, ls in club_index() for lid_ts in ls)
+    chosen = []
+    for kind, ids, k in spec["pool"]:
+        if kind == "nt":
+            wc_pool(mine)  # fills _WC_STRENGTH
+            cands = sorted((t for t in ids if t != mine and t not in chosen), key=lambda t: -_WC_STRENGTH.get(t, 0))
+        else:
+            cands = sorted({t for lid in ids for t in leagues.get(lid, []) if t != mine and t not in chosen},
+                           key=lambda t: (-club_rating(t), t))
+        chosen += cands[:k]
+    need = spec["n"] - 1
+    if len(chosen) < need:  # not enough clubs in those leagues: top European clubs fill up
+        extra = sorted({t for lid in EURO_LEAGUES for t in leagues.get(lid, []) if t != mine and t not in chosen},
+                       key=lambda t: (-club_rating(t), t))
+        chosen += extra[:need - len(chosen)]
+    return chosen[:need]
 
 
 def cup_team(st, teamid, mine=None):
@@ -2167,25 +3180,61 @@ def wc_pool(mine):
 
 
 def new_cup(st, meta, difficulty, myteam=None):
-    """A cup instance (CupProxy.updateCurrentCupData): 16 clubs, 4 round-robin groups of 4
-    (3 rounds), then an 8-club knock-out. pairs[].legs[leg] = {homeidx, awayidx, score?,
-    shootout?} index into that group's teams; rounds[].shuffle -> the draw screen."""
+    """A cup instance (CupProxy.updateCurrentCupData): phases built from the cup's format
+    (CUP_SPECS; World Cup = 8 groups + knock-out). pairs[].legs[leg] = {homeidx, awayidx,
+    score?, shootout?} index into that group's teams; rounds[].shuffle -> the draw screen."""
     wc = meta.get("type") == "wcpve"
-    me = myteam if wc else my_teamid(st)
+    spec = CUP_SPECS.get(meta["metaid"])
+    me = myteam if (wc or myteam is not None) else my_teamid(st)
     teams = [me] + (wc_pool(me) if wc else cup_pool(meta["metaid"], me))
     random.shuffle(teams)
-    groups = [{"teams": [cup_team(st, t, me) for t in teams[g * 4:g * 4 + 4]],
-               "rounds": [{"shuffle": r == 0, "pairs": [{"legs": [{"homeidx": h, "awayidx": a}]}
-                                                         for h, a in league_round([0, 1, 2, 3], r)]}
-                          for r in range(3)]} for g in range(len(teams) // 4)]
+    fmt = [list(f) for f in spec["fmt"]] if spec else [["rr", len(teams) // 4, "Vòng bảng"],
+                                                         ["ko", None, "Vòng loại trực tiếp"]]
     cupid = f"{int(time.time()):08x}{os.urandom(8).hex()}"
     cup = {"_id": cupid, "metaid": meta["metaid"], "name": meta["name"], "type": meta.get("type", "pve"), "myteam": me,
-           "difficulty": difficulty, "current": {"phase": 0, "round": 0, "leg": 0},
-           "phases": [{"system": "round-robin", "name": "Vòng bảng", "maxrounds": 3, "groups": groups}],
+           "teamselect": meta.get("teamselect", "user"), "trophy": meta["trophy"], "quality": meta["quality"],
+           "difficulty": difficulty, "current": {"phase": 0, "round": 0, "leg": 0}, "_fmt": fmt,
+           "ownsquad": not wc and myteam is None,  # da bang doi hinh the cua minh (CLB chinh)
+           "phases": [cup_build_phase(fmt[0], [cup_team(st, t, me) for t in teams])],
            "coaches": [{"_id": coach_id(_default_slot(st)), "state": "playing"}],
            "teams": [cup_team(st, t, me) for t in teams]}
     cup_refresh_stats(cup)
     return cup
+
+
+def cup_fmt(cup):
+    """Phase list of a cup; cups made before formats existed are 4/8 groups + knock-out."""
+    return cup.get("_fmt") or [["rr", len(cup["phases"][0]["groups"]), "Vòng bảng"], ["ko", None, "Vòng loại trực tiếp"]]
+
+
+def cup_build_phase(f, teams):
+    """One phase over `teams` (team objects, already in draw order)."""
+    kind, k, name = f
+    if kind == "rr":
+        size = len(teams) // k
+        groups = [{"teams": [dict(t) for t in teams[g * size:(g + 1) * size]],
+                   "rounds": [{"shuffle": r == 0, "pairs": [{"legs": [{"homeidx": h, "awayidx": a}]}
+                                                             for h, a in league_round(list(range(size)), r)]}
+                              for r in range(size - 1)]} for g in range(k)]
+        return {"system": "round-robin", "name": name, "maxrounds": size - 1, "groups": groups}
+    nrounds = k or max(1, int(math.log2(len(teams))))
+    rounds, n = [], len(teams) // 2
+    for _ in range(nrounds):
+        rounds.append({"pairs": [{"legs": [{}]} for _ in range(max(1, n))]}); n //= 2
+    rounds[0] = {"shuffle": True, "pairs": [{"legs": [{"homeidx": i, "awayidx": i + 1}]} for i in range(0, len(teams), 2)]}
+    return {"system": "knock-out", "name": name, "maxrounds": nrounds,
+            "groups": [{"teams": [dict(t) for t in teams], "rounds": rounds}]}
+
+
+def cup_ko_rounds(cup):
+    """Knock-out rounds the champion plays (for the reward share)."""
+    n, total = len(cup.get("teams") or []) or 16, 0
+    for kind, k, _ in cup_fmt(cup):
+        if kind == "rr":
+            n = 2 * k
+        else:
+            r = k or max(1, int(math.log2(n))); total += r; n >>= r
+    return max(1, total)
 
 
 def cup_my_pair(cup):
@@ -2269,12 +3318,16 @@ def cup_play_round(st, cup, mine=None):
             else:
                 gh, ga = sim_score(rng, team_strength(st, h["teamid"]), team_strength(st, a["teamid"]))
             leg["score"] = {"home": gh, "away": ga}
+            if h["coach"] or a["coach"]:  # thanh tich Cup trong Info Manager
+                record_match(st, "cup", *((gh, ga) if h["coach"] else (ga, gh)))
             if ko and gh == ga and played and len(mine) > 3 and mine[2] != mine[3]:  # shootout played in game
                 leg["shootout"] = {"home": mine[2], "away": mine[3]}
             elif ko and gh == ga:  # penalties
                 ph = rng.randint(3, 5); pa = ph + rng.choice((-1, 1)) if ph < 5 else ph - 1
                 leg["shootout"] = {"home": ph, "away": pa}
     me_state = cup["coaches"][0]
+    fmt = cup_fmt(cup)
+    last_phase = cur["phase"] + 1 >= len(fmt)
     if not ko:
         if cur["round"] + 1 < len(phase["groups"][0]["rounds"]):
             cur["round"] += 1
@@ -2286,37 +3339,54 @@ def cup_play_round(st, cup, mine=None):
             y = x + 1
             qual += [phase["groups"][x]["teams"][tables[x][0]], phase["groups"][y]["teams"][tables[y][1]],
                      phase["groups"][y]["teams"][tables[y][0]], phase["groups"][x]["teams"][tables[x][1]]]
-        n, rounds = len(qual) // 2, []
-        while n >= 1:
-            rounds.append({"pairs": [{"legs": [{}]} for _ in range(n)]}); n //= 2
-        rounds[0] = {"shuffle": True, "pairs": [{"legs": [{"homeidx": i, "awayidx": i + 1}]} for i in range(0, len(qual), 2)]}
-        cup["phases"].append({"system": "knock-out", "name": "Vòng loại trực tiếp", "maxrounds": len(rounds),
-                              "groups": [{"teams": qual, "rounds": rounds}]})
-        cup.update(current={"phase": cur["phase"] + 1, "round": 0, "leg": 0})
-        if not any(t["coach"] for t in qual):
+        if last_phase:  # a cup ending on a group phase: the group winner takes it
+            cup["finished"] = True
+            if me_state["state"] == "playing":
+                me_state["state"] = "won" if qual and qual[0]["coach"] else "eliminated"
+            return
+    else:
+        g = phase["groups"][0]
+        winners = []
+        for pair in g["rounds"][cur["round"]]["pairs"]:
+            leg = pair["legs"][0]; s = leg.get("shootout") or leg["score"]
+            winners.append(leg["homeidx"] if s["home"] > s["away"] else leg["awayidx"])
+        my_idx = next(i for i, t in enumerate(g["teams"]) if t["coach"]) if any(t["coach"] for t in g["teams"]) else None
+        if my_idx is not None and me_state["state"] == "playing" and my_idx not in winners and \
+                any(my_idx in (p["legs"][0].get("homeidx"), p["legs"][0].get("awayidx")) for p in g["rounds"][cur["round"]]["pairs"]):
             me_state["state"] = "eliminated"
-        return
-    g = phase["groups"][0]
-    winners = []
-    for pair in g["rounds"][cur["round"]]["pairs"]:
-        leg = pair["legs"][0]; s = leg.get("shootout") or leg["score"]
-        winners.append(leg["homeidx"] if s["home"] > s["away"] else leg["awayidx"])
-    my_idx = next(i for i, t in enumerate(g["teams"]) if t["coach"]) if any(t["coach"] for t in g["teams"]) else None
-    if my_idx is not None and me_state["state"] == "playing" and my_idx not in winners and \
-            any(my_idx in (p["legs"][0].get("homeidx"), p["legs"][0].get("awayidx")) for p in g["rounds"][cur["round"]]["pairs"]):
+        if cur["round"] + 1 < len(g["rounds"]):
+            for k, pair in enumerate(g["rounds"][cur["round"] + 1]["pairs"]):
+                pair["legs"][0] = {"homeidx": winners[2 * k], "awayidx": winners[2 * k + 1]}
+            cur["round"] += 1
+            return
+        if last_phase or len(winners) < 2:  # final played
+            cup["finished"] = True
+            if me_state["state"] == "playing":
+                me_state["state"] = "won" if my_idx in winners else "eliminated"  # CupMainScreen._cupState
+            return
+        qual = [g["teams"][i] for i in winners]
+    # phase over: the qualifiers start the next one (knock-out keeps the bracket order;
+    # a group phase after a knock-out is drawn afresh)
+    nxt = fmt[cur["phase"] + 1]
+    if nxt[0] == "rr":
+        qual = list(qual); random.shuffle(qual)
+    cup["phases"].append(cup_build_phase(nxt, qual))
+    cup.update(current={"phase": cur["phase"] + 1, "round": 0, "leg": 0})
+    if not any(t["coach"] for t in qual) and me_state["state"] == "playing":
         me_state["state"] = "eliminated"
-    if cur["round"] + 1 < len(g["rounds"]):
-        for k, pair in enumerate(g["rounds"][cur["round"] + 1]["pairs"]):
-            pair["legs"][0] = {"homeidx": winners[2 * k], "awayidx": winners[2 * k + 1]}
-        cur["round"] += 1
-    else:  # final played
-        cup["finished"] = True
-        if me_state["state"] == "playing":
-            me_state["state"] = "won" if my_idx in winners else "eliminated"  # CupMainScreen._cupState
 
 
 def cup_resources(cup):
     cup_refresh_stats(cup)  # luon du goals / goalsconceded cho bang xep hang (hieu so)
+    meta = cup_meta_of(cup.get("metaid"))
+    if meta:  # CupMainScreen / tournament tree read currentCup.trophy / quality
+        cup.setdefault("quality", meta["quality"])
+        # ten / cup / nen luon theo meta hien tai (giai dang da do van doi theo, vd UEFA Champions League)
+        cup["trophy"] = meta["trophy"]
+        if "name" in cup or "name" in meta:
+            cup["name"] = meta["name"]
+        # CupBackground.setData (in-cup screens) loads skins/s<skin>_bg.png from currentCup.skin
+        cup["skin"] = meta["skin"]
     uri = f"/cup/{cup['_id']}"
     return [{"resource": uri, "uri": uri, "body": cup}]
 
@@ -2338,6 +3408,19 @@ def ep_cup_new(query, body):
             return _json({"result": False, "reason": "Đội tuyển này chưa có trong World Cup offline."})
         for k in [k for k, c in (st.get("cups") or {}).items() if c.get("type") == "wcpve"]:
             st["cups"].pop(k)  # chi 1 World Cup cung luc
+    elif meta.get("teamselect") == "authentic":  # national-team cup: the team picked in the creation screen
+        allowed = CUP_SPECS.get(meta["metaid"], {}).get("authentic") or []
+        try:
+            myteam = wc_base(int(req.get("teamid") or 0))
+        except (TypeError, ValueError):
+            myteam = 0
+        if allowed and myteam not in allowed:
+            return _json({"result": False, "reason": "Đội tuyển này không tham gia giải này."})
+        if not allowed:  # cup CLB: CLB da chon (khong phai doi tuyen); khong chon / CLB chinh -> doi cua minh
+            if myteam in _NATIONAL_TEAMS or (myteam and myteam not in _CLUB_TEAMS):
+                return _json({"result": False, "reason": "Hãy chọn một CLB (không phải đội tuyển)."})
+            if not myteam or myteam == my_teamid(st):
+                myteam = None
     cup = new_cup(st, meta, int(req.get("difficulty") or 0), myteam)
     st.setdefault("cups", {})[cup["_id"]] = cup
     _save(st)
@@ -2369,8 +3452,8 @@ def ep_cup_next(cupid, query, body):
 
 
 def cup_reward_ep(cup):
-    """EP for an ended cup: the meta's prize for the champion, a share of it by the round
-    reached otherwise (group exit 10%, QF 20%, SF 35%, final 50%); 0 while still playing."""
+    """EP for an ended cup: the meta's prize for the champion, otherwise 10% plus up to 40%
+    more by knock-out matches played (group exit 10%, losing the final ~50%); 0 while playing."""
     state = cup["coaches"][0]["state"]
     meta = cup_meta_of(cup["metaid"]) or CUPS[0]
     prize = meta["bestrewards"][-1][0]["count"]
@@ -2378,14 +3461,24 @@ def cup_reward_ep(cup):
         return prize
     if state != "eliminated":
         return 0
-    ko = cup["phases"][1]["groups"][0] if len(cup["phases"]) > 1 else None
-    mine = next((i for i, t in enumerate(ko["teams"]) if t["coach"]), None) if ko else None
-    if mine is None:
-        return prize // 10
-    played = sum(1 for r in ko["rounds"] for p in r["pairs"]
-                 if mine in (p["legs"][0].get("homeidx"), p["legs"][0].get("awayidx")) and "score" in p["legs"][0])
-    shares = (20, 35, 50) if len(ko["rounds"]) <= 3 else (15, 25, 35, 50)
-    return prize * shares[max(0, min(played, len(shares)) - 1)] // 100
+    played = 0
+    for ph in cup["phases"]:
+        if ph["system"] != "knock-out":
+            continue
+        g = ph["groups"][0]
+        mine = next((i for i, t in enumerate(g["teams"]) if t["coach"]), None)
+        played += 0 if mine is None else sum(
+            1 for r in g["rounds"] for p in r["pairs"]
+            if mine in (p["legs"][0].get("homeidx"), p["legs"][0].get("awayidx")) and "score" in p["legs"][0])
+    return prize * (10 + 40 * min(played, cup_ko_rounds(cup)) // cup_ko_rounds(cup)) // 100
+
+
+def cup_record_add(st, cup, ep=0):
+    """recordsbymetaid entry for /cup/record (CupFrontScreen "Thang/So lan": wins/challenges)."""
+    rec = st.setdefault("cup_records", {}).setdefault(str(cup["metaid"]), {"wins": 0, "challenges": 0})
+    rec["challenges"] += 1
+    rec["wins"] += cup["coaches"][0]["state"] == "won"
+    rec["prize"] = rec.get("prize", 0) + ep
 
 
 def ep_cup_leave(cupid, query, body):
@@ -2398,6 +3491,16 @@ def ep_cup_leave(cupid, query, body):
         rec["join"] += 1
         rec["won"] += cup["coaches"][0]["state"] == "won"
         rec["win"] += sum(t.get("win", 0) for g in cup["phases"][0]["groups"] for t in g["teams"] if t["coach"])
+    elif cup:
+        cup_record_add(st, cup, ep)
+    if cup:  # Info Manager: bo giua chung, vo dich (theo do kho AI)
+        r, state = coach_record(my_coach(st), "cup"), cup["coaches"][0]["state"]
+        r["abandonments"] = r.get("abandonments", 0) + (state == "playing")
+        if state == "won":
+            wins = r.setdefault("cupwins", [0] * 5)
+            wins[min(4, max(0, int(cup.get("difficulty") or 0)))] += 1
+        if ep > (r.get("best") or {}).get("prize", 0):
+            r["best"] = {"prize": ep, "metaid": cup["metaid"], "date": w3c(time.time())}
     add_ep(st, ep)
     _save(st)
     return _json({"result": True, "rewards": [{"itemid": 1, "count": ep}] if ep else []})
@@ -2410,17 +3513,20 @@ def ep_cup_match(cupid, query, body):
     if leg is None or "score" in leg:
         return _json({"result": False, "reason": "Trận này đã đá rồi."})
     me = coach_me(st, _default_slot(st)); wc = cup.get("type") == "wcpve"
-    teamid = cup.get("myteam") if wc else me["teamid"]
+    # World Cup / cup doi tuyen / cup CLB voi CLB khac CLB chinh: doi hinh that cua doi da chon
+    picked = wc or (cup.get("teamselect") == "authentic" and not cup.get("ownsquad"))
+    teamid = cup.get("myteam") if picked else me["teamid"]
     home = g["teams"][leg["homeidx"]]["teamid"]; away = g["teams"][leg["awayidx"]]["teamid"]
     opp = away if home == teamid else home
     user = {"id": me["id"], "name": me["name"], "levelinfo": me["levelinfo"]}
-    mine = roster_team(teamid) if wc else st["teams"][str(_default_slot(st))]  # World Cup: doi tuyen da chon
+    mine = roster_team(teamid) if picked else st["teams"][str(_default_slot(st))]
     match = new_match("WorldCup_PvE" if wc else "Cup_PvE", match_side(mine, teamid, user, _tactics(st)[1]),
-                      match_side(roster_team(opp), opp, mode="worldcup" if wc else "cup"))
+                      match_side(roster_team(opp), opp, mode="worldcup" if wc else f"cup_{cup.get('metaid')}"))
     gs = match["gamesettings"]
     gs["home"] = home == teamid
     gs["kit"] = ["home", "away"] if gs["home"] else ["away", "home"]
     gs["difficulty"] = cup.get("difficulty", 0)  # AI level 0..4
+    apply_prematch(st, match)
     if cup["phases"][cup["current"]["phase"]]["system"] == "knock-out":
         # native maps drawMode 1/2/3 to end rules 9/6/7 (0 = a draw stands). 2 plays extra time
         # (FIRST_EXTRA_HALF seen in game); a draw after it is settled by cup_play_round
@@ -2459,6 +3565,12 @@ def ep_worldcup(query, body):
 WC_RP_TIERS = [{"rewardby": n, "items": [{"itemid": 1, "count": n * 50}]} for n in (300, 600, 1000, 1500, 2100)]
 
 
+def wc_rp_tiers():
+    """Moc danh vong kem staticdata vat pham (o phan thuong WCCoachReputationPointViewer can de ve icon)."""
+    return [{"rewardby": t["rewardby"], "items": [dict(i, staticdata=EP_ITEM_DEF if i["itemid"] == EP_ITEM else item_def(i["itemid"]))
+                                                   for i in t["items"]]} for t in WC_RP_TIERS]
+
+
 def wc_rpinfo(st):
     rec = st.setdefault("wc_record", {"win": 0, "join": 0, "won": 0})
     rp = rec["win"] * 100
@@ -2466,7 +3578,7 @@ def wc_rpinfo(st):
 
 
 def ep_wc_rep_rewards(query, body):
-    return _json({"result": True, "reputation": {"weeklyrp": WC_RP_TIERS, "accumrp": WC_RP_TIERS}})
+    return _json({"result": True, "reputation": {"weeklyrp": wc_rp_tiers(), "accumrp": wc_rp_tiers()}})
 
 
 def ep_wc_rep_reward(query, body):
@@ -2480,7 +3592,7 @@ def ep_wc_rpinfo(query, body):
     until = time.strftime("%Y-%m-%dT00:00:00.000Z", time.gmtime(time.time() + 7 * 86400))
     # WCCoachFameTabPage: order = _fameRecordOrder[do kho] -> mang nationid theo tung do kho (0..4)
     body = dict(rp, order=[[] for _ in range(5)], until=until, champion=rec.get("won", 0), join=rec.get("join", 0),
-                reputation={"weeklyrp": WC_RP_TIERS, "accumrp": WC_RP_TIERS}, records=[])
+                reputation={"weeklyrp": wc_rp_tiers(), "accumrp": wc_rp_tiers()}, records=[])
     return _json({"result": True, "resources": [{"uri": "/worldcup/rpinfo", "body": body}]})
 
 
@@ -2527,9 +3639,17 @@ def ep_wc_team(teamid, query, body):
 def ep_cup_record(query, body):
     """GET /cup/record: CupProxy.onCupRecordResourceChanged takes resources[] entries whose
     `resource` is /cup/record and body._id is my coach id."""
-    st = _state(); coach = coach_me(st, _default_slot(st))
+    st = _state(); coach = coach_me(st, _default_slot(st)); recs = st.get("cup_records") or {}
     return _json({"result": True, "resources": [{"resource": "/cup/record", "uri": "/cup/record",
-                  "body": {"_id": coach["id"], "recordsbymetaid": []}}]})
+                  "body": {"_id": coach["id"],
+                           # CupRecordPveTabPage: totalwins / totalprize / totalchallenges labels (no
+                           # firstwinat -> nothing goes to the trophy tile list)
+                           "totalwins": sum(r["wins"] for r in recs.values()),
+                           "totalchallenges": sum(r["challenges"] for r in recs.values()),
+                           "totalprize": sum(r.get("prize", 0) for r in recs.values()),
+                           "recordsbymetaid": [
+                      {"metaid": int(m), "records": [{"wins": r["wins"], "challenges": r["challenges"]}]}
+                      for m, r in recs.items()]}}]})
 
 
 # --------------------------------------------------------------------------- #
@@ -2538,7 +3658,8 @@ def ep_cup_record(query, body):
 # the client fills staticdata (names, position, ratings) from its own DB via `expandme`.
 # --------------------------------------------------------------------------- #
 LINES = {"GK": range(0, 1), "DF": range(1, 9), "MF": range(9, 20), "FW": range(20, 28)}  # Enums.PLAYERPOSITION
-MAX_PLAYERS = 200  # coach.limits.players (gioi han cau thu trong CLB; theo yeu cau 200)
+MAX_CASH = 999_999_999  # MP / Cash hien thi (so nguyen 32-bit an toan)
+MAX_PLAYERS = 9999  # coach.limits.players (gioi han cau thu trong CLB; theo yeu cau 9999)
 # Tim inti (player state "first": Formasi lists only these) holds 36 ("Tim inti x/36" in Skuad);
 # cards beyond that wait in Tim Cadangan, which Tukar Scout trades from.
 FIRST_TEAM_MAX = 36
@@ -2557,6 +3678,39 @@ def balance_first_team(team):
         p["team2"] = True
 
 
+SERVER_OPTIONS_FILE = os.path.join(HERE, "gamedata", "server_options.json")
+SERVER_OPTIONS_DEFAULT = {"hide_engine_cards": False, "tc_grade": True}  # tc_grade: Team Color nang cap (the +2..+20)  # GM Tool > Tran dau > Thi truong
+
+
+def server_options():
+    """Tuy chon server (gamedata/server_options.json; GM Tool sua khong can khoi dong lai). Doc lai khi
+    file doi (market_listed goi ham nay cho tung the ~60k lan / Top 50 Thi truong)."""
+    try:
+        s = os.stat(SERVER_OPTIONS_FILE)
+        sig = (SERVER_OPTIONS_FILE, s.st_mtime_ns, s.st_size)
+    except OSError:
+        return dict(SERVER_OPTIONS_DEFAULT)
+    if _SERVER_OPTIONS_CACHE[0] != sig:
+        try:
+            with open(SERVER_OPTIONS_FILE, encoding="utf-8") as f:
+                d = json.load(f)
+        except (OSError, ValueError):
+            d = {}
+        _SERVER_OPTIONS_CACHE[:] = [sig, {**SERVER_OPTIONS_DEFAULT, **(d if isinstance(d, dict) else {})}]
+    return dict(_SERVER_OPTIONS_CACHE[1])
+
+
+_SERVER_OPTIONS_CACHE = [None, {}]
+
+
+def market_listed(spid):
+    """Co rao ban tren Thi truong chuyen nhuong: on_market, tru the mua 0 (the mau cua engine,
+    spid < 1e6, chi so 120+) khi bat "an the mua 0" o GM Tool."""
+    if int(spid) < 1000000 and server_options().get("hide_engine_cards"):
+        return False
+    return on_market(spid)
+
+
 def market_offer(spid, grade=1):
     return {"spid": spid, "expandme": "player", "grade": grade, "price": card_price(spid, grade), "count": 1}
 
@@ -2570,13 +3724,15 @@ def ep_transfer_top(position, query, body):
                              WHERE 1 {where}""").fetchall()  # every Market card, licensed or not
     _OVR.update((s, (o, d)) for s, o, d in both)
     rows = [(s, o) for s, o, _ in both]
-    spids = [s for s, ovr in sorted((r for r in rows if on_market(r[0])), key=lambda r: (-r[1], r[0]))[:50]]
+    hide0 = server_options().get("hide_engine_cards")
+    spids = [s for s, ovr in sorted((r for r in rows if on_market(r[0]) and not (hide0 and r[0] < 1000000)),
+                                    key=lambda r: (-r[1], r[0]))[:50]]
     return _json([market_offer(s) for s in spids])
 
 
 def ep_transfer_search(spid, query, body):
-    """GET /transfer/search/<spid>: that card's offers (grades 1..3); none if not tradeable."""
-    return _json([market_offer(int(spid), g) for g in (1, 2, 3)] if on_market(spid) else [])
+    """GET /transfer/search/<spid>: that card's offers (grades 1..20); none if not tradeable."""
+    return _json([market_offer(int(spid), g) for g in range(1, MAX_GRADE + 1)] if market_listed(spid) else [])
 
 
 def add_player(team, spid, grade=1):
@@ -2726,14 +3882,15 @@ def ep_offer_collect(offerid, coupon, query, body):
 # + TeamManagementPlayerEnhancingPopupScreen): two cards of the same player, the lower-grade
 # one (material) is consumed. Buy a second copy on the Market to have a pair.
 # --------------------------------------------------------------------------- #
-ENHANCE_RATE = (1.0, 1.0, 0.81, 0.64, 0.50, 0.26, 0.15, 0.07, 0.04, 0.02, 0)  # +g -> +(g+1) chance
+ENHANCE_RATE = (1.0, 1.0, 0.81, 0.64, 0.50, 0.26, 0.15, 0.07, 0.04, 0.02,  # +g -> +(g+1) chance
+                0.015, 0.012, 0.01, 0.008, 0.006, 0.005, 0.004, 0.003, 0.002, 0.001, 0)
 ENHANCE_DROP_FROM = 5  # a failed upgrade from +5 or higher drops one grade
 
 
 def enhance_pair(team, a, b):
     pa = next((p for p in team["players"] if iid(p) == str(a)), None)
     pb = next((p for p in team["players"] if iid(p) == str(b)), None)
-    if pa is None or pb is None or pa is pb or pa["spid"] != pb["spid"] or grade_of(pa) >= 10:
+    if pa is None or pb is None or pa is pb or pa["spid"] != pb["spid"] or grade_of(pa) >= MAX_GRADE:
         return None, None
     return pa, pb
 
@@ -2756,8 +3913,23 @@ def default_enhance_rate(target, material):
     return min(1.0, ENHANCE_RATE[tg] * bonus)
 
 
-def enhance_cost(target):
-    return max(1000, sig3(card_price(target["spid"], grade_of(target)) // 50))  # 2% of its value
+def enhance_cost(target, material=None, rate=None, v25=False, mat_value=None):
+    """EP 1 lan nang: 2% gia tri the (it nhat 1.000). Shop tinh phi: it nhat bang gia tri trung binh
+    lan nang them vao the (theo ti le rate) tru gia tri phoi - khong thi phoi +1..+3 re tao ra EP."""
+    g = grade_of(target)
+    base = max(1000, sig3(card_price(target["spid"], g) // 50))
+    if (material is None and mat_value is None) or rate is None or not shop_paid():
+        return base
+    mv = getattr(sys.modules[__name__], "market_value", None) or card_price
+    v = lambda x: max(card_price(target["spid"], x), mv(target["spid"], x))  # gia cao nhat: ban duoc
+    if v25:  # that bai: giu cap hoac rot toi da 2 cap (enh25_roll_restore)
+        fails = list(range(max(1, g - 2), g + 1))
+        fail_v = sum(v(x) for x in fails) / len(fails)
+    else:
+        fail_v = v(g - 1 if g >= ENHANCE_DROP_FROM else g)
+    mat = mat_value if material is None else card_price(material["spid"], grade_of(material))
+    gain = rate * v(min(MAX_GRADE, g + 1)) + (1 - rate) * fail_v - v(g) - mat
+    return max(base, nice_ceil(gain))
 
 
 def merge_into(team, keep, gone):
@@ -2783,7 +3955,7 @@ def ep_enhance_preview(a, b, query, body):
         return _json({"result": False, "reason": "INVALID_PARAM"})
     g = grade_of(pa) + 1
     return _json({"result": True, "grade": g, "levelinfo": pa.get("levelinfo", {"level": 1, "exp": 0}),
-                  "price": card_price(pa["spid"], g), "enhancepay": enhance_cost(pa),
+                  "price": card_price(pa["spid"], g), "enhancepay": enhance_cost(pa, pb, enhance_rate(pa, pb)),
                   "probability": round(enhance_rate(pa, pb) * 100)})
 
 
@@ -2794,7 +3966,7 @@ def ep_enhance(a, b, boost, guard, query, body):
     pa, pb = enhance_pair(team, a, b)
     if pa is None:
         return _json({"result": False, "reason": "INVALID_PARAM"})
-    cost = enhance_cost(pa)
+    cost = enhance_cost(pa, pb, enhance_rate(pa, pb))
     if coach_me(st, slot)["money"]["ep"] < cost:
         return _json({"result": False, "reason": "Giá EP mục tiêu không hợp lệ."})
     add_ep(st, -cost)
@@ -2803,9 +3975,150 @@ def ep_enhance(a, b, boost, guard, query, body):
     after = before + 1 if success else before - 1 if before >= ENHANCE_DROP_FROM else before
     pa["grade"] = after
     merge_into(team, pa, pb)
+    mission_event(st, upgrade=int(after > before))  # nhiem vu: nang cap thanh cong
     _save(st)
     return _json({"result": True, "success": success, "grade": after, "rgrade": after,
                   "rprice": card_price(pa["spid"], after), "attribPlus": GRADE_BOOST[after] - GRADE_BOOST[before],
+                  "resources": coach_me_resources(st, slot) + achievement_resources(st)})
+
+
+# --------------------------------------------------------------------------- #
+# Nang cap v2.5 (TeamManagementPlayerEnhancement2_5TabPage + EnhancingPopupScreen, bat bang
+# features teammanagement.playermanagement.enhancement = {"v2_5": {}}):
+#   GET  /player/<t>/enhance2.5/<m>/preview/<diem 0|1>/<vat pham|-1>/<su kien|-1>
+#   PUT  /player/<t>/enhance2.5/<m>/<diem 0|1>/<vat pham|-1>/<su kien|-1>
+#   PUT  /player/enhance2.5/restore   (phuc hoi lai co tra phi, 1 lan sau moi lan that bai)
+# Diem nang cap (es) luu o coach["es"]; that bai duoc cong diem, tick "dung diem" tang ti le.
+# That bai: the ve rgrade (phuc hoi lan dau mien phi, game tu chay hieu ung), sau do co the
+# "Thu phuc hoi lai" 1 lan (ton diem). Bang PE2STATICVALUES: responses/static_db_PE2STATICVALUES.json.
+# --------------------------------------------------------------------------- #
+ENH25_POINT_BONUS = 150  # % ti le khi dung diem (= PE2STATICVALUES.bonus.use)
+
+
+def enh25_need_es(target):
+    return 10 * max(1, grade_of(target))
+
+
+def enh25_item(coach, target, item):
+    """Bua nang cap trong kho (staticdata ENHANCEMENT_BOOST, dung cap the) hoac None."""
+    try:
+        iid_ = int(item)
+    except (TypeError, ValueError):
+        return None
+    it = next((i for i in coach.get("items", []) if i["itemid"] == iid_ and i.get("remains", 0) > 0), None)
+    if it is None or iid_ not in ITEMS or ITEMS[iid_][2] != "ENHANCEMENT_BOOST":
+        return None
+    eff = ITEMS[iid_][3]
+    # mingrade/maxgrade = cap SAU khi nang (EnhanceControlPanel: targetGrade = cap cao nhat + 1)
+    return it if eff["mingrade"] <= grade_of(target) + 1 <= eff["maxgrade"] else None
+
+
+def enh25_rate(target, material, use_point, item_eff=None):
+    r = enhance_rate(target, material)
+    if use_point:
+        r *= ENH25_POINT_BONUS / 100
+    if item_eff:
+        r = 1.0 if item_eff.get("sure") else r * item_eff.get("mult", 1)
+    return min(1.0, r)
+
+
+def enh25_roll_restore(before):
+    """Cap sau phuc hoi: giu nguyen hoac rot toi da 2 cap (khong ve +0)."""
+    return random.choice(range(max(1, before - 2), before + 1))
+
+
+def ep_enh25_preview(a, b, use_point, item, event, query, body):
+    st = _state(); team = st["teams"][str(_default_slot(st))]
+    pa, pb = enhance_pair(team, a, b)
+    if pa is None:  # luon tra du truong (thieu levelinfo -> loi giao dien)
+        return _json({"grade": 0, "price": 0, "levelinfo": {"level": 1, "exp": 0}, "exp": 0,
+                      "enhancepay": 0, "needes": 0, "probability": 0})
+    g = grade_of(pa) + 1
+    lv = player_levelinfo(pa)
+    it = enh25_item(my_coach(st), pa, item) if item != "-1" else None
+    eff = ITEMS[it["itemid"]][3] if it else None
+    return _json({"result": True, "grade": g, "price": card_price(pa["spid"], g), "levelinfo": lv,
+                  "exp": lv.get("exp", 0), "needes": enh25_need_es(pa),
+                  "enhancepay": enhance_cost(pa, pb, enh25_rate(pa, pb, use_point == "1", eff), True),
+                  "probability": round(enh25_rate(pa, pb, use_point == "1", eff) * 100)})
+
+
+def ep_enh25(a, b, use_point, item, event, query, body):
+    st = _state(); slot = _default_slot(st); team = st["teams"][str(slot)]; coach = my_coach(st)
+    pa, pb = enhance_pair(team, a, b)
+    if pa is None:
+        return _json({"result": False, "reason": "INVALID_PARAM"})
+    need = enh25_need_es(pa)
+    use = use_point == "1" and int(coach.get("es", 0)) >= need
+    it = None
+    if item != "-1":
+        it = enh25_item(coach, pa, item)
+        if it is None:
+            return _json({"result": False, "reason": "expired item"})
+    cost = enhance_cost(pa, pb, enh25_rate(pa, pb, use, ITEMS[it["itemid"]][3] if it else None), True)
+    if coach_me(st, slot)["money"]["ep"] < cost:
+        return _json({"result": False, "reason": "Invalid target ep price"})
+    add_ep(st, -cost)
+    if use:
+        coach["es"] = int(coach.get("es", 0)) - need
+    eff = ITEMS[it["itemid"]][3] if it else None
+    if it:  # bua dung mot lan
+        it["remains"] -= 1
+        if it["remains"] <= 0:
+            coach["items"].remove(it)
+    before = grade_of(pa)
+    success = random.random() < enh25_rate(pa, pb, use, eff)
+    out = {"result": True, "success": success}
+    if success:
+        pa["grade"] = before + 1
+        out.update(grade=before + 1, rgrade=before + 1, rprice=card_price(pa["spid"], before + 1),
+                   attribPlus=GRADE_BOOST[before + 1] - GRADE_BOOST[before])
+        coach.pop("enh25", None)
+    else:
+        rg = enh25_roll_restore(before)
+        grant = 20 + 10 * before
+        pa["grade"] = rg
+        coach["es"] = int(coach.get("es", 0)) + grant
+        usepoint = restore_cost(pa, before, rg, need)
+        coach["enh25"] = {"id": iid(pa), "before": before, "price": usepoint["price"], "currency": usepoint["currency"],
+                          "used": rg == before}
+        out.update(grade=rg, rgrade=rg, rprice=card_price(pa["spid"], rg), grantes=grant, usepoint=usepoint, attribPlus=0)
+    merge_into(team, pa, pb)
+    mission_event(st, upgrade=int(success))
+    _save(st)
+    out["resources"] = coach_me_resources(st, slot) + achievement_resources(st)
+    return _json(out)
+
+
+def restore_cost(p, before, now, need):
+    """Gia 1 lan phuc hoi sau khi nang that bai: diem nang cap (Shop mien phi) hoac, khi Shop tinh
+    phi, EP = gia tri trung binh lan phuc hoi tra lai (diem nang cap kiem duoc mien phi -> khong in EP)."""
+    if not shop_paid():
+        return {"currency": "ES", "price": need}
+    rolls = range(max(1, before - 2), before + 1)
+    gain = sum(card_price(p["spid"], g) for g in rolls) / len(rolls) - card_price(p["spid"], now)
+    return {"currency": "EP", "price": max(1000, nice_ceil(gain))}
+
+
+def ep_enh25_restore(query, body):
+    st = _state(); slot = _default_slot(st); team = st["teams"][str(slot)]; coach = my_coach(st)
+    rec = coach.get("enh25") or {}
+    p = next((x for x in team["players"] if iid(x) == rec.get("id")), None)
+    if p is None or rec.get("used"):
+        return _json({"result": False, "reason": "ENHANCE_RESTORE_ERROR"})
+    if rec.get("currency") == "EP":  # Shop tinh phi: phuc hoi tra bang EP (= gia tri tra lai)
+        if coach_me(st, slot)["money"]["ep"] < rec["price"]:
+            return _json({"result": False, "reason": "NOT_ENOUGH_EP"})
+        add_ep(st, -rec["price"])
+    else:
+        if int(coach.get("es", 0)) < rec["price"]:
+            return _json({"result": False, "reason": "Không đủ điểm nâng cấp để phục hồi"})
+        coach["es"] = int(coach.get("es", 0)) - rec["price"]
+    g = enh25_roll_restore(rec["before"])
+    p["grade"] = g
+    rec["used"] = True
+    _save(st)
+    return _json({"result": True, "success": False, "grade": g, "rprice": card_price(p["spid"], g), "grantes": 0,
                   "resources": coach_me_resources(st, slot)})
 
 
@@ -2827,7 +4140,7 @@ def static_values():
 def trade_grades(gsum):
     """PLAYERTRADE.playergrade[sum of the given cards' grades] -> {grade: weight}: +1 always,
     one more possible grade per 8 grade points traded (the tab shows its first..last key)."""
-    return {str(g): 0.5 ** (g - 1) for g in range(1, min(10, 1 + int(gsum) // 8) + 1)}
+    return {str(g): 0.5 ** (g - 1) for g in range(1, min(MAX_GRADE, 1 + int(gsum) // 8) + 1)}
 
 
 def trade_pool():
@@ -2869,6 +4182,40 @@ def trade_props(give, rng):
     return props
 
 
+def trade_cap_props(props, give, gmax=MAX_GRADE):
+    """Shop tinh phi: khong de nghi trao doi nao (the + EP kem) dang gia hon cac the da dua - ca theo
+    gia tri the lan gia thi truong (khong thi doi qua doi lai la in ra EP). The vuot muc -> the dat nhat
+    vua muc (cap <= gmax); EP kem bot lai cho vua. Shop mien phi: giu nguyen."""
+    if not shop_paid() or not give:
+        return props
+    mv = getattr(sys.modules[__name__], "market_value", None) or card_price
+    cap_v = sum(card_price(p["spid"], grade_of(p)) for p in give)
+    cap_m = sum(mv(p["spid"], grade_of(p)) for p in give)
+    pool = trade3_pool()
+    out = []
+    for o in props:
+        o = dict(o)
+        if "spid" not in o:  # CLB mua ca lo bang EP
+            if "ep" in o:
+                o["ep"] = max(0, min(int(o["ep"]), int(min(cap_v, cap_m))))
+            out.append(o)
+            continue
+        val = lambda s, g: max(card_price(s, g), mv(s, g))
+        if val(o["spid"], o["grade"]) > min(cap_v, cap_m):
+            j = bisect.bisect_right(pool, (min(cap_v, cap_m), math.inf)) - 1
+            while j > 0 and (pool[j][3] > gmax or val(pool[j][1], pool[j][3]) > min(cap_v, cap_m)):
+                j -= 1
+            price, s, t, g = pool[max(0, j)]
+            o.update(spid=s, teamid=t, grade=g, price=price)
+        if o.get("ep"):
+            left = min(cap_v - o["price"], cap_m - mv(o["spid"], o["grade"]))
+            o["ep"] = max(0, min(int(o["ep"]), int(left)))
+            if not o["ep"]:
+                o.pop("ep")
+        out.append(o)
+    return out
+
+
 def ep_trade_proposal(query, body):
     """POST /players/trade/proposal {players: [iid...]} -> {result, props}."""
     req = json.loads(body or b"{}")
@@ -2877,7 +4224,7 @@ def ep_trade_proposal(query, body):
     give = [p for p in team["players"] if iid(p) in ids]
     if not 2 <= len(give) <= 10 or len(give) != len(set(ids)) or any(in_squad(team, p) for p in give):
         return _json({"result": False, "reason": "Cầu thủ không hợp lệ."})  # the tab lists reserves only
-    props = trade_props(give, random.Random())
+    props = trade_cap_props(trade_props(give, random.Random()), give)
     st["trade"] = {"players": ids, "props": props}
     _save(st)
     return _json({"result": True, "props": props})
@@ -2928,6 +4275,8 @@ SCOUTS = (  # (key = scoutid, string id, cooldown s, offer value x total, quest)
     ("default_B01", "STR_SCOUTER_KR_DEFAULT_B01", 0, (0.9, 1.3), {"require_value": 100000}),
     ("igr", "STR_SCOUTER_KR_IGR_A01", 0, (0.9, 1.4), {"require_grade": 2, "require_grade_count": 2}),
     ("vip", "STR_SCOUTER_KR_VIP_A01", 0, (1.0, 1.5), {"require_season": "88", "require_season_count": 2}),
+    # VVIP (client co san: anh scouter_vvip.png, gioi han vvip_playertrade3_limit) - tai khoan VVIP mien phi
+    ("vvip", "STR_SCOUTER_KR_VVIP_A01", 0, (1.2, 1.8), {"require_grade": 5, "require_grade_count": 2}),
 )
 QUEST_BONUS = 0.2  # quest met: the offer value range moves up by this x total
 _T3_POOL = []
@@ -2963,13 +4312,15 @@ def quest_met(quest, give):
 
 
 def trade3_pool():
-    """[(price, spid, teamid, grade)] of Market cards at every grade +1..+10, cheapest first
+    """[(price, spid, teamid, grade)] of Market cards at every grade +1..+20, cheapest first
     (cached). Grade +1 only capped an offer at the dearest +1 card (~20 billion EP), so a trade
     of ~71 billion got far less back (user: "pertukaran tidak sebanding dengan nilai yang diawal")."""
     if not _T3_POOL:
-        rows = [r for o in trade_pool().values() for r in o]
+        # moi the cua moi mua (ca huyen thoai: WL, EL, UL, CC, LP...); bo the goc khong mua (spid < 1e6,
+        # game hien thanh '17) de giao dich ra dung cac mua
+        rows = [r for o in trade_pool().values() for r in o if r[0] >= 1000000]
         card_ovrs([s for s, _ in rows])  # one bulk query instead of one per unpriced card
-        _T3_POOL.extend(sorted((card_price(s, g), s, t, g) for s, t in rows for g in range(1, 11)))
+        _T3_POOL.extend(sorted((card_price(s, g), s, t, g) for s, t in rows for g in range(1, MAX_GRADE + 1)))
     return _T3_POOL
 
 
@@ -3013,7 +4364,7 @@ def ep_trade3_proposal(query, body):
         return _json({"result": False, "reason": "TRADE2_ERROR_TOO_MANY_TRY"})  # still cooling down
     if sum(card_price(p["spid"], grade_of(p)) for p in give) >= TRADE3_STATIC["playertrade3_limit"]["max_trade"]:
         return _json({"result": False, "reason": "Cầu thủ không hợp lệ."})  # the tab blocks this first
-    props = trade3_props(give, scout, random.Random())
+    props = trade_cap_props(trade3_props(give, scout, random.Random()), give)
     if scout[2]:
         used[scout[0]] = time.time()  # a negotiation uses the scout, picked or not
     st["trade"] = {"players": [iid(p) for p in give], "props": props}
@@ -3117,7 +4468,7 @@ FA_SEASONS = (
     ("06", (6,), 45004), ("06U", (63,), 7618), ("06WC", (65,), 7622), ("08", (8,), 739), ("08E", (67,), 8157),
     ("09", (9,), 45006), ("10", (10,), 45007), ("10U", (69,), 7618), ("10WC", (47,), 7622), ("11", (11,), 45004),
     ("14", (14,), 15031), ("14WC", (77,), 880047), ("14T", (53,), 45026), ("15", (15,), 16001), ("16", (16,), 16001),
-    ("17", (88,), 45011), ("16EC", (35,), 8157), ("16TH", (45,), 8545), ("WB", (91,), 8334), ("WL", (93,), 8194),
+    ("17", (88,), 45011), ("25L", (325,), 45011), ("26L", (300,), 45011), ("16EC", (35,), 8157), ("16TH", (45,), 8545), ("WB", (91,), 8334), ("WL", (93,), 8194),
     ("UB", (28,), 8336), ("UL", (30,), 8335), ("EL", (27,), 8194), ("LP", (23,), 8329), ("CP", (22,), 8549),
     ("CC", (24,), 8547), ("17TH", (44,), 8545), ("TCO92", (49,), 8546), ("MUA", (55,), 8547), ("ML", (71,), 8549),
     ("TL", (51,), 8549), ("VL", (61,), 8549), ("CL", (89,), 8549), ("KL02", (95,), 8546), ("CEL", (31, 33), 8335),
@@ -3132,12 +4483,23 @@ PACKS[82214356] = ("07 Top 200", {"season": 7, "top": 200, "all": True})  # the 
 for _iid, (_name, _f) in PACKS.items():
     if "icon" in _f and not os.path.isfile(os.path.join(ASSETS, "externalAssets", "shop", f"{_f['icon']}.png")):
         _f["icon"] = _iid
-PACK_BUNCHES = (1, 10)  # buy 1 or 10 (5% off)
+PACK_BUNCHES = (1, 10, 30, 50, 100, 200)  # so luong mua 1 lan (goi the + vat pham dung)
 _PACK_POOL = {}
+
+
+@functools.lru_cache(maxsize=None)
+def _pack_rows():
+    """[(spid, POSOVR, preferredposition1, leagueid)] cua moi the theo thu tu spid (nhu quet bang)."""
+    with closing(_db()) as c:
+        return tuple(tuple(r) for r in c.execute(
+            f"SELECT p.spid, {POSOVR}, p.preferredposition1, p.leagueid FROM players p ORDER BY p.spid"))
 
 
 def pack_pool(itemid):
     """[(spid, weight)] of the Market cards a pack can give (cached)."""
+    if itemid not in _PACK_POOL and PACKS[itemid][1].get("custom"):
+        f = PACKS[itemid][1]  # goi tu chon: moi the co co hoi nhu nhau
+        _PACK_POOL[itemid] = [(s, 1.0) for s in custom_pack_cards(f["spids"], f["seasons"])]
     if itemid not in _PACK_POOL:
         f = PACKS[itemid][1]
         lo, hi = POSITIONS.get(f.get("pos"), (0, 27))
@@ -3145,11 +4507,13 @@ def pack_pool(itemid):
         # "65+" = the rating the card shows once opened (POSOVR base + its grade's boost, as on fifaaddict)
         # "all" packs take every Market card; the others only cards licensed for the ID region
         # (permid), which leaves e.g. 37 of the 395 '06 cards
-        with closing(_db()) as c:
-            rows = c.execute(f"""SELECT p.spid, {POSOVR} AS ovr FROM players p LEFT JOIN permid m ON m.spid = p.spid
-                                 WHERE ovr >= ?1 AND p.preferredposition1 BETWEEN ?2 AND ?3
-                                 AND (?4 IS NULL OR p.leagueid = ?4) AND (?5 OR m.licensed = 1)""",
-                             (f.get("ovr", 0) - GRADE_BOOST[1], lo, hi, f.get("league"), True)).fetchall()  # mo khoa: moi the
+        # = SELECT p.spid, POSOVR AS ovr FROM players p WHERE ovr >= ? AND preferredposition1 BETWEEN lo AND hi
+        # AND (league IS NULL OR leagueid = league) (mo khoa: moi the, khong loc permid), loc tren bang nap
+        # san 1 lan (truoc day ~90 ms/goi x 96 goi = 8-9 s luc mo Cua hang lan dau)
+        omin, league = f.get("ovr", 0) - GRADE_BOOST[1], f.get("league")
+        rows = [(s, o) for s, o, pos, lg in _pack_rows()
+                if o is not None and o >= omin and pos is not None and lo <= pos <= hi
+                and (league is None or lg == league)]
         # spid < 1.000.000 = the goc khong co mua (game hien huy hieu '17): bo khoi goi, neu khong cac
         # goi "moi mua" (Top 300, Best 30, All Season...) chi ra toan the nay -> nguoi choi thay toan '17
         rows = sorted(((s, o) for s, o in rows if on_market(s) and s >= 1000000
@@ -3158,7 +4522,8 @@ def pack_pool(itemid):
         # a price far below the pool's (odd fifaaddict data, e.g. a 120k World Best card among 20M+
         # ones) would win almost every draw: weigh anything under a tenth of the median as that tenth
         prices = [card_price(s) for s, _ in rows]
-        floor = sorted(prices)[len(prices) // 2] / 10
+        # goi khong co the nao (vd. mua chua co trong fifadb cua server): pool rong thay vi IndexError
+        floor = sorted(prices)[len(prices) // 2] / 10 if prices else 0
         _PACK_POOL[itemid] = [(s, max(p, floor) ** -0.75) for (s, _), p in zip(rows, prices)]
     return _PACK_POOL[itemid]
 
@@ -3166,8 +4531,10 @@ def pack_pool(itemid):
 def pack_grades(itemid):
     """[(grade, weight)]: a "+N" pack's card comes at a random grade +1..+N, lower grades more
     likely (weight N-g+1: for +5 that is 33/27/20/13/7%); other packs give +1."""
-    n = PACKS[itemid][1].get("grade", 1)
-    return [(g, n - g + 1) for g in range(1, n + 1)]
+    f = PACKS[itemid][1]
+    n = f.get("grade", 1)
+    lo = f.get("grade_min", 1)  # goi tu chon: +min..+max (cap thap ra nhieu hon)
+    return [(g, n - g + 1) for g in range(lo, n + 1)]
 
 
 def pack_grade(itemid):
@@ -3178,6 +4545,8 @@ def pack_grade(itemid):
 @functools.lru_cache(maxsize=None)
 def pack_price(itemid):
     pool, grades = pack_pool(itemid), pack_grades(itemid)
+    if not pool:
+        return 0
     gw = sum(w for _, w in grades)
     return sig3(sum(card_price(s, g) * w * gwt for s, w in pool for g, gwt in grades) / sum(w for _, w in pool) / gw)
 
@@ -3185,21 +4554,281 @@ def pack_price(itemid):
 def warm_packs():
     """Build every pack pool and price and the trade pools once (~20 s) so the first Shop or
     Tukar request does not stall the client."""
-    for itemid in PACKS:
+    card_ratings([0])  # nap bang chi so 1 lan
+    tc_colors(); tc_static()  # /static/info/teamcolor, tc_bonus (dang nhap)
+    for itemid in list(PACKS):
         pack_price(itemid)
     trade3_pool()
 
 
-SHOP_FREE = True  # user: "shop jadi 0 semua" -> every Shop product costs 0 EP
+# --------------------------------------------------------------------------- #
+# Goi tuy chon (GM Tool > Goi tuy chon): gamedata/custom_packs.json
+# [{"id": 96000001, "name", "spids": [...], "seasons": [...], "grade_min", "grade_max", "color": 0..7}]
+# Moi goi la mot muc PACKS (itemid 96000000+n) -> tu co trong Cua hang, mo nhu goi thuong.
+# Icon: anh ve san externalAssets/shop/95990001..95990008.png (8 mau "GOI TU CHON").
+# --------------------------------------------------------------------------- #
+CUSTOM_PACKS_FILE = os.path.join(HERE, "gamedata", "custom_packs.json")
+CUSTOM_PACK_BASE = 96_000_000
+CUSTOM_ICON_BASE = 95_990_001
+CUSTOM_ICON_COUNT = 8
+_CUSTOM_SIG = None
+
+
+def custom_packs_load():
+    try:
+        with open(CUSTOM_PACKS_FILE, encoding="utf-8") as f:
+            data = json.load(f)
+        return [p for p in data if isinstance(p, dict) and isinstance(p.get("id"), int)]
+    except (OSError, ValueError):
+        return []
+
+
+def custom_packs_save(packs):
+    tmp = CUSTOM_PACKS_FILE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(packs, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, CUSTOM_PACKS_FILE)
+    custom_packs_sync(force=True)
+
+
+def custom_packs_sync(force=False):
+    """Dua goi trong custom_packs.json vao PACKS (doc lai khi file doi)."""
+    global _CUSTOM_SIG
+    try:
+        st = os.stat(CUSTOM_PACKS_FILE); sig = (st.st_mtime_ns, st.st_size)
+    except OSError:
+        sig = None
+    if sig == _CUSTOM_SIG and not force:
+        return
+    _CUSTOM_SIG = sig
+    for iid_ in [i for i, (_, f) in PACKS.items() if f.get("custom")]:
+        PACKS.pop(iid_, None)
+        _PACK_POOL.pop(iid_, None)
+    for p in custom_packs_load():
+        gmax = min(max(int(p.get("grade_max") or 1), 1), MAX_GRADE)
+        gmin = min(max(int(p.get("grade_min") or gmax), 1), gmax)
+        color = int(p.get("color") or 0) % CUSTOM_ICON_COUNT
+        PACKS[p["id"]] = (str(p.get("name") or "Gói tự chọn")[:40],
+                          {"custom": True, "spids": [int(s) for s in p.get("spids") or []],
+                           "seasons": [int(s) for s in p.get("seasons") or []],
+                           "grade_min": gmin, "grade": gmax, "icon": CUSTOM_ICON_BASE + color,
+                           **custom_pack_staff_conf(p)})
+        _PACK_POOL.pop(p["id"], None)
+    pack_price.cache_clear()
+
+
+def custom_pack_staff_conf(p):
+    """HLV trong goi tu chon: {"staffs": [stfid], "staff_rate": % ra HLV moi lan mo (khi goi co ca
+    cau thu), "staff_gmin"/"staff_gmax": cap sao 1..10 (2 = 1 sao, 10 = 5 sao)}."""
+    try:
+        staffs = list(dict.fromkeys(int(s) for s in p.get("staffs") or []))
+    except (TypeError, ValueError):
+        staffs = []
+    if not staffs:
+        return {}
+    gmax = min(max(int(p.get("staff_gmax") or 10), 1), 10)
+    gmin = min(max(int(p.get("staff_gmin") or gmax), 1), gmax)
+    rate = min(max(int(p.get("staff_rate") or 10), 1), 100)
+    return {"staffs": staffs, "staff_rate": rate, "staff_gmin": gmin, "staff_gmax": gmax}
+
+
+def pack_staff_draw(itemid):
+    """Mo goi tu chon co HLV: stfid neu lan nay ra HLV, None = ra cau thu nhu cu. Goi chi co HLV
+    (khong cau thu) -> luon ra HLV."""
+    f = PACKS[itemid][1]
+    staffs = [s for s in f.get("staffs") or [] if str(s) in staff_service.CATALOG]
+    if not staffs:
+        return None
+    if pack_pool(itemid) and random.random() * 100 >= f.get("staff_rate", 10):
+        return None
+    return random.choice(staffs)
+
+
+def ep_pack_staff(st, slot, coach, team, it, stfid):
+    """Lan mo goi ra HLV. Man mo goi cua game (TeamManagementPlayerCardScreen) chi biet hien the cau
+    thu, khong co hieu ung cho HLV -> HLV vao thang CLB (Quan ly HLV), goi tru 1, tra result False kem
+    reason = thong bao tieng Viet (game hien hop thoai) + resources (/coach/me co danh sach HLV moi)."""
+    f = PACKS[it["itemid"]][1]
+    staff_service.normalize_team(team)
+    if len(team["staffs"]) >= team["maxstaff"]:
+        return _json({"result": False, "reason": f"Đã đủ {team['maxstaff']} HLV, hãy xoá bớt HLV rồi mở lại gói."})
+    grade = random.randint(f.get("staff_gmin", 10), f.get("staff_gmax", 10))
+    staff = staff_service.make_staff(stfid, grade)
+    team["staffs"].append(staff)
+    it["remains"] -= 1
+    if not it["remains"]:
+        coach["items"].remove(it)
+    _save(st)
+    stars = f"{grade // 2}" + (",5" if grade % 2 else "")
+    msg = (f"Chúc mừng! Bạn nhận được HLV {staff['commonname']} ({stars} sao). "
+           "HLV đã vào CLB: Quản lý đội > Quản lý HLV > HLV của tôi.")
+    return _json({"result": False, "reason": msg, "message": msg, "staff": staff,
+                  "resources": coach_me_resources(st, slot)})
+
+
+def custom_pack_cards(spids, seasons):
+    """[spid] cua goi tu chon: cau thu chon tay + moi the cua cac mua da chon (the co tren cho)."""
+    out = [s for s in dict.fromkeys(spids)]
+    if seasons:
+        sset = set(seasons)
+        with closing(_db()) as c:
+            rows = c.execute("SELECT spid FROM players").fetchall()
+        out += [s for (s,) in rows if s >= 1000000 and s // 1000000 in sset and on_market(s)]
+    have = set()
+    if out:
+        with closing(_db()) as c:
+            for i in range(0, len(out), 900):
+                chunk = out[i:i + 900]
+                have |= {r[0] for r in c.execute(f"SELECT spid FROM players WHERE spid IN ({','.join('?' * len(chunk))})", chunk)}
+    return [s for s in dict.fromkeys(out) if s in have]
+
+
+custom_packs_sync()
+
+SHOP_FREE = True  # mac dinh: moi mon trong Shop 0 EP (GM Tool > Gia EP the > Shop tinh phi de doi)
+
+# --------------------------------------------------------------------------- #
+# Shop tinh phi (port fo3-server-indo #30): gamedata/shop_settings.json {paid, packs}. Khi bat, moi
+# mon co gia bang gia tri cua no (lam tron len): vat pham chua EP = EP no cho (ky vong), goi the =
+# gia tri ky vong cac the (x he so goi >= 1, + bien do thi truong dong vi goi de danh mo vao ngay
+# gia cao), goi qua / goi thang = tong ben trong; mon khong chua EP (tang ti le, vien EXP, doi ten,
+# doi doi...) = gia co ban x he so gia the (tab Gia EP the). Khong con duong tao EP tu hu khong:
+# nang cap ton it nhat gia tri no them vao, phuc hoi tra bang EP, de nghi trao doi khong vuot gia tri
+# the da dua, gia rao ban tren thi truong toi da 105%.
+# --------------------------------------------------------------------------- #
+SHOP_SETTINGS_FILE = os.path.join(HERE, "gamedata", "shop_settings.json")
+SHOP_SETTINGS_DEFAULT = {"paid": False, "packs": 1.0}
+_SHOP_SET = {"mtime": None, "data": dict(SHOP_SETTINGS_DEFAULT)}
+ES_EP = 1000  # 1 diem nang cap
+EXP_EP = 10  # 1 diem EXP (cau thu / HLV)
+SET_EP = {"COACHNAME_CHANGE": 100_000, "TEAM_CHANGE": 300_000, "PLAYER_POOL_INCREASE": 1_000_000,
+          "PLAYER_GROWTH_RESET": 500_000, "LEAGUE_SIMULATION": 100_000}
+OTHER_EP = 100_000  # mon khong chua EP khac (manh ghep, hop dong...)
+
+
+def shop_settings():
+    try:
+        m = os.path.getmtime(SHOP_SETTINGS_FILE)
+    except OSError:
+        return dict(SHOP_SETTINGS_DEFAULT)
+    if m != _SHOP_SET["mtime"]:
+        try:
+            with open(SHOP_SETTINGS_FILE, encoding="utf-8") as f:
+                d = json.load(f)
+        except (OSError, ValueError):
+            d = {}
+        packs = d.get("packs", 1.0)
+        _SHOP_SET.update(mtime=m, data={"paid": bool(d.get("paid")),
+                                        "packs": float(packs) if isinstance(packs, (int, float)) and 1 <= packs <= 100 else 1.0})
+    return dict(_SHOP_SET["data"])
+
+
+def set_shop_settings(cfg):
+    packs = float(cfg.get("packs", 1.0))
+    if not 1 <= packs <= 100:
+        raise ValueError("packs")
+    new = {"paid": bool(cfg.get("paid")), "packs": packs}
+    os.makedirs(os.path.dirname(SHOP_SETTINGS_FILE), exist_ok=True)
+    tmp = SHOP_SETTINGS_FILE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(new, f, indent=1)
+    os.replace(tmp, SHOP_SETTINGS_FILE)
+    shop_changed()
+    return new
+
+
+def shop_paid():
+    return not SHOP_FREE or shop_settings()["paid"]
+
+
+def nice_ceil(x):
+    """Lam tron LEN toi 3 chu so co nghia (gia Shop khong bao gio thap hon gia tri)."""
+    x = float(x)
+    if x <= 0:
+        return 0
+    e = max(0, int(math.floor(math.log10(x))) - 2)
+    return int(math.ceil(x / 10 ** e - 1e-9)) * 10 ** e
+
+
+def _player_mult():
+    try:
+        import price_settings
+        return float(price_settings.get()["multiplier"])
+    except Exception:
+        return 1.0
+
+
+def _market_swing():
+    try:
+        cfg = market.settings()
+        return 1 + float(cfg["swing"]) if cfg.get("dynamic") else 1.0
+    except Exception:
+        return 1.0
+
+
+def shop_worth(itemid, depth=0):
+    """Gia tri EP cua 1 mon trong Shop tinh phi."""
+    if depth > 4:  # goi tu tao chua chinh no
+        return 0
+    worth = lambda i: shop_worth(i, depth + 1)
+    if itemid == EP_ITEM:
+        return 1
+    if itemid in PACKS:
+        return pack_price(itemid) * shop_settings()["packs"] * _market_swing()
+    if itemid in ITEMS:
+        typ, eff = ITEMS[itemid][2:4]
+        if "ep" in eff:  # random.triangular(lo, hi, lo): ky vong (2lo + hi) / 3
+            return (2 * eff["ep"][0] + eff["ep"][1]) / 3
+        if "prizes" in eff:
+            total = sum(w for w, _ in eff["prizes"])
+            return sum(w * (p[1] if isinstance(p, tuple) else worth(p)) for w, p in eff["prizes"]) / total if total else 0
+        if typ in ("ENHANCEMENT_BOOST", "ITEM_ENHANCEMENT"):  # = diem nang cap cho cung ti le o +9
+            gain = 4.0 if eff.get("sure") else max(0.05, eff.get("mult", 1) - 1)
+            return gain / (ENH25_POINT_BONUS / 100 - 1) * 100 * ES_EP * _player_mult()
+        if "exp" in eff:
+            return eff["exp"] * EXP_EP * _player_mult()
+        return SET_EP.get(typ, OTHER_EP) * _player_mult()
+    if itemid in MONTHLY:
+        _, _, days, now, daily, _ = MONTHLY[itemid]
+        return sum(worth(i) * n for i, n in now) + days * sum(worth(i) * n for i, n in daily)
+    if itemid in PACKAGES:
+        return sum(worth(i) * n for i, n in PACKAGES[itemid][2])
+    return 0
+
+
+def product_price(itemid, n=1):
+    """EP cho 1 lan mua n mon: 0 khi Shop mien phi, khong thi gia tri lam tron len (10 goi khong giam gia)."""
+    if not shop_paid():
+        return 0
+    try:
+        return nice_ceil(shop_worth(itemid) * n)
+    except Exception as e:
+        print(f"shop price {itemid}: {e!r}", flush=True)
+        return 0
 
 
 def shop_price(value, n):
-    return 0 if SHOP_FREE else sig3(value * n * (0.95 if n > 1 else 1))
+    return 0 if not shop_paid() else nice_ceil(value * n)
+
+
+SHOP_CHANGED = 0  # ms cua lan shop_changed() cuoi: GET /shop/list/clear
+
+
+def shop_changed():
+    """Gia Shop doi tren GM Tool: game giu /shop/list trong StaticData ca phien; push /shop/list/clear
+    lam no bo cache -> lan mo Shop sau hoi lai (tab da ve giu gia cu toi khi vao lai game). Cung 1
+    push 2 lan thi lan sau khong tac dung -> moi lan mang thoi gian moi."""
+    global SHOP_CHANGED
+    SHOP_CHANGED = max(int(time.time() * 1000), SHOP_CHANGED + 1)
+    try:
+        messenger_push("/shop/list/clear", {"changed": SHOP_CHANGED})
+    except Exception as e:
+        print(f"shop push: {e!r}", flush=True)
 
 
 VI_NAME = (("This Season", "Mùa này"), ("All Season", "Mọi mùa"), ("Special Season", "Mùa đặc biệt"),
            ("Team of the Season", "Đội hình mùa"), ("Player Top", "Top"), (" NEW ", " Mới "), (" max ", " tối đa "),
-           ("VIP Premium", "VIP cao cấp"), ("World Cup", "World Cup"))
+           ("VIP Premium", "VIP cao cấp"), ("World Cup", "World Cup"), ("Lucky EP", "EP may mắn"))
 
 
 def vi_name(name):
@@ -3232,7 +4861,7 @@ def _item_def(itemid):
             "type": "LEAGUE" if "league" in f else "POSITION" if "pos" in f else "CUSTOM",
             "unit": "COUNT", "itemicon": f.get("icon", itemid), "currency": "ep",
             **({"bundleicon": f["icon"]} if "icon" in f else {}),  # several packs share one icon
-            "bunches": [{"bunch": n, "price": shop_price(pack_price(itemid), n)} for n in PACK_BUNCHES],
+            "bunches": [{"bunch": n, "price": product_price(itemid, n)} for n in PACK_BUNCHES],
             **({"draw": {"year": 2017}} if f.get("season") == 88 else {})}
 
 
@@ -3252,6 +4881,27 @@ EP_ITEM = 1  # externalAssets/shop/1.png = EP coin: EP in Bag entries and packag
 EP_ITEM_DEF = {"itemid": EP_ITEM, "productid": EP_ITEM, "name": "EP", "category": "EP", "type": "EP",
                "unit": "EP", "itemicon": EP_ITEM}
 ITEMS = {  # itemid: (name, icon, type, effect, description)
+    # Phieu nang cap (nang cap v2.5: EnhanceControlPanel loc coach items type ENHANCEMENT_BOOST theo
+    # staticdata.mingrade <= cap sau khi nang <= maxgrade; chon trong o "Dung vat pham" khi nang cap)
+    80501: ("Phiếu nâng cấp Thường", 80511, "ENHANCEMENT_BOOST", {"mult": 1.5, "mingrade": 2, "maxgrade": 20},
+            "Dùng khi nâng cấp (v2.5): tỉ lệ thành công x1,5. Áp dụng thẻ +1 đến +19."),
+    80502: ("Phiếu nâng cấp Cao cấp", 80512, "ENHANCEMENT_BOOST", {"mult": 2.0, "mingrade": 2, "maxgrade": 20},
+            "Dùng khi nâng cấp (v2.5): tỉ lệ thành công x2. Áp dụng thẻ +1 đến +19."),
+    80503: ("Phiếu nâng cấp Tuyệt đối", 80513, "ENHANCEMENT_BOOST", {"sure": True, "mingrade": 2, "maxgrade": 20},
+            "Dùng khi nâng cấp (v2.5): chắc chắn thành công. Áp dụng thẻ +1 đến +19."),
+    # +11..+20 (cap the toi da MAX_GRADE): mingrade/maxgrade = cap SAU khi nang
+    80504: ("Phiếu Huyền thoại", 80514, "ENHANCEMENT_BOOST", {"mult": 2.0, "mingrade": 11, "maxgrade": 15},
+            "Dùng khi nâng cấp (v2.5): tỉ lệ thành công x2. Áp dụng thẻ +10 đến +14 (lên +11..+15)."),
+    80505: ("Phiếu Siêu sao", 80515, "ENHANCEMENT_BOOST", {"mult": 2.0, "mingrade": 16, "maxgrade": 20},
+            "Dùng khi nâng cấp (v2.5): tỉ lệ thành công x2. Áp dụng thẻ +15 đến +19 (lên +16..+20)."),
+    80506: ("Phiếu Huyền thoại Tuyệt đối", 80516, "ENHANCEMENT_BOOST", {"sure": True, "mingrade": 11, "maxgrade": 20},
+            "Dùng khi nâng cấp (v2.5): chắc chắn thành công. Áp dụng thẻ +10 đến +19 (lên +11..+20)."),
+    # Nut [+] canh "Cau thu N / gioi han" (TeamManagementPlayerPoolTabPage.ShowPopupBuyPlayerPoolIncreaseItem)
+    # tim trong /shop/list mot muc shopcategory "USE" co product.staticdata.items[].itemid =
+    # Enums.PLAYER_POOL_INCREASE_ITEM_ID (5026); thieu -> hop thoai "Do Not Find PlayerPoolIncreaseItem".
+    # Gioi han CLB da la MAX_PLAYERS nen mua / dung chi bao gioi han da toi da (khong tru EP, khong vao kho).
+    5026: ("Thẻ mở rộng đội hình", 5026, "PLAYER_POOL_INCREASE", {},
+           "Tăng giới hạn số cầu thủ trong CLB. Bản offline: giới hạn đã ở mức tối đa."),
     501: ("Lucky EP", 501, "EP_LOTTERY", {"ep": (10_000, 1_000_000)}, "Mở thẻ: nhận 10.000 - 1.000.000 EP."),
     50029: ("Lucky EP max 20.000.000", "ID50029", "EP_LOTTERY", {"ep": (100_000, 20_000_000)},
             "Mở thẻ: nhận 100.000 - 20.000.000 EP."),
@@ -3292,17 +4942,17 @@ ITEMS = {  # itemid: (name, icon, type, effect, description)
 # Player EXP capsules use the client's native player selection screen.
 ITEMS.update({
     910001: ('EXP cầu thủ +1.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 1000},
-             'Cộng 1.000 EXP cho một cầu thủ. Cấp tối đa: 23.'),
+             'Cộng 1.000 EXP cho một cầu thủ. Cấp tối đa: 30.'),
     910002: ('EXP cầu thủ +5.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 5000},
-             'Cộng 5.000 EXP cho một cầu thủ. Cấp tối đa: 23.'),
+             'Cộng 5.000 EXP cho một cầu thủ. Cấp tối đa: 30.'),
     910003: ('EXP cầu thủ +30.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 30000},
-             'Cộng 30.000 EXP cho một cầu thủ. Cấp tối đa: 23.'),
+             'Cộng 30.000 EXP cho một cầu thủ. Cấp tối đa: 30.'),
 })
 # Additional consumables supported by the native inventory screens.
 ITEMS.update({
-    910004: ('EXP cầu thủ +2.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 2000}, 'Cộng 2.000 EXP cầu thủ. Cấp tối đa: 23.'),
-    910005: ('EXP cầu thủ +10.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 10000}, 'Cộng 10.000 EXP cầu thủ. Cấp tối đa: 23.'),
-    910006: ('EXP cầu thủ +20.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 20000}, 'Cộng 20.000 EXP cầu thủ. Cấp tối đa: 23.'),
+    910004: ('EXP cầu thủ +2.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 2000}, 'Cộng 2.000 EXP cầu thủ. Cấp tối đa: 30.'),
+    910005: ('EXP cầu thủ +10.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 10000}, 'Cộng 10.000 EXP cầu thủ. Cấp tối đa: 30.'),
+    910006: ('EXP cầu thủ +20.000', 300, 'PLAYER_EXP_CAPSULE', {'exp': 20000}, 'Cộng 20.000 EXP cầu thủ. Cấp tối đa: 30.'),
     911001: ('EXP HLV +1.000', 200, 'COACH_EXP_CAPSULE', {'exp': 1000}, 'Cộng 1.000 EXP HLV. Cấp tối đa: 100.'),
     911002: ('EXP HLV +5.000', 200, 'COACH_EXP_CAPSULE', {'exp': 5000}, 'Cộng 5.000 EXP HLV. Cấp tối đa: 100.'),
     911003: ('EXP HLV +30.000', 200, 'COACH_EXP_CAPSULE', {'exp': 30000}, 'Cộng 30.000 EXP HLV. Cấp tối đa: 100.'),
@@ -3368,9 +5018,11 @@ def use_item_def(itemid):
             "itemicon": icon, "bundleicon": icon, "currency": "ep", "stackable": True, "description": desc,
             **({'capsuleexp': eff['exp'], 'capsuleseason': None, 'capsulelv': None}
                if typ == 'PLAYER_EXP_CAPSULE' else {}),
+            **({"mingrade": eff["mingrade"], "maxgrade": eff["maxgrade"], "season": None}
+               if typ == "ENHANCEMENT_BOOST" else {}),
             # TeamManagementEPCardScreen.onQuery sizes the coin counter from count.max
             **({"count": {"min": eff["ep"][0], "max": eff["ep"][1]}} if "ep" in eff else {}),
-            "bunches": [{"bunch": n, "price": 0} for n in PACK_BUNCHES]}
+            "bunches": [{"bunch": n, "price": product_price(itemid, n)} for n in PACK_BUNCHES]}
 
 
 def package_def(itemid):
@@ -3383,7 +5035,7 @@ def package_def(itemid):
         extra = {}
     return {"itemid": itemid, "productid": itemid, "name": name, "category": "PACKAGE", "type": "ITEM",
             "unit": "COUNT", "itemicon": icon, "bundleicon": icon, "currency": "ep", "description": desc,
-            "bunches": [{"bunch": 1, "price": 0}], **extra,
+            "bunches": [{"bunch": 1, "price": product_price(itemid, 1)}], **extra,
             "items": [{"itemid": i, "count": n, "staticdata": item_def(i)} for i, n in contents]}
 
 
@@ -3412,11 +5064,27 @@ def chained_entry(st, first):
     return {**parts[0], "step": min(done, len(steps) - 1), "chained": parts[1:]}
 
 
+# 92000300 = goi "26L Top 200": banner dau tien (trang 1) gioi thieu SOGE Store (sogestore.vn), bam vao mo goi nay
+PROMO_BANNERS = {92000300: (1, "fo3off_soge"), 7675: (3, "fo3off_7675"), 8335: (4, "fo3off_8335"), 8334: (5, "fo3off_8334")}
+
+
 def shop_list(st):
     """GET /shop/list: every Shop tab's products (ShopController filters them by shopcategory)."""
-    return ([shop_entry(i) for i in PACKS] + [shop_entry(i, "USE") for i in ITEMS]
+    custom = [i for i in PACKS if PACKS[i][1].get("custom")]  # goi tu chon len dau tab Goi cau thu
+    # Banner tab Nen mua (ShopRecommendationTabPage: promotion > 0, xep tang dan; anh
+    # externalAssets/shop/banner/<promotionbanner>.png, toi da 5)
+    promo = dict(PROMO_BANNERS)
+    if custom:
+        promo[custom[-1]] = (2, "fo3off_custom")
+    def entry(i):
+        e = shop_entry(i)
+        if i in promo:
+            e["promotion"], e["promotionbanner"] = promo[i]
+        return e
+    return ([entry(i) for i in custom[::-1]] + [entry(i) for i in PACKS if i not in custom]
+            + [shop_entry(i, "USE") for i in ITEMS]
             + [shop_entry(i, "PACKAGE") for i in PACKAGES if i not in CHAIN_STEPS]
-            + [shop_entry(i, "MILEAGE", MP_SHOPID + i) for i in MP_SHOP]
+            + [shop_entry(i, "MILEAGE", MP_SHOPID + i) for i in (() if shop_paid() else MP_SHOP)]
             + [shop_entry(i, "MONTHLYPACK") for i in MONTHLY]
             + [chained_entry(st, first) for first in CHAINED])
 
@@ -3507,7 +5175,7 @@ def locker_catalog():
     add(99999, "SHOES", "SHOES", 0, "Mặc định", "ADIDAS")
     for order, asset in enumerate(LOCKER_SHOE_ASSETS):
         add(100000 + asset, "SHOES", "SHOES", asset,
-            "Mac dinh" if asset == 0 else f"Mẫu {order:03d}", "ETC")
+            "Mặc định" if asset == 0 else f"Mẫu {order:03d}", "ETC")
     return rows
 
 
@@ -3599,17 +5267,68 @@ def locker_room_access(slot):
             "createat": now - 86400000, "expireat": now + 3650 * 86400000,
             "remains": 1, "count": 1, "expireable": True, "expired": False,
             "staticdata": {"itemid": 801, "name": "Phòng thay đồ (Offline)",
-                           "category": "LOCKERROOM", "type": "LOCKERROOM", "itemicon": 801, "bundleicon": 801,
+                           "category": "EQUIP", "type": "LOCKERROOM", "itemicon": 80800, "bundleicon": 80800,
                            "description": "Mở khoá Phòng thay đồ miễn phí, dùng vĩnh viễn."}}
 
 
-def coach_items(st, slot):
+def coach_items(st, slot, key="items"):
     """/coach/me items: one stack per pack ({_id, itemid, remains}); expireable marks an owned
-    item (GeneralInventoryTileItemRenderer: Gunakan button instead of Beli)."""
+    item (GeneralInventoryTileItemRenderer: Gunakan button instead of Beli). key="depot" = Kho chua."""
     coach = next(c for c in st["coaches"] if c["slot"] == slot)
-    return [locker_room_access(slot)] + [{"_id": i["_id"], "id": i["_id"], "itemid": i["itemid"], "remains": i["remains"], "count": i["remains"],
+    return ([locker_room_access(slot)] if key == "items" else []) + [{"_id": i["_id"], "id": i["_id"], "itemid": i["itemid"], "remains": i["remains"], "count": i["remains"],
              "expireable": True, "expired": False, "staticdata": item_def(i["itemid"])}
-            for i in coach.get("items", []) if i["itemid"] in PACKS or i["itemid"] in ITEMS]
+            for i in coach.get(key, []) if i["itemid"] in PACKS or i["itemid"] in ITEMS]
+
+
+# --------------------------------------------------------------------------- #
+# Kho chua (Vat pham > Kho, ItemDepotTabPage): coach["depot"] giu cac chong do nhu coach["items"].
+# O trong Vat pham (goi, vat pham dung: GeneralInventoryTileItemRenderer.isMovableItem) gui
+# POST /items/itemtodepot {moveitems: [id]}; o trong Kho gui POST /item/depottoitem/<_id> {}.
+# Chuyen ca chong. {result: true} -> client GET /item/depot (mang coach_items) va hien
+# DepotItemMoveCompletePopup; khong thi hien hop thoai voi `reason`.
+# --------------------------------------------------------------------------- #
+def stack_move(coach, item_id, src, dst):
+    """Chuyen chong item_id tu coach[src] sang coach[dst], gop vao chong cung vat pham o do."""
+    it = next((i for i in coach.get(src, []) if i["_id"] == item_id and i.get("remains", 0) > 0), None)
+    if it is None:
+        return False
+    coach[src].remove(it)
+    same = next((i for i in coach.setdefault(dst, []) if i["itemid"] == it["itemid"]), None)
+    if same is None:
+        coach[dst].append(it)
+    else:
+        same["remains"] += it["remains"]
+    return True
+
+
+def depot_reply(st, ok):
+    if not ok:  # khong luu gi: lan chuyen bi tu choi khong thay doi gi
+        return _json({"result": False, "reason": "Không tìm thấy vật phẩm."})
+    _save(st)
+    slot = _default_slot(st)
+    return _json({"result": True, "resources": coach_me_resources(st, slot)
+                  + [{"uri": "/item/depot", "body": coach_items(st, slot, "depot")}]})
+
+
+def ep_item_to_depot(query, body):
+    """POST /items/itemtodepot {moveitems: [_id...]}: Vat pham -> Kho (ve Phong thay do o lai)."""
+    st = _state(); coach = my_coach(st)
+    ids = [str(i) for i in json.loads(body or b"{}").get("moveitems") or []]
+    lr = locker_room_access(_default_slot(st))["_id"]
+    moved = [stack_move(coach, i, "items", "depot") for i in ids if i != lr]
+    return depot_reply(st, bool(moved) and all(moved))
+
+
+def ep_depot_to_item(item_id, query, body):
+    """POST /item/depottoitem/<_id> {}: Kho -> Vat pham."""
+    st = _state()
+    return depot_reply(st, stack_move(my_coach(st), item_id, "depot", "items"))
+
+
+def ep_item_depot(query, body):
+    """GET /item/depot: danh sach Kho."""
+    st = _state()
+    return _json(coach_items(st, _default_slot(st), "depot"))
 
 
 def ep_shop_purchase(query, body):
@@ -3619,6 +5338,9 @@ def ep_shop_purchase(query, body):
     itemid = int(req.get("productid") or 0) or int(req.get("shopid") or 0) % MP_SHOPID % STSHOPID
     if not any(itemid in t for t in (PACKS, ITEMS, PACKAGES, MONTHLY)):
         return _json({"result": False, "reason": "NOT_EXIST_PRODUCT"})
+    if itemid in ITEMS and ITEMS[itemid][2] == "PLAYER_POOL_INCREASE":
+        # ShopController.onShopPurchaseResponseReceived: result false -> hop thoai voi reason (chu thuong hien nguyen van)
+        return _json({"result": False, "reason": player_pool_full_msg()})
     bunches = item_def(itemid)["bunches"]
     b = bunches[min(max(int(req.get("bunch") or 0), 0), len(bunches) - 1)]
     st = _state(); slot = _default_slot(st); coach = my_coach(st)
@@ -3643,6 +5365,10 @@ def ep_shop_purchase(query, body):
                   + ([{"uri": "/monthlypack", "body": monthly_list(st)}] if itemid in MONTHLY else [])})
 
 
+def player_pool_full_msg():
+    return f"Giới hạn cầu thủ trong CLB đã ở mức tối đa ({MAX_PLAYERS}), không cần mở rộng thêm."
+
+
 def use_item(st, slot, coach, it, req):
     """/item/<_id>/use for a USE item (see ITEMS): its effect, one used up."""
     _, _, typ, eff, _ = ITEMS[it["itemid"]]
@@ -3650,6 +5376,10 @@ def use_item(st, slot, coach, it, req):
     consume = 1
     if typ == 'LEAGUE_SIMULATION':
         return {'result': False, 'reason': 'ITEM_USE_ERROR'}
+    if typ == "PLAYER_POOL_INCREASE":
+        return {"result": False, "reason": player_pool_full_msg()}
+    if typ == 'ENHANCEMENT_BOOST':  # chi dung trong man Nang cap (o "Dung vat pham")
+        return {'result': False, 'reason': 'Phiếu nâng cấp dùng trong màn Nâng cấp cầu thủ.'}
     if typ == 'COACH_EXP_CAPSULE':
         count = req.get('count', 1)
         if type(count) is not int or count < 1 or count > it['remains']:
@@ -3711,9 +5441,14 @@ def ep_item_use(item_id, query, body):
         return _json({**out, "resources": coach_me_resources(st, slot)})
     if it is None or it["itemid"] not in PACKS:
         return _json({"result": False, "reason": "INVALID_ITEM"})
+    stfid = pack_staff_draw(it["itemid"]) if PACKS[it["itemid"]][1].get("staffs") else None
+    if stfid is not None:  # goi tu chon co HLV (GM Tool): lan nay ra HLV
+        return ep_pack_staff(st, slot, coach, team, it, stfid)
     if len(team["players"]) >= MAX_PLAYERS:
         return _json({"result": False, "reason": "CLB đã đầy, hãy thanh lý bớt cầu thủ."})  # client shows "squad full"
     pool = pack_pool(it["itemid"])
+    if not pool:
+        return _json({"result": False, "reason": "Gói này chưa có cầu thủ nào (sửa gói trên GM Tool)."})
     spid = random.choices([s for s, _ in pool], [w for _, w in pool])[0]
     g = pack_grade(it["itemid"])
     p = add_player(team, spid, g)
@@ -3746,8 +5481,8 @@ def ep_static_item(query, body):
 # items [{itemid, count}] expanded via /static/cache/item, players [{spid, grade}]).
 # --------------------------------------------------------------------------- #
 DAILY_FILE = os.path.join(HERE, "gamedata", "daily_rewards.json")
-DAILY_DEFAULT = [{"ep": 10000}, {"ep": 20000}, {"pack": 28007}, {"ep": 30000}, {"pack": 28006},
-                 {"ep": 50000}, {"ep": 100000, "pack": 82214068}]  # day 1..7
+# mac dinh: moi ngay 100 trieu EP + 100 goi VIP nhat (All Season Top 200 +8, itemid 7675)
+DAILY_DEFAULT = [{"ep": 100_000_000, "pack": 7675, "count": 100} for _ in range(7)]  # day 1..7
 WIB = 7 * 3600
 
 
@@ -3810,7 +5545,10 @@ def bag_apply(st, entry):
         elif it["itemid"] in PACKS or it["itemid"] in ITEMS:
             inventory_add(coach, it["itemid"], it["count"])
     for p in entry["players"]:
-        add_player(team, p["spid"], p.get("grade", 1))
+        x = add_player(team, p["spid"], p.get("grade", 1))
+        lv = int(p.get("level") or 1)
+        if lv > 1:  # cap do do GM Tool chon khi gui vao Tui
+            x["levelinfo"] = {"level": min(PLAYER_MAX_LEVEL, lv), "exp": 0}
     coach["bag"].remove(entry)
 
 
@@ -3854,6 +5592,8 @@ ROUTES = [
     # Ganti tim screen: a club's summary for its TeamInfoNew (name/crest id, ovr, teamgrade)
     (re.compile(r"/static/info/team/summary/(\d+)"), lambda t, q, b: _json(club_summary_response(int(t)))),
     (re.compile(r"/player/(\w+)/move/(firstteam|secondteam)"), ep_player_move),
+    (re.compile(r"/player/(\w+)/enhance2\.5/(\w+)/preview/([01])/(-?\w+)/(-?\w+)/?"), ep_enh25_preview),
+    (re.compile(r"/player/(\w+)/enhance2\.5/(\w+)/([01])/(-?\w+)/(-?\w+)/?"), ep_enh25),
     (re.compile(r"/player/(\w+)/enhance/(\w+)/preview"), ep_enhance_preview),
     (re.compile(r"/player/(\w+)/enhance/(\w+)(?:/(-?\w+)/(-?\w+))?"), ep_enhance),
     (re.compile(r"/transfer/top/50(?:/position/(\w+))?"), ep_transfer_top),
@@ -3874,6 +5614,16 @@ ROUTES = [
     (re.compile(r"/cup/([0-9a-f]{24})/(?:resume|test)"), ep_cup_resume),
     (re.compile(r"/cup/([0-9a-f]{24})/leave"), ep_cup_leave),
     (re.compile(r"/cup/([0-9a-f]{24})"), lambda cupid, q, b: _json((_state().get("cups") or {}).get(cupid, {}))),
+    (re.compile(r"/item/depottoitem/(\w+)"), ep_depot_to_item),
+    # thong bao he thong bi bam xoa (SystemMessageCommand.deleteNotification, DELETE): khong luu
+    (re.compile(r"/inbox/my/notifications/(\w+)"), lambda nid, q, b: _json({"result": True})),
+    # bescript di thang vao native (BeginnersGuideManager -> ApplyCampaignScript); "{}" cho GET la
+    # lam vo trinh doc script. Script khong co file responses/ -> script rong cua camera_controller.
+    (re.compile(r"/static/bescript/(\w+)"), lambda name, q, b: from_file("/static/bescript/camera_controller")
+        or ("application/json", json.dumps("function main() {}\n").encode())),
+    # GET /game/inweburl/<ten> {url}: StartupNoticeScreen.onReceivedNoticeUrl dua url thang vao native
+    # LoadWebAddress; thieu url (tra "{}") = chuoi NULL -> crash. File responses/ (vd. notice) van uu tien.
+    (re.compile(r"/game/inweburl/(\w+)"), lambda name, q, b: _json({"result": True, "url": "about:blank"})),
 ]
 
 
@@ -3896,7 +5646,18 @@ ENDPOINTS = {
     "/shop/cash/history/url": ep_shop_url,
 }
 ENDPOINTS["/coaches"] = ep_coaches
+ENDPOINTS["/player/enhance2.5/restore"] = ep_enh25_restore
 ENDPOINTS["/coach/me"] = ep_coach_me
+
+def ep_staff_status_expand(query, body):
+    """GET /staff/status/expand (mo man Quan ly HLV): kem /coach/me de danh sach HLV cap nhat
+    ngay (HLV vua them tu GM Tool hien luon, khong can thoat game)."""
+    st = _state()
+    return _json({"result": True, "expandable": False, "nextmaxcount": 30, "nextfee": 0,
+                  "resources": coach_me_resources(st, _default_slot(st))})
+
+
+ENDPOINTS["/staff/status/expand"] = ep_staff_status_expand
 ENDPOINTS["/coach/me/onready"] = ep_coach_onready
 for _slot in (0, 1):  # two coach slots
     ENDPOINTS[f"/coach/{_slot}"] = lambda q, b, s=_slot: ep_create_coach(s, q, b)
@@ -3937,6 +5698,13 @@ def ep_recontract(query, body):
 
 
 ENDPOINTS.update({
+    "/stadium/list": ep_stadium_list,
+    "/items/itemtodepot": ep_item_to_depot, "/item/depot": ep_item_depot,
+    # Thanh tich giai dau: cua toi (thanh tich cau thu) va tong hop (doi hinh tieu bieu, top chi so);
+    # cup rieng cua giai (cupinfo) khong bao gio vao -> thanh tich cup de trong
+    "/league2/history/players/league": ep_l2_history_players, "/league2/leader/league": ep_l2_leaders,
+    "/league2/history/players/cup": lambda q, b: _json([]),
+    "/league2/leader/cup": lambda q, b: _json({k: [] for k in (*LINES, "ratings", "goals", "assists", "tackles", "passes", "saves")}),
     "/players/recontract/preview": ep_recontract_preview, "/players/recontract": ep_recontract,
     "/league2/me": ep_l2_me, "/league2/reward": ep_l2_reward, "/league2/calendar": ep_l2_calendar,
     "/league2/match": ep_l2_match, "/league2/match/sim": lambda q, b: ep_l2_match(q, b, sim=True),
@@ -3950,7 +5718,8 @@ ENDPOINTS.update({
     "/worldcup/rpinfo": lambda q, b: ep_wc_rpinfo(q, b),
     "/static/db/SORTWORLDCUPTEAM": lambda q, b: _json(wc_sort_team()),
     # ShopController.onRemainedChange: body phai la mang (so luong con lai cua goi gioi han); {} -> UI error
-    "/shop/remained/limited": lambda q, b: _json([]),
+    "/shop/list/clear": lambda q, b: _json({"changed": SHOP_CHANGED}),
+    "/shop/remained/limited": lambda q, b: _json([]), "/shop/remained/limited/STSHOP": lambda q, b: _json([]),
     "/static/db/WORLDCUPTEAMS": lambda q, b: _json({str(t): {"teamid": t, "confederation": c} for t, c in WC_TEAM_CONF.items()}),
     "/transfer/offer": ep_transfer_offer, "/transfer/favorites": ep_transfer_favorites, "/transfer/my/offer/list": lambda q, b: _json(offer_list(_state())),
     "/transfer/my/boostfactor": lambda q, b: _json(NO_BOOST),
@@ -3985,10 +5754,54 @@ def ep_online_only(query, body):
 
 RESPONSES = os.path.join(HERE, "responses")
 
+MESSENGER_PUSH = ("127.0.0.1", int(os.environ.get("FO3_MESSENGER_PUSH_PORT", "28003")))  # messenger.py PUSH_PORT
+PUSH_MAX = 65000  # 1 goi UDP (<= 65507) + khung u16 cua messenger (<= 65535 sau ma hoa): lon hon thi khong day
+
+
+def messenger_push(uri, body):
+    """Day mot resource vao game qua ket noi tin nhan (co gang, khong dam bao): messenger.py nhan 1
+    goi UDP {"cmd": "push", "uri", "body"} va gui cho moi client -> MessengerConnection.handlePacket
+    "push" -> ResourceController.feedResources (nhu resources trong reply HTTP). True = da gui."""
+    import socket
+    data = json.dumps({"cmd": "push", "uri": uri, "body": body}, separators=(",", ":")).encode()
+    if len(data) > PUSH_MAX:
+        return False
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.sendto(data, MESSENGER_PUSH)
+        return True
+    except OSError as e:
+        print(f"messenger push {uri} failed: {e}", flush=True)
+        return False
+
+
+def push_gift(st, title, bag=False):
+    """Bao cho game biet GM Tool vua gui qua: /coach/me (vat pham/cau thu/HLV moi hien ngay, neu CLB
+    du nho de vua 1 goi), /bag khi qua vao Tui, va 1 thong bao he thong (category bag)."""
+    slot = _default_slot(st)
+    sent = messenger_push("/coach/me", coach_me(st, slot))
+    if bag:
+        messenger_push("/bag", bag_list(st))
+    # details.message = dong chu trong khung nhac cua bieu tuong thu (SystemMessage "message"); thieu -> game
+    # hien khoa "NOT_FOUND"
+    messenger_push("/inbox/my/notifications/latest",
+                   {**note("bag", "gift", {"title": title, "message": "Bạn có Vật Phẩm Mới"}), "stackable": True})
+    return sent
+
+
+NOTE_ACTIVITY = None
+DYNAMIC_PATHS = set()  # duong dan module tinh nang tra loi (vd. /contact/list): bo qua file responses/
+BACKGROUND = []  # ham chay nen (luong daemon) khi server khoi dong: rank.presence_loop, market.market_loop
+# responses/staff_status_expand.json (ban cu, khong co resources) che mat ep_staff_status_expand -> HLV
+# vua them tu GM Tool khong hien ngay khi mo Quan ly HLV
+DYNAMIC_PATHS.add("/staff/status/expand")
+
 
 def from_file(path):
     """responses/<path, '/' -> '_'>.json overrides the handler; re-read every request so
     response shapes can be iterated against the live client without a restart."""
+    if path in DYNAMIC_PATHS:
+        return None
     f = os.path.join(RESPONSES, path.strip("/").replace("/", "_") + ".json")
     if os.path.isfile(f):
         with open(f, "rb") as fh:
@@ -4029,12 +5842,15 @@ class H(http.server.BaseHTTPRequestHandler):
         else:
             try:
                 with STATE_LOCK:
+                    custom_packs_sync()  # goi tu chon moi tao/sua tren GM Tool
                     if path in browser_links.URLS:
                         if self.client_address[0] not in ("127.0.0.1", "::1"):
                             ctype, data = _json({"result": False})
                         else:
                             ctype, data = _json({"result": browser_links.open_link(path)})
                     else:
+                        if NOTE_ACTIVITY:  # manager.py: dem thoi gian choi
+                            NOTE_ACTIVITY()
                         ctype, data = from_file(path) or (ENDPOINTS.get(path) or route(path) or fallback)(query, body)
             except Exception:
                 # an empty reply is a curl error and the client quits (CLIENT_CLOSE); answer
@@ -4058,7 +5874,7 @@ class H(http.server.BaseHTTPRequestHandler):
 
 
 # Offline overview stadium metadata (unknown real details are shown explicitly).
-ENDPOINTS['/static/stadium/1'] = lambda q,b: _json({'id':1, 'name':'Offline Stadium', 'yearbuilt':'N/A', 'capacity':'N/A'})
+ENDPOINTS['/static/stadium/1'] = lambda q,b: _json({'id':1, 'name':'Sân vận động Offline', 'yearbuilt':'Không rõ', 'capacity':'Không rõ'})
 ENDPOINTS['/stadium/1'] = ENDPOINTS['/static/stadium/1']
 ENDPOINTS['/coach/new/reserve'] = ep_coach_reserve
 ENDPOINTS['/coach/me/profile'] = ep_coach_profile
@@ -4069,10 +5885,32 @@ ENDPOINTS['/ladder/my/info'] = lambda q, b: _json({"ladder_total": {
     "nodata": True, "highelo": 1001, "hightype": 0, "playedgames": 0, "totalwins": 0, "midrewardable": False}})
 ENDPOINTS['/game/my/team/captain'] = lambda q,b: ep_team_role('captain', q, b)
 ROUTES.insert(0, (re.compile(r'/game/my/team/kickers/(\d+)'), ep_team_role))
+
+
+def ep_sort_sub(table):
+    """StaticData.fetch("SORTLEAGUE", nationid) -> GET /static/db/SORTLEAGUE/<nationid> (cung vay
+    SORTTEAM/<leagueid>): 1 dong cua bang = MANG id. RoomProxy (bo chon doi AI, chay ca luc khoi
+    tao RoomController) lam `data as Array` roi .map -> {} (mac dinh) = null -> TypeError #1009,
+    RoomProxy hong (phong Rank lan sau khong nhan push, nut Huy khong gui gi)."""
+    def ep(key, query, body):
+        return _json(json.loads(table(query, body)[1]).get(str(int(key)), []))
+    return ep
+
+
+ROUTES.insert(0, (re.compile(r'/static/db/SORTLEAGUE/(\d+)/?'), ep_sort_sub(ep_sortleague)))
+ROUTES.insert(0, (re.compile(r'/static/db/SORTTEAM/(\d+)/?'), ep_sort_sub(ep_sortteam)))
 ENDPOINTS['/shop/products/2001'] = lambda q,b: _json([shop_entry(2001, 'USE')])
 import browser_links
 import staff_service
 staff_service.install(sys.modules[__name__])
+import seasoncare, trade2, craft, growth  # tinh nang an: nang cap bang vat pham, trao doi v2, ghep manh, dao tao
+for _feature in (seasoncare, trade2, craft, growth):
+    _feature.install(sys.modules[__name__])
+import rank, market, draftpack  # Xep hang voi HLV ao, thi truong song, goi chon cau thu (port fo3-indo-server dot 2)
+for _feature in (rank, market, draftpack):
+    _feature.install(sys.modules[__name__])
+import manager  # Info Manager, xep hang HLV, nhiem vu / thanh tich / Quest (port fo3-server-indo #33)
+manager.install(sys.modules[__name__])
 
 
 if __name__ == "__main__":
@@ -4102,4 +5940,6 @@ if __name__ == "__main__":
         admin.start(sys.modules[__name__], admin_port)
         print(f"Trang quản trị: http://127.0.0.1:{admin_port}/", flush=True)
     threading.Thread(target=warm_packs, daemon=True, name="packs").start()
+    for _fn in BACKGROUND:
+        threading.Thread(target=_fn, daemon=True, name=_fn.__name__).start()
     srv.serve_forever()

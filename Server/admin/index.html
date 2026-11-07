@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quản trị FIFA Online 3</title>
+<title>GM TOOL FO3 OFFLINE</title>
 <script>
   // Ap theme da luu truoc khi ve trang, tranh nhay mau
   try { const t = localStorage.getItem("fo3-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
@@ -159,21 +159,55 @@
   }
 
   /* ============ Bo cuc ============ */
-  .shell { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 18px; max-width: none; margin: 0; padding: 18px 24px 40px; }
+  .shell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; max-width: none; margin: 0; padding: 16px 24px 40px; }
+  /* menu 2 tang: hang 1 = nhom (segmented), hang 2 = cac muc cua nhom dang chon */
   nav {
-    position: sticky; top: 20px; align-self: start; display: grid; gap: 4px; padding: 10px;
+    display: flex; flex-direction: column; gap: 0; padding: 0; overflow: hidden;
     background: var(--nav); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
   }
-  nav .nav-title { padding: 6px 12px 8px; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
-  nav button {
-    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; border: 0; border-radius: 10px;
-    background: none; cursor: pointer; color: var(--ink-2); font-weight: 500; position: relative;
+  nav .nav-groups {
+    display: flex; gap: 4px; padding: 8px; overflow-x: auto; scrollbar-width: none;
+    background: linear-gradient(135deg, #0f1d3d 0%, #1a3270 55%, #22408c 100%);
+    border-bottom: 3px solid var(--gold);
   }
-  nav button:hover { background: var(--card-2); color: var(--ink); }
-  nav button[aria-selected="true"] { background: var(--nav-active); color: var(--accent); font-weight: 700; }
-  nav button[aria-selected="true"]::before {
-    content: ""; position: absolute; left: -10px; top: 8px; bottom: 8px; width: 4px; border-radius: 0 4px 4px 0; background: var(--accent);
+  nav .nav-groups::-webkit-scrollbar, nav .nav-group::-webkit-scrollbar { display: none; }
+  nav .ng {
+    display: inline-flex; align-items: center; gap: 8px; flex: 1 1 0; justify-content: center; min-width: max-content;
+    padding: 9px 16px; border: 1px solid transparent; border-radius: 11px; background: none; cursor: pointer;
+    color: rgba(226, 234, 255, .82); font: inherit; font-size: 14px; font-weight: 600; letter-spacing: .01em; white-space: nowrap;
+    transition: background .18s, color .18s, box-shadow .18s, border-color .18s;
   }
+  nav .ng svg.i { width: 17px; height: 17px; flex: none; opacity: .8; }
+  nav .ng .cnt {
+    min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; display: inline-grid; place-items: center;
+    font-size: 11px; font-weight: 700; background: rgba(255, 255, 255, .14); color: rgba(226, 234, 255, .9);
+  }
+  nav .ng:hover { color: #fff; background: rgba(255, 255, 255, .09); }
+  nav .ng.on {
+    color: #2b1f00; background: linear-gradient(180deg, #ffd54a, #f5b700); border-color: rgba(255, 255, 255, .35);
+    box-shadow: 0 2px 10px rgba(245, 183, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .45);
+  }
+  nav .ng.on svg.i { opacity: 1; }
+  nav .ng.on .cnt { background: rgba(43, 31, 0, .82); color: #ffd54a; }
+  nav .nav-group { display: none; gap: 2px; padding: 0 10px; overflow-x: auto; scrollbar-width: none; }
+  nav .nav-group.on { display: flex; }
+  nav .nav-group .nav-title { display: none; }
+  nav .nav-items { display: flex; gap: 2px; }
+  nav button[role="tab"] {
+    display: flex; align-items: center; gap: 8px; white-space: nowrap; padding: 13px 14px 12px; border: 0; border-radius: 0;
+    background: none; cursor: pointer; color: var(--mute); font: inherit; font-size: 14px; font-weight: 500; position: relative;
+    transition: color .15s;
+  }
+  nav button[role="tab"] svg.i { width: 16px; height: 16px; flex: none; }
+  nav button[role="tab"]::after {
+    content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0;
+    background: var(--accent); transform: scaleX(0); transition: transform .2s ease;
+  }
+  nav button[role="tab"]:hover { color: var(--ink); }
+  nav button[role="tab"]:hover::after { transform: scaleX(.35); opacity: .4; }
+  nav button[role="tab"][aria-selected="true"] { color: var(--ink); font-weight: 700; }
+  nav button[role="tab"][aria-selected="true"] svg.i { color: var(--accent); }
+  nav button[role="tab"][aria-selected="true"]::after { transform: scaleX(1); opacity: 1; }
   main { min-width: 0; }
   section[hidden] { display: none; }
 
@@ -240,12 +274,13 @@
   td input[type=number] { width: 120px; }
 
   /* nut */
-  button.b {
+  button.b, a.b {
     display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; padding: 0 16px;
     border: 1px solid var(--line-strong); background: var(--card); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600;
     color: var(--ink-2); transition: transform .08s, background .15s, border-color .15s, box-shadow .15s;
   }
-  button.b:hover { border-color: var(--accent); color: var(--accent); }
+  button.b:hover, a.b:hover { border-color: var(--accent); color: var(--accent); }
+  a.b { text-decoration: none; white-space: nowrap; }
   button.b:active { transform: translateY(1px); }
   button.b.primary {
     background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-color: var(--accent); color: var(--accent-ink);
@@ -254,6 +289,12 @@
   button.b.primary:hover { filter: brightness(1.06); color: var(--accent-ink); }
   button.b.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--line-strong)); }
   button.b.danger:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+  /* nut Xuat log loi: noi bat (do-cam), ngay canh nut Tai lai */
+  button.b.log-export { background: linear-gradient(135deg, #e5484d, #f08c2e); border-color: transparent; color: #fff;
+    font-weight: 700; box-shadow: 0 4px 14px rgba(229, 72, 77, .35); display: inline-flex; align-items: center; gap: 6px; }
+  button.b.log-export:hover { filter: brightness(1.08); box-shadow: 0 6px 18px rgba(229, 72, 77, .5); color: #fff; }
+  button.b.log-export .i { width: 16px; height: 16px; }
+  button.b.log-export.busy { opacity: .7; cursor: progress; }
   button.b.small { height: 32px; padding: 0 11px; font-size: 13px; border-radius: 8px; }
   td button.b.small + button.b.small { margin-left: 6px; }
 
@@ -522,12 +563,7 @@
 
   /* ============ Man hinh vua (laptop): menu chi con bieu tuong, nhuong cho cho bang ============ */
   @media (min-width: 861px) and (max-width: 1600px) {
-    .shell { grid-template-columns: 62px minmax(0, 1fr); gap: 14px; padding: 16px 16px 32px; }
-    nav { padding: 8px 6px; }
-    nav .nav-title { display: none; }
-    nav button { justify-content: center; padding: 11px 0; font-size: 0; gap: 0; }
-    nav button svg.i { width: 20px; height: 20px; }
-    nav button[aria-selected="true"]::before { left: -6px; }
+    .shell { gap: 14px; padding: 16px 16px 32px; }
     #playerRows td .muted, #searchRows td .muted { display: none; }
     td { padding: 7px 8px; } th { padding: 10px 8px; }
     td button.b.small { padding: 0 7px; font-size: 12px; height: 30px; }
@@ -540,10 +576,7 @@
   /* ============ Man hinh nho ============ */
   @media (max-width: 860px) {
     .shell { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
-    nav { position: static; display: flex; overflow-x: auto; padding: 6px; gap: 4px; scrollbar-width: none; }
-    nav .nav-title { display: none; }
-    nav button { width: auto; white-space: nowrap; padding: 8px 12px; }
-    nav button[aria-selected="true"]::before { left: 10px; right: 10px; top: auto; bottom: 0; width: auto; height: 3px; border-radius: 3px 3px 0 0; }
+    nav .ng { flex: 0 0 auto; padding: 8px 12px; }
     .hud-inner { grid-template-columns: 1fr; padding: 16px; gap: 14px; }
     .hud::before, .hud::after { left: 82%; }
     .ball { width: 44px; height: 44px; } .ball svg { width: 38px; height: 38px; }
@@ -609,63 +642,207 @@
   .cm-photo { width: 116px; height: 116px; object-fit: cover; object-position: top; border-radius: 18px; flex: none;
               background: linear-gradient(180deg, var(--card-2), var(--line)); border: 1px solid var(--line); box-shadow: var(--shadow); }
   @media (max-width: 560px) { .cm-photo { width: 72px; height: 72px; border-radius: 12px; } }
+  .cp-sw { padding: 4px; border: 2px solid transparent; border-radius: 12px; background: transparent; cursor: pointer; opacity: .55; line-height: 0; }
+  .cp-sw img { width: 102px; height: 72px; display: block; }
+  .cp-sw:hover { opacity: .85; }
+  .cp-sw.on { opacity: 1; border-color: #f5c542; background: rgba(245,197,66,.12); }
+  .cp-sw:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+  .cp-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .cp-chip { display: inline-flex; align-items: center; gap: 8px; padding: 5px 6px 5px 6px; border: 1px solid rgba(59,130,246,.28);
+    border-radius: 999px; background: rgba(59,130,246,.07); font-size: 13.5px; line-height: 1.2; }
+  .cp-chip .sb { margin: 0; }
+  .cp-chip-name { font-weight: 600; }
+  .cp-chip-n { font-size: 12px; opacity: .65; }
+  .cp-chip-x { width: 22px; height: 22px; display: inline-grid; place-items: center; border: 0; border-radius: 50%; padding: 0;
+    background: rgba(100,116,139,.16); color: inherit; font-size: 16px; line-height: 1; cursor: pointer; }
+  .cp-chip-x:hover { background: #ef4444; color: #fff; }
+  .cp-chip-x:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+  .cp-mode { display: inline-flex; gap: 0; margin-top: 6px; border: 1px solid rgba(100,116,139,.35); border-radius: 12px; padding: 4px; background: rgba(100,116,139,.08); flex-wrap: wrap; }
+  .cp-mode button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; border: 0; background: transparent; color: inherit;
+    padding: 9px 16px; border-radius: 9px; cursor: pointer; font-weight: 700; font-size: 14px; text-align: left; }
+  .cp-mode button small { font-weight: 400; font-size: 12px; opacity: .7; }
+  .cp-mode button[aria-checked="true"] { background: #1e3a8a; color: #fff; box-shadow: 0 2px 8px rgba(30,58,138,.35); }
+  .cp-mode button[aria-checked="true"] small { opacity: .85; }
+  .cp-mode button:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+  .cp-label { margin: 18px 0 6px; font-size: 12.5px; font-weight: 600; color: var(--mute); }
+  .cp-mode { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 900px; width: 100%; margin-top: 0 !important; }
+  .cp-mode button b { font-size: 14.5px; }
+  .cp-panel { margin-top: 14px; padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--card-2); }
+  .cp-panel h3 { margin: 0; }
+  .cp-panel-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .cp-panel-head .muted { font-size: 12.5px; }
+  .cp-pick { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+  .cp-pick label.f { flex: 1 1 320px; max-width: 460px; }
+  .cp-pick label.f .cs, .cp-pick label.f .cs-btn { width: 100%; }
+  .cp-pick .b { height: 40px; }
+  .cp-empty { margin-top: 12px; padding: 12px 14px; border: 1px dashed var(--line-strong, var(--line)); border-radius: 10px; color: var(--mute); font-size: 13.5px; }
+  .cp-actions { margin-top: 18px !important; padding-top: 14px; border-top: 1px solid var(--line); }
+  @media (max-width: 560px) { .cp-mode { grid-template-columns: 1fr; } }
+
+  /* nut Huong dan dung GM Tool (header, canh so du EP) */
+  .guide-btn { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px 12px 14px; border-radius: 14px;
+    text-decoration: none; color: #2a1a00; overflow: hidden; white-space: nowrap; flex: none;
+    background: linear-gradient(135deg, #ffe08a 0%, #f5c542 45%, #e3a417 100%);
+    box-shadow: 0 6px 18px rgba(227, 164, 23, .35), inset 0 1px 0 rgba(255,255,255,.6); transition: transform .15s ease, box-shadow .15s ease; }
+  .guide-btn::after { content: ""; position: absolute; top: -40%; bottom: -40%; left: -60%; width: 40%; transform: rotate(20deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); animation: guideShine 3.6s ease-in-out infinite; }
+  .guide-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(227, 164, 23, .45) !important; }
+  .guide-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  .guide-btn svg { flex: none; width: 30px; height: 30px; fill: none; stroke: #3b2500; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    background: rgba(255,255,255,.45); border-radius: 10px; padding: 5px; }
+  .guide-txt { font-size: 16px; font-weight: 800; letter-spacing: .01em; }
+  @keyframes guideShine { 0%, 60% { left: -60%; } 100% { left: 130%; } }
+  @media (prefers-reduced-motion: reduce) { .guide-btn::after { animation: none; display: none; } }
+  .hud-right { flex-wrap: wrap; justify-content: flex-end; gap: 14px; align-items: stretch; }
+  .hud-right > .guide-btn, .hud-right > .wallet { box-sizing: border-box; height: 64px; min-height: 0; border-radius: 14px; align-self: center; }
+  .hud-right > .guide-btn { border: 0; justify-content: center; box-shadow: 0 6px 18px rgba(227, 164, 23, .35); }
+  @media (min-width: 861px) { .hud-right > .guide-btn, .hud-right > .wallet { width: 330px; } }
+  .guide-btn { padding: 0 22px 0 14px; font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
+  .guide-txt { font-size: 16.5px; font-weight: 700; letter-spacing: 0; line-height: 1.2; }
+  @media (max-width: 860px) { .guide-btn { padding: 9px 14px 9px 10px; } .guide-btn svg { width: 24px; height: 24px; padding: 3px; } .guide-txt { font-size: 14px; } }
+  /* Tao HLV tuy chinh + HLV trong goi tu chon */
+  .hc-wrap { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; margin-top: 6px; }
+  .hc-prev { width: 128px; height: 128px; flex: none; display: grid; place-items: center; border: 1px dashed var(--line-strong);
+    border-radius: 12px; background: var(--card-2); color: var(--mute); font-size: 13px; overflow: hidden; }
+  .hc-prev img { width: 128px; height: 128px; display: block; }
+  .hc-prev [hidden] { display: none !important; }
+  .hc-form { flex: 1 1 320px; min-width: 0; }
+  .hc-form .row { align-items: flex-end; }
+  .hc-tag { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; font-weight: 600;
+    background: color-mix(in srgb, var(--gold, #d8a300) 22%, transparent); color: var(--ink-2); vertical-align: middle; }
+  .cp-staff { display: inline-flex; align-items: center; gap: 8px; padding: 4px 6px 4px 4px; margin: 0 8px 8px 0; border: 1px solid var(--line);
+    border-radius: 999px; background: var(--card); }
+  .cp-staff img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+  .cp-staff small { color: var(--mute); }
+
+  /* ============ Hop thoai xac nhan (thay confirm/prompt cua trinh duyet) ============ */
+  .ui-dlg-back {
+    position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px;
+    background: rgba(8, 14, 32, .55); backdrop-filter: blur(3px); animation: uiFade .16s ease-out;
+  }
+  .ui-dlg {
+    width: min(440px, 100%); background: var(--card); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 18px; box-shadow: 0 24px 60px rgba(0, 0, 0, .35); padding: 28px 26px 22px; text-align: center;
+    animation: uiPop .22s cubic-bezier(.2, .9, .3, 1.25);
+  }
+  .ui-dlg .ui-ico {
+    width: 74px; height: 74px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center;
+    border: 4px solid currentColor; font-size: 40px; font-weight: 800; line-height: 1; animation: uiRing .5s ease-out;
+  }
+  .ui-dlg.q .ui-ico { color: #3b82f6; background: color-mix(in srgb, #3b82f6 10%, transparent); }
+  .ui-dlg.warn .ui-ico { color: #f59e0b; background: color-mix(in srgb, #f59e0b 12%, transparent); }
+  .ui-dlg.danger .ui-ico { color: #ef4444; background: color-mix(in srgb, #ef4444 10%, transparent); }
+  .ui-dlg h3 { margin: 0 0 8px; font-size: 21px; font-weight: 800; letter-spacing: -.01em; display: block; color: var(--ink); }
+  .ui-dlg h3::before { content: none; }
+  .ui-dlg .ui-msg { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere; }
+  .ui-dlg .ui-note {
+    margin: 12px 0 0; padding: 8px 12px; border-radius: 10px; font-size: 13.5px; font-weight: 600;
+    color: #b91c1c; background: color-mix(in srgb, #ef4444 10%, transparent);
+  }
+  :root[data-theme="dark"] .ui-dlg .ui-note { color: #fca5a5; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ui-dlg .ui-note { color: #fca5a5; } }
+  .ui-dlg input.ui-in {
+    width: 100%; margin-top: 14px; height: 44px; padding: 0 14px; border-radius: 11px; border: 1.5px solid var(--line);
+    background: var(--input, var(--card-2)); color: var(--ink); font: inherit; font-size: 16px; text-align: center; letter-spacing: .12em;
+  }
+  .ui-dlg input.ui-in:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .ui-dlg .ui-btns { display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+  .ui-dlg .ui-btns button {
+    min-width: 120px; height: 44px; padding: 0 20px; border-radius: 11px; border: 0; cursor: pointer;
+    font: inherit; font-size: 15px; font-weight: 700; transition: transform .12s, filter .15s, box-shadow .15s;
+  }
+  .ui-dlg .ui-btns button:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  .ui-dlg .ui-btns button:active { transform: translateY(0); }
+  .ui-dlg .ui-ok { color: #fff; background: linear-gradient(180deg, var(--accent-2, var(--accent)), var(--accent));
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .ui-dlg.danger .ui-ok { background: linear-gradient(180deg, #f87171, #dc2626); box-shadow: 0 6px 16px rgba(220, 38, 38, .35); }
+  .ui-dlg .ui-cancel { color: var(--ink-2); background: var(--card-2); box-shadow: inset 0 0 0 1px var(--line); }
+  .ui-dlg .ui-btns button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 50%, transparent); outline-offset: 2px; }
+  .ui-dlg-back.out { animation: uiOut .14s ease-in forwards; }
+  @keyframes uiFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes uiOut { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes uiPop { from { opacity: 0; transform: scale(.86); } to { opacity: 1; transform: scale(1); } }
+  @keyframes uiRing { 0% { transform: scale(.5) rotate(-12deg); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .ui-dlg-back, .ui-dlg, .ui-dlg .ui-ico { animation: none; } }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></symbol>
-  <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3 3 6l2 5 3-1v11h8V10l3 1 2-5-5-3a4 4 0 0 1-8 0Z"/></symbol>
-  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M3 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/></symbol>
-  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13"/><path d="M12 8S10 3 7.5 4.5 9 8 12 8Zm0 0s2-5 4.5-3.5S15 8 12 8Z"/></symbol>
-  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></symbol>
-  <symbol id="i-scout" viewBox="0 0 24 24"><circle cx="6.5" cy="15.5" r="3.5"/><circle cx="17.5" cy="15.5" r="3.5"/><path d="M10 15h4M6.5 12 9 5h2l1 5 1-5h2l2.5 7"/></symbol>
-  <symbol id="i-log" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></symbol>
-  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7Z"/></symbol>
-  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.8 0-3 .9-3 2s1 1.7 3 2 3 1 3 2.2-1.3 2-3 2c-1.5 0-2.6-.6-3-1.6M12 6v2M12 16v2"/></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
-  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
-  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
-  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
-  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M10 21v-6h4v6"></path></symbol>
+  <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3 3 6l2 5 3-1v11h8V10l3 1 2-5-5-3a4 4 0 0 1-8 0Z"></path></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"></circle><path d="M3 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"></rect><path d="M5 13v8h14v-8M12 8v13"></path><path d="M12 8S10 3 7.5 4.5 9 8 12 8Zm0 0s2-5 4.5-3.5S15 8 12 8Z"></path></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="m9 15 2 2 4-4"></path></symbol>
+  <symbol id="i-scout" viewBox="0 0 24 24"><circle cx="6.5" cy="15.5" r="3.5"></circle><circle cx="17.5" cy="15.5" r="3.5"></circle><path d="M10 15h4M6.5 12 9 5h2l1 5 1-5h2l2.5 7"></path></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="m7 9 3 3-3 3M13 15h4"></path></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7Z"></path></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.8 0-3 .9-3 2s1 1.7 3 2 3 1 3 2.2-1.3 2-3 2c-1.5 0-2.6-.6-3-1.6M12 6v2M12 16v2"></path></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"></path><path d="m3 13 9 5 9-5"></path><path d="m3 17.5 9 5 9-5"></path></symbol>
 </svg>
 
 <header class="hud">
   <div class="hud-inner">
     <div class="brand">
       <span class="ball" aria-hidden="true">
-        <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fff" stroke="#1b1b1b" stroke-width="2"/><path d="M20 12.5l7 5.1-2.7 8.2h-8.6L13 17.6Z" fill="#1b1b1b"/><path d="M20 12.5V4.5M27 17.6l7.4-2.6M24.3 25.8l4.6 6.6M15.7 25.8l-4.6 6.6M13 17.6l-7.4-2.6" stroke="#1b1b1b" stroke-width="2"/></svg>
+        <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fff" stroke="#1b1b1b" stroke-width="2"></circle><path d="M20 12.5l7 5.1-2.7 8.2h-8.6L13 17.6Z" fill="#1b1b1b"></path><path d="M20 12.5V4.5M27 17.6l7.4-2.6M24.3 25.8l4.6 6.6M15.7 25.8l-4.6 6.6M13 17.6l-7.4-2.6" stroke="#1b1b1b" stroke-width="2"></path></svg>
       </span>
       <div class="brand-text">
-        <h1 class="display"><small>FIFA Online 3 · Offline</small><span class="title-row">Quản trị CLB
+        <h1 class="display"><small>FIFA Online 3 · Offline</small><span class="title-row">GM TOOL FO3 OFFLINE
           <button class="theme-btn" id="themeBtn" type="button" aria-label="Đổi giao diện sáng / tối" title="Đổi giao diện sáng / tối">
-            <svg class="i moon"><use href="#i-moon"/></svg><svg class="i sun"><use href="#i-sun"/></svg>
+            <svg class="i moon"><use href="#i-moon"></use></svg><svg class="i sun"><use href="#i-sun"></use></svg>
           </button></span></h1>
         <div class="meta">
-          <span class="jersey"><span class="shirt"><svg class="i"><use href="#i-shirt"/></svg></span><span id="coachName">…</span></span>
-          <span class="badge pc">PC</span><span class="badge vip">VIP</span>
-          <span class="clock" title="Giờ server (giờ Việt Nam)"><svg class="i"><use href="#i-clock"/></svg><span id="serverTime"></span></span>
+          <span class="jersey"><span class="shirt"><svg class="i"><use href="#i-shirt"></use></svg></span><span id="coachName">…</span></span>
+          <span class="badge pc">PC</span><span class="badge vip" title="VVIP đã kích hoạt">VVIP</span>
+          <span class="clock" title="Giờ server (giờ Việt Nam)"><svg class="i"><use href="#i-clock"></use></svg><span id="serverTime"></span></span>
         </div>
       </div>
     </div>
     <div class="hud-right">
-      <div class="wallet" aria-label="Số dư EP"><span class="lbl">EP</span><span class="amt"><small>Số dư</small><strong id="epTop">…</strong></span></div>
+      <a class="guide-btn" href="/huongdan/" target="_blank" rel="noopener" title="Hướng Dẫn Dùng GM Tool"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5 2.5 2.5 0 0 0 6.5 24H20"/><path d="M8 7h7M8 11h5"/></svg><span class="guide-txt">Hướng Dẫn Dùng GM Tool</span></a><div class="wallet" aria-label="Số dư EP"><span class="lbl">EP</span><span class="amt"><small>Số dư</small><strong id="epTop">…</strong></span></div>
     </div>
   </div>
 </header>
 
 <div class="shell">
   <nav role="tablist" aria-label="Menu quản trị">
-    <div class="nav-title">Bảng điều khiển</div>
-    <button role="tab" data-tab="ringkasan" aria-selected="true"><svg class="i"><use href="#i-home"/></svg>Tổng quan</button>
-    <button role="tab" data-tab="pemain"><svg class="i"><use href="#i-shirt"/></svg>Cầu thủ CLB</button>
-    <button role="tab" data-tab="tambah"><svg class="i"><use href="#i-plus"/></svg>Thêm cầu thủ</button>
-    <button role="tab" data-tab="theomua"><svg class="i"><use href="#i-layers"/></svg>Thêm hàng loạt</button>
-    <button role="tab" data-tab="item"><svg class="i"><use href="#i-gift"/></svg>Gói thẻ &amp; Túi đồ</button>
-    <button role="tab" data-tab="harian"><svg class="i"><use href="#i-cal"/></svg>Quà hằng ngày</button>
-    <button role="tab" data-tab="hlv"><svg class="i"><use href="#i-scout"/></svg>HLV</button>
-    <button role="tab" data-tab="scout"><svg class="i"><use href="#i-scout"/></svg>Đổi cầu thủ</button>
-    <button role="tab" data-tab="log"><svg class="i"><use href="#i-log"/></svg>Nhật ký server</button>
+    <div class="nav-group"><div class="nav-title">Bảng điều khiển</div><div class="nav-items">
+      <button role="tab" data-tab="ringkasan" aria-selected="true" title="Tổng quan"><svg class="i"><use href="#i-home"></use></svg>Tổng quan</button>
+    </div></div>
+    <div class="nav-group"><div class="nav-title">Cầu thủ</div><div class="nav-items">
+      <button role="tab" data-tab="pemain" title="Cầu thủ CLB"><svg class="i"><use href="#i-shirt"></use></svg>Cầu thủ CLB</button>
+      <button role="tab" data-tab="tambah" title="Thêm cầu thủ"><svg class="i"><use href="#i-plus"></use></svg>Thêm cầu thủ</button>
+      <button role="tab" data-tab="theomua" title="Thêm hàng loạt"><svg class="i"><use href="#i-layers"></use></svg>Thêm hàng loạt</button>
+      <button role="tab" data-tab="scout" title="Đổi cầu thủ"><svg class="i"><use href="#i-scout"></use></svg>Đổi cầu thủ</button>
+      <button role="tab" data-tab="dapthe" title="Tỷ lệ đập thẻ"><svg class="i"><use href="#i-bolt"></use></svg>Tỷ lệ đập thẻ</button>
+      <button role="tab" data-tab="teamcolor" title="Team Color"><svg class="i"><use href="#i-chart"></use></svg>Team Color</button>
+    </div></div>
+    <div class="nav-group"><div class="nav-title">Vật phẩm</div><div class="nav-items">
+      <button role="tab" data-tab="item" title="Gói thẻ &amp; Túi đồ"><svg class="i"><use href="#i-gift"></use></svg>Gói thẻ &amp; Túi đồ</button>
+      <button role="tab" data-tab="goitc" title="Gói tự chọn"><svg class="i"><use href="#i-gift"></use></svg>Gói tự chọn</button>
+      <button role="tab" data-tab="harian" title="Quà hằng ngày"><svg class="i"><use href="#i-cal"></use></svg>Quà hằng ngày</button>
+    </div></div>
+    <div class="nav-group"><div class="nav-title">Kinh tế</div><div class="nav-items">
+      <button role="tab" data-tab="giaep" title="Giá EP thẻ"><svg class="i"><use href="#i-coin"></use></svg>Giá EP thẻ</button>
+      <button role="tab" data-tab="thitruong" title="Thị trường"><svg class="i"><use href="#i-chart"></use></svg>Thị trường</button>
+    </div></div>
+    <div class="nav-group"><div class="nav-title">Trận đấu</div><div class="nav-items">
+      <button role="tab" data-tab="trandau" title="Cài đặt trước trận"><svg class="i"><use href="#i-sun"></use></svg>Cài đặt trước trận</button>
+      <button role="tab" data-tab="thuong" title="Thưởng sau trận"><svg class="i"><use href="#i-coin"></use></svg>Thưởng sau trận</button>
+      <button role="tab" data-tab="bot" title="Sức mạnh BOT"><svg class="i"><use href="#i-bolt"></use></svg>Sức mạnh BOT</button>
+      <button role="tab" data-tab="xephang" title="Xếp hạng HLV ảo"><svg class="i"><use href="#i-bolt"></use></svg>Xếp hạng HLV ảo</button>
+    </div></div>
+    <div class="nav-group"><div class="nav-title">HLV &amp; hệ thống</div><div class="nav-items">
+      <button role="tab" data-tab="hlv" title="HLV"><svg class="i"><use href="#i-scout"></use></svg>HLV</button>
+      <button role="tab" data-tab="nhiemvu" title="Nhiệm vụ &amp; thành tích"><svg class="i"><use href="#i-cal"></use></svg>Nhiệm vụ</button>
+      <button role="tab" data-tab="resetnv" title="Reset nhân vật"><svg class="i"><use href="#i-bolt"></use></svg>Reset nhân vật</button>
+      <button role="tab" data-tab="log" title="Nhật ký server"><svg class="i"><use href="#i-log"></use></svg>Nhật ký server</button>
+    </div></div>
   </nav>
 
   <main>
@@ -673,101 +850,41 @@
 
     <section id="ringkasan">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-chart"/></svg></span><div><h2 class="display">Tổng quan CLB</h2></div></div>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-chart"></use></svg></span><div><h2 class="display">Tổng quan CLB</h2></div></div>
         <p class="lead">Tình trạng tài khoản và CLB hiện tại.</p>
         <dl class="facts" id="facts"></dl>
       </div>
 
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-plus"/></svg></span><h2 class="display">Thông tin HLV</h2></div>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-plus"></use></svg></span><h2 class="display">Thông tin HLV</h2></div>
         <p class="lead">Đổi tên, cấp độ và kinh nghiệm của HLV. Vào lại game để thấy thay đổi.</p>
         <form class="row" id="coachForm">
-          <label class="f">Tên HLV<input id="coachNameIn" maxlength="16" minlength="2" required></label>
-          <label class="f">Cấp độ<input type="number" id="coachLevel" min="1" max="100" required></label>
+          <label class="f">Tên HLV<input id="coachNameIn" maxlength="16" minlength="2" required=""></label>
+          <label class="f">Cấp độ<input type="number" id="coachLevel" min="1" max="100" required=""></label>
           <label class="f">Kinh nghiệm<input type="number" id="coachExp" min="0" value="0"></label>
           <button class="b primary">Lưu</button>
         </form>
         <p class="muted" id="coachHint"></p>
       </div>
 
-      <div class="card">
-        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"/></svg></span><h2 class="display">Giá EP thẻ cầu thủ</h2></div>
-        <p class="lead">Giá thẻ tính theo OVR và cấp thẻ. Ở bản gốc thẻ +0 có giá 0, nên đội khởi đầu có Giá trị đội 0 EP. Thay đổi ở đây áp dụng cho mọi thẻ: Giá trị đội, giá trong bảng và giá trị khi đổi cầu thủ.</p>
-        <label for="zeroPct" class="muted">Giá thẻ +0 bằng <strong id="zeroVal">0%</strong> giá thẻ +1 (0% = như bản gốc)</label>
-        <div class="rate-wrap">
-          <input id="zeroPct" type="range" min="0" max="100" step="5" value="0">
-          <span class="rate-big" id="zeroBig" aria-hidden="true">0%</span>
-        </div>
-        <div class="row">
-          <label class="f">Hệ số nhân giá (0,1 – 10)<input type="number" id="priceMult" min="0.1" max="10" step="0.1" value="1"></label>
-          <button class="b primary" id="priceSave" type="button">Lưu</button>
-          <button class="b" id="priceReset" type="button">Về mặc định</button>
-        </div>
-        <h3>Giá tự đặt cho từng thẻ</h3>
-        <p class="muted" style="margin:0 0 8px">Giá nhập là giá ở +1; các cấp khác tự tính theo hệ số cấp thẻ. SPID xem trong bảng cầu thủ hoặc trong chi tiết thẻ.</p>
-        <form class="row" id="ovForm">
-          <label class="f">SPID<input type="number" id="ovSpid" required placeholder="VD: 88020801"></label>
-          <label class="f">Giá EP ở +1<input type="number" id="ovPrice" min="0" step="1000" required></label>
-          <button class="b primary">Lưu giá</button>
-        </form>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Cầu thủ</th><th class="num">SPID</th><th class="num">Giá ở +1</th><th>Thao tác</th></tr></thead>
-          <tbody id="ovRows"><tr><td colspan="4" class="muted">Chưa có giá tự đặt.</td></tr></tbody>
-        </table></div>
-      </div>
 
       <div class="card">
-        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"/></svg></span><h2 class="display">Số dư EP</h2></div>
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">Số dư EP</h2></div>
         <p class="lead">Cộng, trừ hoặc đặt thẳng số EP của bạn.</p>
         <form class="row" id="epForm">
-          <label class="f">Số EP (tối đa 999.999.999.999)<input type="number" id="epValue" min="0" max="999999999999" step="1000" required placeholder="VD: 1000000"></label>
+          <label class="f">Số EP (tối đa 999.999.999.999)<input type="number" id="epValue" min="0" max="999999999999" step="1000" required="" placeholder="VD: 1000000"></label>
           <button class="b primary" data-mode="add">Cộng EP</button>
           <button class="b" data-mode="sub">Trừ EP</button>
           <button class="b" data-mode="set">Đặt số dư</button>
         </form>
       </div>
 
-      <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"/></svg></span><h2 class="display">Tỷ lệ đập thẻ</h2></div>
-        <p id="enhanceStatus" class="lead">Đang tải thiết lập…</p>
-        <label for="enhanceRate" class="muted">Tỷ lệ thành công: <strong id="enhanceValue">50%</strong></label>
-        <div class="rate-wrap">
-          <input id="enhanceRate" type="range" min="1" max="100" step="1" value="50">
-          <span class="rate-big" id="enhanceBig" aria-hidden="true">50%</span>
-        </div>
-        <div class="row">
-          <button id="enhanceSave" class="b primary">Lưu tỷ lệ</button>
-          <button id="enhanceDefault" class="b">Dùng tỷ lệ gốc</button>
-        </div>
-        <p class="hint">Áp dụng cho các lần đập tiếp theo của mọi HLV. Không thay đổi thẻ đã có hoặc dữ liệu profile.</p>
-      </div>
 
-      <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"/></svg></span><h2 class="display">Sức mạnh BOT</h2></div>
-        <p class="lead">Thẻ cộng và cấp cầu thủ của đội máy (BOT) theo từng chế độ. Áp dụng từ trận tiếp theo, không cần khởi động lại.</p>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Chế độ</th><th>Thẻ cộng</th><th>Cấp cầu thủ</th></tr></thead>
-          <tbody id="botRows"><tr><td colspan="3" class="muted">Đang tải…</td></tr></tbody>
-        </table></div>
-        <div class="row">
-          <button id="botSave" class="b primary" type="button">Lưu</button>
-          <button id="botReset" class="b" type="button">Về mặc định (+10, LV 1)</button>
-        </div>
-      </div>
 
-      <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"/></svg></span><h2 class="display">Reset nhân vật</h2></div>
-        <p class="lead">Xoá HLV, CLB, cầu thủ, EP và túi đồ hiện tại để vào game tạo lại nhân vật mới từ đầu. Thoát game trước khi bấm.</p>
-        <div class="row">
-          <button id="resetCoach" class="b danger" type="button">Reset nhân vật</button>
-        </div>
-        <p class="hint">Dữ liệu cũ được sao lưu tự động vào <code>Server\gamedata\backup</code> trước khi xoá. Thiết lập GM (tỷ lệ đập thẻ, giá EP, quà hằng ngày) giữ nguyên.</p>
-      </div>
     </section>
-
-    <section id="pemain" hidden>
+    <section id="pemain" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-shirt"/></svg></span><h2 class="display">Cầu thủ CLB</h2></div>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-shirt"></use></svg></span><h2 class="display">Cầu thủ CLB</h2></div>
         <p class="lead">Đổi cấp thẻ, chuyển cầu thủ dự bị sang Đội phụ (dùng để đổi cầu thủ) hoặc thanh lý. 18 cầu thủ trong đội hình (Chính/Thay) không thanh lý được ở đây.</p>
         <div class="filters" id="playerFilters">
           <label class="f">Tên cầu thủ<input id="playerFilter" placeholder="VD: Ronaldo"></label>
@@ -781,14 +898,15 @@
         <div class="qr-rm">
           <span class="qr-rm-title">Thanh lý nhanh theo mùa</span>
           <select id="qrSeason"><option value="">— Chọn mùa —</option></select>
-          <button class="b small danger" type="button" id="qrGo" disabled>Thanh lý</button>
+          <button class="b small danger" type="button" id="qrGo" disabled="">Thanh lý</button>
           <span class="muted" id="qrNote">Chỉ thanh lý thẻ dự bị (kể cả Đội phụ); cầu thủ trong đội hình 18 người được giữ lại.</span>
+          <button class="b small danger" type="button" id="qrAll" style="margin-left:auto">Thanh lý tất cả cầu thủ</button>
         </div>
-        <div class="bulk" id="bulkClub" hidden>
+        <div class="bulk" id="bulkClub" hidden="">
           <span class="bulk-n"><strong id="bulkClubN">0</strong> cầu thủ đã chọn</span>
-          <label class="bulk-lbl">Cấp thẻ <select id="bulkGrade"></select></label>
+          <label class="bulk-lbl">Cấp thẻ <select id="bulkGrade"><option value="0">+0</option><option value="1" selected="">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option><option value="6">+6</option><option value="7">+7</option><option value="8">+8</option><option value="9">+9</option><option value="10">+10</option></select></label>
           <button class="b small primary" type="button" data-bulk="grade">Đặt cấp thẻ</button>
-          <label class="bulk-lbl">Cấp độ <select id="bulkLevel"></select></label>
+          <label class="bulk-lbl">Cấp độ <select id="bulkLevel"><option value="1">LV 1</option><option value="2">LV 2</option><option value="3">LV 3</option><option value="4">LV 4</option><option value="5">LV 5</option><option value="6">LV 6</option><option value="7">LV 7</option><option value="8">LV 8</option><option value="9">LV 9</option><option value="10">LV 10</option><option value="11">LV 11</option><option value="12">LV 12</option><option value="13">LV 13</option><option value="14">LV 14</option><option value="15">LV 15</option><option value="16">LV 16</option><option value="17">LV 17</option><option value="18">LV 18</option><option value="19">LV 19</option><option value="20">LV 20</option><option value="21">LV 21</option><option value="22">LV 22</option><option value="23" selected="">LV 23</option></select></label>
           <button class="b small primary" type="button" data-bulk="level">Đặt cấp độ</button>
           <button class="b small" type="button" data-bulk="second">Sang đội phụ</button>
           <button class="b small" type="button" data-bulk="first">Về đội chính</button>
@@ -802,25 +920,25 @@
         </table></div>
       </div>
     </section>
-
-    <section id="tambah" hidden>
+    <section id="tambah" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-plus"/></svg></span><h2 class="display">Thêm cầu thủ</h2></div>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-plus"></use></svg></span><h2 class="display">Thêm cầu thủ</h2></div>
         <p class="lead">Toàn bộ thẻ cầu thủ trong game. Gõ để lọc ngay, bấm tiêu đề cột để sắp xếp, rồi thêm thẳng vào CLB hoặc gửi vào Túi đồ.</p>
         <form class="row" id="searchForm">
           <label class="f">Tên cầu thủ<input id="searchQ" placeholder="VD: Messi, Ronaldo"></label>
           <label class="f">Giải đấu<input type="hidden" id="searchLeague"><span class="ss" data-for="searchLeague" data-src="leagues" data-all="Tất cả giải đấu"></span></label>
           <label class="f">Đội bóng<input type="hidden" id="searchTeam"><span class="ss" data-for="searchTeam" data-src="teams" data-all="Tất cả đội bóng"></span></label>
           <label class="f">Quốc gia<input type="hidden" id="searchNation"><span class="ss" data-for="searchNation" data-src="nations" data-all="Tất cả quốc gia"></span></label>
-          <label class="f">Vị trí<select id="searchPos"></select></label>
-          <label class="f">Mùa<select id="searchSeason"><option value="">Tất cả</option></select></label>
-          <label class="f">Cấp thẻ<select id="searchGrade"></select></label>
+          <label class="f">Vị trí<select id="searchPos"><option value="">Tất cả</option><option value="GK">Thủ môn</option><option value="DEF">Hậu vệ</option><option value="MID">Tiền vệ</option><option value="FWD">Tiền đạo</option><option value="GK">GK</option><option value="SW">SW</option><option value="RWB">RWB</option><option value="RB">RB</option><option value="RCB">RCB</option><option value="CB">CB</option><option value="LCB">LCB</option><option value="LB">LB</option><option value="LWB">LWB</option><option value="RDM">RDM</option><option value="CDM">CDM</option><option value="LDM">LDM</option><option value="RM">RM</option><option value="RCM">RCM</option><option value="CM">CM</option><option value="LCM">LCM</option><option value="LM">LM</option><option value="RAM">RAM</option><option value="CAM">CAM</option><option value="LAM">LAM</option><option value="RF">RF</option><option value="CF">CF</option><option value="LF">LF</option><option value="RW">RW</option><option value="RS">RS</option><option value="ST">ST</option><option value="LS">LS</option><option value="LW">LW</option></select></label>
+          <label class="f">Mùa<select id="searchSeason"><option value="">Tất cả</option><option value="6">06 — Mùa 2006 (395 thẻ)</option><option value="7">07 — Mùa 2007 (398 thẻ)</option><option value="8">08 — Mùa 2008 (462 thẻ)</option><option value="9">09 — Mùa 2009 (451 thẻ)</option><option value="10">10 — Mùa 2010 (523 thẻ)</option><option value="11">11 — Mùa 2011 (435 thẻ)</option><option value="14">14 — Mùa 2014 (6.117 thẻ)</option><option value="15">15 — Mùa 2015 (5.572 thẻ)</option><option value="16">16 — Mùa 2016 (8.257 thẻ)</option><option value="88">17 — Mùa 2017 (15.274 thẻ)</option><option value="0">Gốc — Thẻ gốc (chỉ số engine) (15.239 thẻ)</option><option value="20">S20 — Mùa đặc biệt (mã 20) (21 thẻ)</option><option value="21">S21 — Mùa đặc biệt (mã 21) (5 thẻ)</option><option value="22">CP — Captain Player (425 thẻ)</option><option value="23">LP — Loyal Player (301 thẻ)</option><option value="24">CC — Continental Champion (535 thẻ)</option><option value="26">S26 — Europe Legend (9 thẻ)</option><option value="27">EL — Mùa EL (17 thẻ)</option><option value="28">UB — Ultimate Best (5 thẻ)</option><option value="29">U23 — Mùa U23 (19 thẻ)</option><option value="30">UL — Ultimate Legend (5 thẻ)</option><option value="31">CEL — Europe Legend 1 (9 thẻ)</option><option value="32">S32 — Europe National Legend (5 thẻ)</option><option value="33">CEL — Europe Legend 2 (5 thẻ)</option><option value="35">16EC — 16 Europe/Copa Season (946 thẻ)</option><option value="37">S37 — Mùa đặc biệt (mã 37) (34 thẻ)</option><option value="38">S38 — China 2002 Legend (3 thẻ)</option><option value="39">S39 — 02 Chinese Legend (24 thẻ)</option><option value="40">NHD — NHD (261 thẻ)</option><option value="41">16B — Mùa 2016 (bộ thẻ phụ) (4 thẻ)</option><option value="42">S42 — ID BEST (3 thẻ)</option><option value="43">S43 — Mùa đặc biệt (mã 43) (3 thẻ)</option><option value="44">17TH — Thailand Best 2017 (23 thẻ)</option><option value="45">16TH — Mùa 16TH (11 thẻ)</option><option value="47">10WC — 10 WC (508 thẻ)</option><option value="48">MUL — Mùa MUL (7 thẻ)</option><option value="49">TCO92 — Man Utd Legend (5 thẻ)</option><option value="51">TL — Mùa TL (3 thẻ)</option><option value="53">14T — 14T (90 thẻ)</option><option value="55">MUA — Mùa MUA (7 thẻ)</option><option value="57">S57 — Đặc biệt (1 thẻ)</option><option value="61">VL — VN Legend (12 thẻ)</option><option value="63">06U — 06U (320 thẻ)</option><option value="65">06WC — 06 WC (540 thẻ)</option><option value="67">08E — Siêu sao Châu Âu 08 (559 thẻ)</option><option value="69">10U — Siêu sao Châu Âu '10 (528 thẻ)</option><option value="71">ML — Mùa ML (3 thẻ)</option><option value="73">VS — VN STAR (17 thẻ)</option><option value="77">14WC — 14 WC (1.041 thẻ)</option><option value="81">S81 — Best China (39 thẻ)</option><option value="82">17 CSL — 17 CSL (168 thẻ)</option><option value="83">S83 — '14 Chinese Super League (49 thẻ)</option><option value="85">S85 — Chinese Super League (170 thẻ)</option><option value="87">16 CSL — 16 CSL (145 thẻ)</option><option value="89">CL — Chinese Legend (7 thẻ)</option><option value="91">WB — World Best (43 thẻ)</option><option value="93">WL — World Legend (73 thẻ)</option><option value="95">KL02 — Huyền thoại 2002 (23 thẻ)</option><option value="97">KXI — Huyền thoại (20 thẻ)</option></select></label>
+          <label class="f">Cấp thẻ<select id="searchGrade"><option value="1" selected="">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option><option value="6">+6</option><option value="7">+7</option><option value="8">+8</option><option value="9">+9</option><option value="10">+10</option></select></label>
+          <label class="f">Cấp độ<select id="searchLevel"></select></label>
           <button class="b" type="button" id="searchClear">Xóa lọc</button>
         </form>
-        <div class="bulk" id="bulkSearch" hidden>
+        <div class="bulk" id="bulkSearch" hidden="">
           <span class="bulk-n"><strong id="bulkSearchN">0</strong> thẻ đã chọn</span>
           <button class="b small primary" type="button" data-sbulk="add">Thêm tất cả vào CLB</button>
-          <span class="muted">(cấp thẻ theo ô Cấp thẻ ở trên)</span>
+          <span class="muted">(cấp thẻ và cấp độ theo ô Cấp thẻ / Cấp độ ở trên)</span>
           <button class="b small ghost" type="button" data-sbulk="clear">Bỏ chọn</button>
         </div>
         <p class="count muted" id="searchCount">Đang tải danh sách thẻ…</p>
@@ -834,29 +952,28 @@
           <span id="pgInfo" class="muted">Trang 1 / 1</span>
           <button class="b small" type="button" data-pg="next">Sau ›</button>
           <button class="b small" type="button" data-pg="last" aria-label="Trang cuối">»</button>
-          <label class="bulk-lbl">Mỗi trang <select id="pgSize"><option>25</option><option selected>50</option><option>100</option><option>200</option></select></label>
+          <label class="bulk-lbl">Mỗi trang <select id="pgSize"><option>25</option><option selected="">50</option><option>100</option><option>200</option></select></label>
         </div>
       </div>
     </section>
-
-    <section id="theomua" hidden>
+    <section id="theomua" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-layers"/></svg></span><h2 class="display">Thêm hàng loạt</h2></div>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-layers"></use></svg></span><h2 class="display">Thêm hàng loạt</h2></div>
         <p class="lead">Chọn <b>một mùa</b>, <b>một đội bóng</b>, hoặc cả hai (giải đấu giúp thu hẹp danh sách đội), rồi chọn cấp độ và cấp thẻ. Tích chọn các cầu thủ muốn thêm (mặc định chọn tất cả thẻ chưa có). Thẻ được thêm vào CLB ở mục dự bị.</p>
         <div class="sm-steps">
           <label class="f sm-step" id="smLeaguePick"><span><b>1</b> Giải đấu</span><input type="hidden" id="smLeagueMain"><span class="ss" data-for="smLeagueMain" data-src="allLeagues" data-all="Tất cả giải đấu" data-ph="giải đấu"></span></label>
           <label class="f sm-step" id="smTeamPick"><span><b>2</b> Đội bóng <i class="sm-opt">(tuỳ chọn)</i></span><input type="hidden" id="smTeamMain"><span class="ss" data-for="smTeamMain" data-src="allTeams" data-all="Tất cả đội bóng" data-ph="đội bóng"></span></label>
           <label class="f sm-step"><span><b>3</b> Mùa <i class="sm-opt">(tuỳ chọn)</i></span><select id="smSeason"><option value="">Tất cả mùa</option></select></label>
-          <label class="f sm-step"><span><b>4</b> Cấp độ</span><select id="smLevel"></select></label>
-          <label class="f sm-step"><span><b>5</b> Cấp thẻ</span><select id="smGrade"></select></label>
+          <label class="f sm-step"><span><b>4</b> Cấp độ</span><select id="smLevel"><option value="1" selected="">LV 1</option><option value="2">LV 2</option><option value="3">LV 3</option><option value="4">LV 4</option><option value="5">LV 5</option><option value="6">LV 6</option><option value="7">LV 7</option><option value="8">LV 8</option><option value="9">LV 9</option><option value="10">LV 10</option><option value="11">LV 11</option><option value="12">LV 12</option><option value="13">LV 13</option><option value="14">LV 14</option><option value="15">LV 15</option><option value="16">LV 16</option><option value="17">LV 17</option><option value="18">LV 18</option><option value="19">LV 19</option><option value="20">LV 20</option><option value="21">LV 21</option><option value="22">LV 22</option><option value="23">LV 23</option></select></label>
+          <label class="f sm-step"><span><b>5</b> Cấp thẻ</span><select id="smGrade"><option value="1" selected="">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option><option value="6">+6</option><option value="7">+7</option><option value="8">+8</option><option value="9">+9</option><option value="10">+10</option></select></label>
           <label class="f sm-step"><span><b>6</b> Lọc tên</span><input id="smFilter" placeholder="Gõ tên để lọc danh sách"></label>
         </div>
-        <div class="filters sm-filters" id="smFilters" hidden>
+        <div class="filters sm-filters" id="smFilters" hidden="">
           <label class="f">Quốc gia<input type="hidden" id="smNation"><span class="ss" data-for="smNation" data-src="smNations" data-all="Tất cả quốc gia"></span></label>
           <label class="f">Vị trí<select id="smPos"><option value="">Tất cả</option><option value="GK">Thủ môn</option><option value="DEF">Hậu vệ</option><option value="MID">Tiền vệ</option><option value="FWD">Tiền đạo</option></select></label>
           <button class="b" type="button" id="smClear">Xóa lọc</button>
         </div>
-        <div class="sm-bar" id="smBar" hidden>
+        <div class="sm-bar" id="smBar" hidden="">
           <div class="sm-info" id="smInfo"></div>
           <div class="sm-actions">
             <button class="b small" type="button" data-sm="all">Chọn tất cả</button>
@@ -865,26 +982,59 @@
             <button class="b small" type="button" data-sm="new">Bỏ thẻ đã có</button>
           </div>
         </div>
-        <div class="table-wrap" id="smWrap" hidden><table>
+        <div class="table-wrap" id="smWrap" hidden=""><table>
           <thead><tr><th class="ck"><input type="checkbox" id="smAll" aria-label="Chọn tất cả thẻ đang hiện"></th><th>Tên</th><th>Mùa</th><th>Đội bóng</th><th>Quốc gia</th><th>Vị trí</th>
             <th class="num">OVR gốc</th><th class="num">OVR sau khi thêm</th><th class="num">Giá EP</th><th>Ghi chú</th></tr></thead>
           <tbody id="smRows"></tbody>
         </table></div>
         <p class="muted" id="smEmpty">Chọn một mùa hoặc một đội bóng (hoặc cả hai) để xem danh sách thẻ.</p>
-        <div class="sm-go" id="smGoWrap" hidden>
+        <div class="sm-go" id="smGoWrap" hidden="">
           <button class="b primary sm-go-btn" type="button" id="smGo">Thêm cầu thủ đã chọn vào CLB</button>
           <span class="muted" id="smGoNote"></span>
         </div>
       </div>
     </section>
-
-    <section id="item" hidden>
+    <section id="scout" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-gift"/></svg></span><h2 class="display">Gói thẻ &amp; Túi đồ</h2></div>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"></use></svg></span><h2 class="display">Đổi cầu thủ</h2></div>
+        <p class="lead">Đưa 2–10 cầu thủ trong Đội phụ cho tuyển trạch viên để đổi lấy thẻ mới có giá trị tương đương hoặc cao hơn. Đạt điều kiện thưởng thêm thì thẻ nhận về sẽ có giá trị cao hơn.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tuyển trạch viên</th><th>Trạng thái</th><th>Dùng lại lúc</th><th>Điều kiện thưởng thêm</th></tr></thead>
+          <tbody id="scoutRows"></tbody>
+        </table></div>
+        <div class="row"><button class="b primary" id="scoutReset">Mở khóa tất cả tuyển trạch viên</button></div>
+      </div>
+    </section>
+    <section id="dapthe" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Tỷ lệ đập thẻ</h2></div>
+        <p id="enhanceStatus" class="lead">Đang áp dụng tỷ lệ thành công: 1%</p>
+        <label for="enhanceRate" class="muted">Tỷ lệ thành công: <strong id="enhanceValue">1%</strong></label>
+        <div class="rate-wrap">
+          <input id="enhanceRate" type="range" min="1" max="100" step="1" value="30" style="--fill: 29%;">
+          <span class="rate-big" id="enhanceBig" aria-hidden="true">1%</span>
+        </div>
+        <div class="row">
+          <button id="enhanceSave" class="b primary">Lưu tỷ lệ</button>
+          <button id="enhanceDefault" class="b">Dùng tỷ lệ gốc</button>
+        </div>
+        <p class="hint">Áp dụng cho các lần đập tiếp theo của mọi HLV. Không thay đổi thẻ đã có hoặc dữ liệu profile.</p>
+      </div>
+    </section>
+    <section id="teamcolor" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-chart"></use></svg></span><h2 class="display">Team Color</h2></div>
+        <p class="lead">Đủ bộ Team Color: CLB / quốc gia (chung và có tên riêng, kèm chỉ số cộng), mùa thẻ, các bộ đặc biệt (14 WC, EC/Copa, BEST, MSN, BBC, Galacticos, Arsenal vô đối…) và <b>Team Color nâng cấp</b> theo cấp thẻ đá chính (+2 đến +20, cộng thêm vào Team Color tốt nhất của mỗi cầu thủ). Danh sách mới hiện trong game từ lần đăng nhập sau.</p>
+        <label class="check"><input type="checkbox" id="optTcGrade"> Bật Team Color nâng cấp (thẻ +2 … +20)</label>
+      </div>
+    </section>
+    <section id="item" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-gift"></use></svg></span><h2 class="display">Gói thẻ &amp; Túi đồ</h2></div>
         <p class="lead">Gói thẻ được thêm vào kho đồ (mục Gói cầu thủ). Quà gửi vào Túi đồ, vào game bấm Nhận để lấy.</p>
         <h3>Tặng gói thẻ</h3>
         <form class="row" id="packForm">
-          <label class="f">Gói<select id="packSel"></select></label>
+          <label class="f">Gói<select id="packSel"><option value="28001">Premier League 65+</option><option value="28002">Bundesliga 65+</option><option value="28003">LaLiga 65+</option><option value="28004">Serie A 65+</option><option value="28005">Ligue 1 65+</option><option value="28006">FW 60+</option><option value="28007">MF 60+</option><option value="28008">DF 60+</option><option value="28009">GK 60+</option><option value="8223600">FW 65+</option><option value="8223601">MF 65+</option><option value="8223602">DF 65+</option><option value="8223603">GK 65+</option><option value="8223508">FW NEW 70+ 2017</option><option value="8223509">MF NEW 70+ 2017</option><option value="8223510">DF NEW 70+ 2017</option><option value="82214068">World Best 300 2017</option><option value="82214180">World Best 50 2017</option><option value="45011">This Season Top 10</option><option value="45012">This Season Top 20</option><option value="45013">This Season Top 30</option><option value="45097">This Season Top 30 +8</option><option value="45004">06-11 Player Top 10</option><option value="45006">06-11 Player Top 30</option><option value="45007">06-11 Player Top 50</option><option value="82214356">07 Top 200</option><option value="739">'08 Top 3</option><option value="15031">'14 Top 30 +5</option><option value="16001">'15 Top 30 +5</option><option value="7622">World Cup '10 Top 30</option><option value="7618">Europe '10 Top 30 +3</option><option value="880047">World Cup '14 Top 50</option><option value="45020">Special Season '14 Top 30</option><option value="45063">Special Season '14 Top 50 +5</option><option value="45026">Team of the Season '14 Top 20</option><option value="45027">Team of the Season '14 Top 30</option><option value="45028">Team of the Season '14 Top 50</option><option value="45130">Team of the Season '14 All</option><option value="8157">EC Top 10</option><option value="82232124">EC Top 30 +3</option><option value="8135">Best EC 30 +5</option><option value="8329">LP Top 50 +3</option><option value="8334">World Best 5</option><option value="8336">World Best 1</option><option value="82231307">World Best +5</option><option value="8194">World Legend Top 30</option><option value="8335">World Legend Top 3</option><option value="82214007">Top 300</option><option value="8223562">Best 30</option><option value="7675">All Season Top 200 +8</option><option value="92000006">06 Top 200</option><option value="92000063">06U Top 200</option><option value="92000065">06WC Top 200</option><option value="92000008">08 Top 200</option><option value="92000067">08E Top 200</option><option value="92000009">09 Top 200</option><option value="92000010">10 Top 200</option><option value="92000069">10U Top 200</option><option value="92000047">10WC Top 200</option><option value="92000011">11 Top 200</option><option value="92000014">14 Top 200</option><option value="92000077">14WC Top 200</option><option value="92000053">14T Top 200</option><option value="92000015">15 Top 200</option><option value="92000016">16 Top 200</option><option value="92000088">17 Top 200</option><option value="92000035">16EC Top 200</option><option value="92000045">16TH Top 200</option><option value="92000091">WB Top 200</option><option value="92000093">WL Top 200</option><option value="92000028">UB Top 200</option><option value="92000030">UL Top 200</option><option value="92000027">EL Top 200</option><option value="92000023">LP Top 200</option><option value="92000022">CP Top 200</option><option value="92000024">CC Top 200</option><option value="92000044">17TH Top 200</option><option value="92000049">TCO92 Top 200</option><option value="92000055">MUA Top 200</option><option value="92000071">ML Top 200</option><option value="92000051">TL Top 200</option><option value="92000061">VL Top 200</option><option value="92000089">CL Top 200</option><option value="92000095">KL02 Top 200</option><option value="92000031">CEL Top 200</option><option value="92000029">U23 Top 200</option><option value="92000097">KXI Top 200</option><option value="92000048">MUL Top 200</option><option value="92000073">VS Top 200</option><option value="96000001">test</option></select></label>
           <label class="f">Số lượng<input type="number" id="packCount" min="1" max="999" value="1"></label>
           <button class="b primary">Tặng</button>
         </form>
@@ -892,12 +1042,21 @@
         <form class="row" id="bagForm">
           <label class="f">Tên quà<input class="wide" id="bagTitle" value="Quà Admin" maxlength="60"></label>
           <label class="f">EP<input type="number" id="bagEp" min="0" step="1000" value="0"></label>
-          <label class="f">Gói<select id="bagPack"><option value="">Không kèm gói</option></select></label>
+          <label class="f">Gói<select id="bagPack"><option value="">Không kèm gói</option><option value="28001">Premier League 65+</option><option value="28002">Bundesliga 65+</option><option value="28003">LaLiga 65+</option><option value="28004">Serie A 65+</option><option value="28005">Ligue 1 65+</option><option value="28006">FW 60+</option><option value="28007">MF 60+</option><option value="28008">DF 60+</option><option value="28009">GK 60+</option><option value="8223600">FW 65+</option><option value="8223601">MF 65+</option><option value="8223602">DF 65+</option><option value="8223603">GK 65+</option><option value="8223508">FW NEW 70+ 2017</option><option value="8223509">MF NEW 70+ 2017</option><option value="8223510">DF NEW 70+ 2017</option><option value="82214068">World Best 300 2017</option><option value="82214180">World Best 50 2017</option><option value="45011">This Season Top 10</option><option value="45012">This Season Top 20</option><option value="45013">This Season Top 30</option><option value="45097">This Season Top 30 +8</option><option value="45004">06-11 Player Top 10</option><option value="45006">06-11 Player Top 30</option><option value="45007">06-11 Player Top 50</option><option value="82214356">07 Top 200</option><option value="739">'08 Top 3</option><option value="15031">'14 Top 30 +5</option><option value="16001">'15 Top 30 +5</option><option value="7622">World Cup '10 Top 30</option><option value="7618">Europe '10 Top 30 +3</option><option value="880047">World Cup '14 Top 50</option><option value="45020">Special Season '14 Top 30</option><option value="45063">Special Season '14 Top 50 +5</option><option value="45026">Team of the Season '14 Top 20</option><option value="45027">Team of the Season '14 Top 30</option><option value="45028">Team of the Season '14 Top 50</option><option value="45130">Team of the Season '14 All</option><option value="8157">EC Top 10</option><option value="82232124">EC Top 30 +3</option><option value="8135">Best EC 30 +5</option><option value="8329">LP Top 50 +3</option><option value="8334">World Best 5</option><option value="8336">World Best 1</option><option value="82231307">World Best +5</option><option value="8194">World Legend Top 30</option><option value="8335">World Legend Top 3</option><option value="82214007">Top 300</option><option value="8223562">Best 30</option><option value="7675">All Season Top 200 +8</option><option value="92000006">06 Top 200</option><option value="92000063">06U Top 200</option><option value="92000065">06WC Top 200</option><option value="92000008">08 Top 200</option><option value="92000067">08E Top 200</option><option value="92000009">09 Top 200</option><option value="92000010">10 Top 200</option><option value="92000069">10U Top 200</option><option value="92000047">10WC Top 200</option><option value="92000011">11 Top 200</option><option value="92000014">14 Top 200</option><option value="92000077">14WC Top 200</option><option value="92000053">14T Top 200</option><option value="92000015">15 Top 200</option><option value="92000016">16 Top 200</option><option value="92000088">17 Top 200</option><option value="92000035">16EC Top 200</option><option value="92000045">16TH Top 200</option><option value="92000091">WB Top 200</option><option value="92000093">WL Top 200</option><option value="92000028">UB Top 200</option><option value="92000030">UL Top 200</option><option value="92000027">EL Top 200</option><option value="92000023">LP Top 200</option><option value="92000022">CP Top 200</option><option value="92000024">CC Top 200</option><option value="92000044">17TH Top 200</option><option value="92000049">TCO92 Top 200</option><option value="92000055">MUA Top 200</option><option value="92000071">ML Top 200</option><option value="92000051">TL Top 200</option><option value="92000061">VL Top 200</option><option value="92000089">CL Top 200</option><option value="92000095">KL02 Top 200</option><option value="92000031">CEL Top 200</option><option value="92000029">U23 Top 200</option><option value="92000097">KXI Top 200</option><option value="92000048">MUL Top 200</option><option value="92000073">VS Top 200</option><option value="96000001">test</option></select></label>
           <label class="f">Số gói<input type="number" id="bagCount" min="1" max="999" value="1"></label>
           <label class="f">SPID cầu thủ<input type="number" id="bagSpid" placeholder="Không bắt buộc"></label>
-          <label class="f">Cấp thẻ<select id="bagGrade"></select></label>
+          <label class="f">Cấp thẻ<select id="bagGrade"><option value="1" selected="">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option><option value="6">+6</option><option value="7">+7</option><option value="8">+8</option><option value="9">+9</option><option value="10">+10</option></select></label>
           <button class="b primary">Gửi quà</button>
         </form>
+      </div>
+      <div class="card">
+        <div class="card-head" style="flex-wrap:wrap"><h3 style="margin:0">Kho đồ của HLV</h3><span class="muted" id="invCount"></span>
+          <button class="b danger" type="button" id="invClearAll" style="margin-left:auto">Xoá toàn bộ kho đồ</button></div>
+        <p class="lead">Gói cầu thủ và vật phẩm đang có trong <b>Kho đồ</b>. Nhập số lượng rồi bấm <b>Xoá</b> để bớt, để trống ô số lượng thì xoá hết món đó. Vào lại game để thấy thay đổi.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Icon</th><th>Tên</th><th>Loại</th><th class="num">Số lượng</th><th>Xoá</th></tr></thead>
+          <tbody id="invRows"><tr><td colspan="5" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
       </div>
       <div class="card">
         <h3 style="margin-top:0">Các gói trong cửa hàng</h3>
@@ -907,10 +1066,79 @@
         </table></div>
       </div>
     </section>
-
-    <section id="harian" hidden>
+    <section id="goitc" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-cal"/></svg></span><h2 class="display">Quà đăng nhập hằng ngày</h2></div>
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-gift"></use></svg></span><h2 class="display" id="cpTitle">Tạo gói tự chọn</h2></div>
+        <p class="lead">Đặt tên gói, chọn <b>theo mùa</b> hoặc <b>chọn từng cầu thủ</b>, chọn số cộng rồi bấm <b>Tạo gói</b>. Gói hiện ngay đầu tab <b>Gói cầu thủ</b> trong Cửa hàng (vào lại Cửa hàng là thấy), mua rồi vào <b>Vật phẩm</b> để mở. Mỗi thẻ trong gói có cơ hội ra như nhau.</p>
+        <form class="row" id="cpForm" onsubmit="return false">
+          <label class="f">Tên gói<input class="wide" id="cpName" maxlength="40" placeholder="VD: Gói Huyền thoại MU"></label>
+          <label class="f">Số cộng từ<select id="cpGmin"><option value="1" selected="">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option><option value="6">+6</option><option value="7">+7</option><option value="8">+8</option><option value="9">+9</option><option value="10">+10</option></select></label>
+          <label class="f">đến<select id="cpGmax"><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5" selected="">+5</option><option value="6">+6</option><option value="7">+7</option><option value="8">+8</option><option value="9">+9</option><option value="10">+10</option></select></label>
+        </form>
+        <div class="f" style="margin-top:10px"><span>Màu icon gói</span><div id="cpColors" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button type="button" class="cp-sw on" data-cpcolor="0" aria-label="Màu icon 1" aria-pressed="true"><img src="/shopimg/95990001.png" alt=""></button><button type="button" class="cp-sw" data-cpcolor="1" aria-label="Màu icon 2" aria-pressed="false"><img src="/shopimg/95990002.png" alt=""></button><button type="button" class="cp-sw" data-cpcolor="2" aria-label="Màu icon 3" aria-pressed="false"><img src="/shopimg/95990003.png" alt=""></button><button type="button" class="cp-sw" data-cpcolor="3" aria-label="Màu icon 4" aria-pressed="false"><img src="/shopimg/95990004.png" alt=""></button><button type="button" class="cp-sw" data-cpcolor="4" aria-label="Màu icon 5" aria-pressed="false"><img src="/shopimg/95990005.png" alt=""></button><button type="button" class="cp-sw" data-cpcolor="5" aria-label="Màu icon 6" aria-pressed="false"><img src="/shopimg/95990006.png" alt=""></button><button type="button" class="cp-sw" data-cpcolor="6" aria-label="Màu icon 7" aria-pressed="false"><img src="/shopimg/95990007.png" alt=""></button><button type="button" class="cp-sw" data-cpcolor="7" aria-label="Màu icon 8" aria-pressed="false"><img src="/shopimg/95990008.png" alt=""></button></div></div>
+        <div class="cp-label">Cách chọn thẻ cho gói</div>
+        <div class="cp-mode" role="radiogroup" aria-label="Cách chọn thẻ cho gói">
+          <button type="button" role="radio" data-cpmode="season" aria-checked="true"><b>Theo mùa</b><small>Mọi thẻ có bán của các mùa đã chọn</small></button>
+          <button type="button" role="radio" data-cpmode="player" aria-checked="false"><b>Chọn cầu thủ</b><small>Chỉ những cầu thủ bạn thêm tay</small></button>
+          <button type="button" role="radio" data-cpmode="staff" aria-checked="false"><b>Chọn HLV</b><small>Gói HLV: mỗi lần mở ra 1 HLV</small></button>
+        </div>
+        <div id="cpModeSeason" class="cp-panel">
+          <div class="cp-panel-head"><h3>Chọn mùa thẻ</h3><span class="muted">Có thể thêm nhiều mùa</span></div>
+          <div class="cp-pick"><label class="f">Mùa<select id="cpSeasonSel"><option value="6">06 — Mùa 2006 (395 thẻ)</option><option value="7">07 — Mùa 2007 (398 thẻ)</option><option value="8">08 — Mùa 2008 (462 thẻ)</option><option value="9">09 — Mùa 2009 (451 thẻ)</option><option value="10">10 — Mùa 2010 (523 thẻ)</option><option value="11">11 — Mùa 2011 (435 thẻ)</option><option value="14">14 — Mùa 2014 (6.117 thẻ)</option><option value="15">15 — Mùa 2015 (5.572 thẻ)</option><option value="16">16 — Mùa 2016 (8.257 thẻ)</option><option value="20">S20 — Mùa đặc biệt (mã 20) (21 thẻ)</option><option value="21">S21 — Mùa đặc biệt (mã 21) (5 thẻ)</option><option value="22">CP — Captain Player (425 thẻ)</option><option value="23">LP — Loyal Player (301 thẻ)</option><option value="24">CC — Continental Champion (535 thẻ)</option><option value="26">S26 — Europe Legend (9 thẻ)</option><option value="27">EL — Mùa EL (17 thẻ)</option><option value="28">UB — Ultimate Best (5 thẻ)</option><option value="29">U23 — Mùa U23 (19 thẻ)</option><option value="30">UL — Ultimate Legend (5 thẻ)</option><option value="31">CEL — Europe Legend 1 (9 thẻ)</option><option value="32">S32 — Europe National Legend (5 thẻ)</option><option value="33">CEL — Europe Legend 2 (5 thẻ)</option><option value="35">16EC — 16 Europe/Copa Season (946 thẻ)</option><option value="37">S37 — Mùa đặc biệt (mã 37) (34 thẻ)</option><option value="38">S38 — China 2002 Legend (3 thẻ)</option><option value="39">S39 — 02 Chinese Legend (24 thẻ)</option><option value="40">NHD — NHD (261 thẻ)</option><option value="41">16B — Mùa 2016 (bộ thẻ phụ) (4 thẻ)</option><option value="42">S42 — ID BEST (3 thẻ)</option><option value="43">S43 — Mùa đặc biệt (mã 43) (3 thẻ)</option><option value="44">17TH — Thailand Best 2017 (23 thẻ)</option><option value="45">16TH — Mùa 16TH (11 thẻ)</option><option value="47">10WC — 10 WC (508 thẻ)</option><option value="48">MUL — Mùa MUL (7 thẻ)</option><option value="49">TCO92 — Man Utd Legend (5 thẻ)</option><option value="51">TL — Mùa TL (3 thẻ)</option><option value="53">14T — 14T (90 thẻ)</option><option value="55">MUA — Mùa MUA (7 thẻ)</option><option value="57">S57 — Đặc biệt (1 thẻ)</option><option value="61">VL — VN Legend (12 thẻ)</option><option value="63">06U — 06U (320 thẻ)</option><option value="65">06WC — 06 WC (540 thẻ)</option><option value="67">08E — Siêu sao Châu Âu 08 (559 thẻ)</option><option value="69">10U — Siêu sao Châu Âu '10 (528 thẻ)</option><option value="71">ML — Mùa ML (3 thẻ)</option><option value="73">VS — VN STAR (17 thẻ)</option><option value="77">14WC — 14 WC (1.041 thẻ)</option><option value="81">S81 — Best China (39 thẻ)</option><option value="82">17 CSL — 17 CSL (168 thẻ)</option><option value="83">S83 — '14 Chinese Super League (49 thẻ)</option><option value="85">S85 — Chinese Super League (170 thẻ)</option><option value="87">16 CSL — 16 CSL (145 thẻ)</option><option value="88">17 — Mùa 2017 (15.274 thẻ)</option><option value="89">CL — Chinese Legend (7 thẻ)</option><option value="91">WB — World Best (43 thẻ)</option><option value="93">WL — World Legend (73 thẻ)</option><option value="95">KL02 — Huyền thoại 2002 (23 thẻ)</option><option value="97">KXI — Huyền thoại (20 thẻ)</option></select></label><button class="b primary" type="button" id="cpSeasonAdd">+ Thêm mùa</button></div>
+          <div id="cpSeasons" class="cp-chips"><div class="cp-empty">Chưa chọn mùa nào. Chọn mùa ở trên rồi bấm <b>+ Thêm mùa</b>.</div></div>
+        </div>
+        <div id="cpModePlayer" class="cp-panel" hidden="">
+        <h3>Thêm cầu thủ chọn tay</h3>
+        <div class="row">
+          <label class="f">Tên cầu thủ<input id="cpQ" placeholder="VD: Messi, Ronaldo"></label>
+          <label class="f">Mùa<select id="cpQSeason"><option value="">Tất cả</option><option value="6">06 — Mùa 2006 (395 thẻ)</option><option value="7">07 — Mùa 2007 (398 thẻ)</option><option value="8">08 — Mùa 2008 (462 thẻ)</option><option value="9">09 — Mùa 2009 (451 thẻ)</option><option value="10">10 — Mùa 2010 (523 thẻ)</option><option value="11">11 — Mùa 2011 (435 thẻ)</option><option value="14">14 — Mùa 2014 (6.117 thẻ)</option><option value="15">15 — Mùa 2015 (5.572 thẻ)</option><option value="16">16 — Mùa 2016 (8.257 thẻ)</option><option value="20">S20 — Mùa đặc biệt (mã 20) (21 thẻ)</option><option value="21">S21 — Mùa đặc biệt (mã 21) (5 thẻ)</option><option value="22">CP — Captain Player (425 thẻ)</option><option value="23">LP — Loyal Player (301 thẻ)</option><option value="24">CC — Continental Champion (535 thẻ)</option><option value="26">S26 — Europe Legend (9 thẻ)</option><option value="27">EL — Mùa EL (17 thẻ)</option><option value="28">UB — Ultimate Best (5 thẻ)</option><option value="29">U23 — Mùa U23 (19 thẻ)</option><option value="30">UL — Ultimate Legend (5 thẻ)</option><option value="31">CEL — Europe Legend 1 (9 thẻ)</option><option value="32">S32 — Europe National Legend (5 thẻ)</option><option value="33">CEL — Europe Legend 2 (5 thẻ)</option><option value="35">16EC — 16 Europe/Copa Season (946 thẻ)</option><option value="37">S37 — Mùa đặc biệt (mã 37) (34 thẻ)</option><option value="38">S38 — China 2002 Legend (3 thẻ)</option><option value="39">S39 — 02 Chinese Legend (24 thẻ)</option><option value="40">NHD — NHD (261 thẻ)</option><option value="41">16B — Mùa 2016 (bộ thẻ phụ) (4 thẻ)</option><option value="42">S42 — ID BEST (3 thẻ)</option><option value="43">S43 — Mùa đặc biệt (mã 43) (3 thẻ)</option><option value="44">17TH — Thailand Best 2017 (23 thẻ)</option><option value="45">16TH — Mùa 16TH (11 thẻ)</option><option value="47">10WC — 10 WC (508 thẻ)</option><option value="48">MUL — Mùa MUL (7 thẻ)</option><option value="49">TCO92 — Man Utd Legend (5 thẻ)</option><option value="51">TL — Mùa TL (3 thẻ)</option><option value="53">14T — 14T (90 thẻ)</option><option value="55">MUA — Mùa MUA (7 thẻ)</option><option value="57">S57 — Đặc biệt (1 thẻ)</option><option value="61">VL — VN Legend (12 thẻ)</option><option value="63">06U — 06U (320 thẻ)</option><option value="65">06WC — 06 WC (540 thẻ)</option><option value="67">08E — Siêu sao Châu Âu 08 (559 thẻ)</option><option value="69">10U — Siêu sao Châu Âu '10 (528 thẻ)</option><option value="71">ML — Mùa ML (3 thẻ)</option><option value="73">VS — VN STAR (17 thẻ)</option><option value="77">14WC — 14 WC (1.041 thẻ)</option><option value="81">S81 — Best China (39 thẻ)</option><option value="82">17 CSL — 17 CSL (168 thẻ)</option><option value="83">S83 — '14 Chinese Super League (49 thẻ)</option><option value="85">S85 — Chinese Super League (170 thẻ)</option><option value="87">16 CSL — 16 CSL (145 thẻ)</option><option value="88">17 — Mùa 2017 (15.274 thẻ)</option><option value="89">CL — Chinese Legend (7 thẻ)</option><option value="91">WB — World Best (43 thẻ)</option><option value="93">WL — World Legend (73 thẻ)</option><option value="95">KL02 — Huyền thoại 2002 (23 thẻ)</option><option value="97">KXI — Huyền thoại (20 thẻ)</option></select></label>
+          <span class="muted" id="cpQCount"></span>
+        </div>
+        <div class="table-wrap" style="max-height:320px;overflow:auto"><table>
+          <thead><tr><th>Tên</th><th>Mùa</th><th>Đội bóng</th><th>Vị trí</th><th class="num">OVR</th><th></th></tr></thead>
+          <tbody id="cpResults"><tr><td colspan="6" class="muted">Gõ tên để tìm cầu thủ.</td></tr></tbody>
+        </table></div>
+        <h3>Cầu thủ trong gói <span class="muted" id="cpPickedN" style="font-weight:400">(0 cầu thủ)</span></h3>
+        <div class="table-wrap" style="max-height:320px;overflow:auto"><table>
+          <thead><tr><th>Tên</th><th>Mùa</th><th>Đội bóng</th><th>Vị trí</th><th class="num">OVR</th><th></th></tr></thead>
+          <tbody id="cpPicked"><tr><td colspan="6" class="muted">Chưa có cầu thủ nào. Tìm ở bảng phía trên rồi bấm Thêm.</td></tr></tbody>
+        </table></div>
+        </div>
+        <div id="cpStaffPanel" class="cp-panel" hidden="">
+          <div class="cp-panel-head"><h3>HLV trong gói</h3><span class="muted" id="cpStaffN">(0 HLV)</span></div>
+          <div class="row">
+            <label class="f">HLV<select id="cpStaffSel"></select></label>
+            <button class="b primary" type="button" id="cpStaffAdd">+ Thêm HLV</button>
+          </div>
+          <div id="cpStaffs" style="margin-top:10px"></div>
+          <div class="row" style="margin-top:6px">
+            <label class="f">Sao HLV từ<select id="cpSgmin"></select></label>
+            <label class="f">đến<select id="cpSgmax"></select></label>
+            <input type="hidden" id="cpSrate" value="100">
+          </div>
+          <p class="hint">Mỗi lần mở gói ra <b>1 HLV</b> chọn ngẫu nhiên trong danh sách trên, số sao ngẫu nhiên trong khoảng đã chọn. Màn mở gói của game chỉ có hiệu ứng thẻ cầu thủ, nên khi ra HLV game hiện <b>hộp thông báo</b> "Chúc mừng! Bạn nhận được HLV ..." và HLV vào thẳng <b>Quản lý đội → Quản lý HLV → HLV của tôi</b>.</p>
+        </div>
+        <div class="row cp-actions">
+          <button class="b primary" type="button" id="cpSave">Tạo gói</button>
+          <button class="b ghost" type="button" id="cpCancel">Làm lại từ đầu</button>
+          <span class="muted" id="cpNote"></span>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Các gói tự chọn đã tạo</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Icon</th><th>Tên gói</th><th>Số cộng</th><th class="num">Số thẻ</th><th>Thao tác</th></tr></thead>
+          <tbody id="cpList"><tr>
+    <td><img src="/shopimg/95990001.png" alt="" style="width:68px;height:48px"></td>
+    <td><b>test</b><div class="muted">Mã gói 96000001 · 0 cầu thủ chọn tay · mùa VL</div></td>
+    <td>+1 → +10</td><td class="num">12</td>
+    <td><button class="b small" type="button" data-cpedit="96000001">Sửa</button> <button class="b small primary" type="button" data-cpgive="96000001">Gửi 10 gói vào Túi</button> <button class="b small danger" type="button" data-cpremove="96000001">Xoá</button></td></tr></tbody>
+        </table></div>
+      </div>
+    </section>
+    <section id="harian" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-cal"></use></svg></span><h2 class="display">Quà đăng nhập hằng ngày</h2></div>
         <p class="lead">Lần vào game đầu tiên mỗi ngày sẽ nhận quà vào Túi đồ. Vào liên tục để lên ngày tiếp theo; bỏ một ngày sẽ quay về Ngày 1. Hết vòng thì bắt đầu lại từ Ngày 1.</p>
         <dl class="facts" id="dailyFacts"></dl>
         <div class="row" style="margin-top:16px">
@@ -930,10 +1158,174 @@
         </div>
       </div>
     </section>
-
-    <section id="hlv" hidden>
+    <section id="giaep" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"/></svg></span><h2 class="display">Thêm HLV</h2></div>
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">Giá EP thẻ cầu thủ</h2></div>
+        <p class="lead">Giá thẻ tính theo OVR và cấp thẻ. Ở bản gốc thẻ +0 có giá 0, nên đội khởi đầu có Giá trị đội 0 EP. Thay đổi ở đây áp dụng cho mọi thẻ: Giá trị đội, giá trong bảng và giá trị khi đổi cầu thủ.</p>
+        <label for="zeroPct" class="muted">Giá thẻ +0 bằng <strong id="zeroVal">0%</strong> giá thẻ +1 (0% = như bản gốc)</label>
+        <div class="rate-wrap">
+          <input id="zeroPct" type="range" min="0" max="100" step="5" value="0">
+          <span class="rate-big" id="zeroBig" aria-hidden="true">0%</span>
+        </div>
+        <div class="row">
+          <label class="f">Hệ số nhân giá (0,1 – 10)<input type="number" id="priceMult" min="0.1" max="10" step="0.1" value="1"></label>
+          <button class="b primary" id="priceSave" type="button">Lưu</button>
+          <button class="b" id="priceReset" type="button">Về mặc định</button>
+        </div>
+        <h3>Giá tự đặt cho từng thẻ</h3>
+        <p class="muted" style="margin:0 0 8px">Giá nhập là giá ở +1; các cấp khác tự tính theo hệ số cấp thẻ. SPID xem trong bảng cầu thủ hoặc trong chi tiết thẻ.</p>
+        <form class="row" id="ovForm">
+          <label class="f">SPID<input type="number" id="ovSpid" required="" placeholder="VD: 88020801"></label>
+          <label class="f">Giá EP ở +1<input type="number" id="ovPrice" min="0" step="1000" required=""></label>
+          <button class="b primary">Lưu giá</button>
+        </form>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Cầu thủ</th><th class="num">SPID</th><th class="num">Giá ở +1</th><th>Thao tác</th></tr></thead>
+          <tbody id="ovRows"><tr><td colspan="4" class="muted">Chưa có giá tự đặt.</td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-gift"></use></svg></span><h2 class="display">Shop tính phí</h2></div>
+        <p class="lead">Tắt = Shop miễn phí như trước (mọi món 0 EP). Bật: mọi món có giá đúng giá trị của nó (làm tròn lên): Lucky EP / hộp quà = EP trung bình nhận được, gói thẻ = giá trị trung bình thẻ ra (× hệ số gói; + biên độ khi thị trường biến động), gói quà / gói tháng = tổng bên trong, món không chứa EP (tăng tỉ lệ, viên EXP, đổi tên, đổi đội…) = giá cơ bản × hệ số giá ở trên. Khi bật, không còn cách tạo EP từ hư không: nâng cấp tốn ít nhất giá trị nó thêm vào thẻ, phục hồi sau khi rớt cấp trả bằng EP, đề nghị trao đổi / tuyển trạch không vượt giá trị thẻ đã đưa, giá rao bán tối đa 105%. Lưu xong Shop trong game cập nhật ở lần mở tiếp theo (tab đang mở giữ giá cũ tới khi vào lại game).</p>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="shopPaid"> Bật Shop tính phí</label>
+          <label class="f">Hệ số giá gói thẻ (1 – 100)<input type="number" id="shopPacks" min="1" max="100" step="0.1" value="1"></label>
+          <button class="b primary" id="shopSave" type="button">Lưu</button>
+        </div>
+        <p class="muted" id="shopSample"></p>
+      </div>
+    </section>
+    <section id="thitruong" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-chart"></use></svg></span><h2 class="display">Thị trường chuyển nhượng</h2></div>
+        <label class="check"><input type="checkbox" id="optHide0"> Ẩn thẻ mùa 0 (thẻ mẫu của engine, chỉ số 120+) khỏi Thị trường</label>
+        <p class="hint">Mặc định tắt (giữ như cũ). Khi bật: thẻ mùa 0 không có người bán, không nằm trong Top 50 và không mua được trên Thị trường. Danh sách tìm kiếm trong game do client tự lọc nên tên thẻ vẫn có thể hiện (nhưng không có người bán).</p>
+        <h3>Thị trường sống</h3>
+        <p class="lead"><b>Thị trường sống</b>: thẻ bạn rao bán sẽ được một HLV ảo mua sau một lúc (giá càng thấp bán càng nhanh); bán xong game hiện thông báo. Trong lúc chờ có thể <b>Hủy</b> (thẻ về Đội phụ) hoặc <b>Đăng lại</b> với giá khác. <b>Bán ngay</b>: như trước, rao là bán liền. Cửa sổ thẻ có <b>biểu đồ giá</b> 30 ngày. Có hiệu lực ngay, không cần khởi động lại.</p>
+        <div class="row">
+          <label class="f">Chế độ<select id="mkMode"><option value="living">Thị trường sống (bán sau một lúc)</option><option value="instant">Bán ngay (như trước)</option></select></label>
+          <label class="f">Mẫu kinh tế<select id="mkPreset"><option value="easy">Dễ – giá cố định, bán nhanh</option><option value="realistic">Thực tế – giá lên xuống ±12%, có hàng rẻ</option><option value="hard">Khó – giá lên xuống ±20%, bán chậm</option><option value="custom">Tùy chỉnh</option></select></label>
+        </div>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="mkDynamic"> Kinh tế động (giá mỗi cầu thủ lên xuống theo ngày, HLV ảo đôi khi bán rẻ, được đặt giá cao hơn giá thị trường nhưng bán chậm hơn)</label>
+        </div>
+        <div class="row">
+          <label class="f">Biên độ giá (%)<input type="number" id="mkSwing" min="0" max="30" step="1" style="width:90px"></label>
+          <label class="f">Giá bán tối đa (% giá thị trường)<input type="number" id="mkAsk" min="100" max="150" step="1" style="width:90px"></label>
+          <label class="f">Bán nhanh nhất (giây, giá 80%)<input type="number" id="mkSaleMin" min="1" max="3600" style="width:100px"></label>
+          <label class="f">Bán chậm nhất (giây, giá 100%)<input type="number" id="mkSaleMax" min="1" max="86400" style="width:100px"></label>
+        </div>
+        <div class="row" style="margin-top:12px"><button class="b primary" id="mkSave">Lưu thị trường</button><span class="muted" id="mkInfo"></span></div>
+      </div>
+    </section>
+    <section id="trandau" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-sun"></use></svg></span><h2 class="display">Cài đặt trước trận</h2></div>
+        <p class="lead">Sân, thời điểm, thời tiết, thời lượng và bóng cho các trận <b>Giải đấu, Cup, World Cup và Giao hữu</b>. Trong game các mục này chỉ hiện (không đổi được) nên server dùng lựa chọn ở đây cho mọi trận mới. Áp dụng từ trận tạo sau khi lưu.</p>
+        <div class="row">
+          <label class="f">Sân<select id="pmStadium"></select></label>
+          <label class="f">Thời điểm<select id="pmTod"></select></label>
+          <label class="f">Thời tiết<select id="pmWeather"></select></label>
+          <label class="f">Thời lượng trận<select id="pmHalf"></select></label>
+          <label class="f">Bóng<select id="pmBall"></select></label>
+        </div>
+        <div class="row" style="margin-top:12px"><button class="b primary" id="pmSave">Lưu cài đặt trận</button></div>
+      </div>
+    </section>
+    <section id="thuong" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">Thưởng sau trận</h2></div>
+        <p class="lead">EP và EXP nhận sau mỗi trận theo kết quả (EXP cầu thủ: cho mỗi cầu thủ ra sân, +20 mỗi bàn, +10 mỗi kiến tạo). Màn thưởng chia <b>3 thẻ</b>: bạn nhận thẻ đầu tiên, thẻ được rút ngẫu nhiên theo <b>trọng số</b> trong bảng dưới. Không có dòng nào = không có thẻ thưởng. Đọc lại mỗi trận, không cần khởi động lại.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Kết quả</th><th>EP</th><th>EXP HLV</th><th>EXP cầu thủ</th></tr></thead>
+          <tbody id="mrResult"></tbody>
+        </table></div>
+        <h3>Thẻ thưởng</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Trọng số</th><th>Loại</th><th>Phần thưởng</th><th>Tỉ lệ</th><th></th></tr></thead>
+          <tbody id="mrCards"></tbody>
+        </table></div>
+        <div class="row">
+          <button class="b" id="mrAdd">Thêm dòng thẻ</button>
+          <button class="b primary" id="mrSave">Lưu thưởng sau trận</button>
+          <span class="muted" id="mrFile"></span>
+        </div>
+      </div>
+    </section>
+    <section id="bot" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Sức mạnh BOT</h2></div>
+        <p class="lead">Thẻ cộng và cấp cầu thủ của đội máy (BOT) theo từng chế độ và từng giải cúp. Áp dụng từ trận tiếp theo, không cần khởi động lại. Xếp hạng 1vs1 / Giả lập mặc định "Theo HLV ảo": mỗi HLV ảo giữ thẻ và cấp riêng theo trình (Elo); chọn số cụ thể thì cả đội HLV ảo dùng mức đó.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Chế độ</th><th>Thẻ cộng</th><th>Cấp cầu thủ</th></tr></thead>
+          <tbody id="botRows"><tr><td colspan="3" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+        <div class="row">
+          <button id="botSave" class="b primary" type="button">Lưu</button>
+          <button id="botReset" class="b" type="button">Về mặc định</button>
+        </div>
+      </div>
+    </section>
+    <section id="nhiemvu" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-cal"></use></svg></span><h2 class="display">Nhiệm vụ &amp; thành tích</h2></div>
+        <p class="lead"><b>Manager &gt; Danh sách thành tích</b>: 8 thành tích × 5 cấp (cấp HLV, số trận, trận thắng, nâng cấp, thẻ cấp cao, giá trị đội, bàn thắng, thắng Rank), thưởng EP + gói + vật phẩm; xong cả hàng được <b>huy hiệu</b> để đeo. Dòng <b>Nhiệm vụ hằng ngày</b> làm mới 00:00 mỗi ngày. Nút <b>Quest</b> trên thanh trên cùng: 5 nhiệm vụ tuần (làm mới thứ Hai), thưởng GP để đổi hộp quà. Server tự đếm các trận bạn đá (Giải đấu, Cúp, Rank) và lần nâng cấp thành công. Thưởng EP nhân theo hệ số ở tab Giá EP thẻ. Ngôn ngữ và nút Quest có hiệu lực sau khi vào lại game.</p>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="misOn"> Bật nhiệm vụ</label>
+          <label class="f"><span>Ngôn ngữ</span><select id="misLang"></select></label>
+          <label class="f"><span>Mục tiêu (x)</span><input type="number" id="misTargets" min="0.1" max="10" step="0.1"></label>
+          <label class="f"><span>Phần thưởng (x)</span><input type="number" id="misRewards" min="0" max="10" step="0.1"></label>
+          <button id="misSave" class="b primary" type="button">Lưu</button>
+        </div>
+        <p class="muted" id="misMe"></p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nhiệm vụ tuần (Quest)</th><th>Tiến độ</th><th>GP</th></tr></thead>
+          <tbody id="misQuests"></tbody>
+        </table></div>
+      </div>
+    </section>
+    <section id="xephang" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Xếp hạng với HLV ảo</h2></div>
+        <p class="lead"><b>Xếp hạng 1vs1</b> và <b>Xếp hạng giả lập</b> (menu Nhiều người): đá trận thật trên máy với đội hình của một HLV ảo có Elo gần bạn. Có 100–162 HLV ảo mang tên streamer Việt Nam và thế giới; <b>Mixigaming</b> là HLV mạnh nhất, luôn đứng top 1 (mỗi ngày có người mới; đội hình mua bán, nâng cấp hằng ngày; thẻ +1…+11, cấp đến 30 theo hạng), bảng xếp hạng, 5 trận phân hạng, hạng Nghiệp dư → Huyền thoại, bạn bè trong Tin nhắn và chat trong trận. <b>Cần bản vá client MenuScreen.big mới</b> (bản hiện tại chặn các mục này bằng thông báo "cần chơi online").</p>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="rkOn"> Bật Xếp hạng + bạn bè HLV ảo (menu hiện sau khi vào lại game)</label>
+          <label class="check"><input type="checkbox" id="rkChat"> HLV ảo chat trong trận</label>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Chế độ</th><th>Elo</th><th>Hạng</th><th>Thứ hạng</th><th>Thắng / Hòa / Thua</th></tr></thead>
+          <tbody id="rkMe"></tbody>
+        </table></div>
+        <h3>Top 10 Xếp hạng 1vs1</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>HLV</th><th>Elo</th><th>Hạng</th></tr></thead>
+          <tbody id="rkTop"></tbody>
+        </table></div>
+        <div class="row"><button class="b" id="rkReset">Đặt lại Xếp hạng mùa này của tôi</button><span class="muted" id="rkInfo"></span></div>
+      </div>
+    </section>
+    <section id="hlv" hidden="">
+      <div class="card" id="hcCard">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-plus"></use></svg></span><h2 class="display">Tạo HLV tùy chỉnh</h2></div>
+        <p class="lead">Tạo HLV mới với <b>tên</b>, <b>vị trí</b> và <b>ảnh</b> của riêng bạn. Chỉ số hỗ trợ và mức cộng tối đa (<b>+5 đến +10</b>) được chọn ngẫu nhiên như các HLV nổi tiếng. HLV mới hiện ngay ở danh sách <b>Thêm HLV</b> bên dưới, trong chiêu mộ HLV của game và có thể cho vào <b>Gói tự chọn</b>.</p>
+        <div class="hc-wrap">
+          <div class="hc-prev"><img id="hcPrev" alt="Xem trước ảnh HLV" hidden><span id="hcPrevEmpty">128 × 128</span></div>
+          <div class="hc-form">
+            <div class="row">
+              <label class="f">Tên HLV<input class="wide" id="hcName" maxlength="30" placeholder="VD: Nguyễn Văn A"></label>
+              <label class="f">Vị trí / vai trò<select id="hcPos"></select></label>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <label class="f">Ảnh HLV (PNG hoặc JPG)<input type="file" id="hcFile" accept=".png,.jpg,.jpeg,image/png,image/jpeg"></label>
+              <a class="b" href="https://www.iloveimg.com/resize-image" target="_blank" rel="noopener noreferrer" title="Mở trang thu nhỏ ảnh trong tab mới">Resize ảnh online ↗</a>
+            </div>
+            <p class="hint">Yêu cầu ảnh: <b>PNG hoặc JPG</b>, <b>đúng 128 × 128 px</b> (ảnh vuông, đúng cỡ game dùng), dung lượng <b>tối đa 2 MB</b>. Ảnh sai cỡ: bấm <b>Resize ảnh online</b> → chọn <i>By pixels</i>, nhập 128 × 128 (ảnh chưa vuông thì nên cắt vuông trước để không bị méo), tải ảnh về rồi chọn lại ở đây.</p>
+            <div class="row" style="margin-top:10px"><button class="b primary" type="button" id="hcSave" disabled>Tạo HLV</button><span class="muted" id="hcNote"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"></use></svg></span><h2 class="display">Thêm HLV</h2></div>
         <p class="lead">Chọn HLV, số sao (tối đa 5 sao, có nửa sao như trong game) và số lượng rồi bấm <b>Thêm</b>. HLV được gửi thẳng vào game, không cần tuyển. Vào game: <b>Quản lý đội → Quản lý HLV → HLV của tôi</b> để bổ nhiệm.</p>
         <div class="row">
           <select id="hlvPos"><option value="">Tất cả vị trí</option></select>
@@ -947,7 +1339,7 @@
       </div>
       <div class="card">
         <div class="card-head" style="flex-wrap:wrap"><h2 class="display" style="margin:0">HLV của CLB</h2><span class="muted" id="hlvMine"></span>
-          <button class="b primary" id="hlvFullAll" style="margin-left:auto">Full tất cả HLV (5 sao, mỗi dòng +5)</button></div>
+          <button class="b danger" id="hlvDelAll" style="margin-left:auto">Xoá tất cả HLV</button><button class="b primary" id="hlvFullAll" style="margin-left:8px">Full tất cả HLV (5 sao, chỉ số lên tối đa)</button></div>
         <p class="lead">Đổi số sao trực tiếp ở cột <b>Sao</b>, chọn chỉ số ở các dòng có ô chọn. HLV đang bổ nhiệm thì phải bỏ bổ nhiệm trong game trước khi xoá.</p>
         <div class="table-wrap"><table>
           <thead><tr><th></th><th>Tên</th><th>Vị trí</th><th>Sao</th><th>Chỉ số đang cộng</th><th>Trạng thái</th><th></th></tr></thead>
@@ -955,41 +1347,52 @@
         </table></div>
       </div>
     </section>
-
-    <section id="scout" hidden>
+    <section id="resetnv" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"/></svg></span><h2 class="display">Đổi cầu thủ</h2></div>
-        <p class="lead">Đưa 2–10 cầu thủ trong Đội phụ cho tuyển trạch viên để đổi lấy thẻ mới có giá trị tương đương hoặc cao hơn. Đạt điều kiện thưởng thêm thì thẻ nhận về sẽ có giá trị cao hơn.</p>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Tuyển trạch viên</th><th>Trạng thái</th><th>Dùng lại lúc</th><th>Điều kiện thưởng thêm</th></tr></thead>
-          <tbody id="scoutRows"></tbody>
-        </table></div>
-        <div class="row"><button class="b primary" id="scoutReset">Mở khóa tất cả tuyển trạch viên</button></div>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Reset nhân vật</h2></div>
+        <p class="lead">Mỗi tài khoản có tối đa 2 HLV. Chọn HLV cần xoá (hoặc cả hai): HLV, CLB, cầu thủ, EP và túi đồ của HLV đó bị xoá để vào game tạo lại từ đầu. Thoát game trước khi bấm.</p>
+        <div class="row">
+          <label class="f">HLV cần reset<select id="resetSlot"><option value="0">HLV 1: Genta (đang chơi)</option><option value="all">Tất cả</option></select></label>
+          <button id="resetCoach" class="b danger" type="button">Reset nhân vật</button>
+        </div>
+        <p class="hint">Dữ liệu cũ được sao lưu tự động vào <code>Server\gamedata\backup</code> trước khi xoá. Thiết lập GM (tỷ lệ đập thẻ, giá EP, quà hằng ngày) giữ nguyên.</p>
       </div>
     </section>
-
-    <section id="log" hidden>
+    <section id="log" hidden="">
       <div class="card">
-        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-log"/></svg></span><h2 class="display">Nhật ký server</h2></div>
-        <p class="lead">Các dòng mới nhất trong captures/http_config.log.</p>
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-log"></use></svg></span><h2 class="display">Nhật ký server</h2></div>
+        <p class="lead">Các dòng mới nhất trong captures/http_config.log. Gặp lỗi thì bấm <b>Xuất log lỗi</b> để tải file zip (nhật ký máy chủ, game, lỗi Windows, thông tin máy) rồi gửi cho người hỗ trợ.</p>
         <div class="row">
           <button class="b" id="logRefresh">Tải lại</button>
+          <button class="b log-export" id="logExport" type="button"><svg class="i"><use href="#i-log"></use></svg>Xuất log lỗi</button>
           <label class="check"><input type="checkbox" id="logAuto"> Tự tải lại mỗi 3 giây</label>
+          <label class="check"><input type="checkbox" id="logQuiet" checked=""> Ẩn dòng lặp (giờ máy chủ)</label>
+          <label class="check"><input type="checkbox" id="logErr" checked=""> Chỉ hiện lỗi</label>
         </div>
         <pre class="log" id="logBox"></pre>
       </div>
     </section>
 
 
+
+
+
+
+
+
+
+
+
+
   </main>
 </div>
-<div class="modal" id="cardModal" hidden>
+<div class="modal" id="cardModal" hidden="">
   <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
     <button class="modal-x" id="cmClose" type="button" aria-label="Đóng">×</button>
     <div id="cmBody"></div>
   </div>
 </div>
-<div class="pin-chip" id="pinChip" hidden></div>
+<div class="pin-chip" id="pinChip" hidden=""></div>
 
 
 
@@ -1002,7 +1405,7 @@ const pad = n => String(n).padStart(2, "0");
 const dmyTime = t => { const d = new Date(t); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 const pimg = spid => `<img class="pimg" src="/pimg/${spid}.png" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const SCOUT_NAMES = {default_A01: "Tuyển trạch viên nghiệp dư", default_B01: "Tuyển trạch viên chuyên nghiệp", igr: "Tuyển trạch viên quán net (PC)", vip: "Tuyển trạch viên VIP"};
+const SCOUT_NAMES = {default_A01: "Tuyển trạch viên nghiệp dư", default_B01: "Tuyển trạch viên chuyên nghiệp", igr: "Tuyển trạch viên quán net (PC)", vip: "Tuyển trạch viên VIP", vvip: "Tuyển trạch viên VVIP"};
 const QUEST_TEXT = {require_value: "giá trị cầu thủ ≥", require_grade: "cấp thẻ ≥", require_grade_count: "số lượng", require_season: "mùa", require_season_count: "số lượng"};
 const ROLE_VI = {MAIN: "Chính", SUB: "Thay", RES: "Dự bị"};
 const POS_GROUP = {GK: "GK", SW: "DEF", RWB: "DEF", RB: "DEF", RCB: "DEF", CB: "DEF", LCB: "DEF", LB: "DEF", LWB: "DEF",
@@ -1036,11 +1439,15 @@ function paintSort(headId) {
 let clubPlayers = [], searchResults = [];
 // Ten mua: ma mua (88, 93...) -> nhan mau ngan + ten day du (tu /api/seasons)
 let SEASONS = {};
+let SEASON_LIST = [];  // thu tu tu /api/seasons (mua theo nam 2006 -> 2017, roi dac biet A-Z); object SEASONS tu xep so
+const seasonRank = c => { const i = SEASON_LIST.indexOf(Number(c)); return i < 0 ? 1e6 + Number(c) : i; };
+const bySeason = (a, b) => seasonRank(a) - seasonRank(b);
+const seasonsOrdered = () => SEASON_LIST.map(c => SEASONS[c]).filter(Boolean);
 const seasonName = c => (SEASONS[c] && SEASONS[c].name) || `Mùa ${c}`;
 const seasonBadge = c => { const x = SEASONS[c];
   return `<span class="sb k-${x ? x.kind : "special"}" title="${esc(x ? x.name + " · mã " + c : "Mã mùa " + c)}">${esc(x ? x.tag : c)}</span>`; };
 function applySeasons(seasons) {
-  SEASONS = Object.fromEntries(seasons.map(x => [x.code, x]));
+  SEASONS = Object.fromEntries(seasons.map(x => [x.code, x])); SEASON_LIST = seasons.map(x => Number(x.code));
   if ($("#searchSeason").options.length <= 1) $("#searchSeason").innerHTML = '<option value="">Tất cả</option>' + seasons.map(x =>
     `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
 }
@@ -1049,7 +1456,7 @@ async function loadSeasons() {
   try {
     const {seasons} = await api("seasons");
     listCacheSet({seasons});
-    SEASONS = Object.fromEntries(seasons.map(x => [x.code, x]));
+    SEASONS = Object.fromEntries(seasons.map(x => [x.code, x])); SEASON_LIST = seasons.map(x => Number(x.code));
     const groups = {year: "Mùa giải", legend: "Huyền thoại", cup: "World Cup / Châu lục", special: "Đặc biệt", base: "Thẻ gốc"};
     $("#searchSeason").innerHTML = '<option value="">Tất cả</option>' + seasons.map(x =>
       `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
@@ -1115,14 +1522,65 @@ async function api(name, body) {
   apiRemember(name, j);
   return j;
 }
+// Hop thoai dep thay hop xac nhan / nhap chu cua trinh duyet (kieu SweetAlert, khong can thu vien ngoai).
+// uiConfirm(msg) -> Promise<bool>; uiPrompt(msg) -> Promise<string|null>. Tu nhan dien thao tac nguy hiem
+// (Xoa / Thanh ly / Reset / Khong the hoan tac) -> bieu tuong do, nut do.
+function uiDialog(msg, {input = false} = {}) {
+  return new Promise(resolve => {
+    const text = String(msg || "");
+    const NOTE = /\s*Không thể hoàn tác\.?/;
+    const irreversible = NOTE.test(text), body = text.replace(NOTE, "").trim();
+    const danger = input || irreversible || /^(Xoá|Xóa|Thanh lý)|RESET/i.test(body);
+    const warn = !danger && /(Đổi|Đặt lại|bỏ)/i.test(body);
+    const kind = danger ? "danger" : warn ? "warn" : "q";
+    const title = input ? "Xác nhận lần cuối" : danger ? "Bạn chắc chắn chứ?" : warn ? "Lưu ý" : "Xác nhận";
+    const back = document.createElement("div");
+    back.className = "ui-dlg-back";
+    back.innerHTML = `<div class="ui-dlg ${kind}" role="alertdialog" aria-modal="true" aria-labelledby="uiDlgT" aria-describedby="uiDlgM">
+      <div class="ui-ico" aria-hidden="true">${danger ? "!" : warn ? "i" : "?"}</div>
+      <h3 id="uiDlgT">${title}</h3>
+      <p class="ui-msg" id="uiDlgM">${esc(body)}</p>
+      ${irreversible ? '<p class="ui-note">Thao tác này không thể hoàn tác.</p>' : ""}
+      ${input ? '<input class="ui-in" type="text" autocomplete="off" spellcheck="false">' : ""}
+      <div class="ui-btns"><button type="button" class="ui-cancel">Huỷ</button>
+        <button type="button" class="ui-ok">${danger ? "Đồng ý, tiếp tục" : "Đồng ý"}</button></div></div>`;
+    const prev = document.activeElement, inp = back.querySelector(".ui-in");
+    let closed = false;
+    const done = v => {
+      if (closed) return; closed = true;
+      document.removeEventListener("keydown", onKey, true);
+      back.classList.add("out");
+      setTimeout(() => { back.remove(); try { prev && prev.focus && prev.focus(); } catch (e) {} }, 140);
+      resolve(v);
+    };
+    const ok = () => done(input ? inp.value : true), cancel = () => done(input ? null : false);
+    const onKey = e => {
+      if (e.key === "Escape") { e.preventDefault(); cancel(); }
+      else if (e.key === "Enter") { e.preventDefault(); document.activeElement === back.querySelector(".ui-cancel") ? cancel() : ok(); }
+      else if (e.key === "Tab") {  // giu tieu diem trong hop thoai
+        const f = [...back.querySelectorAll("input, button")], i = f.indexOf(document.activeElement);
+        e.preventDefault(); f[(i + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
+      }
+    };
+    back.querySelector(".ui-ok").addEventListener("click", ok);
+    back.querySelector(".ui-cancel").addEventListener("click", cancel);
+    back.addEventListener("mousedown", e => { if (e.target === back) cancel(); });
+    document.addEventListener("keydown", onKey, true);
+    document.body.append(back);
+    (inp || back.querySelector(danger ? ".ui-cancel" : ".ui-ok")).focus();
+  });
+}
+const uiConfirm = msg => uiDialog(msg);
+const uiPrompt = msg => uiDialog(msg, {input: true});
 function say(msg, kind) { const s = $("#status"); s.textContent = msg; s.className = "status " + (kind || ""); }
 async function act(fn, okMsg) {
   try { await fn(); if (okMsg) say(okMsg, "ok"); await refreshTop(); }
   catch (e) { say("Lỗi: " + e.message, "err"); }
 }
-const gradeOpts = (val, lo = 1) => Array.from({length: 11 - lo}, (_, i) => i + lo)
+const MAX_GRADE = 20;  // = MAX_GRADE trong http_config.py
+const gradeOpts = (val, lo = 1) => Array.from({length: MAX_GRADE + 1 - lo}, (_, i) => i + lo)
   .map(g => `<option value="${g}"${g == val ? " selected" : ""}>+${g}</option>`).join("");
-const levelOpts = val => Array.from({length: 23}, (_, i) => i + 1)
+const levelOpts = val => Array.from({length: 30}, (_, i) => i + 1)
   .map(l => `<option value="${l}"${l == val ? " selected" : ""}>LV ${l}</option>`).join("");
 const packOpts = val => packs.map(p => `<option value="${p.itemid}"${p.itemid == val ? " selected" : ""}>${esc(p.name)}</option>`).join("");
 const facts = list => list.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
@@ -1135,7 +1593,7 @@ async function refreshTop() {
   return s;
 }
 
-const HLV = {cat: [], max: 10};
+const HLV = {cat: [], max: 10, imgSize: 128, imgMax: 2 * 1024 * 1024, positions: []};
 // cap HLV 1-10 = 0,5-5 sao nhu trong game
 const starLabel = g => "★".repeat(Math.floor(g / 2)) + (g % 2 ? "½" : "") + ` (${g / 2} sao)`;
 function hlvPaint() {
@@ -1145,10 +1603,10 @@ function hlvPaint() {
   $("#hlvCount").textContent = `${rows.length} HLV`;
   $("#hlvCat").innerHTML = rows.map(x => `<tr>
     <td><img src="/staffimg/${x.stfid}.png" alt="" loading="lazy" style="width:44px;height:44px;object-fit:cover;border-radius:8px" onerror="this.style.visibility='hidden'"></td>
-    <td><b>${esc(x.name)}</b></td><td>${esc(x.pos_name)}</td><td class="muted">${x.boosts.map(esc).join("<br>")}</td>
+    <td><b>${esc(x.name)}</b>${x.custom ? '<span class="hc-tag">Tùy chỉnh</span>' : ""}</td><td>${esc(x.pos_name)}</td><td class="muted"><b style="color:var(--accent,#d8a300)">Tối đa +${x.power}</b>${x.mod ? " · HLV nổi tiếng" : x.custom ? " · HLV tùy chỉnh" : ""}<br>${x.boosts.map(esc).join("<br>")}</td>
     <td><select data-hlvstar="${x.stfid}">${stars}</select></td>
     <td><input type="number" min="1" max="30" value="1" data-hlvn="${x.stfid}" style="width:70px"></td>
-    <td><button class="b primary" data-hlvadd="${x.stfid}">Thêm</button></td></tr>`).join("");
+    <td><div style="display:flex;gap:8px;align-items:stretch"><button class="b primary" data-hlvadd="${x.stfid}">Thêm</button>${x.custom ? `<button class="b danger" data-hlvcdel="${x.stfid}" title="Xoá loại HLV tùy chỉnh này (ảnh được cất vào thư mục sao lưu)">Xoá loại</button>` : ""}</div></td></tr>`).join("");
 }
 document.addEventListener("input", e => { if (e.target.id === "hlvFind") hlvPaint(); });
 document.addEventListener("change", e => {
@@ -1158,19 +1616,241 @@ document.addEventListener("change", e => {
   const g = e.target.dataset && e.target.dataset.hlvgrade;
   if (g) act(async () => { await api("staff_grade", {id: g, grade: +e.target.value}); await loaders.hlv(); }, "Đã đổi số sao. Vào lại màn HLV trong game để thấy.");
 });
-document.addEventListener("click", e => {
-  if (e.target.id === "hlvFullAll") { act(async () => { const r = await api("staff_full", {}); await loaders.hlv(); say(`Đã full ${r.done} HLV: 5 sao, mỗi dòng chỉ số +5. Vào lại màn HLV trong game để thấy.`, "ok"); }); return; }
+document.addEventListener("click", async e => {
+  if (e.target.id === "hlvDelAll") {
+    if (!await uiConfirm("Xoá tất cả HLV đang ở trạng thái Chờ?\nHLV đang bổ nhiệm hoặc đang tập huấn sẽ được giữ lại.")) return;
+    act(async () => { const r = await api("staff_remove_all", {}); await loaders.hlv();
+      say(`Đã xoá ${r.removed} HLV.` + (r.kept ? ` Giữ lại ${r.kept} HLV đang bổ nhiệm/tập huấn.` : ""), "ok"); });
+    return;
+  }
+  if (e.target.id === "hlvFullAll") { act(async () => { const r = await api("staff_full", {}); await loaders.hlv(); say(`Đã full ${r.done} HLV: 5 sao, chỉ số lên tối đa (HLV thường +5, HLV nổi tiếng tới mức riêng). Vào lại màn HLV trong game để thấy.`, "ok"); }); return; }
+  const cdel = e.target.closest && e.target.closest("[data-hlvcdel]");
+  if (cdel) {
+    const x = HLV.cat.find(c => c.stfid === +cdel.dataset.hlvcdel);
+    if (!await uiConfirm(`Xoá loại HLV tùy chỉnh "${x ? x.name : cdel.dataset.hlvcdel}"?\nHLV sẽ biến mất khỏi danh sách và chiêu mộ. Ảnh được chuyển vào thư mục sao lưu (Server\\gamedata\\backup\\custom_staff), không xoá hẳn.`)) return;
+    act(async () => { const r = await api("staff_custom_delete", {stfid: +cdel.dataset.hlvcdel}); CP.staffCat = null; await loaders.hlv();
+      say("Đã xoá loại HLV tùy chỉnh. Ảnh đã cất vào sao lưu." + (r.packs && r.packs.length ? ` Gói tự chọn còn chứa HLV này (${r.packs.join(", ")}) sẽ tự bỏ qua HLV đã xoá.` : ""), "ok"); });
+    return;
+  }
   const b = e.target.closest && e.target.closest("[data-hlvadd],[data-hlvdel]");
   if (!b) return;
   if (b.dataset.hlvadd) {
     const id = b.dataset.hlvadd, grade = +document.querySelector(`[data-hlvstar="${id}"]`).value, count = +document.querySelector(`[data-hlvn="${id}"]`).value || 1;
     act(async () => { const r = await api("staff_add", {stfid: +id, grade, count}); say(`Đã thêm ${r.added} HLV (${r.total} trong CLB). Vào lại màn HLV trong game để thấy.`, "ok"); await loaders.hlv(); });
-  } else if (confirm("Xoá HLV này khỏi CLB?")) {
+  } else if (await uiConfirm("Xoá HLV này khỏi CLB?")) {
     act(async () => { await api("staff_remove", {id: b.dataset.hlvdel}); await loaders.hlv(); }, "Đã xoá HLV.");
   }
 });
 
+// ===== Tao HLV tuy chinh (ten + vi tri + anh 128x128) =====
+const HC = {data: null};
+function hcNote(msg, err) { const n = $("#hcNote"); n.textContent = msg; n.style.color = err ? "var(--danger)" : ""; }
+function hcCheck() { $("#hcSave").disabled = !(HC.data && $("#hcName").value.trim().length >= 2 && $("#hcPos").value); }
+function hcReset() {
+  HC.data = null; $("#hcName").value = ""; $("#hcFile").value = "";
+  $("#hcPrev").hidden = true; $("#hcPrev").removeAttribute("src"); $("#hcPrevEmpty").hidden = false; hcNote(""); hcCheck();
+}
+$("#hcFile").addEventListener("change", () => {
+  HC.data = null; hcCheck();
+  const f = $("#hcFile").files[0], img = $("#hcPrev"), n = HLV.imgSize;
+  img.hidden = true; $("#hcPrevEmpty").hidden = false;
+  if (!f) return hcNote("");
+  const ext = (f.name.split(".").pop() || "").toLowerCase();
+  if (!["png", "jpg", "jpeg"].includes(ext) || (f.type && !/^image\/(png|jpeg)$/.test(f.type))) return hcNote("Chỉ nhận ảnh PNG hoặc JPG.", true);
+  if (f.size > HLV.imgMax) return hcNote(`Ảnh quá lớn (${(f.size / 1048576).toFixed(1)} MB). Tối đa 2 MB.`, true);
+  const rd = new FileReader();
+  rd.onerror = () => hcNote("Không đọc được file ảnh.", true);
+  rd.onload = () => {
+    const url = rd.result, probe = new Image();
+    probe.onload = () => {
+      img.src = url; img.hidden = false; $("#hcPrevEmpty").hidden = true;
+      const w = probe.naturalWidth, h = probe.naturalHeight;
+      if (w !== n || h !== n) return hcNote(`Ảnh đang là ${w}×${h} px. Game cần đúng ${n}×${n} px (ảnh vuông). Bấm "Resize ảnh online" để thu nhỏ rồi chọn lại.`, true);
+      HC.data = url; hcNote(`Ảnh hợp lệ: ${w}×${h} px, ${Math.max(1, Math.round(f.size / 1024))} KB.`); hcCheck();
+    };
+    probe.onerror = () => hcNote("Không đọc được ảnh (file hỏng hoặc không phải PNG/JPG).", true);
+    probe.src = url;
+  };
+  rd.readAsDataURL(f);
+});
+$("#hcName").addEventListener("input", hcCheck);
+$("#hcPos").addEventListener("change", hcCheck);
+$("#hcSave").addEventListener("click", () => act(async () => {
+  const r = await api("staff_custom_create", {name: $("#hcName").value.trim(), position: $("#hcPos").value, image: HC.data});
+  hcReset(); CP.staffCat = null; await loaders.hlv();
+  say(`Đã tạo HLV ${r.name} (mã ${r.stfid}, ${r.pos_name}, tối đa +${r.power}). Bấm Thêm ở danh sách bên dưới để đưa vào CLB, rồi vào lại màn HLV trong game để thấy.`, "ok");
+}));
+
+// ===== Goi tu chon (custom pack) =====
+const CP = {id: 0, color: 0, mode: "season", seasons: [], players: [], staffs: [], staffCat: null, ready: false, iconBase: 95990001, iconCount: 8, q: 0};
+const cpStarOpts = val => Array.from({length: 10}, (_, i) => `<option value="${i + 1}"${i + 1 == val ? " selected" : ""}>${starLabel(i + 1)}</option>`).join("");
+async function cpStaffCat() {
+  if (!CP.staffCat) {
+    const d = await apiFetch("staff_catalog");
+    CP.staffCat = d.staff;
+    $("#cpStaffSel").innerHTML = d.staff.map(x => `<option value="${x.stfid}">${esc(x.pos_name)} — ${esc(x.name)}${x.custom ? " (tùy chỉnh)" : ""}</option>`).join("");
+  }
+  return CP.staffCat;
+}
+function cpStaffInfo(id) { return (CP.staffCat || []).find(x => x.stfid === id) || (CP.staffInfo || {})[id] || {stfid: id, name: "HLV #" + id, pos_name: ""}; }
+function cpRow(r, btn) {
+  return `<tr><td class="pname">${pimg(r.spid)}${esc(r.name || String(r.spid))} <span class="muted">${r.spid}</span></td>
+    <td>${r.season ? seasonBadge(r.season) : ""}</td><td>${esc(r.team || "")}</td><td>${esc(r.pos || "")}</td><td class="num">${r.ovr || ""}</td><td>${btn}</td></tr>`;
+}
+function cpRender() {
+  $("#cpTitle").textContent = CP.id ? "Sửa gói tự chọn" : "Tạo gói tự chọn";
+  $("#cpSave").textContent = CP.id ? "Lưu thay đổi" : "Tạo gói";
+  $("#cpColors").innerHTML = Array.from({length: CP.iconCount}, (_, i) =>
+    `<button type="button" class="cp-sw${i === CP.color ? " on" : ""}" data-cpcolor="${i}" aria-label="Màu icon ${i + 1}" aria-pressed="${i === CP.color}"><img src="/shopimg/${CP.iconBase + i}.png" alt=""></button>`).join("");
+  $("#cpSeasons").innerHTML = CP.seasons.map(c => `<span class="cp-chip">${seasonBadge(c)}<span class="cp-chip-name">${esc(seasonName(c))}</span>${SEASONS[c] ? `<span class="cp-chip-n">${fmt(SEASONS[c].count)} thẻ</span>` : ""}<button type="button" class="cp-chip-x" data-cpsdel="${c}" aria-label="Bỏ ${esc(seasonName(c))}" title="Bỏ mùa này">×</button></span>`).join("")
+    || '<div class="cp-empty">Chưa chọn mùa nào. Chọn mùa ở trên rồi bấm <b>+ Thêm mùa</b>.</div>';
+  document.querySelectorAll("[data-cpmode]").forEach(x => x.setAttribute("aria-checked", String(x.dataset.cpmode === CP.mode)));
+  $("#cpModeSeason").hidden = CP.mode !== "season"; $("#cpModePlayer").hidden = CP.mode !== "player"; $("#cpStaffPanel").hidden = CP.mode !== "staff";
+  $("#cpPickedN").textContent = `(${CP.players.length} cầu thủ)`;
+  $("#cpStaffN").textContent = `(${CP.staffs.length} HLV)`;
+  $("#cpStaffs").innerHTML = CP.staffs.map(id => { const x = cpStaffInfo(id); return `<span class="cp-staff"><img src="/staffimg/${id}.png" alt="" onerror="this.style.visibility='hidden'"><span><b>${esc(x.name)}</b> <small>${esc(x.pos_name || "")}</small></span><button type="button" class="cp-chip-x" data-cpstdel="${id}" aria-label="Bỏ ${esc(x.name)}" title="Bỏ HLV này">×</button></span>`; }).join("")
+    || '<div class="cp-empty">Chưa có HLV nào. Chọn HLV ở trên rồi bấm <b>+ Thêm HLV</b>.</div>';
+  $("#cpPicked").innerHTML = CP.players.map(r => cpRow(r, `<button class="b small danger" type="button" data-cpdel="${r.spid}">Bỏ</button>`)).join("")
+    || '<tr><td colspan="6" class="muted">Chưa có cầu thủ nào. Tìm ở bảng phía trên rồi bấm Thêm.</td></tr>';
+}
+function cpReset() {
+  Object.assign(CP, {id: 0, color: 0, mode: "season", seasons: [], players: [], staffs: []});
+  $("#cpName").value = ""; $("#cpGmin").value = "1"; $("#cpGmax").value = "5"; $("#cpNote").textContent = "";
+  $("#cpSgmin").value = "10"; $("#cpSgmax").value = "10"; $("#cpSrate").value = "100";
+  cpRender();
+}
+async function cpInit() {
+  if (CP.ready) return;
+  if (!Object.keys(SEASONS).length) await loadSeasons();
+  const opts = seasonsOrdered().filter(x => x.kind !== "base" && Number(x.code) > 0).map(x => `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
+  $("#cpSeasonSel").innerHTML = opts; $("#cpQSeason").innerHTML = '<option value="">Tất cả</option>' + opts;
+  $("#cpGmin").innerHTML = gradeOpts(1); $("#cpGmax").innerHTML = gradeOpts(5);
+  $("#cpSgmin").innerHTML = cpStarOpts(10); $("#cpSgmax").innerHTML = cpStarOpts(10);
+  try { await cpStaffCat(); } catch (e) { say("Không tải được danh sách HLV: " + e.message, "err"); }
+  CP.ready = true; cpRender();
+}
+async function cpSearch() {
+  const q = $("#cpQ").value.trim(), season = $("#cpQSeason").value, seq = ++CP.q;
+  if (!q && !season) { $("#cpResults").innerHTML = '<tr><td colspan="6" class="muted">Gõ tên để tìm cầu thủ.</td></tr>'; $("#cpQCount").textContent = ""; return; }
+  try {
+    const d = await api("search?" + new URLSearchParams({q, season, size: 50, page: 0}).toString());
+    if (seq !== CP.q) return;
+    const have = new Set(CP.players.map(r => r.spid));
+    $("#cpQCount").textContent = `${fmt(d.total)} thẻ${d.total > 50 ? " (hiện 50 thẻ đầu)" : ""}`;
+    $("#cpResults").innerHTML = d.rows.map(r => cpRow(r, have.has(r.spid) ? '<span class="muted">Đã thêm</span>'
+      : `<button class="b small primary" type="button" data-cpadd="${r.spid}">Thêm</button>`)).join("")
+      || '<tr><td colspan="6" class="muted">Không tìm thấy cầu thủ nào.</td></tr>';
+    CP.last = d.rows;
+  } catch (e) { say("Lỗi: " + e.message, "err"); }
+}
+async function cpLoadList() {
+  const d = await apiFetch("custom_packs");
+  CP.iconBase = d.icon_base; CP.iconCount = d.icon_count; CP.list = d.packs;
+  CP.staffInfo = {}; d.packs.forEach(p => (p.staffs || []).forEach(x => { CP.staffInfo[x.stfid] = x; }));
+  $("#cpList").innerHTML = d.packs.slice().reverse().map(p => `<tr>
+    <td><img src="/shopimg/${d.icon_base + (p.color || 0)}.png" alt="" style="width:68px;height:48px"></td>
+    <td><b>${esc(p.name)}</b><div class="muted">Mã gói ${p.id} · ${p.players.length} cầu thủ chọn tay${p.seasons.length ? " · mùa " + p.seasons.map(c => esc((SEASONS[c] || {}).tag || c)).join(", ") : ""}${(p.staffs || []).length ? ` · ${p.staffs.length} HLV (${p.players.length || p.seasons.length ? p.staff_rate + "% mỗi lần mở" : "luôn ra HLV"})` : ""}</div></td>
+    <td>${p.grade_min === p.grade_max ? "+" + p.grade_max : `+${p.grade_min} → +${p.grade_max}`}</td><td class="num">${fmt(p.total)}${(p.staffs || []).length ? `<div class="muted">+ ${p.staffs.length} HLV</div>` : ""}</td>
+    <td><button class="b small" type="button" data-cpedit="${p.id}">Sửa</button> <button class="b small primary" type="button" data-cpgive="${p.id}">Gửi 10 gói vào Túi</button> <button class="b small danger" type="button" data-cpremove="${p.id}">Xoá</button></td></tr>`).join("")
+    || '<tr><td colspan="5" class="muted">Chưa có gói nào.</td></tr>';
+  cpRender();
+}
+$("#cpQ").addEventListener("input", () => { clearTimeout(CP.t); CP.t = setTimeout(cpSearch, 250); });
+$("#cpQSeason").addEventListener("change", cpSearch);
+$("#cpSeasonAdd").addEventListener("click", () => { const c = Number($("#cpSeasonSel").value); if (c && !CP.seasons.includes(c)) CP.seasons.push(c); cpRender(); });
+$("#cpCancel").addEventListener("click", cpReset);
+$("#cpStaffAdd").addEventListener("click", async () => {
+  try { await cpStaffCat(); } catch (e) { return say("Không tải được danh sách HLV: " + e.message, "err"); }
+  const id = Number($("#cpStaffSel").value);
+  if (id && !CP.staffs.includes(id)) CP.staffs.push(id);
+  cpRender();
+});
+$("#goitc").addEventListener("click", async e => {
+  const t = e.target.closest("button"); if (!t) return;
+  const d = t.dataset;
+  if (d.cpcolor !== undefined) { CP.color = Number(d.cpcolor); cpRender(); }
+  else if (d.cpmode) {
+    const lost = [d.cpmode !== "season" && CP.seasons.length ? `${CP.seasons.length} mùa` : "", d.cpmode !== "player" && CP.players.length ? `${CP.players.length} cầu thủ` : "", d.cpmode !== "staff" && CP.staffs.length ? `${CP.staffs.length} HLV` : ""].filter(Boolean);
+    if (d.cpmode !== CP.mode && lost.length && !await uiConfirm(`Đổi cách chọn sẽ bỏ ${lost.join(", ")} đã chọn. Tiếp tục?`)) return;
+    if (d.cpmode !== "season") CP.seasons = []; if (d.cpmode !== "player") CP.players = []; if (d.cpmode !== "staff") CP.staffs = [];
+    CP.mode = d.cpmode; cpRender();
+  }
+  else if (d.cpsdel) { CP.seasons = CP.seasons.filter(c => c !== Number(d.cpsdel)); cpRender(); }
+  else if (d.cpstdel) { CP.staffs = CP.staffs.filter(x => x !== Number(d.cpstdel)); cpRender(); }
+  else if (d.cpadd) { const r = (CP.last || []).find(x => x.spid === Number(d.cpadd)); if (r && !CP.players.some(x => x.spid === r.spid)) CP.players.push(r); cpRender(); cpSearch(); }
+  else if (d.cpdel) { CP.players = CP.players.filter(x => x.spid !== Number(d.cpdel)); cpRender(); cpSearch(); }
+  else if (d.cpedit) {
+    const p = (CP.list || []).find(x => x.id === Number(d.cpedit)); if (!p) return;
+    Object.assign(CP, {id: p.id, color: p.color || 0, mode: (p.staffs || []).length && !p.players.length && !p.seasons.length ? "staff" : p.players.length && !p.seasons.length ? "player" : "season", seasons: p.seasons.slice(), players: p.players.slice(), staffs: (p.staffs || []).map(x => x.stfid)});
+    $("#cpName").value = p.name; $("#cpGmin").value = String(p.grade_min); $("#cpGmax").value = String(p.grade_max);
+    $("#cpSgmin").value = String(p.staff_gmin || 10); $("#cpSgmax").value = String(p.staff_gmax || 10); $("#cpSrate").value = "100";
+    cpRender(); $("#cpTitle").scrollIntoView({behavior: "smooth"});
+  }
+  else if (d.cpremove) {
+    const p = (CP.list || []).find(x => x.id === Number(d.cpremove));
+    if (!await uiConfirm(`Xoá gói "${p ? p.name : d.cpremove}"? Gói sẽ biến mất khỏi Cửa hàng và kho đồ.`)) return;
+    await act(async () => { await api("custom_pack_delete", {id: Number(d.cpremove)}); if (CP.id === Number(d.cpremove)) cpReset(); await cpLoadList(); }, "Đã xoá gói.");
+  }
+  else if (d.cpgive) {
+    const p = (CP.list || []).find(x => x.id === Number(d.cpgive));
+    await act(async () => { await api("bag_send", {title: `Gói tự chọn: ${p ? p.name : d.cpgive}`.slice(0, 60), pack: Number(d.cpgive), count: 10}); },
+      "Đã gửi 10 gói vào Túi đồ. Vào game: Kho đồ > tab Kho (tab thứ 4), bấm Nhận; gói sẽ vào tab Gói cầu thủ.");
+  }
+});
+$("#cpSave").addEventListener("click", async () => {
+  let gmin = Number($("#cpGmin").value), gmax = Number($("#cpGmax").value);
+  if (gmin > gmax) [gmin, gmax] = [gmax, gmin];
+  let sgmin = Number($("#cpSgmin").value) || 10, sgmax = Number($("#cpSgmax").value) || 10;
+  if (sgmin > sgmax) [sgmin, sgmax] = [sgmax, sgmin];
+  const srate = Math.round(Number($("#cpSrate").value));
+  if (CP.mode === "staff" && !CP.staffs.length) return say("Chọn ít nhất 1 HLV cho gói.", "err");
+  const body = {id: CP.id || undefined, name: $("#cpName").value.trim(), color: CP.color, grade_min: gmin, grade_max: gmax,
+    spids: CP.mode === "player" ? CP.players.map(r => r.spid) : [], seasons: CP.mode === "season" ? CP.seasons : [],
+    staffs: CP.mode === "staff" ? CP.staffs : [], staff_rate: 100, staff_gmin: sgmin, staff_gmax: sgmax};
+  await act(async () => {
+    const r = await api("custom_pack_save", body);
+    packs = []; API_MEM.delete("packs"); apiStoreSet("packs", undefined);
+    $("#cpNote").textContent = `Đã lưu gói (mã ${r.id}, ${fmt(r.total)} thẻ${r.staffs ? `, ${r.staffs} HLV` : ""}). Vào lại Cửa hàng trong game để thấy.`;
+    CP.id = r.id; await cpLoadList();
+  }, "Đã lưu gói tự chọn.");
+});
+$("#qrAll").addEventListener("click", async () => {
+  const total = clubPlayers.length, inSquad = clubPlayers.filter(x => x.role === "MAIN" || x.role === "SUB").length;
+  if (!total) return say("CLB chưa có cầu thủ nào.", "err");
+  if (!await uiConfirm(`Thanh lý TẤT CẢ ${fmt(Math.max(0, total - inSquad))} cầu thủ dự bị và Đội phụ? 18 cầu thủ trong đội hình được giữ lại. Không thể hoàn tác.`)) return;
+  await act(async () => {
+    const r = await api("player_remove_all", {});
+    say(`Đã thanh lý ${fmt(r.done)} cầu thủ, giữ lại ${r.kept} cầu thủ trong đội hình.`, "ok");
+    await loaders.pemain();
+  });
+});
+// ===== Kho do cua HLV (xoa tung mon / xoa toan bo) =====
+async function invLoad() {
+  try {
+    const d = await apiFetch("inventory");
+    const total = d.items.reduce((a, x) => a + x.count, 0);
+    $("#invCount").textContent = `${d.items.length} loại · ${fmt(total)} món`;
+    $("#invClearAll").disabled = !d.items.length;
+    $("#invRows").innerHTML = d.items.map(x => `<tr>
+      <td><img src="/shopimg/${encodeURIComponent(x.icon)}.png" alt="" style="width:68px;height:48px;object-fit:contain" onerror="this.style.visibility='hidden'"></td>
+      <td><b>${esc(x.name)}</b><div class="muted">Mã ${x.itemid}</div></td><td>${esc(x.kind)}</td><td class="num">${fmt(x.count)}</td>
+      <td><span style="display:inline-flex;gap:6px;align-items:center"><input type="number" min="1" max="${x.count}" placeholder="Tất cả" data-invn="${esc(x.id)}" style="width:96px">
+        <button class="b small danger" type="button" data-invdel="${esc(x.id)}" data-invname="${esc(x.name)}">Xoá</button></span></td></tr>`).join("")
+      || '<tr><td colspan="5" class="muted">Kho đồ trống.</td></tr>';
+  } catch (e) { $("#invRows").innerHTML = `<tr><td colspan="5" class="muted">Không tải được: ${esc(e.message)}</td></tr>`; }
+}
+$("#invRows").addEventListener("click", async e => {
+  const b = e.target.closest("[data-invdel]"); if (!b) return;
+  const inp = document.querySelector(`[data-invn="${CSS.escape(b.dataset.invdel)}"]`), n = inp && inp.value.trim();
+  if (!await uiConfirm(n ? `Xoá ${n} "${b.dataset.invname}" khỏi kho đồ?` : `Xoá toàn bộ "${b.dataset.invname}" khỏi kho đồ?`)) return;
+  await act(async () => { await api("inventory_remove", {id: b.dataset.invdel, count: n ? Number(n) : null}); await invLoad(); }, "Đã xoá. Vào lại game để thấy.");
+});
+$("#invClearAll").addEventListener("click", async () => {
+  if (!await uiConfirm("Xoá TOÀN BỘ gói cầu thủ và vật phẩm trong kho đồ? Không thể hoàn tác.")) return;
+  await act(async () => { const r = await api("inventory_remove", {all: 1}); await invLoad(); say(`Đã xoá ${r.removed} loại đồ khỏi kho. Vào lại game để thấy.`, "ok"); });
+});
 const loaders = {
+  async goitc() { await cpInit(); await cpLoadList(); },
   async ringkasan() {
     loadBot(); loadCoach(); loadPrices();  // tai song song, khong cho phan tong quan
     const s = await refreshTop(), d = s.daily;
@@ -1180,7 +1860,7 @@ const loaders = {
       ["Quà chưa nhận trong Túi", fmt(s.bag)],
       ["Chuỗi đăng nhập", `${d.streak || 0} ngày`],
       ["Quà hôm nay", d.granted_today ? "Đã nhận" : "Chờ vào game"],
-      ["VIP + quán net đến hết", dmy(s.vip_until)],
+      ["VVIP + quán net đến hết", dmy(s.vip_until)],
     ]);
   },
   async pemain() {
@@ -1188,7 +1868,7 @@ const loaders = {
     clubPlayers = players.map(p => ({...p, roleRank: p.team2 ? 3 : {MAIN: 0, SUB: 1, RES: 2}[p.role] ?? 4}));
     clubFacets();
     qrFill();
-    const cur = $("#pfSeason").value, have = [...new Set(clubPlayers.map(p => p.season))].sort((a, b) => a - b);
+    const cur = $("#pfSeason").value, have = [...new Set(clubPlayers.map(p => p.season))].sort(bySeason);
     $("#pfSeason").innerHTML = '<option value="">Tất cả</option>' + have.map(c =>
       `<option value="${c}"${String(c) === cur ? " selected" : ""}>${esc((SEASONS[c] || {}).tag || c)} — ${esc(seasonName(c))}</option>`).join("");
     renderClub();
@@ -1227,6 +1907,7 @@ function renderClub() {
 
 const _loadersRest = {
   async item() {
+    invLoad();
     await packsReady;
     $("#packRows").innerHTML = packs.map(p => `<tr><td>${esc(p.name)}</td><td class="num">${p.itemid}</td><td class="num">${fmt(p.price)}</td></tr>`).join("");
   },
@@ -1240,8 +1921,11 @@ const _loadersRest = {
     renderDaily(d.table);
   },
   async hlv() {
-    const [{staff, max_grade}, mine] = await Promise.all([apiFetch("staff_catalog"), apiFetch("staffs")]);
+    const [{staff, max_grade, positions, img_size, img_max_bytes}, mine] = await Promise.all([apiFetch("staff_catalog"), apiFetch("staffs")]);
     HLV.cat = staff; HLV.max = max_grade;
+    if (img_size) { HLV.imgSize = img_size; HLV.imgMax = img_max_bytes; }
+    const hp = $("#hcPos");
+    if (positions && !hp.options.length) { hp.innerHTML = positions.map(x => `<option value="${x.position}"${x.position === "PREMIUM" ? " selected" : ""}>${esc(x.name)}</option>`).join(""); hcCheck(); }
     const pos = $("#hlvPos"), cur = pos.value;
     const kinds = [...new Map(staff.map(x => [x.position, x.pos_name])).entries()];
     pos.innerHTML = '<option value="">Tất cả vị trí</option>' + kinds.map(([k, n]) => `<option value="${k}"${k === cur ? " selected" : ""}>${esc(n)}</option>`).join("");
@@ -1275,7 +1959,9 @@ const _loadersRest = {
     }).join("");
   },
   async log() {
-    const {lines} = await api("log?n=150");
+    const q = ($("#logQuiet").checked ? "&quiet=1" : "") + ($("#logErr").checked ? "&errors=1" : "");
+    const {lines} = await api("log?n=200" + q);
+    if (!lines.length) { $("#logBox").textContent = $("#logErr").checked ? "Không có dòng lỗi nào gần đây." : "(trống)"; return; }
     const box = $("#logBox"); box.textContent = lines.join("\n"); box.scrollTop = box.scrollHeight;
   },
 };
@@ -1285,7 +1971,7 @@ function qrFill() {
   const res = clubPlayers.filter(p => p.role === "RES"), cnt = {};
   res.forEach(p => { cnt[p.season] = (cnt[p.season] || 0) + 1; });
   const cur = $("#qrSeason").value;
-  $("#qrSeason").innerHTML = '<option value="">— Chọn mùa —</option>' + Object.keys(cnt).map(Number).sort((a, b) => a - b).map(c =>
+  $("#qrSeason").innerHTML = '<option value="">— Chọn mùa —</option>' + Object.keys(cnt).map(Number).sort(bySeason).map(c =>
     `<option value="${c}"${String(c) === cur ? " selected" : ""}>${esc((SEASONS[c] || {}).tag || c)} — ${esc(seasonName(c))} (${cnt[c]} thẻ dự bị)</option>`).join("");
   qrNote();
 }
@@ -1295,10 +1981,10 @@ function qrNote() {
   $("#qrGo").textContent = n ? `Thanh lý ${n} thẻ` : "Thanh lý";
 }
 $("#qrSeason").addEventListener("change", qrNote);
-$("#qrGo").addEventListener("click", () => {
+$("#qrGo").addEventListener("click", async () => {
   const c = $("#qrSeason").value; if (!c) return;
   const ids = clubPlayers.filter(p => p.role === "RES" && String(p.season) === c).map(p => p.id);
-  if (!ids.length || !confirm(`Thanh lý ${ids.length} thẻ dự bị (${seasonName(c)})? Không thể hoàn tác.`)) return;
+  if (!ids.length || !await uiConfirm(`Thanh lý ${ids.length} thẻ dự bị (${seasonName(c)})? Không thể hoàn tác.`)) return;
   act(async () => {
     const r = await api("player_bulk", {ids, action: "remove"});
     selClub.clear(); await loaders.pemain();
@@ -1401,11 +2087,11 @@ $("#smBar").addEventListener("click", e => {
   if (a === "new") shown.forEach(r => { if (r.owned) SM.sel.delete(r.spid); });
   smPaint();
 });
-$("#smGo").addEventListener("click", () => {
+$("#smGo").addEventListener("click", async () => {
   const free = smFree(), picked = smShown().filter(r => SM.sel.has(r.spid)).slice(0, free).map(r => r.spid);  // chi the dang hien, OVR giam dan
   if (!picked.length) return;
   const lv = Number($("#smLevel").value), gr = Number($("#smGrade").value);
-  if (!confirm(`Thêm ${picked.length} cầu thủ (LV ${lv}, +${gr}) vào CLB?`)) return;
+  if (!await uiConfirm(`Thêm ${picked.length} cầu thủ (LV ${lv}, +${gr}) vào CLB?`)) return;
   act(async () => {
     const r = await api("player_add_bulk", {spids: picked, grade: gr, level: lv});
     SM.justAdded = new Set(picked);
@@ -1438,8 +2124,7 @@ loaders.theomua = async () => {
   loadAllTeams();
   if (!Object.keys(SEASONS).length) await loadSeasons();
   if ($("#smSeason").options.length <= 1) {
-    const order = Object.values(SEASONS).sort((a, b) => (a.kind === "year") - (b.kind === "year") || a.code - b.code);
-    $("#smSeason").innerHTML = '<option value="">Tất cả mùa</option>' + Object.values(SEASONS)
+    $("#smSeason").innerHTML = '<option value="">Tất cả mùa</option>' + seasonsOrdered()
       .filter(x => x.code !== 0).map(x => `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
   }
   if ($("#smSeason").value || $("#smTeamMain").value) smLoad();
@@ -1451,7 +2136,7 @@ function renderDaily(table) {
     <td>Ngày ${i + 1}</td>
     <td><input type="number" min="0" step="1000" value="${r.ep || 0}" data-k="ep" aria-label="EP ngày ${i + 1}"></td>
     <td><select data-k="pack" aria-label="Gói ngày ${i + 1}"><option value="">Không kèm gói</option>${packOpts(r.pack)}</select></td>
-    <td><input type="number" min="1" max="99" value="${r.count || 1}" data-k="count" aria-label="Số gói ngày ${i + 1}"></td>
+    <td><input type="number" min="1" max="999" value="${r.count || 1}" data-k="count" aria-label="Số gói ngày ${i + 1}"></td>
     <td><button class="b small danger" data-drop="${i}">Xóa</button></td>
   </tr>`).join("");
 }
@@ -1462,8 +2147,30 @@ function readDaily() {
   });
 }
 
+// Menu 2 tang: hang nhom tao tu .nav-group (tieu de + so muc); bam nhom -> mo muc dau tien cua nhom
+const NAV_GROUP_ICON = ["home", "shirt", "gift", "coin", "sun", "scout"];
+(function buildNavGroups() {
+  const nav = document.querySelector("nav[role=tablist]"), bar = document.createElement("div");
+  bar.className = "nav-groups";
+  nav.querySelectorAll(".nav-group").forEach((g, i) => {
+    const tabs = g.querySelectorAll("[role=tab]"), b = document.createElement("button");
+    b.type = "button"; b.className = "ng";
+    b.innerHTML = `<svg class="i"><use href="#i-${NAV_GROUP_ICON[i] || "layers"}"></use></svg>${g.querySelector(".nav-title").innerHTML}`
+      + (tabs.length > 1 ? `<span class="cnt">${tabs.length}</span>` : "");
+    b.addEventListener("click", () => { const cur = g.querySelector('[aria-selected="true"]'); show((cur || tabs[0]).dataset.tab); });
+    g._ng = b; bar.append(b);
+  });
+  nav.prepend(bar);
+})();
+function syncNavGroups(tab) {
+  document.querySelectorAll("nav .nav-group").forEach(g => {
+    const on = !!g.querySelector(`[data-tab="${tab}"]`);
+    g.classList.toggle("on", on); g._ng.classList.toggle("on", on);
+  });
+}
 function show(tab) {
   document.querySelectorAll("nav [role=tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === tab));
+  syncNavGroups(tab);
   document.querySelectorAll("main section").forEach(s => s.hidden = s.id !== tab);
   try { history.replaceState(null, "", "#" + tab); } catch (e) {}
   loaders[tab]().catch(e => say("Không tải được: " + e.message, "err"));
@@ -1500,28 +2207,36 @@ $("#playerRows").addEventListener("change", e => {
   const id = e.target.dataset.grade; if (!id) return;
   act(async () => { await api("player_grade", {id, grade: Number(e.target.value)}); await loaders.pemain(); }, "Đã đổi cấp thẻ.");
 });
-$("#playerRows").addEventListener("click", e => {
+$("#playerRows").addEventListener("click", async e => {
   const t = e.target;
   if (t.dataset.team) act(async () => { await api("player_team", {id: t.dataset.team, team: t.dataset.to}); await loaders.pemain(); },
                           t.dataset.to === "second" ? "Đã chuyển sang đội phụ." : "Đã đưa về đội chính.");
-  if (t.dataset.remove && confirm(`Thanh lý ${t.dataset.name} khỏi CLB? Không thể hoàn tác.`))
+  if (t.dataset.remove && await uiConfirm(`Thanh lý ${t.dataset.name} khỏi CLB? Không thể hoàn tác.`))
     act(async () => { await api("player_remove", {id: t.dataset.remove}); await loaders.pemain(); }, `Đã thanh lý ${t.dataset.name}.`);
 });
 
 // Cong OVR / he so gia theo cap the (= GRADE_BOOST / GRADE_PRICE trong http_config.py).
 // OVR luu trong danh sach la OVR goc (+0); game hien OVR da cong cap the (vd Pele WL: 89 + 5 = 94 o +1).
-const GRADE_BOOST = [0, 5, 6, 7, 8, 10, 12, 14, 17, 20, 24];
-const GRADE_PRICE = [0, 1, 2.65, 7.1, 19.6, 53, 162, 420, 1090, 2680, 6290];
+const GRADE_BOOST = [0, 5, 6, 7, 8, 10, 12, 14, 17, 20, 24, 28, 32, 36, 40, 44, 48, 52, 55, 58, 60];
+const GRADE_PRICE = [0, 1, 2.65, 7.1, 19.6, 53, 162, 420, 1090, 2680, 6290,
+  14500, 33300, 76500, 176000, 405000, 931000, 2140000, 4930000, 11300000, 26100000];
+const MAX_EP = 999999999999;
+// gia the +g tu gia +1 (nhu card_price: +11..+20 toi da MAX_EP, khong re hon +10)
+function gradePrice(p1, g) {
+  if (g === 1) return p1;
+  const v = sig3(p1 * GRADE_PRICE[g]);
+  return g > 10 ? Math.min(v, Math.max(MAX_EP, sig3(p1 * GRADE_PRICE[10]))) : v;
+}
 function sig3(x) { x = Math.round(x); const n = String(x).length; return x >= 1000 ? Math.round(x / 10 ** (n - 3)) * 10 ** (n - 3) : x; }
 function renderSearch() {
   const rows = searchResults;  // server da sap xep
-  const g = Math.min(10, Math.max(0, Number($("#searchGrade").value) || 1));
+  const g = Math.min(MAX_GRADE, Math.max(0, Number($("#searchGrade").value) || 1));
   paintSort("searchHead");
   $("#searchRows").innerHTML = rows.map(r => `<tr class="${selSearch.has(r.spid) ? "sel" : ""}">
     <td class="ck"><input type="checkbox" data-ssel="${r.spid}" ${selSearch.has(r.spid) ? "checked" : ""} aria-label="Chọn ${esc(r.name)}"></td>
     <td class="pname">${pimg(r.spid)}<button type="button" class="linkish" data-card="${r.spid}" data-cgrade="${$("#searchGrade").value || 1}">${esc(r.name)}</button> <span class="muted">${r.spid}</span></td><td>${esc(r.team || "")}</td><td>${esc(r.nation || "")}</td>
     <td>${seasonBadge(r.season)}</td><td>${r.pos}</td>
-    <td class="num" title="OVR gốc (+0): ${r.ovr}">${r.ovr + GRADE_BOOST[g]}</td><td class="num">${fmt(g === 1 ? r.price : sig3(r.price * GRADE_PRICE[g]))}</td><td>${r.market ? "Có bán" : '<span class="muted">Không bán</span>'}</td>
+    <td class="num" title="OVR gốc (+0): ${r.ovr}">${r.ovr + GRADE_BOOST[g]}</td><td class="num">${fmt(gradePrice(r.price, g))}</td><td>${r.market ? "Có bán" : '<span class="muted">Không bán</span>'}</td>
     <td><button class="b small primary" data-add="${r.spid}" data-name="${esc(r.name)}">Thêm vào CLB</button>
         <button class="b small" data-gift="${r.spid}" data-name="${esc(r.name)}">Gửi vào Túi</button></td>
   </tr>`).join("") || `<tr><td colspan="10" class="muted">Không tìm thấy cầu thủ nào.</td></tr>`;
@@ -1583,9 +2298,9 @@ $("#searchPager").addEventListener("click", e => {
   $("#searchHead").scrollIntoView({block: "nearest"});
 });
 $("#searchRows").addEventListener("click", e => {
-  const t = e.target, grade = Number($("#searchGrade").value);
-  if (t.dataset.add) act(() => api("player_add", {spid: Number(t.dataset.add), grade}), `Đã thêm ${t.dataset.name} +${grade} vào CLB (dự bị).`);
-  if (t.dataset.gift) act(() => api("bag_send", {title: `Cầu thủ: ${t.dataset.name}`, spid: Number(t.dataset.gift), grade}), `Đã gửi ${t.dataset.name} +${grade} vào Túi.`);
+  const t = e.target, grade = Number($("#searchGrade").value), level = Number($("#searchLevel").value) || 1;
+  if (t.dataset.add) act(() => api("player_add", {spid: Number(t.dataset.add), grade, level}), `Đã thêm ${t.dataset.name} +${grade} LV ${level} vào CLB (dự bị).`);
+  if (t.dataset.gift) act(() => api("bag_send", {title: `Cầu thủ: ${t.dataset.name}`, spid: Number(t.dataset.gift), grade, level}), `Đã gửi ${t.dataset.name} +${grade} LV ${level} vào Túi.`);
 });
 
 $("#packForm").addEventListener("submit", e => {
@@ -1607,9 +2322,16 @@ $("#dailyRows").addEventListener("click", e => {
 $("#dailyAdd").addEventListener("click", () => { const t = readDaily(); t.push({ep: 10000}); renderDaily(t); });
 $("#dailySave").addEventListener("click", () => act(async () => { await api("daily_set", {table: readDaily()}); await loaders.harian(); }, "Đã lưu bảng quà."));
 $("#dailyGrant").addEventListener("click", () => act(async () => { const r = await api("daily_grant", {}); await loaders.harian(); say(`Đã gửi "${r.title}" vào Túi.`, "ok"); }));
-$("#dailyReset").addEventListener("click", () => { if (confirm("Đặt lại chuỗi đăng nhập về 0?")) act(async () => { await api("daily_reset", {}); await loaders.harian(); }, "Đã đặt lại chuỗi ngày."); });
+$("#dailyReset").addEventListener("click", async () => { if (await uiConfirm("Đặt lại chuỗi đăng nhập về 0?")) act(async () => { await api("daily_reset", {}); await loaders.harian(); }, "Đã đặt lại chuỗi ngày."); });
 $("#scoutReset").addEventListener("click", () => act(async () => { await api("scouts_reset", {}); await loaders.scout(); }, "Tất cả tuyển trạch viên đã sẵn sàng."));
 $("#logRefresh").addEventListener("click", () => loaders.log());
+["logQuiet", "logErr"].forEach(id => $("#" + id).addEventListener("change", () => loaders.log()));
+$("#logExport").addEventListener("click", () => {
+  const b = $("#logExport"); b.disabled = true; b.classList.add("busy");
+  say("Đang gom nhật ký lỗi (khoảng 10–30 giây), file zip sẽ tự tải về. Gửi file đó cho người hỗ trợ.", "ok");
+  location.href = "/export_logs.zip";
+  setTimeout(() => { b.disabled = false; b.classList.remove("busy"); }, 15000);
+});
 setInterval(() => { if ($("#logAuto").checked && !$("#log").hidden) loaders.log(); }, 3000);
 
 
@@ -1628,7 +2350,7 @@ function skippedText(r) {
   return ` Bỏ qua ${r.skipped.length}: ${names}${r.skipped.length > 4 ? "…" : ""}.`;
 }
 $("#bulkGrade").innerHTML = gradeOpts(1, 0);
-$("#bulkLevel").innerHTML = levelOpts(23);
+$("#bulkLevel").innerHTML = levelOpts(30);
 $("#playerRows").addEventListener("change", e => {
   const id = e.target.dataset.sel; if (!id) return;
   e.target.checked ? selClub.add(id) : selClub.delete(id);
@@ -1637,11 +2359,11 @@ $("#playerRows").addEventListener("change", e => {
 $("#selAllClub").addEventListener("change", e => {
   shownClubIds.forEach(i => e.target.checked ? selClub.add(i) : selClub.delete(i)); renderClub();
 });
-$("#bulkClub").addEventListener("click", e => {
+$("#bulkClub").addEventListener("click", async e => {
   const action = e.target.dataset.bulk; if (!action) return;
   if (action === "clear") { selClub.clear(); renderClub(); return; }
   const ids = [...selClub];
-  if (action === "remove" && !confirm(`Thanh lý ${ids.length} cầu thủ đã chọn khỏi CLB? Không thể hoàn tác.`)) return;
+  if (action === "remove" && !await uiConfirm(`Thanh lý ${ids.length} cầu thủ đã chọn khỏi CLB? Không thể hoàn tác.`)) return;
   const label = {level: `Đã đặt cấp độ LV ${$("#bulkLevel").value} cho`, grade: `Đã đặt cấp +${$("#bulkGrade").value} cho`, second: "Đã chuyển sang đội phụ", first: "Đã đưa về đội chính", remove: "Đã thanh lý"}[action];
   act(async () => {
     const r = await api("player_bulk", {ids, action, grade: Number($("#bulkGrade").value), level: Number($("#bulkLevel").value)});
@@ -1660,11 +2382,11 @@ $("#selAllSearch").addEventListener("change", e => {
 $("#bulkSearch").addEventListener("click", e => {
   const action = e.target.dataset.sbulk; if (!action) return;
   if (action === "clear") { selSearch.clear(); renderSearch(); return; }
-  const grade = Number($("#searchGrade").value) || 1, spids = [...selSearch];
+  const grade = Number($("#searchGrade").value) || 1, level = Number($("#searchLevel").value) || 1, spids = [...selSearch];
   act(async () => {
-    const r = await api("player_add_bulk", {spids, grade});
+    const r = await api("player_add_bulk", {spids, grade, level});
     selSearch.clear(); renderSearch();
-    say(`Đã thêm ${r.done} thẻ +${grade} vào CLB (dự bị).${skippedText(r)}`, r.skipped && r.skipped.length ? "err" : "ok");
+    say(`Đã thêm ${r.done} thẻ +${grade} LV ${level} vào CLB (dự bị).${skippedText(r)}`, r.skipped && r.skipped.length ? "err" : "ok");
   });
 });
 
@@ -1942,7 +2664,8 @@ loadFacets();
 
 loadSeasons();
 loadAllTeams();
-$("#searchGrade").innerHTML = gradeOpts(1); $("#searchGrade").addEventListener("change", () => renderSearch()); $("#bagGrade").innerHTML = gradeOpts(1);
+$("#searchGrade").innerHTML = gradeOpts(1);
+$("#searchLevel").innerHTML = Array.from({length: 30}, (_, i) => `<option value="${i + 1}"${i ? "" : " selected"}>LV ${i + 1}</option>`).join(""); $("#searchGrade").addEventListener("change", () => renderSearch()); $("#bagGrade").innerHTML = gradeOpts(1);
 packsReady = api("packs").then(j => {
   packs = j.packs;
   $("#packSel").innerHTML = packOpts();
@@ -1966,12 +2689,15 @@ api("enhancement_settings").then(renderEnhance).catch(e => { $("#enhanceStatus")
 async function loadBot() {
   try {
     const r = await apiFetch("bot_settings");
+    const autoModes = new Set(r.auto_modes || []), AUTO = r.auto ?? -1;
+    const autoOpt = (k, val) => autoModes.has(k)
+      ? `<option value="${AUTO}"${val == AUTO ? " selected" : ""}>Theo HLV ảo</option>` : "";
     $("#botRows").innerHTML = Object.entries(r.modes).map(([k, name]) => {
       const v = r.values[k];
       const lv = Array.from({length: r.max_level}, (_, i) => i + 1)
         .map(l => `<option value="${l}"${l == v.level ? " selected" : ""}>LV ${l}</option>`).join("");
-      return `<tr data-mode="${k}"><td>${esc(name)}</td><td><select class="botGrade">${gradeOpts(v.grade, 0)}</select></td>`
-        + `<td><select class="botLevel">${lv}</select></td></tr>`;
+      return `<tr data-mode="${k}"><td>${esc(name)}</td><td><select class="botGrade">${autoOpt(k, v.grade)}${gradeOpts(v.grade, 0)}</select></td>`
+        + `<td><select class="botLevel">${autoOpt(k, v.level)}${lv}</select></td></tr>`;
     }).join("");
   } catch (e) { $("#botRows").innerHTML = `<tr><td colspan="3" class="muted">Không tải được: ${esc(e.message)}</td></tr>`; }
 }
@@ -1983,18 +2709,167 @@ $("#botSave").addEventListener("click", () => act(async () => {
 }, "Đã lưu sức mạnh BOT. Áp dụng từ trận tiếp theo."));
 $("#botReset").addEventListener("click", () => act(async () => {
   await api("bot_settings_set", {reset: true}); await loadBot();
-}, "Đã đưa BOT về mặc định (+10, LV 1)."));
+}, "Đã đưa BOT về mặc định (+10, LV 30; Xếp hạng theo HLV ảo)."));
 
-$("#resetCoach").addEventListener("click", async () => {
-  if (!confirm("Xoá toàn bộ nhân vật hiện tại (HLV, CLB, cầu thủ, EP, túi đồ) để tạo lại từ đầu?\n\nHãy thoát game trước. Dữ liệu cũ sẽ được sao lưu.")) return;
-  if (prompt('Gõ chữ RESET để xác nhận:') !== "RESET") { say("Đã huỷ reset nhân vật.", ""); return; }
+async function loadResetSlots() {
   try {
-    const r = await api("reset_coach", {confirm: "RESET"});
-    say("Đã reset nhân vật. Vào game để tạo HLV mới." + (r.backup ? ` Bản sao lưu: ${r.backup}` : ""), "ok");
-    $("#coachName").textContent = "Chưa có HLV";
+    const r = await apiFetch("coach_slots"), sel = $("#resetSlot");
+    sel.innerHTML = r.coaches.map(c => `<option value="${c.slot}">HLV ${c.slot + 1}: ${esc(c.name || "")}${c.default ? " (đang chơi)" : ""}</option>`).join("")
+      + `<option value="all">${r.coaches.length > 1 ? "Cả hai HLV" : "Tất cả"}</option>`;
+    if (r.coaches.length <= 1) sel.value = "all";
+  } catch (e) {}
+}
+loadResetSlots();
+$("#resetCoach").addEventListener("click", async () => {
+  const sel = $("#resetSlot"), label = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : "Tất cả";
+  if (!await uiConfirm(`Xoá nhân vật: ${label}?\n(HLV, CLB, cầu thủ, EP, túi đồ của HLV đó)\n\nHãy thoát game trước. Dữ liệu cũ sẽ được sao lưu.`)) return;
+  if (await uiPrompt('Gõ chữ RESET để xác nhận:') !== "RESET") { say("Đã huỷ reset nhân vật.", ""); return; }
+  try {
+    const r = await api("reset_coach", {confirm: "RESET", slot: sel.value});
+    say((r.done === "all" ? "Đã reset toàn bộ nhân vật. Vào game để tạo HLV mới." : `Đã xoá HLV ${r.done}. Vào game để tạo lại ở ô trống.`)
+        + (r.backup ? ` Bản sao lưu: ${r.backup}` : ""), "ok");
+    if (r.done === "all") $("#coachName").textContent = "Chưa có HLV";
+    await loadResetSlots();
   } catch (e) { say("Lỗi: " + e.message, "err"); }
 });
 
+// ===== Tran dau: cai dat truoc tran, thuong sau tran, thi truong =====
+const PM_TOD = {1: "Ban ngày", 3: "Ban đêm", random: "Ngẫu nhiên"};
+const PM_WEATHER = {0: "Trời đẹp", 1: "Mưa", 2: "Tuyết", 3: "Âm u (ngày) / chạng vạng (đêm)", random: "Ngẫu nhiên (đẹp, mưa, âm u)"};
+const MR_LABEL = {win: "Thắng", draw: "Hoà", loss: "Thua"};
+let MR_CHOICES = [];
+const pmOpt = (v, label, cur) => `<option value="${esc(String(v))}"${String(v) === String(cur) ? " selected" : ""}>${esc(label)}</option>`;
+function mrRow(w, prize) {
+  const isEp = prize && typeof prize === "object";
+  const opts = MR_CHOICES.map(c => `<option value="${c.itemid}"${!isEp && c.itemid == prize ? " selected" : ""}>${esc(c.name)} (${esc(c.kind)})</option>`).join("");
+  return `<tr><td><input type="number" min="1" max="1000" value="${w}" data-mrw style="width:80px"></td>
+    <td><select data-mrkind><option value="ep"${isEp ? " selected" : ""}>EP</option><option value="item"${isEp ? "" : " selected"}>Gói / vật phẩm</option></select></td>
+    <td><input type="number" min="1" value="${isEp ? prize.ep : 1000}" data-mrep style="width:140px"${isEp ? "" : " hidden"}><select data-mritem${isEp ? " hidden" : ""}>${opts}</select></td>
+    <td class="muted" data-mrpct></td><td><button class="b danger" data-mrdel>Xoá</button></td></tr>`;
+}
+function mrPct() {
+  const rows = [...document.querySelectorAll("#mrCards tr")], ws = rows.map(r => Math.max(0, +r.querySelector("[data-mrw]").value || 0));
+  const sum = ws.reduce((a, b) => a + b, 0);
+  rows.forEach((r, i) => r.querySelector("[data-mrpct]").textContent = sum ? (ws[i] * 100 / sum).toFixed(1) + " %" : "");
+}
+loaders.giaep = async () => { await loadPrices(); await loadShopPaid(); };
+async function loadShopPaid() {
+  const d = await api("shop_settings");
+  $("#shopPaid").checked = d.paid; $("#shopPacks").value = d.packs;
+  $("#shopSample").textContent = d.paid && d.samples.length ? "Ví dụ giá hiện tại: " + d.samples.map(x => `${x.name}: ${Number(x.price).toLocaleString("vi-VN")} EP`).join(" · ") : "";
+}
+$("#shopSave").addEventListener("click", () => act(async () => {
+  await api("shop_settings_set", {paid: $("#shopPaid").checked, packs: Number($("#shopPacks").value)});
+  await loadShopPaid();
+}, "Đã lưu Shop tính phí. Mở lại Shop trong game để thấy giá mới."));
+loaders.dapthe = async () => { renderEnhance(await api("enhancement_settings")); };
+loaders.bot = async () => { await loadBot(); };
+loaders.nhiemvu = async () => {
+  const d = await api("missions");
+  $("#misOn").checked = d.enabled;
+  $("#misLang").innerHTML = Object.entries(d.langs).map(([k, v]) => `<option value="${k}"${k === d.lang ? " selected" : ""}>${esc(v)}</option>`).join("");
+  $("#misTargets").value = d.targets; $("#misRewards").value = d.rewards;
+  const m = d.me || {};
+  $("#misMe").textContent = m.total ? `Đã xong ${m.done}/${m.total} thành tích · ${m.rewardable} phần thưởng chờ nhận · ${m.gp} GP tuần này · ${m.badges} huy hiệu` : "";
+  $("#misQuests").innerHTML = (m.quests || []).map(q => `<tr><td>${esc(q.name)}</td><td>${q.cur} / ${q.todo}</td><td>${q.gp}</td></tr>`).join("")
+    || `<tr><td colspan="3" class="muted">Nhiệm vụ đang tắt.</td></tr>`;
+};
+$("#misSave").addEventListener("click", () => act(async () => {
+  await api("missions_set", {enabled: $("#misOn").checked, lang: $("#misLang").value,
+                             targets: Number($("#misTargets").value), rewards: Number($("#misRewards").value)});
+  await loaders.nhiemvu();
+}, "Đã lưu cài đặt nhiệm vụ."));
+loaders.resetnv = async () => { await loadResetSlots(); };
+loaders.thuong = loaders.thitruong = loaders.xephang = loaders.teamcolor = () => loaders.trandau();
+loaders.trandau = async () => {
+  const [pm, mr, so] = await Promise.all([apiFetch("prematch"), apiFetch("match_rewards"), apiFetch("server_options")]);
+  $("#pmStadium").innerHTML = pmOpt("home", "Sân nhà của đội chủ nhà", pm.stadium) + pmOpt("random", "Ngẫu nhiên", pm.stadium)
+    + pm.stadiums.map(s => pmOpt(s.id, s.name, pm.stadium)).join("");
+  $("#pmTod").innerHTML = Object.entries(PM_TOD).map(([k, v]) => pmOpt(k, v, pm.tod)).join("");
+  $("#pmWeather").innerHTML = Object.entries(PM_WEATHER).map(([k, v]) => pmOpt(k, v, pm.weather)).join("");
+  $("#pmHalf").innerHTML = pm.halfLengths.map(h => pmOpt(h, `${h / 5} phút (${h / 10} phút mỗi hiệp)`, pm.halfLength)).join("");
+  $("#pmBall").innerHTML = pm.balls.map(b => pmOpt(b.id, b.name, pm.ball)).join("");
+  MR_CHOICES = mr.choices || [];
+  $("#mrResult").innerHTML = ["win", "draw", "loss"].map(k => { const r = mr.result[k] || {}; return `<tr><td><b>${MR_LABEL[k]}</b></td>
+    <td><input type="number" min="0" value="${r.ep || 0}" data-mr="${k}.ep" style="width:130px"></td>
+    <td><input type="number" min="0" value="${r.coach || 0}" data-mr="${k}.coach" style="width:100px"></td>
+    <td><input type="number" min="0" value="${r.player || 0}" data-mr="${k}.player" style="width:100px"></td></tr>`; }).join("");
+  $("#mrCards").innerHTML = (mr.cards || []).map(([w, p]) => mrRow(w, p)).join("");
+  $("#mrFile").textContent = mr.file ? `Lưu ở ${mr.file}` : "";
+  mrPct();
+  $("#optHide0").checked = !!so.hide_engine_cards;
+  $("#optTcGrade").checked = so.tc_grade !== false;
+  const [mk, rk] = await Promise.all([apiFetch("market_settings"), apiFetch("rank_info").catch(() => null)]);
+  mkFill(mk);
+  $("#mkInfo").textContent = ` Đang rao: ${mk.waiting} thẻ · đã bán chờ nhận EP: ${mk.sold} · lưu ở ${mk.file}`;
+  if (rk) rkFill(rk);
+};
+let MK_PRESETS = {};
+function mkFill(mk) {
+  MK_PRESETS = mk.presets || MK_PRESETS;
+  $("#mkMode").value = mk.mode; $("#mkPreset").value = mk.preset;
+  $("#mkDynamic").checked = !!mk.dynamic; $("#mkSwing").value = Math.round(mk.swing * 100);
+  $("#mkAsk").value = Math.round(mk.ask_max * 100); $("#mkSaleMin").value = mk.sale_min; $("#mkSaleMax").value = mk.sale_max;
+}
+const RK_DIV = {AMATEUR: "Nghiệp dư", SEMIPRO: "Bán chuyên", PROFESSIONAL: "Chuyên nghiệp", WORLDCLASS: "Cấp thế giới", LEGENDARY: "Huyền thoại"};
+const rkDiv = c => { const m = /^([A-Z]+?)_?([A-E])?$/.exec(String(c || "")); return m && RK_DIV[m[1]] ? RK_DIV[m[1]] + (m[2] ? " " + m[2] : "") : String(c || ""); };
+function rkFill(rk) {
+  $("#rkOn").checked = !!rk.enabled; $("#rkChat").checked = !!rk.chat;
+  $("#rkMe").innerHTML = ((rk.me || {}).modes || []).map(m => `<tr><td><b>${esc(m.mode)}</b></td><td>${m.elo}</td><td>${esc(rkDiv(m.division))}</td>
+    <td>${m.games ? m.rank : "Chưa đá"}</td><td>${m.wins} / ${m.draws} / ${m.losses}</td></tr>`).join("");
+  $("#rkTop").innerHTML = (rk.top || []).map((t, i) => `<tr${t.me ? ' style="font-weight:700"' : ""}><td>${i + 1}</td><td>${esc(t.name)}</td><td>${t.elo}</td><td>${esc(rkDiv(t.division))}</td></tr>`).join("");
+  $("#rkInfo").textContent = ` ${rk.count} HLV ảo (tối đa ${rk.max}) · lưu ở ${rk.file}`;
+}
+$("#mkPreset").addEventListener("change", () => {
+  const p = MK_PRESETS[$("#mkPreset").value];
+  if (p) mkFill({...p, mode: $("#mkMode").value, preset: $("#mkPreset").value});
+});
+["#mkDynamic", "#mkSwing", "#mkAsk", "#mkSaleMin", "#mkSaleMax"].forEach(id => $(id).addEventListener("input", () => { $("#mkPreset").value = "custom"; }));
+$("#mkSave").addEventListener("click", () => act(async () => {
+  await api("market_settings_set", {mode: $("#mkMode").value, preset: $("#mkPreset").value, dynamic: $("#mkDynamic").checked,
+    swing: (+$("#mkSwing").value || 0) / 100, ask_max: (+$("#mkAsk").value || 100) / 100,
+    sale_min: +$("#mkSaleMin").value || 1, sale_max: +$("#mkSaleMax").value || 1});
+  await loaders.trandau();
+}, "Đã lưu cài đặt thị trường."));
+$("#rkOn").addEventListener("change", e => act(async () => {
+  await api("rank_settings_set", {enabled: e.target.checked});
+  rkFill(await apiFetch("rank_info"));
+}, e.target.checked ? "Đã bật Xếp hạng. Vào lại game để thấy menu." : "Đã tắt Xếp hạng."));
+$("#rkChat").addEventListener("change", e => act(async () => {
+  await api("rank_settings_set", {chat: e.target.checked});
+}, e.target.checked ? "HLV ảo sẽ chat trong trận." : "Đã tắt chat của HLV ảo."));
+$("#rkReset").addEventListener("click", async () => {
+  if (await uiConfirm("Đặt lại Elo và kết quả Xếp hạng mùa này của HLV đang chơi?"))
+    act(async () => { rkFill(await api("rank_reset", {})); }, "Đã đặt lại Xếp hạng mùa này.");
+});
+$("#optTcGrade").addEventListener("change", e => act(async () => {
+  await api("server_options_set", {tc_grade: e.target.checked});
+}, e.target.checked ? "Đã bật Team Color nâng cấp." : "Đã tắt Team Color nâng cấp."));
+$("#pmSave").addEventListener("click", () => act(async () => {
+  const v = id => { const x = $(id).value; return /^\d+$/.test(x) ? +x : x; };
+  await api("prematch_set", {stadium: v("#pmStadium"), tod: v("#pmTod"), weather: v("#pmWeather"), halfLength: v("#pmHalf"), ball: v("#pmBall")});
+  await loaders.trandau();
+}, "Đã lưu cài đặt trận. Áp dụng từ trận tạo tiếp theo."));
+$("#mrAdd").addEventListener("click", () => { $("#mrCards").insertAdjacentHTML("beforeend", mrRow(10, {ep: 1000})); mrPct(); });
+$("#mrCards").addEventListener("input", mrPct);
+$("#mrCards").addEventListener("change", e => {
+  if (e.target.matches("[data-mrkind]")) {
+    const tr = e.target.closest("tr"), ep = e.target.value === "ep";
+    tr.querySelector("[data-mrep]").hidden = !ep; tr.querySelector("[data-mritem]").hidden = ep;
+  }
+});
+$("#mrCards").addEventListener("click", e => { if (e.target.matches("[data-mrdel]")) { e.target.closest("tr").remove(); mrPct(); } });
+$("#mrSave").addEventListener("click", () => act(async () => {
+  const result = {};
+  document.querySelectorAll("[data-mr]").forEach(i => { const [k, f] = i.dataset.mr.split("."); (result[k] = result[k] || {})[f] = +i.value || 0; });
+  const cards = [...document.querySelectorAll("#mrCards tr")].map(tr => [+tr.querySelector("[data-mrw]").value || 1,
+    tr.querySelector("[data-mrkind]").value === "ep" ? {ep: +tr.querySelector("[data-mrep]").value || 1} : +tr.querySelector("[data-mritem]").value]);
+  await api("match_rewards_set", {result, cards});
+  await loaders.trandau();
+}, "Đã lưu thưởng sau trận."));
+$("#optHide0").addEventListener("change", e => act(async () => {
+  await api("server_options_set", {hide_engine_cards: e.target.checked});
+}, e.target.checked ? "Đã ẩn thẻ mùa 0 khỏi Thị trường." : "Thẻ mùa 0 lại được bán trên Thị trường."));
 show(((location.hash || "").slice(1) in loaders) ? location.hash.slice(1) : "ringkasan");
 </script>
 <script>
@@ -2033,49 +2908,86 @@ show(((location.hash || "").slice(1) in loaders) ? location.hash.slice(1) : "rin
       if (lab) btn.setAttribute("aria-label", lab);
       btn.innerHTML = '<span class="cs-val"></span><svg class="cs-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
       wrap.appendChild(btn);
-      const sync = () => { btn.querySelector(".cs-val").textContent = text(sel); btn.disabled = sel.disabled; };
+      const sync = () => { btn.querySelector(".cs-val").textContent = text(sel); btn.disabled = sel.disabled; wrap.hidden = sel.hidden; };
       sel._csSync = sync; sync();
       sel.addEventListener("change", sync);
-      new MutationObserver(sync).observe(sel, {childList: true, subtree: true, attributes: true, attributeFilter: ["disabled"]});
+      new MutationObserver(sync).observe(sel, {childList: true, subtree: true, attributes: true, attributeFilter: ["disabled", "hidden"]});
+      // gan .value / .selectedIndex bang code cung cap nhat nhan hien thi
+      ["value", "selectedIndex"].forEach(prop => {
+        const d = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, prop);
+        if (d && d.set) Object.defineProperty(sel, prop, {configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, v); sync(); }});
+      });
       btn.addEventListener("click", e => { e.preventDefault(); open && open.sel === sel ? close() : show(sel, btn); });
       btn.addEventListener("keydown", e => {
         if (!open && ["ArrowDown", "ArrowUp", "Enter", " "].includes(e.key)) { e.preventDefault(); e.stopPropagation(); show(sel, btn); }
       });
     }
+    const fold = t => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+    const COUNT_RE = /\s*\(([\d.,]+)\s*(thẻ[^)]*)\)\s*$/;
     function show(sel, btn) {
       close();
       if (!sel.options.length) return;
+      const searchable = sel.options.length > 11;  // danh sach dai (mua, cap do, goi...) -> co o tim
       const pop = document.createElement("div");
-      pop.className = "cs-pop"; pop.setAttribute("role", "listbox");
-      [...sel.options].forEach((o, i) => {
-        const it = document.createElement("div");
-        it.className = "cs-opt" + (i === sel.selectedIndex ? " on" : "");
-        it.setAttribute("role", "option"); it.setAttribute("aria-selected", i === sel.selectedIndex);
-        it.textContent = o.text; it.dataset.i = i;
-        pop.appendChild(it);
+      pop.className = "cs-pop" + (searchable ? " ss-pop" : "");
+      let list = pop, search = null, foot = null;
+      if (searchable) {
+        const hint = ((sel.closest("label") && sel.closest("label").firstChild.textContent) || "").replace(/^\s*\d+\s*/, "").replace(/\(.*?\)/g, "").trim().toLowerCase() || "mục";
+        pop.innerHTML = '<div class="ss-head"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>'
+          + '<input class="ss-search" autocomplete="off"></div><div class="ss-list" role="listbox"></div><div class="ss-foot muted"></div>';
+        search = pop.querySelector(".ss-search"); search.placeholder = `Tìm ${hint}…`; search.setAttribute("aria-label", `Tìm ${hint}`);
+        list = pop.querySelector(".ss-list"); foot = pop.querySelector(".ss-foot");
+      } else pop.setAttribute("role", "listbox");
+      const opts = [...sel.options].map((o, i) => {
+        const m = o.text.match(COUNT_RE);
+        return {i, text: o.text, name: m ? o.text.replace(COUNT_RE, "") : o.text, count: m ? m[1] : "", unit: m ? m[2] : "", key: fold(o.text)};
       });
       document.body.appendChild(pop);
+      open = {sel, btn, pop, list, opts, vis: opts.map(o => o.i), active: 0};
+      const render = () => {
+        const q = search ? fold(search.value.trim()) : "";
+        const vis = opts.filter(o => !q || o.key.includes(q));
+        open.vis = vis.map(o => o.i);
+        list.innerHTML = "";
+        vis.forEach(o => {
+          const it = document.createElement("div");
+          const on = o.i === sel.selectedIndex;
+          it.className = "cs-opt" + (on ? " on" : "");
+          it.setAttribute("role", "option"); it.setAttribute("aria-selected", on); it.dataset.i = o.i;
+          if (o.count) {
+            const nm = document.createElement("span"); nm.className = "ss-name"; nm.textContent = o.name;
+            const ct = document.createElement("span"); ct.className = "ss-count"; ct.textContent = o.count; ct.title = `${o.count} ${o.unit}`;
+            it.append(nm, ct);
+          } else it.textContent = o.text;
+          list.appendChild(it);
+        });
+        if (!vis.length) list.innerHTML = '<div class="cs-opt muted" style="cursor:default">Không có kết quả</div>';
+        if (foot) foot.textContent = q ? `${vis.length} / ${opts.length} kết quả` : `${opts.length} mục · gõ để lọc`;
+        const cur = open.vis.indexOf(sel.selectedIndex);
+        setActive(cur >= 0 ? cur : 0, true);
+      };
       const r = btn.getBoundingClientRect();
-      pop.style.minWidth = r.width + "px";
-      const h = Math.min(pop.scrollHeight, 280), below = innerHeight - r.bottom;
-      pop.style.top = (below < h + 12 && r.top > below ? r.top - h - 6 : r.bottom + 6) + "px";
+      pop.style.minWidth = Math.max(r.width, searchable ? 300 : 0) + "px";
+      render();
+      const h = Math.min(pop.scrollHeight, searchable ? 380 : 280), below = innerHeight - r.bottom;
+      pop.style.top = (below < h + 12 && r.top > below ? Math.max(8, r.top - h - 6) : r.bottom + 6) + "px";
       pop.style.left = Math.max(8, Math.min(r.left, innerWidth - pop.offsetWidth - 8)) + "px";
-      open = {sel, btn, pop, active: Math.max(0, sel.selectedIndex)};
       btn.classList.add("open"); btn.setAttribute("aria-expanded", "true");
-      pop.addEventListener("mousedown", e => e.preventDefault());
-      pop.addEventListener("click", e => { const it = e.target.closest(".cs-opt"); if (it) pick(+it.dataset.i); });
-      pop.addEventListener("mousemove", e => { const it = e.target.closest(".cs-opt"); if (it) setActive(+it.dataset.i, false); });
-      setActive(open.active, true);
+      pop.addEventListener("mousedown", e => { if (e.target !== search) e.preventDefault(); });
+      list.addEventListener("click", e => { const it = e.target.closest(".cs-opt[data-i]"); if (it) pick(+it.dataset.i); });
+      list.addEventListener("mousemove", e => { const it = e.target.closest(".cs-opt[data-i]"); if (it) setActive(open.vis.indexOf(+it.dataset.i), false); });
+      if (search) { search.addEventListener("input", render); setTimeout(() => search.focus(), 0); }
     }
-    function setActive(i, scroll) {
+    function setActive(k, scroll) {
       if (!open) return;
-      const items = open.pop.children;
-      if (i < 0 || i >= items.length) return;
-      for (const x of items) x.classList.remove("act");
-      items[i].classList.add("act"); open.active = i;
-      if (scroll) items[i].scrollIntoView({block: "nearest"});
+      const items = open.list.querySelectorAll(".cs-opt[data-i]");
+      if (k < 0 || k >= items.length) return;
+      items.forEach(x => x.classList.remove("act"));
+      items[k].classList.add("act"); open.active = k;
+      if (scroll) items[k].scrollIntoView({block: "nearest"});
     }
     function pick(i) {
+      if (i === undefined || i === null || isNaN(i)) return;
       const {sel, btn} = open;
       close();
       if (sel.selectedIndex !== i) {
@@ -2095,9 +3007,9 @@ show(((location.hash || "").slice(1) in loaders) ? location.hash.slice(1) : "rin
       if (e.key === "Escape") { e.preventDefault(); const b = open.btn; close(); b.focus(); }
       else if (e.key === "ArrowDown") { e.preventDefault(); setActive(open.active + 1, true); }
       else if (e.key === "ArrowUp") { e.preventDefault(); setActive(open.active - 1, true); }
-      else if (e.key === "Home") { e.preventDefault(); setActive(0, true); }
-      else if (e.key === "End") { e.preventDefault(); setActive(open.pop.children.length - 1, true); }
-      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(open.active); }
+      else if (e.key === "Home" && !(e.target.classList && e.target.classList.contains("ss-search"))) { e.preventDefault(); setActive(0, true); }
+      else if (e.key === "End" && !(e.target.classList && e.target.classList.contains("ss-search"))) { e.preventDefault(); setActive(open.vis.length - 1, true); }
+      else if (e.key === "Enter" || (e.key === " " && !(e.target.classList && e.target.classList.contains("ss-search")))) { e.preventDefault(); pick(open.vis[open.active]); }
       else if (e.key === "Tab") close();
     });
     document.addEventListener("mousedown", e => { if (open && !open.pop.contains(e.target) && !open.btn.contains(e.target)) close(); });
@@ -2114,5 +3026,7 @@ show(((location.hash || "").slice(1) in loaders) ? location.hash.slice(1) : "rin
   
 })();
 </script>
+
+
 </body>
 </html>

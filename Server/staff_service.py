@@ -3,6 +3,7 @@ import json
 import os
 import random
 import re
+import time
 
 hc = None
 PACKS = (
@@ -14,13 +15,37 @@ PACKS = (
      "staffpack_desc": "Chiêu mộ 1 nhân viên (5 sao). 150.000 EP.", "ep": 150000, "item": 0, "grades": (10,)},
 )
 # Names, portrait IDs and roles are sourced from the bundled catalog.
-with open(os.path.join(os.path.dirname(__file__), 'gamedata', 'staff_catalog.json'), encoding='utf-8') as stream:
+HERE = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(HERE, 'gamedata', 'staff_catalog.json'), encoding='utf-8') as stream:
     CATALOG = json.load(stream)['staff']
+# HLV tuy chinh (GM Tool > HLV > Tao HLV tuy chinh): file rieng, khong nam trong goi cap nhat
+# (make_update PROTECTED) -> cap nhat ban va khong xoa mat. Gop vao CATALOG khi chay.
+CUSTOM_FILE = os.path.join(HERE, 'gamedata', 'custom_staff.json')
+
+
+def _custom_load():
+    try:
+        with open(CUSTOM_FILE, encoding='utf-8') as stream:
+            data = json.load(stream)
+        staff = {str(k): v for k, v in (data.get('staff') or {}).items() if isinstance(v, dict)}
+        return {'staff': staff, 'deleted': [int(x) for x in data.get('deleted') or []]}
+    except (OSError, ValueError, AttributeError, TypeError):
+        return {'staff': {}, 'deleted': []}
+
+
+CUSTOM = _custom_load()
+CATALOG.update(CUSTOM['staff'])
 TYPE_LABELS = (('FRONT', 'HLV kỹ thuật'), ('PREMIUM', 'HLV trưởng'),
                ('MEDICAL', 'Y tế'), ('FW', 'FW'), ('MF', 'MF'), ('DF', 'DF'), ('GK', 'GK'))
-TYPES = tuple((typ, label, tuple(int(pid) for pid, info in CATALOG.items()
-                               if info['position'] == typ and not info['material']), ())
-              for typ, label in TYPE_LABELS)
+
+
+def _build_types():
+    return tuple((typ, label, tuple(int(pid) for pid, info in CATALOG.items()
+                                    if info['position'] == typ and not info['material'] and not info.get('hidden')), ())
+                 for typ, label in TYPE_LABELS)
+
+
+TYPES = _build_types()
 STAT_KEYS = dict(zip(
     ('Acceleration|Aggresion|Agility|Balance|Ball Control|Cross|Dribble|Finishing|Free Kick|GK Diving|GK Goal Kick|GK Handling|GK Positioning|GK Reaction|Heading|Interception|Jump|Long Pass|Long Shot|Marking|Overall Rating|Penalty Kick|Positioning|Reaction|Shoot Curve|Shoot Power|Short Pass|Sliding Tackle|Sprint Speed|Stamina|Strength|Tackle|Vision|Volley').split('|'),
     ('acceleration|aggression|agility|balance|ballcontrol|crossing|dribbling|finishing|freekickaccuracy|gkdiving|gkkicking|gkhandling|gkpositioning|gkreflexes|headingaccuracy|interceptions|jumping|longpassing|longshots|marking|ovr|penalties|positioning|reactions|curve|shotpower|shortpassing|slidingtackle|sprintspeed|stamina|strength|standingtackle|vision|volleys').split('|')))
@@ -31,8 +56,11 @@ def recruit_effects(info, grade):
     for index, group in enumerate(info['boost_groups'][:min(3, grade)], 1):
         choices = [STAT_KEYS[label] for label in group if label in STAT_KEYS]
         if choices:
+            # HLV mod (power): muc cong rieng theo dang cap HLV (+15..+95), tang dan theo so sao
+            power = info.get('power')
+            amount = max(1, round(power * grade / MAX_GRADE)) if power else max(1, (grade + 1) // 2)
             effects.append({'effectidx': index, 'effect': random.choice(choices),
-                            'amount': max(1, (grade + 1) // 2), 'grade': 1, 'open': True})
+                            'amount': amount, 'grade': 1, 'open': True})
     return effects
 
 SLOT_TYPES = {i + 1: row[0] for i, row in enumerate(TYPES)}
@@ -48,19 +76,28 @@ for pack in PACKS:
     pack['icon'] = 'staffpack/' + pack['icon']
 
 
+MAX_STAFF = 200
+
+
 def normalize_team(team):
     """Migrate legacy ALL staff and relocate appointments without losing owned cards."""
     staffs = team.setdefault('staffs', [])
+    team['maxstaff'] = max(int(team.get('maxstaff') or 0), MAX_STAFF)  # suc chua HLV (tuyen toi da 50 lan/luot)
     for staff in staffs:
         info = CATALOG.get(str(staff.get('stfid')))
         if info is not None:
             staff['commonname'] = info['name']
             staff['position'] = info['position']
             staff['material'] = info['material']
+            # tran moi (HLV custom +5..+10): ha cac chi so cu dang vuot tran
+            cap = amount_cap(staff)
+            for eff in staff.get('effect') or []:
+                if isinstance(eff.get('amount'), (int, float)) and eff['amount'] > cap:
+                    eff['amount'] = cap
         elif staff.get('position') not in SLOT_TYPES.values():
             staff['position'] = 'FRONT'
         if str(staff.get('stfid')) in ('9502', '9505'):
-            staff['commonname'] = 'Staff #' + str(staff['stfid']) + ' (unverified)'
+            staff['commonname'] = 'HLV #' + str(staff['stfid']) + ' (chưa xác minh)'
     by_id = {p['_id']: p for p in staffs}
     old = team.get('staffroles') or []
     roles = [{'roleidx': 1, 'slotidx': i, 'open': True, 'staffid': None} for i in SLOT_TYPES]
@@ -235,10 +272,16 @@ def unappoint(staffid, query, body):
 STUDY = {str(i): {'location': 'LOCATION_NAME_%02d' % i, 'grade': 1,
                  'position': [t[0] for t in TYPE_LABELS], 'matchcount': 1,
                  'fee': 1000 if i <= 3 else 2000,
-                 'effectstring': 'Đổi một chỉ số thưởng trong cùng nhóm.' if i <= 3 else 'Tăng một chỉ số thưởng thêm +1 (tối đa +5).',
+                 'effectstring': 'Đổi một chỉ số thưởng trong cùng nhóm.' if i <= 3 else 'Tăng một chỉ số thưởng thêm +1 (HLV thường tối đa +5, HLV custom tối đa +5 đến +10 tuỳ HLV).',
                  'effectidx': (i - 1) % 3 + 1,
                  'boosttype': 'change' if i <= 3 else 'enhance'} for i in range(1, 7)}
 STUDY_MAX_FEE = 100000
+
+def amount_cap(staff):
+    """Tran muc cong khi tap huan: +5 (HLV goc) hoac suc manh cua HLV mod."""
+    info = CATALOG.get(str(staff.get('stfid'))) or {}
+    return max(5, int(info.get('power') or 0))
+
 
 def study_boost(staff, rule):
     idx = rule['effectidx']
@@ -246,7 +289,7 @@ def study_boost(staff, rule):
     if current is None:
         return None
     if rule['boosttype'] == 'enhance':
-        if current.get('amount', 0) >= 5:
+        if current.get('amount', 0) >= amount_cap(staff):
             return None
         return {'effectidx': idx, 'boosttype': 'enhance', 'effect': current['effect'], 'inc': 1}
     info = CATALOG.get(str(staff.get('stfid')))
@@ -311,7 +354,8 @@ def study_complete(lid, query, body):
     if boost['boosttype'] == 'change':
         effect['effect'] = boost['effect']
     else:
-        effect['amount'] = min(5, effect['amount'] + boost['inc'])
+        # khong bao gio ha muc cong (HLV mod +15..+95); tang toi tran cua HLV
+        effect['amount'] = max(effect['amount'], min(amount_cap(staff), effect['amount'] + boost['inc']))
     study['history'].setdefault(lid, []).append(dict(boost))
     staff['status'] = 'idle'
     # Keep the result for the client's return popup, while freeing the location.
@@ -320,9 +364,214 @@ def study_complete(lid, query, body):
     return reply(st, slot, staffs={staff['_id']: staff})
 
 
+# --------------------------------------------------------------------------- #
+# HLV tuy chinh: ten + vi tri + anh rieng (GM Tool). Anh game doc tu externalAssets/staffs/<stfid>.png
+# (128x128); ten/vi tri tu staff object (commonname/position) va bang /static/db/STAFF stafflist.
+# Ma moi: <so dau theo vi tri>7NN (FW 17NN, MF 27NN, DF 37NN, GK 47NN, Y te 57NN, HLV truong /
+# ky thuat 97NN) -> khong dung ma goc nao (cao nhat 9663) va make_update bo qua staffs/?7??.png.
+# --------------------------------------------------------------------------- #
+IMG_SIZE = 128
+IMG_MAX_BYTES = 2 * 1024 * 1024
+POS_PREFIX = {'FW': 1, 'MF': 2, 'DF': 3, 'GK': 4, 'MEDICAL': 5, 'FRONT': 9, 'PREMIUM': 9}
+STAT_POOL = [k for k in STAT_KEYS if not k.startswith('GK ') and k != 'Overall Rating']
+
+
+def image_info(data):
+    """(kind 'png'|'jpg', width, height) tu header file anh; ValueError (tieng Viet) neu khong hop le."""
+    if not isinstance(data, (bytes, bytearray)) or not data:
+        raise ValueError('Chưa chọn ảnh.')
+    if len(data) > IMG_MAX_BYTES:
+        raise ValueError(f'Ảnh quá lớn ({len(data) / 1048576:.1f} MB). Tối đa 2 MB.')
+    if data[:8] == b'\x89PNG\r\n\x1a\n':
+        if len(data) < 33 or data[12:16] != b'IHDR':
+            raise ValueError('File PNG bị hỏng (không đọc được kích thước).')
+        w, h = int.from_bytes(data[16:20], 'big'), int.from_bytes(data[20:24], 'big')
+        return 'png', w, h
+    if data[:3] == b'\xff\xd8\xff':
+        i = 2
+        while i + 4 <= len(data):
+            if data[i] != 0xFF:
+                break
+            marker = data[i + 1]
+            if marker == 0xFF:  # byte dem
+                i += 1
+                continue
+            if marker in (0x01, 0xD8) or 0xD0 <= marker <= 0xD7:
+                i += 2
+                continue
+            if marker in (0xD9, 0xDA):  # het anh / bat dau du lieu ma truoc khi gap SOF
+                break
+            seg = int.from_bytes(data[i + 2:i + 4], 'big')
+            if marker in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                if i + 9 > len(data):
+                    break
+                h, w = int.from_bytes(data[i + 5:i + 7], 'big'), int.from_bytes(data[i + 7:i + 9], 'big')
+                return 'jpg', w, h
+            i += 2 + seg
+        raise ValueError('File JPG bị hỏng (không đọc được kích thước).')
+    raise ValueError('Chỉ nhận ảnh PNG hoặc JPG.')
+
+
+def check_image(data):
+    kind, w, h = image_info(data)
+    if (w, h) != (IMG_SIZE, IMG_SIZE):
+        raise ValueError(f'Ảnh đang là {w}x{h} px. Game cần đúng {IMG_SIZE}x{IMG_SIZE} px (ảnh vuông). '
+                         'Hãy cắt/thu nhỏ ảnh về 128x128 (nút "Resize ảnh online") rồi chọn lại.')
+    return kind
+
+
+def staff_dirs():
+    """Thu muc anh HLV: kho CDN cua server (ASSETS) + ban sao trong _cache/cdn (neu co)."""
+    main = os.path.join(hc.ASSETS, 'externalAssets', 'staffs')
+    mirror = os.path.normpath(os.path.join(hc.ASSETS, '..', '..', 'cdn', 'externalAssets', 'staffs'))
+    out = [main]
+    if mirror != os.path.normpath(main) and os.path.isdir(os.path.dirname(mirror)):
+        out.append(mirror)
+    return out
+
+
+def _static_stafflist():
+    try:
+        with open(os.path.join(hc.RESPONSES, 'static_db_STAFF.json'), encoding='utf-8') as stream:
+            return json.load(stream)
+    except (OSError, ValueError):
+        return None
+
+
+def new_custom_id(position):
+    prefix = POS_PREFIX[position]
+    listed = set((_static_stafflist() or {}).get('stafflist') or {})
+    for n in range(1, 100):
+        sid = prefix * 1000 + 700 + n
+        if (str(sid) in CATALOG or str(sid) in listed or sid in CUSTOM['deleted']
+                or any(os.path.exists(os.path.join(d, f'{sid}.png')) for d in staff_dirs())):
+            continue
+        return sid
+    raise ValueError('Đã hết mã cho HLV tùy chỉnh ở vị trí này (tối đa 99).')
+
+
+def random_boost_groups(position):
+    """Nhom chi so ngau nhien: HLV truong theo mau HLV noi tieng (1 chi so / 5 chi so / Tat ca chi so);
+    vi tri khac lay nhom chi so cua mot HLV goc cung vi tri (GK ra chi so thu mon, Y te ra the luc...)."""
+    if position == 'PREMIUM':
+        first = random.choice(STAT_POOL)
+        return [[first], random.sample([k for k in STAT_POOL if k != first], 5), ['Overall Rating']]
+    pool = [info['boost_groups'] for info in CATALOG.values()
+            if info.get('position') == position and not info.get('material') and not info.get('hidden')
+            and not info.get('custom') and any(info.get('boost_groups') or [])]
+    if not pool:
+        first = random.choice(STAT_POOL)
+        return [[first], random.sample(STAT_POOL, 5), random.sample(STAT_POOL, 5)]
+    return [list(g) for g in random.choice(pool)]
+
+
+def _custom_save():
+    tmp = CUSTOM_FILE + '.tmp'
+    with open(tmp, 'w', encoding='utf-8') as stream:
+        json.dump(CUSTOM, stream, ensure_ascii=False, indent=1)
+    os.replace(tmp, CUSTOM_FILE)
+
+
+def _rebuild():
+    global TYPES, TYPE_BY_PORTRAIT
+    TYPES = _build_types()
+    TYPE_BY_PORTRAIT = {pid: row[0] for row in TYPES for pid in row[2]}
+
+
+def custom_create(name, position, data):
+    """Tao loai HLV moi: kiem tra anh truoc, roi ghi anh (ca 2 thu muc) + custom_staff.json."""
+    name = ' '.join(str(name or '').split())
+    if not 2 <= len(name) <= 30:
+        raise ValueError('Tên HLV phải dài 2–30 ký tự.')
+    if any(c in name for c in '<>"\\{}'):
+        raise ValueError('Tên HLV không được chứa ký tự < > " \\ { }.')
+    if any(str(info.get('name', '')).lower() == name.lower() for info in CATALOG.values()):
+        raise ValueError('Đã có HLV trùng tên này. Hãy đặt tên khác.')
+    if position not in POS_PREFIX:
+        raise ValueError('Vị trí HLV không hợp lệ.')
+    check_image(data)
+    sid = new_custom_id(position)
+    info = {'name': name, 'position': position, 'boost_groups': random_boost_groups(position),
+            'power': random.randint(5, 10), 'material': False, 'verified': False, 'custom': True,
+            'created': time.strftime('%Y-%m-%d %H:%M:%S')}
+    written = []
+    try:
+        for d in staff_dirs():
+            os.makedirs(d, exist_ok=True)
+            f = os.path.join(d, f'{sid}.png')  # game luon xin <id>.png; JPG cung doc duoc theo noi dung
+            with open(f + '.part', 'wb') as stream:
+                stream.write(data)
+            os.replace(f + '.part', f)
+            written.append(f)
+        CUSTOM['staff'][str(sid)] = info
+        _custom_save()
+    except Exception:
+        CUSTOM['staff'].pop(str(sid), None)
+        for f in written:  # chua luu duoc catalog -> go anh vua ghi (dua vao backup, khong xoa han)
+            _to_backup(f, sid)
+        raise
+    CATALOG[str(sid)] = info
+    _rebuild()
+    return sid, info
+
+
+def backup_dir():
+    return os.path.join(HERE, 'gamedata', 'backup', 'custom_staff')
+
+
+def _to_backup(path, sid):
+    if not os.path.isfile(path):
+        return None
+    os.makedirs(backup_dir(), exist_ok=True)
+    tag = 'cdn' if os.sep + 'cdn' + os.sep in path else 'assets'
+    dst = os.path.join(backup_dir(), f"{sid}_{tag}_{time.strftime('%Y%m%d_%H%M%S')}.png")
+    n = 1
+    while os.path.exists(dst):
+        dst = dst[:-4] + f'_{n}.png'
+        n += 1
+    os.replace(path, dst)
+    return dst
+
+
+def custom_delete(sid):
+    """Bo loai HLV tuy chinh: anh chuyen vao gamedata/backup/custom_staff (khong xoa han)."""
+    key = str(sid)
+    if key not in CUSTOM['staff']:
+        raise ValueError('Đây không phải HLV tùy chỉnh (HLV gốc không xoá được).')
+    moved = [m for m in (_to_backup(os.path.join(d, f'{key}.png'), key) for d in staff_dirs()) if m]
+    info = CUSTOM['staff'].pop(key)
+    if int(key) not in CUSTOM['deleted']:
+        CUSTOM['deleted'].append(int(key))  # khong cap lai ma nay (thu cu / goi cu khong nham sang HLV khac)
+    CUSTOM.setdefault('removed', {})[key] = info
+    _custom_save()
+    CATALOG.pop(key, None)
+    _rebuild()
+    return moved
+
+
+def static_staff():
+    """/static/db/STAFF: bang goc trong responses/ + moi HLV trong CATALOG chua co (HLV tuy chinh)."""
+    data = _static_stafflist()
+    if data is None:
+        return None
+    lst = data.setdefault('stafflist', {})
+    for sid, info in CATALOG.items():
+        if sid not in lst:
+            lst[sid] = {'stfid': int(sid), 'commonname': info['name'], 'material': bool(info.get('material')),
+                        'position': info['position']}
+    return hc._json(data)
+
+
 def install(module):
     global hc
     hc = module
+    _from_file = hc.from_file
+
+    def from_file(path):  # bang STAFF tinh + HLV tuy chinh (tao tren GM Tool, khong can khoi dong lai)
+        if path == '/static/db/STAFF':
+            return static_staff() or _from_file(path)
+        return _from_file(path)
+    hc.from_file = from_file
     hc.ENDPOINTS["/staff/recruit"] = recruit_list
     hc.ROUTES[:0] = [
         (re.compile(r"/staff/study/(\d+)/complete"), study_complete),

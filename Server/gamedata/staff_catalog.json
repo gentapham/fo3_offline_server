@@ -1,2556 +1,4166 @@
 {
-  "source": "https://en.fifaaddict.com/fo3staff.php",
-  "retrieved": "2026-11-04",
-  "note": "Names, types and boost options from source; EP prices and numeric bonus amounts remain offline balancing values.",
-  "unverified_existing_ids": [
-    9502,
-    9505
-  ],
-  "staff": {
-    "9001": {
-      "name": "Sir Alexander Ferguson",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Strength"
-        ],
-        [
-          "Sprint Speed",
-          "Penalty Kick",
-          "Finishing",
-          "Shoot Power",
-          "Free Kick"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9001.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9001,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9002": {
-      "name": "Louis van Gaal",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Sprint Speed"
-        ],
-        [
-          "Long Pass",
-          "Short Pass",
-          "Cross",
-          "Agility",
-          "Acceleration"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9002.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9002,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9003": {
-      "name": "Park Hang-Seo",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Sprint Speed"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Agility",
-          "Shoot Curve",
-          "Acceleration"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9003.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9003,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9004": {
-      "name": "Jung Hae-seong",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Long Pass"
-        ],
-        [
-          "Heading",
-          "Jump",
-          "Positioning",
-          "Long Shot",
-          "Vision"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9004.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9004,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9005": {
-      "name": "Kim Hyun-Tae",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Reaction"
-        ],
-        [
-          "Positioning",
-          "Aggresion",
-          "Jump",
-          "Interception",
-          "Shoot Curve"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9005.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9005,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9006": {
-      "name": "Hong Myung-Bo",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Strength"
-        ],
-        [
-          "Sliding Tackle",
-          "Interception",
-          "Vision",
-          "Positioning",
-          "Long Pass"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9006.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9006,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9007": {
-      "name": "Kim Tae-Young",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Finishing"
-        ],
-        [
-          "Positioning",
-          "Volley",
-          "Shoot Power",
-          "Free Kick",
-          "Agility"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9007.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9007,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9008": {
-      "name": "Choi Jin-Cheul",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Aggresion"
-        ],
-        [
-          "Tackle",
-          "Long Pass",
-          "Jump",
-          "Heading",
-          "Ball Control"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9008.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9008,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9009": {
-      "name": "Choi Yong-Soo",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Tackle"
-        ],
-        [
-          "Sliding Tackle",
-          "Positioning",
-          "Vision",
-          "Jump",
-          "Heading"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9009.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9009,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9010": {
-      "name": "Yoon Jong-Hwan",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Heading"
-        ],
-        [
-          "Positioning",
-          "Volley",
-          "Jump",
-          "Agility",
-          "Reaction"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9010.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9010,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9011": {
-      "name": "Hwang Sun-Hong",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Ball Control"
-        ],
-        [
-          "Short Pass",
-          "Long Pass",
-          "Vision",
-          "Dribble",
-          "Free Kick"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9011.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9011,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9012": {
-      "name": "Lee Min-Sung",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Long Shot"
-        ],
-        [
-          "Cross",
-          "Marking",
-          "Vision",
-          "Interception",
-          "Long Pass"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9012.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9012,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9013": {
-      "name": "Yoo Sang-Chul",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Shoot Power"
-        ],
-        [
-          "Tackle",
-          "Aggresion",
-          "Interception",
-          "Cross",
-          "Long Pass"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9013.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9013,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9028": {
-      "name": "Joel McKeown",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Aggresion"
-        ],
-        [
-          "Tackle",
-          "Long Pass",
-          "Jump",
-          "Heading",
-          "Ball Control"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9028.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9028,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9027": {
-      "name": "Luca Gordon",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Finishing"
-        ],
-        [
-          "Positioning",
-          "Volley",
-          "Shoot Power",
-          "Free Kick",
-          "Agility"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9027.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9027,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9026": {
-      "name": "Barbara Eaton",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Strength"
-        ],
-        [
-          "Sliding Tackle",
-          "Interception",
-          "Vision",
-          "Positioning",
-          "Long Pass"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9026.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9026,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9025": {
-      "name": "Mikito Kotani",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Reaction"
-        ],
-        [
-          "Positioning",
-          "Aggresion",
-          "Jump",
-          "Interception",
-          "Shoot Curve"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9025.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9025,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9024": {
-      "name": "Lonnie Dombrowski",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Long Pass"
-        ],
-        [
-          "Heading",
-          "Jump",
-          "Positioning",
-          "Long Shot",
-          "Vision"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9024.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9024,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9023": {
-      "name": "Joseph Evans",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Sprint Speed"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Agility",
-          "Shoot Curve",
-          "Acceleration"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9023.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9023,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9021": {
-      "name": "Craig Howard",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Strength"
-        ],
-        [
-          "Sprint Speed",
-          "Penalty Kick",
-          "Finishing",
-          "Shoot Power",
-          "Free Kick"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9021.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9021,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9022": {
-      "name": "Kasib Rahal",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Sprint Speed"
-        ],
-        [
-          "Long Pass",
-          "Short Pass",
-          "Cross",
-          "Agility",
-          "Acceleration"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9022.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9022,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9029": {
-      "name": "Cristoforo Conti",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Tackle"
-        ],
-        [
-          "Sliding Tackle",
-          "Positioning",
-          "Vision",
-          "Jump",
-          "Heading"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9029.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9029,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9030": {
-      "name": "Jude Stevenson",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Heading"
-        ],
-        [
-          "Positioning",
-          "Volley",
-          "Jump",
-          "Agility",
-          "Reaction"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9030.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9030,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9031": {
-      "name": "Reuben Macías",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Ball Control"
-        ],
-        [
-          "Short Pass",
-          "Long Pass",
-          "Vision",
-          "Dribble",
-          "Free Kick"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9031.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9031,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9032": {
-      "name": "Jenny Leavitt",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Long Shot"
-        ],
-        [
-          "Cross",
-          "Marking",
-          "Vision",
-          "Interception",
-          "Long Pass"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9032.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9032,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9033": {
-      "name": "Klaus Neudorf",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Shoot Power"
-        ],
-        [
-          "Tackle",
-          "Aggresion",
-          "Interception",
-          "Cross",
-          "Long Pass"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9033.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9033,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9117": {
-      "name": "Timothy Duncan",
-      "position": "FRONT",
-      "boost_groups": [
-        [
-          "Shoot Power",
-          "Finishing",
-          "Jump",
-          "Volley",
-          "Aggresion",
-          "Strength",
-          "Positioning",
-          "Reaction"
-        ],
-        [
-          "Long Shot",
-          "Volley",
-          "Vision",
-          "Shoot Power",
-          "Aggresion",
-          "Finishing",
-          "Dribble",
-          "Ball Control",
-          "Positioning",
-          "Reaction",
-          "Stamina",
-          "Balance",
-          "Shoot Curve"
-        ],
-        [
-          "Jump",
-          "Finishing",
-          "Strength",
-          "Agility",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9117.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9117,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9118": {
-      "name": "Eric Jonhston",
-      "position": "FRONT",
-      "boost_groups": [
-        [
-          "Marking",
-          "Interception",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration",
-          "Sliding Tackle",
-          "Tackle",
-          "Dribble"
-        ],
-        [
-          "Long Pass",
-          "Short Pass",
-          "Aggresion",
-          "Marking",
-          "Cross",
-          "Interception",
-          "Dribble",
-          "Ball Control",
-          "Reaction",
-          "Stamina",
-          "Balance",
-          "Sliding Tackle",
-          "Tackle"
-        ],
-        [
-          "Jump",
-          "Finishing",
-          "Strength",
-          "Agility",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9118.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9118,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9119": {
-      "name": "Jerry Wang",
-      "position": "FRONT",
-      "boost_groups": [
-        [
-          "Long Shot",
-          "Agility",
-          "Ball Control",
-          "Reaction",
-          "Stamina",
-          "Sprint Speed",
-          "Acceleration",
-          "Vision"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Vision",
-          "Short Pass",
-          "Aggresion",
-          "Finishing",
-          "Dribble",
-          "Ball Control",
-          "Positioning",
-          "Reaction",
-          "Stamina",
-          "Balance",
-          "Agility"
-        ],
-        [
-          "Jump",
-          "Finishing",
-          "Strength",
-          "Agility",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9119.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9119,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9120": {
-      "name": "Julio Sebastian",
-      "position": "FRONT",
-      "boost_groups": [
-        [
-          "Ball Control",
-          "Balance",
-          "Agility",
-          "Interception",
-          "Reaction",
-          "Marking",
-          "Sliding Tackle",
-          "Tackle"
-        ],
-        [
-          "Jump",
-          "Aggresion",
-          "Strength",
-          "Positioning",
-          "Heading",
-          "Long Pass",
-          "Aggresion",
-          "Interception",
-          "Vision",
-          "Short Pass",
-          "Dribble",
-          "Ball Control",
-          "Agility"
-        ],
-        [
-          "Jump",
-          "Finishing",
-          "Strength",
-          "Agility",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9120.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9120,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9121": {
-      "name": "Mark Reynolds",
-      "position": "FRONT",
-      "boost_groups": [
-        [
-          "Finishing",
-          "Dribble",
-          "Ball Control",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Strength",
-          "Acceleration"
-        ],
-        [
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision",
-          "Heading",
-          "Short Pass",
-          "Aggresion",
-          "Shoot Power",
-          "Dribble",
-          "Ball Control",
-          "Positioning",
-          "Stamina",
-          "Strength"
-        ],
-        [
-          "Jump",
-          "Finishing",
-          "Strength",
-          "Agility",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9121.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9121,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9122": {
-      "name": "Eugene Franklin",
-      "position": "FRONT",
-      "boost_groups": [
-        [
-          "Long Pass",
-          "Vision",
-          "Short Pass",
-          "Positioning",
-          "Balance",
-          "Dribble",
-          "Ball Control",
-          "Agility"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Vision",
-          "Short Pass",
-          "Aggresion",
-          "Reaction",
-          "Dribble",
-          "Ball Control",
-          "Positioning",
-          "Reaction",
-          "Stamina",
-          "Balance",
-          "Agility"
-        ],
-        [
-          "Jump",
-          "Finishing",
-          "Strength",
-          "Agility",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9122.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9122,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9014": {
-      "name": "Bum Kun Cha",
-      "position": "PREMIUM",
-      "boost_groups": [
-        [
-          "Sprint Speed"
-        ],
-        [
-          "Jump",
-          "Finishing",
-          "Strength",
-          "Agility",
-          "Acceleration"
-        ],
-        [
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9014.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9014,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "5001": {
-      "name": "Debbie Canon",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [
-          "Stamina"
-        ],
-        [
-          "Stamina",
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance",
-          "Boost Mental Status"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/5001.png",
-      "material": false,
-      "verified": true,
-      "source_id": 5001,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "5002": {
-      "name": "Juliana Turner",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance",
-          "Boost Mental Status"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/5002.png",
-      "material": false,
-      "verified": true,
-      "source_id": 5002,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4905": {
-      "name": "Training Staff",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [],
-        [],
-        []
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4905.png",
-      "material": true,
-      "verified": true,
-      "source_id": 4905,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9507": {
-      "name": "Sierra McLaughlin",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [
-          "Sprint Speed"
-        ],
-        [
-          "Stamina",
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance",
-          "Boost Mental Status",
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9507.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9507,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9508": {
-      "name": "Emma WilKins",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [
-          "Jump"
-        ],
-        [
-          "Stamina",
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance",
-          "Boost Mental Status",
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9508.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9508,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9509": {
-      "name": "Samuel Felix",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [
-          "Dribble"
-        ],
-        [
-          "Stamina",
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance",
-          "Boost Mental Status",
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9509.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9509,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9510": {
-      "name": "Stella Kim",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [
-          "Agility"
-        ],
-        [
-          "Stamina",
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance",
-          "Boost Mental Status",
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9510.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9510,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "9511": {
-      "name": "Favian Goff",
-      "position": "MEDICAL",
-      "boost_groups": [
-        [
-          "Reaction"
-        ],
-        [
-          "Stamina",
-          "Balance"
-        ],
-        [
-          "Stamina",
-          "Balance",
-          "Boost Mental Status",
-          "Overall Rating"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/9511.png",
-      "material": false,
-      "verified": true,
-      "source_id": 9511,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1001": {
-      "name": "Bruce Rodney Rodriguez",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Dribble"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1001.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1001,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1010": {
-      "name": "Clinton Lloyd",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Cross"
-        ],
-        [
-          "Short Pass",
-          "Agility",
-          "Heading",
-          "Aggresion"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1010.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1010,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1002": {
-      "name": "Philip Brown",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Dribble"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1002.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1002,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1003": {
-      "name": "Terry Collins",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Free Kick"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1003.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1003,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1004": {
-      "name": "Raymond Hall",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Shoot Power"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1004.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1004,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1005": {
-      "name": "Ronald Thompson",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Cross"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1005.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1005,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1006": {
-      "name": "Thor salbe Sanchez",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Dribble"
-        ],
-        [
-          "Short Pass",
-          "Agility",
-          "Heading",
-          "Aggresion"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1006.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1006,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1007": {
-      "name": "Hubert Richards",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Dribble"
-        ],
-        [
-          "Short Pass",
-          "Agility",
-          "Heading",
-          "Aggresion"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1007.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1007,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1008": {
-      "name": "Ed Hoffman",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Free Kick"
-        ],
-        [
-          "Short Pass",
-          "Agility",
-          "Heading",
-          "Aggresion"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1008.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1008,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1009": {
-      "name": "Victor Cortez",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Shoot Power"
-        ],
-        [
-          "Short Pass",
-          "Agility",
-          "Heading",
-          "Aggresion"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/1009.png",
-      "material": false,
-      "verified": true,
-      "source_id": 1009,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4901": {
-      "name": "Training Staff",
-      "position": "FW",
-      "boost_groups": [
-        [],
-        [],
-        []
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4901.png",
-      "material": true,
-      "verified": true,
-      "source_id": 4901,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2001": {
-      "name": "Ssunda Wu Chen",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Long Pass"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2001.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2001,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2002": {
-      "name": "Brian Lucas",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Tackle"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2002.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2002,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2003": {
-      "name": "Johnny Lam",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Ball Control"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2003.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2003,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2004": {
-      "name": "Higashi Kenichi",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Long Shot"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2004.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2004,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2005": {
-      "name": "Tracy Nash",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Aggresion"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2005.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2005,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2006": {
-      "name": "isabelle Copola",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Free Kick"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2006.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2006,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2007": {
-      "name": "Katie Paul",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Long Pass"
-        ],
-        [
-          "Shoot Power",
-          "Cross",
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2007.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2007,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2008": {
-      "name": "Andrew Roman",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Tackle"
-        ],
-        [
-          "Shoot Power",
-          "Cross",
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2008.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2008,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2009": {
-      "name": "Bryant Johnson Jr",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Ball Control"
-        ],
-        [
-          "Shoot Power",
-          "Cross",
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2009.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2009,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2010": {
-      "name": "Francisco J. Roger",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Long Shot"
-        ],
-        [
-          "Shoot Power",
-          "Cross",
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2010.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2010,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2011": {
-      "name": "Lionel Cruelo",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Aggresion"
-        ],
-        [
-          "Shoot Power",
-          "Cross",
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2011.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2011,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "2012": {
-      "name": "Earl park",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Free Kick"
-        ],
-        [
-          "Shoot Power",
-          "Cross",
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/2012.png",
-      "material": false,
-      "verified": true,
-      "source_id": 2012,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4902": {
-      "name": "Training Staff",
-      "position": "MF",
-      "boost_groups": [
-        [],
-        [],
-        []
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4902.png",
-      "material": true,
-      "verified": true,
-      "source_id": 4902,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3001": {
-      "name": "Jerry George",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Marking"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3001.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3001,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3002": {
-      "name": "Rufus Fitzgerald",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Tackle"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3002.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3002,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3003": {
-      "name": "Jo Seung-woo",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Sliding Tackle"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3003.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3003,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3004": {
-      "name": "Charlie Wilson",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Interception"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3004.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3004,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3005": {
-      "name": "Christine Lindsay",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Jump"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3005.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3005,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3006": {
-      "name": "Jesi Yang",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Short Pass"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3006.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3006,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3007": {
-      "name": "Russell Eastwood",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Heading"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3007.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3007,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3008": {
-      "name": "Patrick E. Gordon",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Marking"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3008.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3008,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3009": {
-      "name": "Barry Woods",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Tackle"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3009.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3009,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3010": {
-      "name": "Frank Harrington",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Sliding Tackle"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3010.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3010,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3011": {
-      "name": "Carl Hunt",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3011.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3011,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3012": {
-      "name": "Dennis Potter",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Jump"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3012.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3012,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3013": {
-      "name": "Fujigaya Satoshi",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Short Pass"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3013.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3013,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "3014": {
-      "name": "Phil Watson",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Heading"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/3014.png",
-      "material": false,
-      "verified": true,
-      "source_id": 3014,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4903": {
-      "name": "Training Staff",
-      "position": "DF",
-      "boost_groups": [
-        [],
-        [],
-        []
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4903.png",
-      "material": true,
-      "verified": true,
-      "source_id": 4903,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4001": {
-      "name": "Alexander Cold",
-      "position": "GK",
-      "boost_groups": [
-        [
-          "GK Handling"
-        ],
-        [
-          "Jump",
-          "Long Pass"
-        ],
-        [
-          "GK Diving",
-          "GK Positioning",
-          "GK Reaction"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4001.png",
-      "material": false,
-      "verified": true,
-      "source_id": 4001,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4002": {
-      "name": "Ricardo Piero",
-      "position": "GK",
-      "boost_groups": [
-        [
-          "GK Goal Kick"
-        ],
-        [
-          "Jump",
-          "Long Pass"
-        ],
-        [
-          "GK Diving",
-          "GK Positioning",
-          "GK Reaction"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4002.png",
-      "material": false,
-      "verified": true,
-      "source_id": 4002,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4003": {
-      "name": "Cecil Vega",
-      "position": "GK",
-      "boost_groups": [
-        [
-          "GK Handling"
-        ],
-        [
-          "Positioning",
-          "Reaction"
-        ],
-        [
-          "GK Diving",
-          "GK Positioning",
-          "GK Reaction"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4003.png",
-      "material": false,
-      "verified": true,
-      "source_id": 4003,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4004": {
-      "name": "Jang Han",
-      "position": "GK",
-      "boost_groups": [
-        [
-          "GK Goal Kick"
-        ],
-        [
-          "Positioning",
-          "Reaction"
-        ],
-        [
-          "GK Diving",
-          "GK Positioning",
-          "GK Reaction"
-        ]
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4004.png",
-      "material": false,
-      "verified": true,
-      "source_id": 4004,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "4904": {
-      "name": "Training Staff",
-      "position": "GK",
-      "boost_groups": [
-        [],
-        [],
-        []
-      ],
-      "image_url": "https://fifaaddict.com/fo3img/staffs/4904.png",
-      "material": true,
-      "verified": true,
-      "source_id": 4904,
-      "source": "https://en.fifaaddict.com/fo3staff.php"
-    },
-    "1101": {
-      "name": "Bruce Rodney Rodriguez",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Dribble"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 1001,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 1001
-    },
-    "1104": {
-      "name": "Raymond Hall",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Shoot Power"
-        ],
-        [
-          "Long Pass",
-          "Long Shot",
-          "Jump",
-          "Volley",
-          "Vision"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 1004,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 1004
-    },
-    "1109": {
-      "name": "Victor Cortez",
-      "position": "FW",
-      "boost_groups": [
-        [
-          "Shoot Power"
-        ],
-        [
-          "Short Pass",
-          "Agility",
-          "Heading",
-          "Aggresion"
-        ],
-        [
-          "Ball Control",
-          "Reaction",
-          "Finishing",
-          "Sprint Speed",
-          "Strength",
-          "Positioning",
-          "Acceleration"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 1009,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 1009
-    },
-    "2101": {
-      "name": "Ssunda Wu Chen",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Long Pass"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 2001,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 2001
-    },
-    "2103": {
-      "name": "Johnny Lam",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Ball Control"
-        ],
-        [
-          "Heading",
-          "Finishing",
-          "Marking",
-          "Vision"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 2003,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 2003
-    },
-    "2107": {
-      "name": "Katie Paul",
-      "position": "MF",
-      "boost_groups": [
-        [
-          "Long Pass"
-        ],
-        [
-          "Shoot Power",
-          "Cross",
-          "Interception"
-        ],
-        [
-          "Dribble",
-          "Short Pass",
-          "Strength",
-          "Sprint Speed",
-          "Reaction",
-          "Acceleration",
-          "Positioning"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 2007,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 2007
-    },
-    "3103": {
-      "name": "Jo Seung-woo",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Sliding Tackle"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 3003,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 3003
-    },
-    "3105": {
-      "name": "Christine Lindsay",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Jump"
-        ],
-        [
-          "Aggresion",
-          "Long Pass",
-          "Cross"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 3005,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 3005
-    },
-    "3112": {
-      "name": "Dennis Potter",
-      "position": "DF",
-      "boost_groups": [
-        [
-          "Jump"
-        ],
-        [
-          "Dribble",
-          "Ball Control",
-          "Vision"
-        ],
-        [
-          "Strength",
-          "Positioning",
-          "Reaction",
-          "Sprint Speed",
-          "Acceleration"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 3012,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 3012
-    },
-    "4101": {
-      "name": "Alexander Cold",
-      "position": "GK",
-      "boost_groups": [
-        [
-          "GK Handling"
-        ],
-        [
-          "Jump",
-          "Long Pass"
-        ],
-        [
-          "GK Diving",
-          "GK Positioning",
-          "GK Reaction"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 4001,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 4001
-    },
-    "4103": {
-      "name": "Cecil Vega",
-      "position": "GK",
-      "boost_groups": [
-        [
-          "GK Handling"
-        ],
-        [
-          "Positioning",
-          "Reaction"
-        ],
-        [
-          "GK Diving",
-          "GK Positioning",
-          "GK Reaction"
-        ]
-      ],
-      "image_url": null,
-      "material": false,
-      "verified": true,
-      "source_id": 4003,
-      "source": "https://en.fifaaddict.com/fo3staff.php",
-      "local_variant_of": 4003
-    }
+ "source": "https://en.fifaaddict.com/fo3staff.php",
+ "retrieved": "2026-11-04",
+ "note": "Names, types and boost options from source; EP prices and numeric bonus amounts remain offline balancing values.",
+ "unverified_existing_ids": [
+  9502,
+  9505
+ ],
+ "staff": {
+  "9001": {
+   "name": "Sir Alexander Ferguson",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Strength"
+    ],
+    [
+     "Sprint Speed",
+     "Penalty Kick",
+     "Finishing",
+     "Shoot Power",
+     "Free Kick"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9001.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9001,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "power": 9
+  },
+  "9002": {
+   "name": "Louis van Gaal",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Sprint Speed"
+    ],
+    [
+     "Long Pass",
+     "Short Pass",
+     "Cross",
+     "Agility",
+     "Acceleration"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9002.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9002,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "power": 10
+  },
+  "9003": {
+   "name": "Park Hang-Seo",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Sprint Speed"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Agility",
+     "Shoot Curve",
+     "Acceleration"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9003.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9003,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "power": 8
+  },
+  "9004": {
+   "name": "Jung Hae-seong",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Long Pass"
+    ],
+    [
+     "Heading",
+     "Jump",
+     "Positioning",
+     "Long Shot",
+     "Vision"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9004.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9004,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9005": {
+   "name": "Kim Hyun-Tae",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Reaction"
+    ],
+    [
+     "Positioning",
+     "Aggresion",
+     "Jump",
+     "Interception",
+     "Shoot Curve"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9005.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9005,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9006": {
+   "name": "Hong Myung-Bo",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Strength"
+    ],
+    [
+     "Sliding Tackle",
+     "Interception",
+     "Vision",
+     "Positioning",
+     "Long Pass"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9006.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9006,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9007": {
+   "name": "Kim Tae-Young",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Positioning",
+     "Volley",
+     "Shoot Power",
+     "Free Kick",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9007.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9007,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9008": {
+   "name": "Choi Jin-Cheul",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Aggresion"
+    ],
+    [
+     "Tackle",
+     "Long Pass",
+     "Jump",
+     "Heading",
+     "Ball Control"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9008.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9008,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9009": {
+   "name": "Choi Yong-Soo",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Sliding Tackle",
+     "Positioning",
+     "Vision",
+     "Jump",
+     "Heading"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9009.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9009,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9010": {
+   "name": "Yoon Jong-Hwan",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Heading"
+    ],
+    [
+     "Positioning",
+     "Volley",
+     "Jump",
+     "Agility",
+     "Reaction"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9010.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9010,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9011": {
+   "name": "Hwang Sun-Hong",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Ball Control"
+    ],
+    [
+     "Short Pass",
+     "Long Pass",
+     "Vision",
+     "Dribble",
+     "Free Kick"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9011.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9011,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9012": {
+   "name": "Lee Min-Sung",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Long Shot"
+    ],
+    [
+     "Cross",
+     "Marking",
+     "Vision",
+     "Interception",
+     "Long Pass"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9012.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9012,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9013": {
+   "name": "Yoo Sang-Chul",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Shoot Power"
+    ],
+    [
+     "Tackle",
+     "Aggresion",
+     "Interception",
+     "Cross",
+     "Long Pass"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9013.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9013,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9028": {
+   "name": "Joel McKeown",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Aggresion"
+    ],
+    [
+     "Tackle",
+     "Long Pass",
+     "Jump",
+     "Heading",
+     "Ball Control"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9028.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9028,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9027": {
+   "name": "Luca Gordon",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Positioning",
+     "Volley",
+     "Shoot Power",
+     "Free Kick",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9027.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9027,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9026": {
+   "name": "Barbara Eaton",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Strength"
+    ],
+    [
+     "Sliding Tackle",
+     "Interception",
+     "Vision",
+     "Positioning",
+     "Long Pass"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9026.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9026,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9025": {
+   "name": "Mikito Kotani",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Reaction"
+    ],
+    [
+     "Positioning",
+     "Aggresion",
+     "Jump",
+     "Interception",
+     "Shoot Curve"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9025.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9025,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9024": {
+   "name": "Lonnie Dombrowski",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Long Pass"
+    ],
+    [
+     "Heading",
+     "Jump",
+     "Positioning",
+     "Long Shot",
+     "Vision"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9024.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9024,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9023": {
+   "name": "Joseph Evans",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Sprint Speed"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Agility",
+     "Shoot Curve",
+     "Acceleration"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9023.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9023,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9021": {
+   "name": "Craig Howard",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Strength"
+    ],
+    [
+     "Sprint Speed",
+     "Penalty Kick",
+     "Finishing",
+     "Shoot Power",
+     "Free Kick"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9021.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9021,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9022": {
+   "name": "Kasib Rahal",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Sprint Speed"
+    ],
+    [
+     "Long Pass",
+     "Short Pass",
+     "Cross",
+     "Agility",
+     "Acceleration"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9022.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9022,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9029": {
+   "name": "Cristoforo Conti",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Sliding Tackle",
+     "Positioning",
+     "Vision",
+     "Jump",
+     "Heading"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9029.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9029,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9030": {
+   "name": "Jude Stevenson",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Heading"
+    ],
+    [
+     "Positioning",
+     "Volley",
+     "Jump",
+     "Agility",
+     "Reaction"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9030.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9030,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9031": {
+   "name": "Reuben Macías",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Ball Control"
+    ],
+    [
+     "Short Pass",
+     "Long Pass",
+     "Vision",
+     "Dribble",
+     "Free Kick"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9031.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9031,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9032": {
+   "name": "Jenny Leavitt",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Long Shot"
+    ],
+    [
+     "Cross",
+     "Marking",
+     "Vision",
+     "Interception",
+     "Long Pass"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9032.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9032,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9033": {
+   "name": "Klaus Neudorf",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Shoot Power"
+    ],
+    [
+     "Tackle",
+     "Aggresion",
+     "Interception",
+     "Cross",
+     "Long Pass"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9033.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9033,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9117": {
+   "name": "Timothy Duncan",
+   "position": "FRONT",
+   "boost_groups": [
+    [
+     "Shoot Power",
+     "Finishing",
+     "Jump",
+     "Volley",
+     "Aggresion",
+     "Strength",
+     "Positioning",
+     "Reaction"
+    ],
+    [
+     "Long Shot",
+     "Volley",
+     "Vision",
+     "Shoot Power",
+     "Aggresion",
+     "Finishing",
+     "Dribble",
+     "Ball Control",
+     "Positioning",
+     "Reaction",
+     "Stamina",
+     "Balance",
+     "Shoot Curve"
+    ],
+    [
+     "Jump",
+     "Finishing",
+     "Strength",
+     "Agility",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9117.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9117,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9118": {
+   "name": "Eric Jonhston",
+   "position": "FRONT",
+   "boost_groups": [
+    [
+     "Marking",
+     "Interception",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration",
+     "Sliding Tackle",
+     "Tackle",
+     "Dribble"
+    ],
+    [
+     "Long Pass",
+     "Short Pass",
+     "Aggresion",
+     "Marking",
+     "Cross",
+     "Interception",
+     "Dribble",
+     "Ball Control",
+     "Reaction",
+     "Stamina",
+     "Balance",
+     "Sliding Tackle",
+     "Tackle"
+    ],
+    [
+     "Jump",
+     "Finishing",
+     "Strength",
+     "Agility",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9118.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9118,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9119": {
+   "name": "Jerry Wang",
+   "position": "FRONT",
+   "boost_groups": [
+    [
+     "Long Shot",
+     "Agility",
+     "Ball Control",
+     "Reaction",
+     "Stamina",
+     "Sprint Speed",
+     "Acceleration",
+     "Vision"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Vision",
+     "Short Pass",
+     "Aggresion",
+     "Finishing",
+     "Dribble",
+     "Ball Control",
+     "Positioning",
+     "Reaction",
+     "Stamina",
+     "Balance",
+     "Agility"
+    ],
+    [
+     "Jump",
+     "Finishing",
+     "Strength",
+     "Agility",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9119.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9119,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9120": {
+   "name": "Julio Sebastian",
+   "position": "FRONT",
+   "boost_groups": [
+    [
+     "Ball Control",
+     "Balance",
+     "Agility",
+     "Interception",
+     "Reaction",
+     "Marking",
+     "Sliding Tackle",
+     "Tackle"
+    ],
+    [
+     "Jump",
+     "Aggresion",
+     "Strength",
+     "Positioning",
+     "Heading",
+     "Long Pass",
+     "Aggresion",
+     "Interception",
+     "Vision",
+     "Short Pass",
+     "Dribble",
+     "Ball Control",
+     "Agility"
+    ],
+    [
+     "Jump",
+     "Finishing",
+     "Strength",
+     "Agility",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9120.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9120,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9121": {
+   "name": "Mark Reynolds",
+   "position": "FRONT",
+   "boost_groups": [
+    [
+     "Finishing",
+     "Dribble",
+     "Ball Control",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Strength",
+     "Acceleration"
+    ],
+    [
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision",
+     "Heading",
+     "Short Pass",
+     "Aggresion",
+     "Shoot Power",
+     "Dribble",
+     "Ball Control",
+     "Positioning",
+     "Stamina",
+     "Strength"
+    ],
+    [
+     "Jump",
+     "Finishing",
+     "Strength",
+     "Agility",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9121.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9121,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9122": {
+   "name": "Eugene Franklin",
+   "position": "FRONT",
+   "boost_groups": [
+    [
+     "Long Pass",
+     "Vision",
+     "Short Pass",
+     "Positioning",
+     "Balance",
+     "Dribble",
+     "Ball Control",
+     "Agility"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Vision",
+     "Short Pass",
+     "Aggresion",
+     "Reaction",
+     "Dribble",
+     "Ball Control",
+     "Positioning",
+     "Reaction",
+     "Stamina",
+     "Balance",
+     "Agility"
+    ],
+    [
+     "Jump",
+     "Finishing",
+     "Strength",
+     "Agility",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9122.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9122,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9014": {
+   "name": "Bum Kun Cha",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Sprint Speed"
+    ],
+    [
+     "Jump",
+     "Finishing",
+     "Strength",
+     "Agility",
+     "Acceleration"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9014.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9014,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "5001": {
+   "name": "Debbie Canon",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Stamina",
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance",
+     "Boost Mental Status"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/5001.png",
+   "material": false,
+   "verified": true,
+   "source_id": 5001,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "5002": {
+   "name": "Juliana Turner",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance",
+     "Boost Mental Status"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/5002.png",
+   "material": false,
+   "verified": true,
+   "source_id": 5002,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4905": {
+   "name": "Nhân viên huấn luyện",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [],
+    [],
+    []
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4905.png",
+   "material": true,
+   "verified": true,
+   "source_id": 4905,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9507": {
+   "name": "Sierra McLaughlin",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [
+     "Sprint Speed"
+    ],
+    [
+     "Stamina",
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance",
+     "Boost Mental Status",
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9507.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9507,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9508": {
+   "name": "Emma WilKins",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [
+     "Jump"
+    ],
+    [
+     "Stamina",
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance",
+     "Boost Mental Status",
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9508.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9508,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9509": {
+   "name": "Samuel Felix",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [
+     "Dribble"
+    ],
+    [
+     "Stamina",
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance",
+     "Boost Mental Status",
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9509.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9509,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9510": {
+   "name": "Stella Kim",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [
+     "Agility"
+    ],
+    [
+     "Stamina",
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance",
+     "Boost Mental Status",
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9510.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9510,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "9511": {
+   "name": "Favian Goff",
+   "position": "MEDICAL",
+   "boost_groups": [
+    [
+     "Reaction"
+    ],
+    [
+     "Stamina",
+     "Balance"
+    ],
+    [
+     "Stamina",
+     "Balance",
+     "Boost Mental Status",
+     "Overall Rating"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/9511.png",
+   "material": false,
+   "verified": true,
+   "source_id": 9511,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1001": {
+   "name": "Bruce Rodney Rodriguez",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Dribble"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1001.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1001,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1010": {
+   "name": "Clinton Lloyd",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Cross"
+    ],
+    [
+     "Short Pass",
+     "Agility",
+     "Heading",
+     "Aggresion"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1010.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1010,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1002": {
+   "name": "Philip Brown",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Dribble"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1002.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1002,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1003": {
+   "name": "Terry Collins",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Free Kick"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1003.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1003,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1004": {
+   "name": "Raymond Hall",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Shoot Power"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1004.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1004,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1005": {
+   "name": "Ronald Thompson",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Cross"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1005.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1005,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1006": {
+   "name": "Thor salbe Sanchez",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Dribble"
+    ],
+    [
+     "Short Pass",
+     "Agility",
+     "Heading",
+     "Aggresion"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1006.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1006,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1007": {
+   "name": "Hubert Richards",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Dribble"
+    ],
+    [
+     "Short Pass",
+     "Agility",
+     "Heading",
+     "Aggresion"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1007.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1007,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1008": {
+   "name": "Ed Hoffman",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Free Kick"
+    ],
+    [
+     "Short Pass",
+     "Agility",
+     "Heading",
+     "Aggresion"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1008.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1008,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1009": {
+   "name": "Victor Cortez",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Shoot Power"
+    ],
+    [
+     "Short Pass",
+     "Agility",
+     "Heading",
+     "Aggresion"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/1009.png",
+   "material": false,
+   "verified": true,
+   "source_id": 1009,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4901": {
+   "name": "Nhân viên huấn luyện",
+   "position": "FW",
+   "boost_groups": [
+    [],
+    [],
+    []
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4901.png",
+   "material": true,
+   "verified": true,
+   "source_id": 4901,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2001": {
+   "name": "Ssunda Wu Chen",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Long Pass"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2001.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2001,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2002": {
+   "name": "Brian Lucas",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2002.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2002,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2003": {
+   "name": "Johnny Lam",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Ball Control"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2003.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2003,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2004": {
+   "name": "Higashi Kenichi",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Long Shot"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2004.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2004,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2005": {
+   "name": "Tracy Nash",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Aggresion"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2005.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2005,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2006": {
+   "name": "isabelle Copola",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Free Kick"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2006.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2006,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2007": {
+   "name": "Katie Paul",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Long Pass"
+    ],
+    [
+     "Shoot Power",
+     "Cross",
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2007.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2007,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2008": {
+   "name": "Andrew Roman",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Shoot Power",
+     "Cross",
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2008.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2008,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2009": {
+   "name": "Bryant Johnson Jr",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Ball Control"
+    ],
+    [
+     "Shoot Power",
+     "Cross",
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2009.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2009,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2010": {
+   "name": "Francisco J. Roger",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Long Shot"
+    ],
+    [
+     "Shoot Power",
+     "Cross",
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2010.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2010,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2011": {
+   "name": "Lionel Cruelo",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Aggresion"
+    ],
+    [
+     "Shoot Power",
+     "Cross",
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2011.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2011,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "2012": {
+   "name": "Earl park",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Free Kick"
+    ],
+    [
+     "Shoot Power",
+     "Cross",
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/2012.png",
+   "material": false,
+   "verified": true,
+   "source_id": 2012,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4902": {
+   "name": "Nhân viên huấn luyện",
+   "position": "MF",
+   "boost_groups": [
+    [],
+    [],
+    []
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4902.png",
+   "material": true,
+   "verified": true,
+   "source_id": 4902,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3001": {
+   "name": "Jerry George",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Marking"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3001.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3001,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3002": {
+   "name": "Rufus Fitzgerald",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3002.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3002,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3003": {
+   "name": "Jo Seung-woo",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Sliding Tackle"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3003.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3003,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3004": {
+   "name": "Charlie Wilson",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Interception"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3004.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3004,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3005": {
+   "name": "Christine Lindsay",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Jump"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3005.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3005,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3006": {
+   "name": "Jesi Yang",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3006.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3006,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3007": {
+   "name": "Russell Eastwood",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Heading"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3007.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3007,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3008": {
+   "name": "Patrick E. Gordon",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Marking"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3008.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3008,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3009": {
+   "name": "Barry Woods",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3009.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3009,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3010": {
+   "name": "Frank Harrington",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Sliding Tackle"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3010.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3010,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3011": {
+   "name": "Carl Hunt",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3011.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3011,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3012": {
+   "name": "Dennis Potter",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Jump"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3012.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3012,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3013": {
+   "name": "Fujigaya Satoshi",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3013.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3013,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "3014": {
+   "name": "Phil Watson",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Heading"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/3014.png",
+   "material": false,
+   "verified": true,
+   "source_id": 3014,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4903": {
+   "name": "Nhân viên huấn luyện",
+   "position": "DF",
+   "boost_groups": [
+    [],
+    [],
+    []
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4903.png",
+   "material": true,
+   "verified": true,
+   "source_id": 4903,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4001": {
+   "name": "Alexander Cold",
+   "position": "GK",
+   "boost_groups": [
+    [
+     "GK Handling"
+    ],
+    [
+     "Jump",
+     "Long Pass"
+    ],
+    [
+     "GK Diving",
+     "GK Positioning",
+     "GK Reaction"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4001.png",
+   "material": false,
+   "verified": true,
+   "source_id": 4001,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4002": {
+   "name": "Ricardo Piero",
+   "position": "GK",
+   "boost_groups": [
+    [
+     "GK Goal Kick"
+    ],
+    [
+     "Jump",
+     "Long Pass"
+    ],
+    [
+     "GK Diving",
+     "GK Positioning",
+     "GK Reaction"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4002.png",
+   "material": false,
+   "verified": true,
+   "source_id": 4002,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4003": {
+   "name": "Cecil Vega",
+   "position": "GK",
+   "boost_groups": [
+    [
+     "GK Handling"
+    ],
+    [
+     "Positioning",
+     "Reaction"
+    ],
+    [
+     "GK Diving",
+     "GK Positioning",
+     "GK Reaction"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4003.png",
+   "material": false,
+   "verified": true,
+   "source_id": 4003,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4004": {
+   "name": "Jang Han",
+   "position": "GK",
+   "boost_groups": [
+    [
+     "GK Goal Kick"
+    ],
+    [
+     "Positioning",
+     "Reaction"
+    ],
+    [
+     "GK Diving",
+     "GK Positioning",
+     "GK Reaction"
+    ]
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4004.png",
+   "material": false,
+   "verified": true,
+   "source_id": 4004,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "4904": {
+   "name": "Nhân viên huấn luyện",
+   "position": "GK",
+   "boost_groups": [
+    [],
+    [],
+    []
+   ],
+   "image_url": "https://fifaaddict.com/fo3img/staffs/4904.png",
+   "material": true,
+   "verified": true,
+   "source_id": 4904,
+   "source": "https://en.fifaaddict.com/fo3staff.php"
+  },
+  "1101": {
+   "name": "Bruce Rodney Rodriguez",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Dribble"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 1001,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 1001,
+   "hidden": true,
+   "duplicate_of": 1001
+  },
+  "1104": {
+   "name": "Raymond Hall",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Shoot Power"
+    ],
+    [
+     "Long Pass",
+     "Long Shot",
+     "Jump",
+     "Volley",
+     "Vision"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 1004,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 1004,
+   "hidden": true,
+   "duplicate_of": 1004
+  },
+  "1109": {
+   "name": "Victor Cortez",
+   "position": "FW",
+   "boost_groups": [
+    [
+     "Shoot Power"
+    ],
+    [
+     "Short Pass",
+     "Agility",
+     "Heading",
+     "Aggresion"
+    ],
+    [
+     "Ball Control",
+     "Reaction",
+     "Finishing",
+     "Sprint Speed",
+     "Strength",
+     "Positioning",
+     "Acceleration"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 1009,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 1009,
+   "hidden": true,
+   "duplicate_of": 1009
+  },
+  "2101": {
+   "name": "Ssunda Wu Chen",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Long Pass"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 2001,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 2001,
+   "hidden": true,
+   "duplicate_of": 2001
+  },
+  "2103": {
+   "name": "Johnny Lam",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Ball Control"
+    ],
+    [
+     "Heading",
+     "Finishing",
+     "Marking",
+     "Vision"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 2003,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 2003,
+   "hidden": true,
+   "duplicate_of": 2003
+  },
+  "2107": {
+   "name": "Katie Paul",
+   "position": "MF",
+   "boost_groups": [
+    [
+     "Long Pass"
+    ],
+    [
+     "Shoot Power",
+     "Cross",
+     "Interception"
+    ],
+    [
+     "Dribble",
+     "Short Pass",
+     "Strength",
+     "Sprint Speed",
+     "Reaction",
+     "Acceleration",
+     "Positioning"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 2007,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 2007,
+   "hidden": true,
+   "duplicate_of": 2007
+  },
+  "3103": {
+   "name": "Jo Seung-woo",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Sliding Tackle"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 3003,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 3003,
+   "hidden": true,
+   "duplicate_of": 3003
+  },
+  "3105": {
+   "name": "Christine Lindsay",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Jump"
+    ],
+    [
+     "Aggresion",
+     "Long Pass",
+     "Cross"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 3005,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 3005,
+   "hidden": true,
+   "duplicate_of": 3005
+  },
+  "3112": {
+   "name": "Dennis Potter",
+   "position": "DF",
+   "boost_groups": [
+    [
+     "Jump"
+    ],
+    [
+     "Dribble",
+     "Ball Control",
+     "Vision"
+    ],
+    [
+     "Strength",
+     "Positioning",
+     "Reaction",
+     "Sprint Speed",
+     "Acceleration"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 3012,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 3012,
+   "hidden": true,
+   "duplicate_of": 3012
+  },
+  "4101": {
+   "name": "Alexander Cold",
+   "position": "GK",
+   "boost_groups": [
+    [
+     "GK Handling"
+    ],
+    [
+     "Jump",
+     "Long Pass"
+    ],
+    [
+     "GK Diving",
+     "GK Positioning",
+     "GK Reaction"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 4001,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 4001,
+   "hidden": true,
+   "duplicate_of": 4001
+  },
+  "4103": {
+   "name": "Cecil Vega",
+   "position": "GK",
+   "boost_groups": [
+    [
+     "GK Handling"
+    ],
+    [
+     "Positioning",
+     "Reaction"
+    ],
+    [
+     "GK Diving",
+     "GK Positioning",
+     "GK Reaction"
+    ]
+   ],
+   "image_url": null,
+   "material": false,
+   "verified": true,
+   "source_id": 4003,
+   "source": "https://en.fifaaddict.com/fo3staff.php",
+   "local_variant_of": 4003,
+   "hidden": true,
+   "duplicate_of": 4003
+  },
+  "9601": {
+   "name": "Pep Guardiola",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9601,
+   "source": "https://en.wikipedia.org/wiki/Pep_Guardiola"
+  },
+  "9602": {
+   "name": "José Mourinho",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9602,
+   "source": "https://en.wikipedia.org/wiki/José_Mourinho"
+  },
+  "9603": {
+   "name": "Carlo Ancelotti",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9603,
+   "source": "https://en.wikipedia.org/wiki/Carlo_Ancelotti"
+  },
+  "9604": {
+   "name": "Jürgen Klopp",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9604,
+   "source": "https://en.wikipedia.org/wiki/Jürgen_Klopp"
+  },
+  "9605": {
+   "name": "Zinedine Zidane",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9605,
+   "source": "https://en.wikipedia.org/wiki/Zinedine_Zidane"
+  },
+  "9606": {
+   "name": "Arsène Wenger",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 7,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9606,
+   "source": "https://en.wikipedia.org/wiki/Arsène_Wenger"
+  },
+  "9607": {
+   "name": "Johan Cruyff",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9607,
+   "source": "https://en.wikipedia.org/wiki/Johan_Cruyff"
+  },
+  "9608": {
+   "name": "Rinus Michels",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9608,
+   "source": "https://en.wikipedia.org/wiki/Rinus_Michels"
+  },
+  "9609": {
+   "name": "Arrigo Sacchi",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9609,
+   "source": "https://en.wikipedia.org/wiki/Arrigo_Sacchi"
+  },
+  "9610": {
+   "name": "Bob Paisley",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9610,
+   "source": "https://en.wikipedia.org/wiki/Bob_Paisley",
+   "hidden": true,
+   "hidden_reason": "no_photo"
+  },
+  "9611": {
+   "name": "Matt Busby",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9611,
+   "source": "https://en.wikipedia.org/wiki/Matt_Busby"
+  },
+  "9612": {
+   "name": "Bill Shankly",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 7,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9612,
+   "source": "https://en.wikipedia.org/wiki/Bill_Shankly"
+  },
+  "9613": {
+   "name": "Brian Clough",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9613,
+   "source": "https://en.wikipedia.org/wiki/Brian_Clough"
+  },
+  "9614": {
+   "name": "Helenio Herrera",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9614,
+   "source": "https://en.wikipedia.org/wiki/Helenio_Herrera"
+  },
+  "9615": {
+   "name": "Ernst Happel",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9615,
+   "source": "https://en.wikipedia.org/wiki/Ernst_Happel"
+  },
+  "9616": {
+   "name": "Valeriy Lobanovskyi",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9616,
+   "source": "https://en.wikipedia.org/wiki/Valeriy_Lobanovskyi"
+  },
+  "9617": {
+   "name": "Fabio Capello",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9617,
+   "source": "https://en.wikipedia.org/wiki/Fabio_Capello"
+  },
+  "9618": {
+   "name": "Marcello Lippi",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 7,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9618,
+   "source": "https://en.wikipedia.org/wiki/Marcello_Lippi"
+  },
+  "9619": {
+   "name": "Vicente del Bosque",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9619,
+   "source": "https://en.wikipedia.org/wiki/Vicente_del_Bosque"
+  },
+  "9620": {
+   "name": "Joachim Löw",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 7,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9620,
+   "source": "https://en.wikipedia.org/wiki/Joachim_Löw"
+  },
+  "9621": {
+   "name": "Didier Deschamps",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9621,
+   "source": "https://en.wikipedia.org/wiki/Didier_Deschamps"
+  },
+  "9622": {
+   "name": "Lionel Scaloni",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9622,
+   "source": "https://en.wikipedia.org/wiki/Lionel_Scaloni"
+  },
+  "9623": {
+   "name": "Luiz Felipe Scolari",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9623,
+   "source": "https://en.wikipedia.org/wiki/Luiz_Felipe_Scolari"
+  },
+  "9624": {
+   "name": "Jupp Heynckes",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 7,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9624,
+   "source": "https://en.wikipedia.org/wiki/Jupp_Heynckes"
+  },
+  "9625": {
+   "name": "Ottmar Hitzfeld",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9625,
+   "source": "https://en.wikipedia.org/wiki/Ottmar_Hitzfeld"
+  },
+  "9626": {
+   "name": "Hansi Flick",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9626,
+   "source": "https://en.wikipedia.org/wiki/Hansi_Flick"
+  },
+  "9627": {
+   "name": "Diego Simeone",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9627,
+   "source": "https://en.wikipedia.org/wiki/Diego_Simeone"
+  },
+  "9628": {
+   "name": "Antonio Conte",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9628,
+   "source": "https://en.wikipedia.org/wiki/Antonio_Conte"
+  },
+  "9629": {
+   "name": "Thomas Tuchel",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9629,
+   "source": "https://en.wikipedia.org/wiki/Thomas_Tuchel"
+  },
+  "9630": {
+   "name": "Luis Enrique",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9630,
+   "source": "https://en.wikipedia.org/wiki/Luis_Enrique"
+  },
+  "9631": {
+   "name": "Rafael Benítez",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9631,
+   "source": "https://en.wikipedia.org/wiki/Rafael_Benítez"
+  },
+  "9632": {
+   "name": "Massimiliano Allegri",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9632,
+   "source": "https://en.wikipedia.org/wiki/Massimiliano_Allegri"
+  },
+  "9633": {
+   "name": "Mauricio Pochettino",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9633,
+   "source": "https://en.wikipedia.org/wiki/Mauricio_Pochettino"
+  },
+  "9634": {
+   "name": "Unai Emery",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9634,
+   "source": "https://en.wikipedia.org/wiki/Unai_Emery"
+  },
+  "9635": {
+   "name": "Mikel Arteta",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9635,
+   "source": "https://en.wikipedia.org/wiki/Mikel_Arteta"
+  },
+  "9636": {
+   "name": "Xabi Alonso",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9636,
+   "source": "https://en.wikipedia.org/wiki/Xabi_Alonso"
+  },
+  "9637": {
+   "name": "Frank Rijkaard",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9637,
+   "source": "https://en.wikipedia.org/wiki/Frank_Rijkaard"
+  },
+  "9638": {
+   "name": "Guus Hiddink",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9638,
+   "source": "https://en.wikipedia.org/wiki/Guus_Hiddink"
+  },
+  "9639": {
+   "name": "Bobby Robson",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9639,
+   "source": "https://en.wikipedia.org/wiki/Bobby_Robson"
+  },
+  "9640": {
+   "name": "Roberto Mancini",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9640,
+   "source": "https://en.wikipedia.org/wiki/Roberto_Mancini"
+  },
+  "9641": {
+   "name": "Claudio Ranieri",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9641,
+   "source": "https://en.wikipedia.org/wiki/Claudio_Ranieri"
+  },
+  "9642": {
+   "name": "Marcelo Bielsa",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9642,
+   "source": "https://en.wikipedia.org/wiki/Marcelo_Bielsa"
+  },
+  "9643": {
+   "name": "César Luis Menotti",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9643,
+   "source": "https://en.wikipedia.org/wiki/César_Luis_Menotti"
+  },
+  "9644": {
+   "name": "Carlos Bilardo",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9644,
+   "source": "https://en.wikipedia.org/wiki/Carlos_Bilardo"
+  },
+  "9645": {
+   "name": "Tite",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9645,
+   "source": "https://en.wikipedia.org/wiki/Tite_(football_manager)"
+  },
+  "9646": {
+   "name": "Erik ten Hag",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9646,
+   "source": "https://en.wikipedia.org/wiki/Erik_ten_Hag"
+  },
+  "9647": {
+   "name": "Sven-Göran Eriksson",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9647,
+   "source": "https://en.wikipedia.org/wiki/Sven-Göran_Eriksson"
+  },
+  "9648": {
+   "name": "Ronald Koeman",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Short Pass"
+    ],
+    [
+     "Vision",
+     "Ball Control",
+     "Long Pass",
+     "Dribble",
+     "Agility"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9648,
+   "source": "https://en.wikipedia.org/wiki/Ronald_Koeman"
+  },
+  "9649": {
+   "name": "Gérard Houllier",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9649,
+   "source": "https://en.wikipedia.org/wiki/Gérard_Houllier"
+  },
+  "9650": {
+   "name": "Karl-Heinz Weigang",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9650,
+   "source": "https://de.wikipedia.org/wiki/Karl-Heinz_Weigang",
+   "hidden": true,
+   "hidden_reason": "no_photo"
+  },
+  "9651": {
+   "name": "Colin Murphy",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9651,
+   "source": "https://en.wikipedia.org/wiki/Colin_Murphy_(football_manager)",
+   "hidden": true,
+   "hidden_reason": "no_photo"
+  },
+  "9652": {
+   "name": "Alfred Riedl",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9652,
+   "source": "https://en.wikipedia.org/wiki/Alfred_Riedl"
+  },
+  "9653": {
+   "name": "Christian Letard",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9653,
+   "source": "https://fr.wikipedia.org/wiki/Christian_Letard",
+   "hidden": true,
+   "hidden_reason": "no_photo"
+  },
+  "9654": {
+   "name": "Edson Tavares",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9654,
+   "source": "https://pt.wikipedia.org/wiki/Edson_Tavares",
+   "hidden": true,
+   "hidden_reason": "no_photo"
+  },
+  "9655": {
+   "name": "Henrique Calisto",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9655,
+   "source": "https://en.wikipedia.org/wiki/Henrique_Calisto"
+  },
+  "9656": {
+   "name": "Falko Götz",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 10,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9656,
+   "source": "https://en.wikipedia.org/wiki/Falko_Götz"
+  },
+  "9657": {
+   "name": "Phan Thanh Hùng",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Finishing"
+    ],
+    [
+     "Shoot Power",
+     "Positioning",
+     "Dribble",
+     "Ball Control",
+     "Volley"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9657,
+   "source": "https://vi.wikipedia.org/wiki/Phan_Thanh_Hùng"
+  },
+  "9658": {
+   "name": "Hoàng Văn Phúc",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9658,
+   "source": "https://vi.wikipedia.org/wiki/Hoàng_Văn_Phúc"
+  },
+  "9659": {
+   "name": "Toshiya Miura",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 5,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9659,
+   "source": "https://en.wikipedia.org/wiki/Toshiya_Miura"
+  },
+  "9660": {
+   "name": "Nguyễn Hữu Thắng",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9660,
+   "source": "https://vi.wikipedia.org/wiki/Nguyễn_Hữu_Thắng_(cầu_thủ_bóng_đá)"
+  },
+  "9661": {
+   "name": "Mai Đức Chung",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 9,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9661,
+   "source": "https://vi.wikipedia.org/wiki/Mai_Đức_Chung"
+  },
+  "9662": {
+   "name": "Philippe Troussier",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Tackle"
+    ],
+    [
+     "Marking",
+     "Interception",
+     "Strength",
+     "Heading",
+     "Sliding Tackle"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 8,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9662,
+   "source": "https://en.wikipedia.org/wiki/Philippe_Troussier"
+  },
+  "9663": {
+   "name": "Kim Sang-sik",
+   "position": "PREMIUM",
+   "boost_groups": [
+    [
+     "Stamina"
+    ],
+    [
+     "Sprint Speed",
+     "Acceleration",
+     "Strength",
+     "Aggresion",
+     "Jump"
+    ],
+    [
+     "Overall Rating"
+    ]
+   ],
+   "power": 6,
+   "material": false,
+   "verified": true,
+   "mod": true,
+   "source_id": 9663,
+   "source": "https://en.wikipedia.org/wiki/Kim_Sang-sik"
   }
+ }
 }

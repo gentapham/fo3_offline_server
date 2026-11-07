@@ -22,8 +22,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PAGE = os.path.join(HERE, "admin", "index.html")
 POS_NAMES = "GK SW RWB RB RCB CB LCB LB LWB RDM CDM LDM RM RCM CM LCM LM RAM CAM LAM RF CF LF RW RS ST LS LW".split()
 API = {}
-READ_ONLY = {"bot_settings", "enhancement_settings", "summary", "players", "search", "packs", "daily", "log", "seasons", "facets", "season_cards",
-             "coach_info", "price_settings", "card", "staff_catalog", "staffs"}  # the rest must be POST + header
+READ_ONLY = {"missions", "shop_settings", "inventory", "custom_packs", "coach_slots", "bot_settings", "enhancement_settings", "summary", "players", "search", "packs", "daily", "log", "seasons", "facets", "season_cards",
+             "coach_info", "price_settings", "card", "staff_catalog", "staffs", "match_rewards", "prematch", "server_options",
+             "market_settings", "rank_info"}  # the rest must be POST + header
 NO_LOCK = {"search", "facets", "seasons", "packs", "staff_catalog", "log"}
 hc = None  # the http_config module, set by start() (or by tests)
 
@@ -154,8 +155,41 @@ def reset_coach(p):
         saved = os.path.join(bdir, time.strftime("state_truoc_reset_%Y%m%d_%H%M%S.json"))
         import shutil
         shutil.copyfile(hc.STATE, saved)
-    hc._save({"coaches": [], "defaultcoachid": "", "teams": {}})
-    return {"ok": True, "backup": os.path.relpath(saved, os.path.dirname(os.path.dirname(hc.STATE))) if saved else ""}
+    target = str(p.get("slot", "all"))
+    st = hc._state()
+    if target == "all" or len(st.get("coaches") or []) <= 1:
+        hc._save({"coaches": [], "defaultcoachid": "", "teams": {}})
+        done = "all"
+    else:
+        slot = int(target)
+        gone = next((c for c in st["coaches"] if c["slot"] == slot), None)
+        if gone is None:
+            raise AdminError("Không có HLV ở ô này")
+        was_default = gone["_id"] == st.get("defaultcoachid")
+        st["coaches"].remove(gone)
+        st["teams"].pop(str(slot), None)
+        (st.get("pendingteams") or {}).pop(str(slot), None)
+        ctx = st.setdefault("coachcontexts", {})
+        ctx.pop(str(slot), None)
+        if was_default:
+            # du lieu giai/cup/tran o goc state la cua HLV vua xoa -> bo, nap du lieu cua HLV con lai
+            for k in hc.COACH_CONTEXT_KEYS:
+                st.pop(k, None)
+            other = st["coaches"][0]
+            st.update(ctx.pop(str(other["slot"]), {}))
+            st["defaultcoachid"] = other["_id"]
+        hc._save(st)
+        done = gone["name"]
+    return {"ok": True, "done": done,
+            "backup": os.path.relpath(saved, os.path.dirname(os.path.dirname(hc.STATE))) if saved else ""}
+
+
+@api("coach_slots")
+def coach_slots(p):
+    """Danh sach HLV cua tai khoan (toi da 2) cho o Reset nhan vat."""
+    st = hc._state()
+    return {"coaches": [{"slot": c["slot"], "name": c.get("name"), "teamid": c.get("teamid"),
+                         "default": c["_id"] == st.get("defaultcoachid")} for c in st.get("coaches") or []]}
 
 
 @api("players")
@@ -281,7 +315,7 @@ def season_table():
         if c == 0:
             tag, name = "Gốc", "Thẻ gốc (chỉ số engine)"
         if c == 51:
-            name = ""  # file ngon ngu ghi nham "Chon quoc tich" cho ma 51 (TL)
+            name = "Thai Legend"  # file ngon ngu goc ghi nham "Chon quoc tich" cho ma 51 (TL, da sua)
         if c == 41:
             tag, name = "16B", "Mùa 2016 (bộ thẻ phụ)"
         name = name or (f"Mùa {tag}" if tag else f"Mùa đặc biệt (mã {c})")
@@ -289,7 +323,7 @@ def season_table():
         low = name.lower()
         legend = {"WL", "UL", "EL", "KL02", "ML", "TL", "VL", "CL", "MUL", "MUA", "CEL", "TCO92", "KXI"}
         cup = {"06WC", "10WC", "14WC", "08E", "10U", "06U", "16EC"}
-        kind = ("base" if c == 0 else "year" if tag.isdigit() else
+        kind = ("base" if c == 0 else "year" if tag.isdigit() or c in (300, 325) else
                 "legend" if tag in legend or any(w in low for w in ("legend", "huyền thoại", "icons"))
                 else "cup" if tag in cup or any(w in low for w in (" wc", "europe", "copa", "ucl", "champion", "châu âu"))
                 else "special")
@@ -306,8 +340,22 @@ def seasons(p):
     global _SEASONS
     _SEASONS = None  # dung lai sau khi da co danh sach the
     t = season_table()
-    return {"seasons": [dict(v, count=count.get(c, 0)) for c, v in sorted(t.items(), key=lambda x: (x[1]["kind"] != "year", x[0]))
+    return {"seasons": [dict(v, count=count.get(c, 0)) for c, v in sorted(t.items(), key=lambda x: season_order(*x))
                         if count.get(c)]}
+
+
+SEASON_YEARS = (300, 325, 6, 7, 8, 9, 10, 11, 14, 15, 16, 41, 88)  # FO4 26 LIVE, 25 LIVE dau tien (nhu trong game); 2006 .. 2016, 2016 phu, 2017 (nhu static_roster trong game)
+
+
+def season_order(code, v):
+    """Thu tu mua tren GM Tool (giong danh sach trong game): mua theo nam truoc (2006 -> 2017), roi mua
+    dac biet / huyen thoai theo ten (bo dau, A-Z), the goc cuoi cung."""
+    if code in SEASON_YEARS:
+        return (0, SEASON_YEARS.index(code), "")
+    if v.get("kind") == "year":
+        return (0, 50 + code, "")
+    name = re.sub(r"[^0-9a-z ]+", "", _fold(v.get("name") or v.get("tag") or str(code))).strip()  # bo dau + dau nhay
+    return (2 if v.get("kind") == "base" else 1, 0, name)
 
 
 def _by_league(rows, p):
@@ -393,7 +441,87 @@ def search(p):
 
 @api("packs")
 def packs(p):
-    return {"packs": [{"itemid": i, "name": n, "price": hc.pack_price(i)} for i, (n, _) in hc.PACKS.items()]}
+    return {"packs": [{"itemid": i, "name": n, "price": hc.pack_price(i)} for i, (n, _) in list(hc.PACKS.items())]}
+
+
+@api("custom_packs")
+def custom_packs(p):
+    """Goi tu chon: danh sach + chi tiet (ten cau thu, so the theo mua)."""
+    hc.custom_packs_sync()
+    out = []
+    for c in hc.custom_packs_load():
+        spids = [int(s) for s in c.get("spids") or []]
+        idx = {r["spid"]: r for r in card_index()}
+        rows = [idx.get(s) or {"spid": s, "name": str(s)} for s in spids]
+        out.append({"id": c["id"], "name": c.get("name", ""), "grade_min": c.get("grade_min", 1),
+                    "grade_max": c.get("grade_max", 1), "color": c.get("color", 0),
+                    "seasons": c.get("seasons") or [],
+                    "players": [{k: v for k, v in r.items() if not k.startswith("_") and k != "pp"} for r in rows],
+                    "staffs": [_staff_brief(s) for s in c.get("staffs") or []],
+                    "staff_rate": int(c.get("staff_rate") or 10), "staff_gmin": int(c.get("staff_gmin") or 10),
+                    "staff_gmax": int(c.get("staff_gmax") or 10),
+                    "total": len(hc.pack_pool(c["id"])) if c["id"] in hc.PACKS else 0})
+    return {"packs": out, "icon_base": hc.CUSTOM_ICON_BASE, "icon_count": hc.CUSTOM_ICON_COUNT}
+
+
+@api("custom_pack_save")
+def custom_pack_save(p):
+    name = str(p.get("name") or "").strip()
+    if not 2 <= len(name) <= 40:
+        raise AdminError("Tên gói phải dài 2–40 ký tự")
+    try:
+        spids = list(dict.fromkeys(int(s) for s in p.get("spids") or []))
+        seasons = list(dict.fromkeys(int(s) for s in p.get("seasons") or []))
+    except (TypeError, ValueError):
+        raise AdminError("Danh sách cầu thủ/mùa không hợp lệ") from None
+    if len(spids) > 2000:
+        raise AdminError("Tối đa 2000 cầu thủ chọn tay mỗi gói")
+    gmax = as_int(p.get("grade_max", 1), 1, 20, "số cộng tối đa")
+    gmin = as_int(p.get("grade_min", gmax), 1, gmax, "số cộng tối thiểu")
+    color = as_int(p.get("color", 0), 0, hc.CUSTOM_ICON_COUNT - 1, "màu icon")
+    try:
+        staffs = list(dict.fromkeys(int(s) for s in p.get("staffs") or []))
+    except (TypeError, ValueError):
+        raise AdminError("Danh sách HLV không hợp lệ") from None
+    ss = _ss()
+    bad = [s for s in staffs if str(s) not in ss.CATALOG or ss.CATALOG[str(s)].get("material")]
+    if bad:
+        raise AdminError(f"Không có HLV mã {bad[0]}")
+    if len(staffs) > 200:
+        raise AdminError("Tối đa 200 HLV mỗi gói")
+    sgmax = as_int(p.get("staff_gmax", 10), 1, ss.MAX_GRADE, "sao HLV tối đa")
+    sgmin = as_int(p.get("staff_gmin", sgmax), 1, sgmax, "sao HLV tối thiểu")
+    srate = as_int(p.get("staff_rate", 10), 1, 100, "tỉ lệ ra HLV")
+    if not spids and not seasons and not staffs:
+        raise AdminError("Hãy thêm ít nhất 1 cầu thủ, 1 mùa hoặc 1 HLV vào gói")
+    if spids and seasons:
+        raise AdminError("Mỗi gói chỉ chọn một cách: theo mùa hoặc chọn từng cầu thủ")
+    if (spids or seasons) and not hc.custom_pack_cards(spids, seasons):
+        raise AdminError("Không có thẻ nào hợp lệ trong gói")
+    packs = hc.custom_packs_load()
+    pid = int(p.get("id") or 0)
+    row = next((c for c in packs if c["id"] == pid), None)
+    if row is None:
+        pid = max([c["id"] for c in packs] + [hc.CUSTOM_PACK_BASE]) + 1
+        row = {"id": pid}
+        packs.append(row)
+    row.update(name=name, spids=spids, seasons=seasons, grade_min=gmin, grade_max=gmax, color=color)
+    for k in ("staffs", "staff_rate", "staff_gmin", "staff_gmax"):
+        row.pop(k, None)
+    if staffs:  # goi cu (khong HLV) giu nguyen dang du lieu cu
+        row.update(staffs=staffs, staff_rate=srate, staff_gmin=sgmin, staff_gmax=sgmax)
+    hc.custom_packs_save(packs)
+    return {"id": pid, "total": len(hc.pack_pool(pid)), "staffs": len(staffs)}
+
+
+@api("custom_pack_delete")
+def custom_pack_delete(p):
+    pid = as_int(p.get("id"), 1, 10 ** 10, "gói")
+    packs = hc.custom_packs_load()
+    if not any(c["id"] == pid for c in packs):
+        raise AdminError("Gói không tồn tại")
+    hc.custom_packs_save([c for c in packs if c["id"] != pid])
+    return {"ok": True}
 
 
 @api("ep")
@@ -410,14 +538,17 @@ def set_ep(p):
 @api("player_add")
 def player_add(p):
     st = hc._state(); t = team(st)
-    spid, grade = as_int(p.get("spid"), 1, 10 ** 9, "spid"), as_int(p.get("grade", 1), 1, 10, "grade")
+    spid, grade = as_int(p.get("spid"), 1, 10 ** 9, "spid"), as_int(p.get("grade", 1), 1, 20, "grade")
+    level = as_int(p.get("level") or 1, 1, hc.PLAYER_MAX_LEVEL, "level")
     if not names([spid]):
         raise AdminError("Không có SPID này trong dữ liệu")
     if len(t["players"]) >= hc.MAX_PLAYERS:
         raise AdminError(f"CLB đã đầy ({hc.MAX_PLAYERS} cầu thủ)")
     x = hc.add_player(t, spid, grade)
+    if level > 1:
+        x["levelinfo"] = {"level": level, "exp": 0}
     hc._save(st)
-    return {"id": hc.iid(x)}
+    return {"id": hc.iid(x), "live": push(st, f"GM Tool: đã thêm cầu thủ {names([spid]).get(spid, spid)}")}
 
 
 @api("player_level")
@@ -433,7 +564,7 @@ def player_level(p):
 @api("player_grade")
 def player_grade(p):
     st = hc._state()
-    player(st, p.get("id"))["grade"] = as_int(p.get("grade"), 0, 10, "grade")
+    player(st, p.get("id"))["grade"] = as_int(p.get("grade"), 0, 20, "grade")
     hc._save(st)
     return {"ok": True}
 
@@ -461,6 +592,153 @@ def player_team(p):
     return {"ok": True}
 
 
+def push(st, title, bag=False):
+    """Day qua GM Tool vao game dang mo (messenger.py, cong UDP 28003). True = /coach/me da duoc day
+    (CLB du nho); False = game se thay khi tai lai man hinh / vao lai menu."""
+    try:
+        return bool(hc.push_gift(st, title, bag))
+    except Exception as e:  # khong bao gio lam hong thao tac chinh
+        print("push gift:", e, flush=True)
+        return False
+
+
+def rel(path):
+    return os.path.relpath(path, HERE) if os.path.splitdrive(path)[0] == os.path.splitdrive(HERE)[0] else path
+
+
+def prize_row(w, prize):
+    """[trong so, {"ep": n} | itemid cua goi/vat pham] tu mot dong the thuong tren trang."""
+    w = as_int(w, 1, 1000, "trọng số")
+    if isinstance(prize, dict):
+        return [w, {"ep": as_int(prize.get("ep"), 1, 10 ** 12, "EP")}]
+    i = as_int(prize, 1, 10 ** 10, "vật phẩm")
+    if i in hc.PACKS or i in hc.ITEMS:
+        return [w, i]
+    raise AdminError(f"Không có gói / vật phẩm {prize}")
+
+
+@api("match_rewards")
+def match_rewards(p):
+    """Thuong sau tran (gamedata/match_rewards.json) + danh sach goi/vat pham de chon cho the thuong."""
+    choices = [{"itemid": i, "name": hc.item_def(i).get("name", str(i)), "kind": "Gói cầu thủ"} for i in hc.PACKS] +               [{"itemid": i, "name": hc.item_def(i).get("name", str(i)), "kind": "Vật phẩm"} for i in hc.ITEMS]
+    return {**hc.match_reward_cfg(), "file": rel(hc.MATCH_REWARD_FILE), "choices": choices}
+
+
+@api("match_rewards_set")
+def match_rewards_set(p):
+    """EP + EXP theo ket qua va the thuong (gamedata/match_rewards.json, doc lai moi tran)."""
+    res = p.get("result") or {}
+    result = {k: {"ep": as_int((res.get(k) or {}).get("ep"), 0, 10 ** 9, "EP"),
+                  "coach": as_int((res.get(k) or {}).get("coach"), 0, 10 ** 6, "EXP HLV"),
+                  "player": as_int((res.get(k) or {}).get("player"), 0, 10 ** 6, "EXP cầu thủ")}
+              for k in ("win", "draw", "loss")}
+    cards = [prize_row(w, prize) for w, prize in p.get("cards") or []]
+    if len(cards) > 20:
+        raise AdminError("Tối đa 20 dòng thẻ thưởng")
+    cfg = {"result": result, "cards": cards}
+    os.makedirs(os.path.dirname(hc.MATCH_REWARD_FILE), exist_ok=True)
+    with open(hc.MATCH_REWARD_FILE, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, indent=1)
+    return cfg
+
+
+@api("prematch")
+def prematch(p):
+    return {**hc.match_prefs(hc._state()), "halfLengths": list(hc.HALF_LENGTHS),
+            "stadiums": [{"id": s["id"], "name": s["name"]} for s in hc.stadium_choices()],
+            "balls": [{"id": b, "name": n} for b, n in hc.ball_names().items()]}
+
+
+@api("prematch_set")
+def prematch_set(p):
+    """San / thoi diem / thoi tiet / thoi luong / bong mac dinh cho cac tran sau (Giai dau, Cup,
+    World Cup, Giao huu: trong game chi hien, khong doi duoc)."""
+    prefs = {}
+    for k, ok in hc.MATCH_PREFS.items():
+        v = p.get(k)
+        v = int(v) if isinstance(v, str) and v.isdigit() else v
+        if isinstance(v, bool) or v not in ok:
+            raise AdminError(f"Giá trị không hợp lệ: {k}")
+        prefs[k] = v
+    st = hc._state()
+    st["matchprefs"] = prefs
+    hc._save(st)
+    return hc.match_prefs(st)
+
+
+@api("server_options")
+def server_options(p):
+    return {**hc.server_options(), "file": rel(hc.SERVER_OPTIONS_FILE)}
+
+
+@api("server_options_set")
+def server_options_set(p):
+    cfg = {**hc.server_options(), **{k: bool(p[k]) for k in ("hide_engine_cards", "tc_grade") if k in p}}
+    os.makedirs(os.path.dirname(hc.SERVER_OPTIONS_FILE), exist_ok=True)
+    with open(hc.SERVER_OPTIONS_FILE, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, indent=1)
+    return cfg
+
+
+@api("market_settings")
+def market_settings(p):
+    """Thi truong song / ban ngay + mau kinh te (gamedata/market_settings.json) va so the dang rao."""
+    st = hc._state()
+    offers = st.get("offers", []) if st.get("coaches") else []
+    return {**hc.market.settings(), "presets": hc.market.PRESETS, "file": rel(hc.market.SETTINGS_FILE),
+            "waiting": sum(o.get("status") == "waiting" for o in offers), "sold": sum(o.get("status") == "sold" for o in offers)}
+
+
+@api("market_settings_set")
+def market_settings_set(p):
+    if p.get("mode") not in ("living", "instant") or p.get("preset") not in (*hc.market.PRESETS, "custom"):
+        raise AdminError("Chế độ / mẫu thị trường không hợp lệ")
+    if p["preset"] == "custom":
+        # GM Tool chi gui swing/ask_max/sale_min/sale_max/dynamic: slow, bargain_lo/hi giu gia tri dang dung
+        p = {**hc.market.settings(), **p}
+        for k, (lo, hi) in hc.market.LIMITS.items():
+            v = p.get(k)
+            if isinstance(v, bool) or not isinstance(v, (int, float)) or not lo <= v <= hi:
+                raise AdminError(f"Giá trị không hợp lệ: {k} (từ {lo} đến {hi})")
+    return hc.market.save_settings(p)
+
+
+@api("rank_info")
+def rank_info(p):
+    """Xep hang voi HLV ao: cai dat, so HLV ao, top 10 (1v1) va ban ghi cua HLV dang choi."""
+    rk = hc.rank
+    st = hc._state()
+    crowd = rk.virtual_managers()
+    out = {**rk.settings(), "file": rel(rk.SETTINGS_FILE), "count": len(crowd), "max": rk.VM_MAX,
+           "top": [{"name": n, "elo": e, "me": not str(i).startswith("vm"),
+                    "division": rk.ladder_division(e)} for e, n, i in rk.ladder_board(st, 0)[:10]] if st.get("coaches") else []}
+    if st.get("coaches"):
+        lad = rk.my_ladder(st)
+        out["me"] = {"name": coach(st)["name"], "modes": [
+            {"mode": name, "elo": lad["elo"][i], "games": lad["games"][i], "wins": lad["wins"][i], "draws": lad["draws"][i],
+             "losses": lad["losses"][i], "rank": rk.my_rank(st, i) if lad["games"][i] else 0,
+             "division": rk.ladder_division(lad["elo"][i])} for i, name in ((0, "Xếp hạng 1vs1"), (3, "Xếp hạng giả lập (HLV)"))]}
+    return out
+
+
+@api("rank_settings_set")
+def rank_settings_set(p):
+    return hc.rank.save_settings({k: bool(p[k]) for k in ("enabled", "chat") if k in p})
+
+
+@api("rank_reset")
+def rank_reset(p):
+    """Xoa ban ghi Xep hang mua nay cua HLV dang choi (Elo ve 1000)."""
+    st = hc._state()
+    c = coach(st)
+    if c is None:
+        raise AdminError("Chưa có HLV")
+    c.pop("ladder", None)
+    st.pop("ladder_pending", None)
+    hc._save(st)
+    return rank_info({})
+
+
 def give_pack(st, itemid, count):
     inv = coach(st).setdefault("items", [])
     stack = next((i for i in inv if i["itemid"] == itemid), None)
@@ -477,6 +755,46 @@ def api_give_pack(p):
     if itemid not in hc.PACKS:
         raise AdminError("Gói không tồn tại")
     give_pack(st, itemid, as_int(p.get("count", 1), 1, 999, "quantity"))
+    hc._save(st)
+    return {"ok": True, "live": push(st, f"GM Tool: đã thêm {hc.item_def(itemid).get('name', itemid)} vào Vật phẩm")}
+
+
+@api("inventory")
+def inventory(p):
+    """Kho do cua HLV dang chon: goi cau thu + vat pham dung."""
+    st = hc._state(); c = coach(st)
+    out = []
+    for it in c.get("items", []):
+        i = it["itemid"]
+        if i not in hc.PACKS and i not in hc.ITEMS:
+            continue
+        d = hc.item_def(i)
+        out.append({"id": it["_id"], "itemid": i, "name": d.get("name", str(i)), "count": it.get("remains", 0),
+                    "kind": "Gói cầu thủ" if i in hc.PACKS else "Dùng", "icon": d.get("itemicon", i)})
+    return {"items": out}
+
+
+@api("inventory_remove")
+def inventory_remove(p):
+    """Xoa do trong kho: id (mot ngan) + count (bo trong = xoa het ngan do); all=1 xoa toan bo."""
+    st = hc._state(); c = coach(st)
+    items = c.setdefault("items", [])
+    if p.get("all"):
+        n = len(items)
+        c["items"] = []
+        hc._save(st)
+        return {"removed": n}
+    it = next((x for x in items if x["_id"] == str(p.get("id"))), None)
+    if it is None:
+        raise AdminError("Không tìm thấy món đồ này trong kho")
+    cnt = p.get("count")
+    if cnt in (None, "", 0, "0"):
+        items.remove(it)
+    else:
+        k = as_int(cnt, 1, 10 ** 6, "số lượng")
+        it["remains"] = max(0, it.get("remains", 0) - k)
+        if not it["remains"]:
+            items.remove(it)
     hc._save(st)
     return {"ok": True}
 
@@ -495,12 +813,15 @@ def bag_send(p):
         spid = as_int(p["spid"], 1, 10 ** 9, "spid")
         if not names([spid]):
             raise AdminError("Không có SPID này trong dữ liệu")
-        players_ = [{"spid": spid, "grade": as_int(p.get("grade") or 1, 1, 10, "grade")}]
+        players_ = [{"spid": spid, "grade": as_int(p.get("grade") or 1, 1, 20, "grade")}]
+        level = as_int(p.get("level") or 1, 1, hc.PLAYER_MAX_LEVEL, "level")
+        if level > 1:
+            players_[0]["level"] = level
     if not items and not players_:
         raise AdminError("Hãy nhập EP, gói hoặc cầu thủ")
     e = hc.bag_add(st, str(p.get("title") or "Quà Admin")[:60], items, players_, msg="Quà từ admin.")
     hc._save(st)
-    return {"id": e["_id"]}
+    return {"id": e["_id"], "live": push(st, f"Quà mới trong Túi đồ: {e['title']}", bag=True)}
 
 
 @api("daily")
@@ -521,7 +842,7 @@ def daily_set(p):
         if not ep and pack is None:
             raise AdminError(f"Ngày {i + 1} chưa có quà")
         table.append({**({"ep": ep} if ep else {}),
-                      **({"pack": pack, "count": as_int(r.get("count") or 1, 1, 99, "quantity")} if pack else {})})
+                      **({"pack": pack, "count": as_int(r.get("count") or 1, 1, 999, "Số gói")} if pack else {})})
     if not 1 <= len(table) <= 31:
         raise AdminError("Bảng quà phải có từ 1 đến 31 ngày")
     with open(hc.DAILY_FILE, "w", encoding="utf-8") as f:
@@ -560,12 +881,90 @@ def scouts_reset(p):
 @api("log")
 def log(p):
     n = as_int(p.get("n", 80), 1, 1000, "n")
+    quiet = str(p.get("quiet", "")) == "1"   # an dong lap moi 2 giay (/info/server/time, /sign/ping)
+    errors = str(p.get("errors", "")) == "1"  # chi dong loi
     try:
         with open(hc.LOG, encoding="utf-8", errors="replace") as f:
-            lines = f.readlines()[-n:]
+            lines = f.readlines()[-max(n * 20, 4000):]
     except OSError:
         lines = []
-    return {"lines": [ln.rstrip("\n")[:300] for ln in lines]}
+    if quiet:
+        lines = [ln for ln in lines if "/info/server/time" not in ln and "/sign/ping" not in ln]
+    if errors:
+        lines = [ln for ln in lines if _is_err(ln)]
+    return {"lines": [ln.rstrip("\n")[:300] for ln in lines[-n:]]}
+
+
+def _is_err(ln):
+    l = ln.lower()
+    # bo qua dong binh thuong: ten bang EXCEPTION_TEAM_LIST, thoat game ("exit"), bam thoat tran, log su kien UI
+    if "exception_team_list" in l or "usereventtracking" in l or "match_userclose" in l:
+        return False
+    if "client_close" in l and '"message":"exit"' in l:
+        return False
+    return any(k in l for k in ("ui/errors", "traceback", "error", "exception", "client_close", "tcp_disconnect"))
+
+
+def export_logs_zip():
+    """Zip nhat ky loi (giong nut Xuat log loi tren launcher) de nguoi choi gui cho nguoi ho tro."""
+    import io, zipfile, platform, socket, subprocess
+
+    def tail(path, n=4000):
+        try:
+            with open(path, encoding="utf-8", errors="replace") as f:
+                return "".join(f.readlines()[-n:])
+        except OSError as e:
+            return f"(khong doc duoc: {e})\n"
+
+    def ps(cmd):
+        try:
+            r = subprocess.run(["powershell", "-NoProfile", "-Command", cmd], capture_output=True, timeout=40,
+                               creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            return (r.stdout or b"").decode("utf-8", "replace") + (r.stderr or b"").decode("utf-8", "replace")
+        except Exception as e:
+            return f"(loi chay lenh: {e})\n"
+
+    game = hc.GAME
+    info = [f"Thoi gian: {time.strftime('%Y-%m-%d %H:%M:%S')}", f"Thu muc game: {game}", f"Windows: {platform.platform()}"]
+    try:
+        info.append(f"APSEODESK172 -> {socket.gethostbyname('APSEODESK172')}")
+    except OSError as e:
+        info.append(f"APSEODESK172 -> KHONG DICH DUOC ({e})")
+    try:
+        with open(os.path.join(game, "patch_version.txt"), encoding="utf-8") as f:
+            info.append("Ban va: " + f.read().strip())
+    except OSError:
+        info.append("Ban va: (khong ro)")
+    xd = os.path.join(game, "Xigncode")
+    try:
+        info.append("Xigncode: " + ", ".join(f"{f} ({os.path.getsize(os.path.join(xd, f))} B)" for f in sorted(os.listdir(xd))))
+    except OSError as e:
+        info.append(f"Xigncode: KHONG DOC DUOC ({e})")
+    st = hc._state()
+    info.append("HLV: " + ", ".join(f"{c.get('name')} (o {c['slot']}, doi {c.get('teamid')})" for c in st.get("coaches") or []))
+    info.append("\n== May ==\n" + ps("Get-CimInstance Win32_Processor | Select -Expand Name; 'RAM GB: ' + [math]::Round("
+                                    "(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory/1GB,1); Get-CimInstance "
+                                    "Win32_VideoController | % { 'GPU: ' + $_.Name + ' / driver ' + $_.DriverVersion }; "
+                                    "(Get-CimInstance Win32_OperatingSystem).Caption"))
+    events = ps("Get-WinEvent -FilterHashtable @{LogName='Application'; StartTime=(Get-Date).AddDays(-3)} -ErrorAction "
+                "SilentlyContinue | ? { $_.Message -match 'fifazf|FO3|xcorona' -and $_.Level -le 3 } | Select -First 20 "
+                "TimeCreated,Id,ProviderName,Message | Format-List | Out-String -Width 300")
+    # chi file cua game (khong gom file rieng tu khac)
+    defender = ps("Get-MpThreatDetection -ErrorAction SilentlyContinue | ? { ($_.Resources -join ';') -match "
+                  "'FO3|fifa|Xigncode|xcorona|xem|Offline Launcher|FO3 Launcher' } | Select -First 20 InitialDetectionTime,"
+                  "@{n='Files';e={$_.Resources -join '; '}} | Format-List | Out-String -Width 300")
+    srv = tail(hc.LOG)
+    errs = "".join(ln for ln in srv.splitlines(True) if _is_err(ln))
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("thong_tin_may.txt", "\n".join(info))
+        z.writestr("loi_tom_tat.txt", errs or "(khong co dong loi)")
+        z.writestr("may_chu.txt", srv)
+        z.writestr("tin_nhan.txt", tail(os.path.join(os.path.dirname(hc.LOG), "messenger.log")))
+        z.writestr("game_xign.txt", tail(os.path.join(game, "xign_stub.log")))
+        z.writestr("windows_loi_ung_dung.txt", events or "(khong co)")
+        z.writestr("windows_defender.txt", defender or "(khong co)")
+    return buf.getvalue()
 
 
 # ---------------------------------------------------------------- thao tac hang loat
@@ -573,13 +972,13 @@ def log(p):
 def player_bulk(p):
     """{ids: [...], action: grade|second|first|remove, grade} -> {done, skipped: [{name, reason}]}."""
     st = hc._state(); t = team(st)
-    ids = [str(i) for i in (p.get("ids") or [])][:500]
+    ids = [str(i) for i in (p.get("ids") or [])][:10000]
     action = p.get("action")
     if action not in ("grade", "level", "second", "first", "remove"):
         raise AdminError("Thao tác không hợp lệ")
     if not ids:
         raise AdminError("Chưa chọn cầu thủ nào")
-    grade = as_int(p.get("grade"), 0, 10, "grade") if action == "grade" else None
+    grade = as_int(p.get("grade"), 0, 20, "grade") if action == "grade" else None
     level = as_int(p.get("level"), 1, hc.PLAYER_MAX_LEVEL, "level") if action == "level" else None
     nm = names(x["spid"] for x in t["players"])
     done, skipped = 0, []
@@ -606,12 +1005,24 @@ def player_bulk(p):
     return {"done": done, "skipped": skipped}
 
 
+@api("player_remove_all")
+def player_remove_all(p):
+    """Thanh ly toan bo cau thu du bi + doi phu; giu 18 cau thu trong doi hinh."""
+    st = hc._state(); t = team(st)
+    keep = [x for x in t["players"] if hc.in_squad(t, x)]
+    gone = [x for x in t["players"] if not hc.in_squad(t, x)]
+    for x in gone:
+        hc.remove_player(t, x)
+    hc._save(st)
+    return {"done": len(gone), "kept": len(keep)}
+
+
 @api("player_add_bulk")
 def player_add_bulk(p):
     """{spids: [...], grade, level} -> {done, skipped, players, max}: them nhieu the vao CLB (du bi)."""
     st = hc._state(); t = team(st)
     spids = [as_int(s, 1, 10 ** 9, "spid") for s in (p.get("spids") or [])][:1000]
-    grade = as_int(p.get("grade", 1), 1, 10, "grade")
+    grade = as_int(p.get("grade", 1), 1, 20, "grade")
     level = as_int(p.get("level") or 1, 1, hc.PLAYER_MAX_LEVEL, "level")
     if not spids:
         raise AdminError("Chưa chọn thẻ nào")
@@ -628,7 +1039,8 @@ def player_add_bulk(p):
                 x["levelinfo"] = {"level": level, "exp": 0}
             done += 1
     hc._save(st)
-    return {"done": done, "skipped": skipped, "players": len(t["players"]), "max": hc.MAX_PLAYERS}
+    live = push(st, f"GM Tool: đã thêm {done} cầu thủ") if done else False
+    return {"done": done, "skipped": skipped, "players": len(t["players"]), "max": hc.MAX_PLAYERS, "live": live}
 
 
 @api("season_cards")
@@ -639,7 +1051,7 @@ def season_cards(p):
     tq = str(p.get("team") or "").strip()
     if not season and not tq:
         raise AdminError("Hãy chọn mùa hoặc đội bóng")
-    grade = as_int(p.get("grade") or 1, 1, 10, "grade")
+    grade = as_int(p.get("grade") or 1, 1, 20, "grade")
     level = as_int(p.get("level") or 1, 1, hc.PLAYER_MAX_LEVEL, "level")
     rows = card_index()
     if season:
@@ -707,6 +1119,27 @@ def price_settings_get(p):
             "overrides": [{"spid": int(s), "name": nm.get(int(s), "?"), "price": v} for s, v in ov.items()]}
 
 
+@api("shop_settings")
+def shop_settings_get(p):
+    d = hc.shop_settings()
+    samples = []
+    if hc.shop_paid():
+        for i in (501, 50122, 8223601, 801, 81000001):
+            try:
+                samples.append({"name": hc.item_def(i)["name"], "price": hc.product_price(i, 1)})
+            except Exception:
+                pass
+    return {**d, "samples": samples}
+
+
+@api("shop_settings_set")
+def shop_settings_set(p):
+    try:
+        return hc.set_shop_settings(p)
+    except (TypeError, ValueError):
+        raise AdminError("Hệ số giá gói thẻ phải từ 1 đến 100.")
+
+
 @api("price_settings_set")
 def price_settings_set(p):
     import price_settings
@@ -731,6 +1164,11 @@ def price_settings_set(p):
                 raise AdminError("Không có SPID này trong dữ liệu")
             data["overrides"][str(s)] = as_int(p["override_price"], 0, 10 ** 12, "price")
     price_settings.save(data)
+    try:  # gia goi theo gia the: tinh lai, Shop trong game hoi lai gia
+        hc.pack_price.cache_clear()
+        hc.shop_changed()
+    except Exception:
+        pass
     return price_settings_get(p)
 
 
@@ -745,7 +1183,7 @@ STAT_COLS = ("acceleration sprintspeed finishing shotpower longshots volleys pen
 def card(p):
     
     spid = as_int(p.get("spid"), 1, 10 ** 9, "spid")
-    grade = as_int(p.get("grade") or 0, 0, 10, "grade")
+    grade = as_int(p.get("grade") or 0, 0, 20, "grade")
     level = as_int(p.get("level") or 1, 1, hc.PLAYER_MAX_LEVEL, "level")
     cols = ("spid, teamid, nationality, preferredposition1, preferredposition2, preferredposition3, preferredposition4, "
             "height, weight, preferredfoot, skillmoves, weakfootabilitytypecode, attackingworkrate, defensiveworkrate, "
@@ -775,10 +1213,35 @@ def card(p):
             "stats": {k: (r[k] or 0) + boost for k in STAT_COLS}}
 
 
+@api("missions")
+def missions_get(p):
+    m = hc.manager
+    st = hc._state()
+    mine = {}
+    try:
+        me = m.achievement_me(st)
+        mine = {"done": me["summary"]["done"], "total": me["summary"]["total"], "rewardable": me["summary"]["rewardable"],
+                "gp": m.mission_gp(hc.my_coach(st)), "badges": len(hc.my_coach(st).get("missions", {}).get("badges", [])),
+                "quests": [{"name": n, "todo": t, "gp": gp, "cur": min(hc.my_coach(st).get("missions", {}).get("weekly", {}).get(s, 0), t)}
+                           for n, s, t, gp in m.week_quests(m.missions_cfg(), m.week_end())]}
+    except Exception:
+        pass
+    return {**m.missions_cfg(), "langs": m.MISSION_LANGS, "me": mine}
+
+
+@api("missions_set")
+def missions_set(p):
+    try:
+        return hc.manager.set_missions(p)
+    except (TypeError, ValueError):
+        raise AdminError("Cài đặt nhiệm vụ không hợp lệ (mục tiêu 0.1-10, thưởng 0-10).")
+
+
 @api("bot_settings")
 def bot_settings_get(p):
     import bot_settings
-    return {"modes": bot_settings.MODES, "values": bot_settings.get(), "max_level": bot_settings.MAX_LEVEL}
+    return {"modes": bot_settings.modes(), "values": bot_settings.get(), "max_level": bot_settings.MAX_LEVEL,
+            "auto_modes": sorted(bot_settings.AUTO_MODES), "auto": bot_settings.AUTO}
 
 
 @api("bot_settings_set")
@@ -844,14 +1307,71 @@ def staff_catalog(p):
     ss = _ss()
     out = []
     for sid, info in ss.CATALOG.items():
-        if info.get("material"):
+        if info.get("material") or info.get("hidden"):  # hidden = ban trung ten/chi so
             continue
         has_img = os.path.isfile(os.path.join(hc.ASSETS, "externalAssets", "staffs", sid + ".png"))
         out.append({"stfid": int(sid), "name": info["name"], "position": info["position"],
                     "pos_name": STAFF_POS.get(info["position"], info["position"]),
-                    "boosts": [" / ".join(stat_vi(x) for x in g) for g in info.get("boost_groups", [])], "img": has_img})
-    out.sort(key=lambda x: (list(STAFF_POS).index(x["position"]) if x["position"] in STAFF_POS else 99, x["name"]))
-    return {"staff": out, "max_grade": ss.MAX_GRADE}
+                    "boosts": [" / ".join(stat_vi(x) for x in g) for g in info.get("boost_groups", [])], "img": has_img,
+                    "power": int(info.get("power") or 5), "mod": bool(info.get("mod")),
+                    "custom": bool(info.get("custom"))})
+    # HLV manh nhat len dau trong tung vi tri
+    out.sort(key=lambda x: (list(STAFF_POS).index(x["position"]) if x["position"] in STAFF_POS else 99, -x["power"], x["name"]))
+    return {"staff": out, "max_grade": ss.MAX_GRADE,
+            "positions": [{"position": k, "name": v} for k, v in STAFF_POS.items() if k in ss.POS_PREFIX],
+            "img_size": ss.IMG_SIZE, "img_max_bytes": ss.IMG_MAX_BYTES}
+
+
+def _staff_brief(stfid):
+    ss = _ss(); info = ss.CATALOG.get(str(stfid))
+    if info is None:
+        return {"stfid": int(stfid), "name": f"HLV #{stfid} (đã xoá)", "position": "", "pos_name": "", "missing": True}
+    return {"stfid": int(stfid), "name": info["name"], "position": info["position"],
+            "pos_name": STAFF_POS.get(info["position"], info["position"]), "custom": bool(info.get("custom"))}
+
+
+@api("staff_custom_create")
+def staff_custom_create(p):
+    """Tao HLV tuy chinh: {name, position, image: base64 (hoac data URL) cua PNG/JPG 128x128, <= 2 MB}."""
+    import base64, binascii
+    ss = _ss()
+    raw = str(p.get("image") or "")
+    if raw.startswith("data:"):
+        raw = raw.split(",", 1)[-1]
+    if len(raw) > ss.IMG_MAX_BYTES * 4 // 3 + 16:
+        raise AdminError("Ảnh quá lớn. Tối đa 2 MB.")
+    try:
+        data = base64.b64decode(raw, validate=True)
+    except (binascii.Error, ValueError):
+        raise AdminError("Không đọc được file ảnh") from None
+    try:
+        sid, info = ss.custom_create(p.get("name"), str(p.get("position") or ""), data)
+    except ValueError as e:
+        raise AdminError(str(e)) from None
+    return {"stfid": sid, "name": info["name"], "position": info["position"],
+            "pos_name": STAFF_POS.get(info["position"], info["position"]), "power": info["power"],
+            "boosts": [" / ".join(stat_vi(x) for x in g) for g in info["boost_groups"]]}
+
+
+@api("staff_custom_delete")
+def staff_custom_delete(p):
+    """Xoa loai HLV tuy chinh (anh chuyen vao gamedata/backup/custom_staff). Khong cho xoa khi CLB nao
+    con the HLV loai nay."""
+    ss = _ss(); st = hc._state()
+    sid = as_int(p.get("stfid"), 1, 10 ** 6, "stfid")
+    info = ss.CATALOG.get(str(sid))
+    if info is None or not info.get("custom"):
+        raise AdminError("Chỉ xoá được HLV tùy chỉnh")
+    owned = sum(1 for t in st.get("teams", {}).values() for x in t.get("staffs") or [] if str(x.get("stfid")) == str(sid))
+    if owned:
+        raise AdminError(f"CLB đang có {owned} HLV {info['name']}. Hãy xoá các HLV này ở bảng \"HLV của CLB\" trước "
+                         "(HLV đang bổ nhiệm thì bỏ bổ nhiệm trong game trước).")
+    packs = [c.get("name", "") for c in hc.custom_packs_load() if sid in (c.get("staffs") or [])]
+    try:
+        moved = ss.custom_delete(sid)
+    except ValueError as e:
+        raise AdminError(str(e)) from None
+    return {"ok": True, "backup": [os.path.relpath(m, HERE) for m in moved], "packs": packs}
 
 
 @api("staffs")
@@ -881,7 +1401,7 @@ def staff_add(p):
     for _ in range(n):
         t["staffs"].append(ss.make_staff(int(sid), grade))
     hc._save(st)
-    return {"added": n, "total": len(t["staffs"])}
+    return {"added": n, "total": len(t["staffs"]), "live": push(st, f"GM Tool: đã thêm {n} HLV")}
 
 
 @api("staff_grade")
@@ -907,13 +1427,14 @@ def _staff_choices(staff, idx):
 
 def _full(staff):
     ss = _ss(); ss.set_grade(staff, ss.MAX_GRADE); staff["exp"] = 0
+    cap = ss.amount_cap(staff)  # +5 HLV thuong, HLV noi tieng: muc tran rieng (+15..+95)
     for e in staff.get("effect") or []:
-        e["amount"] = 5; e["open"] = True
+        e["amount"] = cap; e["open"] = True
 
 
 @api("staff_full")
 def staff_full(p):
-    """Full sao (5 sao = cap 10) + moi dong chi so +5; id rong = tat ca HLV."""
+    """Full sao (5 sao = cap 10) + moi dong chi so len tran (+5, HLV noi tieng toi muc rieng); id rong = tat ca HLV."""
     ss = _ss(); st = hc._state(); t = team(st); ss.normalize_team(t)
     n = 0
     for x in t.get("staffs", []):
@@ -952,6 +1473,17 @@ def staff_remove(p):
     hc._save(st)
     return {"ok": True}
 
+
+@api("staff_remove_all")
+def staff_remove_all(p):
+    """Xoa moi HLV dang 'Cho'; HLV dang bo nhiem / dang tap huan duoc giu lai (game can bo bo nhiem truoc)."""
+    ss = _ss(); st = hc._state(); t = team(st); ss.normalize_team(t)
+    keep = [y for y in t.get("staffs", []) if y.get("status") in ("appointed", "studying")]
+    removed = len(t.get("staffs", [])) - len(keep)
+    t["staffs"] = keep
+    hc._save(st)
+    return {"removed": removed, "kept": len(keep)}
+
 class Admin(http.server.BaseHTTPRequestHandler):
     def _send(self, code, data, ctype="application/json"):
         self.send_response(code)
@@ -966,6 +1498,15 @@ class Admin(http.server.BaseHTTPRequestHandler):
         if self.client_address[0] not in ("127.0.0.1", "::1") or host not in ("127.0.0.1", "localhost", "[::1]"):
             return self._send(403, b"forbidden", "text/plain")
         url = urllib.parse.urlparse(self.path)
+        if url.path == "/export_logs.zip":
+            data = export_logs_zip()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/zip")
+            self.send_header("Content-Disposition", time.strftime('attachment; filename="FO3_Log_%Y%m%d_%H%M%S.zip"'))
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
         if url.path == "/notice.html":
             with open(os.path.join(HERE, "admin", "notice.html"), "rb") as f:
                 return self._send(200, f.read(), "text/html; charset=utf-8")
@@ -975,15 +1516,27 @@ class Admin(http.server.BaseHTTPRequestHandler):
             if r:
                 return self._send(200, r[1], r[0])
             return self._send(404, b"", "image/png")
+        if url.path in ("/huongdan", "/huongdan/") or url.path.startswith("/huongdan/"):
+            # Huong dan dung GM Tool: thu muc HuongDan (canh thu muc Server) - chi doc file trong do
+            base = os.path.normpath(os.path.join(HERE, "..", "HuongDan"))
+            rel = url.path[len("/huongdan/"):] or "index.html"
+            f = os.path.normpath(os.path.join(base, urllib.parse.unquote(rel)))
+            if not f.startswith(base + os.sep) or not os.path.isfile(f):
+                return self._send(404, b"", "text/plain")
+            ext = os.path.splitext(f)[1].lower()
+            ctype = {".html": "text/html; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg",
+                     ".css": "text/css", ".js": "text/javascript"}.get(ext, "application/octet-stream")
+            with open(f, "rb") as fh:
+                return self._send(200, fh.read(), ctype)
         if url.path == "/hud.jpg":  # anh dau trang GM Tool
             with open(os.path.join(HERE, "admin", "hud.jpg"), "rb") as f:
                 return self._send(200, f.read(), "image/jpeg")
         if url.path in ("/", "/index.html"):
             with open(PAGE, "rb") as f:
                 return self._send(200, f.read(), "text/html; charset=utf-8")
-        m = re.fullmatch(r"/staffimg/(\d+)\.png", url.path)
-        if m:  # anh HLV tu cache game (externalAssets/staffs)
-            f = os.path.join(hc.ASSETS, "externalAssets", "staffs", m.group(1) + ".png")
+        m = re.fullmatch(r"/(staffimg|shopimg)/(\w+)\.png", url.path)
+        if m:  # anh HLV / anh goi cua hang tu cache game (externalAssets/staffs, externalAssets/shop)
+            f = os.path.join(hc.ASSETS, "externalAssets", "staffs" if m.group(1) == "staffimg" else "shop", m.group(2) + ".png")
             if os.path.isfile(f):
                 with open(f, "rb") as fh:
                     return self._send(200, fh.read(), "image/png")

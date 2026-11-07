@@ -1,195 +1,149 @@
 {
- "result": true,
- "option": {
-  "soundOption": {},
-  "screenOption": {
-   "Quality": 0
-  },
-  "aiOption": {},
-  "cameraOption": {}
- },
- "features": {
-  "vip": {},
-  "antifairplaychecker": {},
-  "teamcolor": {},
-  "teammanagement": {
-   "playermanagement": {
-    "playerpool": {},
-    "enhancement": {},
-    "trade": {},
-    "trade3": {},
-    "craft": {}
-   },
-   "team": {
-    "teaminfo": {}
-   },
-   "teammanagement": {
-    "squad": {
-     "workrate": {}
+  "result": true,
+  "option": {
+    "soundOption": {},
+    "screenOption": {
+      "Quality": 0
     },
-    "tactic": {},
-    "playerrole": {}
-   },
-   "staffmanagement": {
-    "staffroles": {},
-    "staffupgrade": {},
-    "staffbuy": {},
-    "staffstudy": {}
-   }
+    "aiOption": {},
+    "cameraOption": {}
   },
-  "mainmenu": {
-   "cupshotcut": {},
-   "item": {},
-   "shop": {},
-   "transfermarket": {},
-   "singlemode": {
-    "league": {},
-    "cup": {},
-    "rtw": {}
-   },
-   "teammanagement": {
-    "teaminfo": {},
-    "locker": {},
-    "loansquad": {},
-    "liveboost": {}
-   }
-  },
-  "freeroambuttons": {
-   "broadcast": {},
-   "keyguide": {},
-   "options": {},
-   "tutorialgroup": {},
-   "webevent": {},
-   "limitshop": {}
-  },
-  "community": {
-   "myclub": {
-    "clubinfo": {
-     "clubmatch": {}
+  "features": {
+    "vip": {},
+    "antifairplaychecker": {},
+    "teamcolor": {
+      "v3": {}
     },
-    "members": {},
-    "facility": {},
-    "clubmatch": {}
-   },
-   "clubmanagement": {
-    "clubmanagement": {}
-   },
-   "findclub": {
-    "clublist": {}
-   },
-   "clubrecord": {
-    "recordmember": {},
-    "recordopponent": {},
-    "recordrecent": {},
-    "recordleaderborad": {}
-   },
-   "clubrenewal": {}
+    "teammanagement": {
+      "playermanagement": {
+        "playerpool": {},
+        "enhancement": {
+          "v2_5": {}
+        },
+        "trade": {},
+        "trade3": {},
+        "craft": {},
+        "trade2": {}
+      },
+      "team": {
+        "teaminfo": {}
+      },
+      "teammanagement": {
+        "squad": {
+          "workrate": {}
+        },
+        "tactic": {},
+        "playerrole": {}
+      },
+      "staffmanagement": {
+        "staffroles": {},
+        "staffupgrade": {},
+        "staffbuy": {},
+        "staffstudy": {},
+        "staffexpand": {}
+      }
+    },
+    "mainmenu": {
+      "cupshotcut": {},
+      "item": {},
+      "shop": {},
+      "transfermarket": {},
+      "singlemode": {
+        "league": {},
+        "cup": {}
+      },
+      "teammanagement": {
+        "teaminfo": {},
+        "locker": {},
+        "loansquad": {}
+      }
+    },
+    "freeroambuttons": {
+      "broadcast": {},
+      "keyguide": {},
+      "options": {},
+      "tutorialgroup": {},
+      "limitshop": {}
+    },
+    "item": {
+      "item": {
+        "playerpack": {},
+        "use": {},
+        "depot": {},
+        "bag": {}
+      }
+    },
+    "shop": {
+      "shop": {
+        "recommendation": {},
+        "playerpack": {},
+        "use": {},
+        "package": {},
+        "chain": {}
+      },
+      "special": {},
+      "vip": {},
+      "vvip": {},
+      "mshop": {},
+      "monthly": {}
+    },
+    "leaguematch": {
+      "leaguematch": {},
+      "leaguerecord": {},
+      "cuprecord": {}
+    },
+    "leaguematch.leaguerecord": {
+      "rank": {},
+      "round": {},
+      "record": {},
+      "totalrecord": {}
+    },
+    "leaguematch.cuprecord": {
+      "cupqualifier": {},
+      "cupfinal": {},
+      "record": {},
+      "totalrecord": {}
+    },
+    "transfermarket": {
+      "transfermarket": {
+        "purchase": {},
+        "sale": {},
+        "myofferlist": {}
+      },
+      "playerpricegraph": {}
+    },
+    "coachinfo": {
+      "coachinfo": {
+        "summary": {},
+        "totalrecord": {},
+        "multiresult": {}
+      },
+      "achievement": {}
+    },
+    "usercoachinfo": {
+      "summary": {},
+      "squad": {},
+      "badge": {}
+    },
+    "worldcup": {},
+    "cupmatch": {},
+    "screenshot": {},
+    "conditionfix": {},
+    "trainingvest": {},
+    "matchrecord": {},
+    "manager2": {
+      "league": {},
+      "overlay": {}
+    },
+    "pvedummymatch": {},
+    "seasoncare": {}
   },
-  "clubranking": {
-   "playerlist": {},
-   "ranking": {},
-   "recordseason": {}
-  },
-  "item": {
-   "item": {
-    "playerpack": {},
-    "use": {},
-    "depot": {},
-    "bag": {}
-   }
-  },
-  "shop": {
-   "shop": {
-    "recommendation": {},
-    "playerpack": {},
-    "use": {},
-    "package": {},
-    "chain": {}
-   },
-   "special": {},
-   "vip": {},
-   "vvip": {},
-   "mshop": {},
-   "monthly": {}
-  },
-  "leaguematch": {
-   "leaguematch": {},
-   "leaguerecord": {},
-   "cuprecord": {}
-  },
-  "leaguematch.leaguerecord": {
-   "rank": {},
-   "round": {},
-   "record": {},
-   "totalrecord": {}
-  },
-  "leaguematch.cuprecord": {
-   "cupqualifier": {},
-   "cupfinal": {},
-   "record": {},
-   "totalrecord": {}
-  },
-  "transfermarket": {
-   "transfermarket": {
-    "purchase": {},
-    "sale": {},
-    "myofferlist": {}
-   }
-  },
-  "coachinfo": {
-   "coachinfo": {
-    "summary": {},
-    "totalrecord": {},
-    "multiresult": {}
-   },
-   "achievement": {},
-   "ranking": {}
-  },
-  "chatting": {
-   "board": {
-    "channel": {},
-    "whisper": {},
-    "club": {},
-    "cup": {}
-   },
-   "list": {
-    "blacklist": {},
-    "clubmember": {}
-   }
-  },
-  "usercoachinfo": {
-   "summary": {},
-   "squad": {},
-   "badge": {}
-  },
-  "boxingday": {
-   "arena": {
-    "ticket": {}
-   }
-  },
-  "esports": {
-   "regionalleague": {
-    "introvideo": {}
-   },
-   "shootoutmode": {}
-  },
-  "worldcup": {},
-  "cupmatch": {},
-  "laddermatch": {},
-  "friendlymatch": {
-   "managermode": {
-    "vsrandom": {}
-   }
-  },
-  "pvproleplay": {},
-  "managermodeshortcut": {}
- },
- "permissions": [
-  "Create2ndCoach"
- ],
- "guides": [],
- "tutorials": [],
- "coaches": [],
- "lockinfo": {},
- "fatiguerate": 1
+  "permissions": [
+    "Create2ndCoach"
+  ],
+  "guides": [],
+  "tutorials": [],
+  "coaches": [],
+  "lockinfo": {},
+  "fatiguerate": 1
 }

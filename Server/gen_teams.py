@@ -69,9 +69,11 @@ def _hc():
     return m if hasattr(m, "ROLE_WEIGHTS") else __import__("http_config")
 
 
-def team(c, teamid, nationality=None):
+def team(c, teamid, nationality=None, nationalteam=False):
+    """nationality = doi hinh tu moi cau thu quoc tich do; nationalteam = doi tuyen that (nationalteamid)."""
     hc = _hc()
-    field, value = ("teamid", teamid) if nationality is None else ("nationality", nationality)
+    field, value = (("nationalteamid", teamid) if nationalteam else ("teamid", teamid) if nationality is None
+                    else ("nationality", nationality))
     rows = c.execute(f"""SELECT p.* FROM players p JOIN permid m ON m.spid = p.spid AND m.licensed = 1
                         WHERE p.{field} = ? ORDER BY (p.spid / 1000000 != ?), (p.spid < 1000000), p.spid""",
                      (value, CURRENT_SEASON)).fetchall()

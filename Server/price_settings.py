@@ -10,12 +10,14 @@ import json
 import os
 import tempfile
 import threading
+import time
 from pathlib import Path
 
 PATH = Path(__file__).resolve().parent / "gamedata" / "price_settings.json"
 LOCK = threading.RLock()
 DEFAULT = {"zero_percent": 0, "multiplier": 1.0, "overrides": {}}
-_cache = {"mtime": None, "data": dict(DEFAULT)}
+_cache = {"mtime": None, "data": dict(DEFAULT), "checked": -1e9}
+RECHECK = 1.0  # s: card_price goi get() hang tram nghin lan / yeu cau -> chi stat file toi da 1 lan/giay
 
 
 def _clean(d):
@@ -32,6 +34,10 @@ def _clean(d):
 
 def get():
     with LOCK:
+        now = time.monotonic()
+        if now - _cache["checked"] < RECHECK:
+            return _cache["data"]
+        _cache["checked"] = now
         try:
             m = PATH.stat().st_mtime
         except OSError:
@@ -60,5 +66,5 @@ def save(data):
         finally:
             if name and os.path.exists(name):
                 os.unlink(name)
-        _cache.update(mtime=None)
+        _cache.update(mtime=None, checked=-1e9)
     return get()

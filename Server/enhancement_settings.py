@@ -8,13 +8,17 @@ import threading
 PATH = Path(__file__).resolve().parent / 'gamedata' / 'enhancement_settings.json'
 LOCK = threading.RLock()
 
+DEFAULT_RATE = 30  # mac dinh khi chua chinh tren GM Tool: 30% thanh cong
+
+
 def get_rate():
+    """Ty le thanh cong (%), hoac None = ty le goc cua game (nguoi dung bam "Dung ty le goc")."""
     with LOCK:
         try:
             value = json.loads(PATH.read_text(encoding='utf-8')).get('success_percent')
-            return value if type(value) is int and 1 <= value <= 100 else None
         except (OSError, ValueError, TypeError, AttributeError):
-            return None
+            return DEFAULT_RATE  # chua co file -> mac dinh 30%
+        return value if type(value) is int and 1 <= value <= 100 else None
 
 def set_rate(value):
     if value is not None and (type(value) is not int or not 1 <= value <= 100):

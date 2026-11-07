@@ -10,7 +10,7 @@ auth needs "result" truthy (no "reason") to reach NOTIFICATION_SERVER_CONNECTED.
 Needs the `cryptography` package (Blowfish).
 Usage: python messenger.py [port=28002]   |   python messenger.py --selftest
 """
-import json, os, socketserver, struct, sys, time, warnings
+import json, os, socket, socketserver, struct, sys, threading, time, warnings
 
 try:  # in tieng Viet co dau an toan ca khi output bi chuyen huong
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -28,6 +28,11 @@ _args = [a for a in sys.argv[1:] if not a.startswith("--")]
 PORT = int(_args[0]) if _args else 28002
 KEY = b"kueec"
 LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "captures", "messenger.log")
+# Server day du lieu: http_config gui {"cmd": "push", "uri", "body"} thanh 1 goi UDP toi cong
+# localhost nay va moi client dang ket noi deu nhan (MessengerConnection.handlePacket "push" ->
+# ResourceController.feedResources), vd. qua GM Tool hien ngay trong game.
+PUSH_PORT = PORT + 1
+CLIENTS, SEND_LOCK = set(), threading.Lock()
 
 
 def _cipher():
@@ -70,9 +75,46 @@ def log(line):
         f.write(line + "\n")
 
 
+def push_loop():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.bind(("127.0.0.1", PUSH_PORT))
+    except OSError as e:
+        log(f"push port {PUSH_PORT} unavailable: {e!r}")
+        return
+    while True:
+        try:
+            data, _ = s.recvfrom(65535)
+        except OSError:
+            continue  # WinError 10054 tren UDP: bo qua
+        try:
+            frame = encode(json.loads(data))
+            if len(frame) - 4 > 0xFFFF:
+                raise ValueError("frame too long")
+        except Exception as e:  # JSON hong, qua dai cho khung u16...: bo goi, giu luong
+            log(f"push dropped: {e!r}")
+            continue
+        with SEND_LOCK:
+            for c in list(CLIENTS):
+                try:
+                    c.sendall(frame)
+                except OSError:
+                    CLIENTS.discard(c)
+            log(f"push -> {len(CLIENTS)} client(s): {data[:120]!r}")
+
+
 class H(socketserver.BaseRequestHandler):
     def handle(self):
         log(f"connect {self.client_address}")
+        with SEND_LOCK:
+            CLIENTS.add(self.request)
+        try:
+            self.serve()
+        finally:
+            with SEND_LOCK:
+                CLIENTS.discard(self.request)
+
+    def serve(self):
         buf = b""
         while True:
             try:
@@ -95,7 +137,8 @@ class H(socketserver.BaseRequestHandler):
                     log(f"<- {msg}")
                 for out in replies(msg):
                     try:
-                        self.request.sendall(encode(out))
+                        with SEND_LOCK:
+                            self.request.sendall(encode(out))
                     except OSError:
                         log(f"closed {self.client_address}")
                         return
@@ -121,6 +164,7 @@ if __name__ == "__main__":
         selftest()
     else:
         os.makedirs(os.path.dirname(LOG), exist_ok=True)
-        print(f"Đang chạy tại cổng {PORT}, nhật ký lưu ở: {LOG}", flush=True)
+        print(f"Đang chạy tại cổng {PORT} (nhận dữ liệu đẩy từ 127.0.0.1:{PUSH_PORT}), nhật ký lưu ở: {LOG}", flush=True)
+        threading.Thread(target=push_loop, daemon=True).start()
         socketserver.ThreadingTCPServer.allow_reuse_address = os.name != "nt"  # no double bind on Windows
         socketserver.ThreadingTCPServer(("0.0.0.0", PORT), H).serve_forever()

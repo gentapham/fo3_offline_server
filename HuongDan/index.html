@@ -3,522 +3,385 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hướng dẫn FO3 Offline</title>
+<title>Hướng dẫn GM Tool</title>
 <style>
-  :root {
-    --bg: #eef1f7; --card: #ffffff; --card-2: #f5f7fb; --ink: #121a2e; --ink-2: #55627d; --line: #dde3ee;
-    --navy: #13204a; --navy-2: #1d2f66; --gold: #d9a632; --gold-2: #a8790f; --gold-soft: #fbf3df;
-    --accent: var(--navy-2); --accent-soft: #e6ebf7;
-    --warn-bg: #fff6e5; --warn-line: #f0c266; --warn-ink: #75470a;
-    --tip-bg: #e9f1ff; --tip-line: #93b6f0; --tip-ink: #0f3b7a;
-    --ok-bg: #e7f7ee; --ok-line: #8fd3ab; --ok-ink: #0f5a32;
-    --code: #edf0f6; --shadow: 0 6px 24px rgba(19, 32, 74, .08);
-  }
-  :root[data-theme="dark"] {
-    --bg: #070d1b; --card: #0f182e; --card-2: #142039; --ink: #e8edf8; --ink-2: #98a6c3; --line: #22314f;
-    --accent: #f5c84c; --accent-soft: #1b2847; --gold-soft: #2a2410;
-    --warn-bg: #2a2110; --warn-line: #8a6420; --warn-ink: #f5d08a;
-    --tip-bg: #0f2036; --tip-line: #2d5f9e; --tip-ink: #a9cdfb;
-    --ok-bg: #0e2a1d; --ok-line: #23744a; --ok-ink: #9fe3bd;
-    --code: #17233f; --shadow: 0 6px 24px rgba(0, 0, 0, .4);
-  }
+  :root { --bg: #f4f7fc; --card: #ffffff; --ink: #0f1b33; --ink2: #3b4a66; --mute: #6b7891; --line: #e3e8f2;
+    --navy: #14234a; --navy2: #1d4ed8; --gold: #f5c542; --gold2: #e3a417; --green: #16a34a; --red: #dc2626; --soft: #eef3ff;
+    --shadow: 0 10px 30px rgba(20, 35, 74, .08); }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 16px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.7 "Segoe UI", system-ui, Roboto, Arial, sans-serif; }
-  a { color: var(--accent); }
-  .hero { background: radial-gradient(1200px 300px at 80% 0, #2a3f80 0, transparent 60%), linear-gradient(135deg, #0a1222, #13204a 60%, #1d2f66); color: #fff; padding: 44px 16px 56px; position: relative; overflow: hidden; border-bottom: 3px solid var(--gold); }
-  .hero-in { max-width: 1520px; margin: 0 auto; position: relative; z-index: 1; display: flex; gap: 22px; align-items: center; padding: 0 8px; }
-  .ball { width: 74px; height: 74px; flex: none; border-radius: 50%; background: #0d1830; border: 3px solid var(--gold); display: grid; place-items: center; }
-  .hero small { color: var(--gold); letter-spacing: .14em; font-weight: 700; font-size: 12.5px; }
-  .hero h1 { margin: 2px 0 0; font-size: clamp(26px, 4vw, 40px); line-height: 1.2; }
-  .hero h1 span { color: var(--gold); }
-  .hero p { margin: 8px 0 0; color: #c6cfe3; max-width: 760px; }
-  .theme-btn { position: absolute; top: 14px; right: 16px; z-index: 2; border: 1px solid rgba(245,200,76,.5); background: rgba(255,255,255,.06); color: #f5d77a; border-radius: 999px; padding: 6px 14px; cursor: pointer; font: inherit; font-size: 14px; }
-  .wrap { max-width: 1520px; margin: -28px auto 0; padding: 0 24px 60px; display: grid; grid-template-columns: 236px minmax(0, 1fr); gap: 22px; position: relative; z-index: 2; }
-  nav.toc { position: sticky; top: 16px; align-self: start; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 10px; box-shadow: var(--shadow); max-height: calc(100vh - 32px); overflow: auto; scrollbar-width: thin; }
-  nav.toc .grp + .grp { border-top: 1px solid var(--line); padding-top: 6px; margin-top: 4px; }
-  nav.toc b { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-2); margin: 4px 8px; }
-  nav.toc b i { font-style: normal; width: 20px; height: 20px; border-radius: 6px; background: var(--navy-2); color: var(--gold); display: grid; place-items: center; font-size: 11px; }
-  nav.toc a { display: block; padding: 4px 10px; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: 14px; line-height: 1.45; }
-  nav.toc a:hover { background: var(--accent-soft); }
-  nav.toc a.sub { margin-left: 18px; font-size: 13.2px; color: var(--ink-2); border-left: 2px solid var(--line); border-radius: 0 8px 8px 0; }
-  nav.toc a.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
-  nav.toc a.sub.on { border-left-color: var(--gold); }
-  main { min-width: 0; }
-  section.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 26px 28px; margin-bottom: 22px; box-shadow: var(--shadow); }
-  h2 { margin: 0 0 6px; font-size: 26px; line-height: 1.3; display: flex; align-items: center; gap: 12px; }
-  h2 .no { flex: none; width: 38px; height: 38px; border-radius: 12px; background: var(--navy-2); color: var(--gold); display: grid; place-items: center; font-size: 19px; }
-  h3 { margin: 30px 0 8px; font-size: 20px; padding-top: 18px; border-top: 1px dashed var(--line); }
-  h3:first-of-type { border-top: 0; padding-top: 0; }
-  h4 { margin: 18px 0 4px; font-size: 16.5px; }
-  .lead { color: var(--ink-2); margin: 0 0 14px; }
-  .new { display: inline-block; background: var(--gold); color: #1b1300; font-size: 11px; font-weight: 800; letter-spacing: .06em; border-radius: 6px; padding: 0 7px; vertical-align: middle; margin-left: 6px; }
-  figure { margin: 16px 0 18px; }
-  figure img { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow); cursor: zoom-in; background: var(--card-2); }
-  figure.narrow img { max-width: 860px; }
-  figcaption { font-size: 14px; color: var(--ink-2); margin-top: 8px; text-align: center; }
-  .shot { position: relative; }
-  .pin { position: absolute; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: #1b1300; font-weight: 800; font-size: 15px; display: grid; place-items: center; border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,.4); pointer-events: none; }
-  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 10px 0; }
-  ol.steps > li { counter-increment: s; position: relative; padding: 2px 0 10px 44px; }
-  ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--gold-soft); color: var(--gold-2); font-weight: 800; display: grid; place-items: center; font-size: 15px; border: 1px solid var(--gold); }
-  ul { padding-left: 22px; }
-  li { margin: 3px 0; }
-  .legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin: 8px 0 4px; padding: 0; list-style: none; }
-  .legend li { display: flex; gap: 10px; align-items: flex-start; background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 0; }
-  .legend .n { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #1b1300; font-weight: 800; font-size: 13.5px; display: grid; place-items: center; margin-top: 2px; }
-  .note, .tip, .warn { border-radius: 12px; padding: 12px 16px; margin: 14px 0; border: 1px solid; }
-  .tip { background: var(--tip-bg); border-color: var(--tip-line); color: var(--tip-ink); }
-  .warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
-  .note { background: var(--ok-bg); border-color: var(--ok-line); color: var(--ok-ink); }
-  kbd, code { background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px; font: 600 14px/1.5 Consolas, "Cascadia Mono", monospace; overflow-wrap: anywhere; }
-  .btn { display: inline-block; background: var(--navy-2); color: #fff; border-radius: 8px; padding: 0 9px; font-weight: 700; font-size: 14px; line-height: 1.75; white-space: nowrap; }
-  .btn.g { background: linear-gradient(90deg, #f1d38a, #c9952a); color: #1b1300; }
-  .btn.o { background: transparent; color: var(--ink); border: 1px solid var(--line); }
-  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 15px; }
-  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { background: var(--navy); color: #f5d77a; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
-  .tbl { overflow-x: auto; }
-  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-  details { background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; margin: 10px 0; }
-  details summary { cursor: pointer; font-weight: 700; }
-  details[open] summary { margin-bottom: 6px; }
-  footer { text-align: center; color: var(--ink-2); padding: 10px 16px 40px; }
-  .genta { display: inline-block; background: #1877f2; color: #fff; text-decoration: none; font-weight: 800; padding: 1px 12px; border-radius: 999px; }
-  .lb { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; place-items: center; z-index: 50; padding: 20px; cursor: zoom-out; }
-  .lb.on { display: grid; }
-  .lb img { max-width: 100%; max-height: 100%; border-radius: 10px; }
+  html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.7 "Segoe UI", system-ui, -apple-system, Arial, sans-serif; }
+  a { color: var(--navy2); }
+  .hero { position: relative; overflow: hidden; color: #fff; border-bottom: 4px solid var(--gold);
+    background: linear-gradient(90deg, rgba(10,22,52,.96) 0%, rgba(14,32,78,.86) 45%, rgba(14,32,78,.30) 100%), url("images/hero.jpg") center right / cover no-repeat; }
+  .hero-in { max-width: 1240px; margin: 0 auto; padding: 46px 20px 40px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; }
+  .eyebrow { font-weight: 800; letter-spacing: .14em; font-size: 12.5px; color: var(--gold); text-transform: uppercase; }
+  .hero h1 { margin: 6px 0 10px; font-size: clamp(30px, 4.6vw, 46px); line-height: 1.12; }
+  .hero p { margin: 0; max-width: 640px; color: #e2e8f8; font-size: 16.5px; }
+  .open { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 13px 22px; border-radius: 12px; font-weight: 800; font-size: 16px;
+    color: #2a1a00; background: linear-gradient(135deg, #ffe08a, var(--gold) 45%, var(--gold2)); text-decoration: none; box-shadow: 0 8px 20px rgba(227,164,23,.35); }
+  .open:hover { filter: brightness(1.05); }
+  .open code { background: rgba(0,0,0,.12); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+  .faces { display: flex; align-items: center; flex-wrap: wrap; max-width: 520px; justify-content: flex-end; }
+  .faces img { width: 78px; height: 78px; object-fit: cover; object-position: top; border-radius: 50%; border: 3px solid #fff;
+    background: linear-gradient(180deg, #dbe6ff, #fff); box-shadow: 0 6px 16px rgba(0,0,0,.25); margin-left: -16px; }
+  .faces img:first-child { margin-left: 0; }
+  .layout { max-width: 1240px; margin: 0 auto; padding: 26px 20px 40px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 26px; align-items: start; }
+  .side { position: sticky; top: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow);
+    padding: 14px 10px; max-height: calc(100vh - 32px); overflow-y: auto; }
+  .side-title { font-size: 11.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); padding: 4px 10px 8px; }
+  .side a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 11px; text-decoration: none; color: var(--ink2); font-weight: 600; font-size: 14.5px; }
+  .side a:hover { background: var(--soft); color: var(--ink); }
+  .side a.on { background: var(--soft); color: var(--navy2); font-weight: 800; box-shadow: inset 3px 0 0 var(--navy2); }
+  .num { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 12.5px; color: #2a1a00; background: var(--gold); }
+  .side a.on .num { background: var(--navy2); color: #fff; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 24px 26px; margin-bottom: 22px; }
+  h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 6px; font-size: 23px; }
+  h2 .num { width: 32px; height: 32px; font-size: 14px; }
+  h3 { margin: 18px 0 6px; font-size: 17px; color: var(--navy); }
+  .lead { color: var(--ink2); margin: 0 0 12px; }
+  .shot { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; margin: 10px 0 14px; box-shadow: 0 6px 18px rgba(20,35,74,.08); }
+  details.shotbox summary { cursor: pointer; color: var(--navy2); font-weight: 650; margin: 6px 0; }
+  ol, ul { margin: 6px 0 10px; padding-left: 22px; } li { margin: 4px 0; }
+  .tip, .warn { border-radius: 12px; padding: 11px 14px; margin: 12px 0; font-size: 14.5px; }
+  .tip { background: #effaf3; border: 1px solid #bfe6cd; } .warn { background: #fff3f3; border: 1px solid #f5c2c2; }
+  .tip strong { color: var(--green); } .warn strong { color: var(--red); }
+  footer { text-align: center; color: var(--mute); font-size: 13.5px; padding: 0 16px 40px; }
   @media (max-width: 900px) {
-    .wrap { grid-template-columns: 1fr; padding: 0 16px 40px; }
-    nav.toc { position: static; max-height: none; }
-    section.card { padding: 20px 16px; }
-    .pin { width: 22px; height: 22px; font-size: 12px; border-width: 2px; }
-    .tbl table { min-width: 560px; }
+    html { scroll-padding-top: 72px; }
+    .hero-in { grid-template-columns: 1fr; } .faces { justify-content: flex-start; } .faces img { width: 54px; height: 54px; margin-left: -12px; }
+    .layout { grid-template-columns: 1fr; padding: 0 16px 16px; gap: 14px; }
+    .side { top: 0; z-index: 5; display: flex; gap: 6px; overflow-x: auto; overflow-y: hidden; max-height: none; padding: 8px; border-radius: 0 0 14px 14px; }
+    .side-title { display: none; } .side a { flex: none; white-space: nowrap; }
+    .card { padding: 18px 16px; } h2 { font-size: 20px; }
   }
+  table.map { border-collapse: collapse; width: 100%; font-size: 14.5px; margin: 10px 0 14px; }
+  table.map th, table.map td { text-align: left; padding: 7px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+  table.map thead th { background: var(--soft); border-top: 0; }
+  table.map td:first-child { white-space: nowrap; }
 </style>
 </head>
 <body>
-
 <header class="hero">
-  <button class="theme-btn" id="themeBtn" type="button">🌓 Sáng / Tối</button>
   <div class="hero-in">
-    <div class="ball" aria-hidden="true">
-      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#f5c84c" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z" fill="#f5c84c"/><path d="M12 7V2.5M16 10l4-1.5M14.5 14.5l2.5 4M9.5 14.5L7 18.5M8 10L4 8.5"/></svg>
-    </div>
     <div>
-      <small>FIFA ONLINE 3 · OFFLINE · LAUNCHER v1.2.0</small>
-      <h1>Hướng dẫn sử dụng FIFA Online 3 <span>Offline</span></h1>
-      <p>Hướng dẫn từng bước cách dùng <b>Launcher</b> để vào game và cập nhật bản vá, <b>Web GM Tool</b> để quản lý CLB. Có chỗ nào chưa rõ thì nhắn Siêu Nhân Hồng nhé.</p>
+      <div class="eyebrow">FIFA Online 3 · Offline</div>
+      <h1>Hướng dẫn dùng GM Tool</h1>
+      <p>GM TOOL FO3 OFFLINE là trang quản trị chạy ngay trên máy bạn: thêm cầu thủ (cả mùa 26 / 25 LIVE), tặng gói, tạo gói tự chọn, chỉnh EP, tỷ lệ đập thẻ, sức mạnh BOT cho từng giải, cài đặt trận đấu, thị trường chuyển nhượng, Xếp hạng với HLV ảo, tạo HLV riêng… Các mục bên trái xếp đúng theo 6 nhóm menu của GM Tool.</p>
+      <a class="open" href="http://127.0.0.1:8088/" target="_blank" rel="noopener">Mở GM Tool <code>127.0.0.1:8088</code></a>
     </div>
+    <div class="faces" aria-hidden="true"><img src="images/face_158023.png" alt=""><img src="images/face_20801.png" alt=""><img src="images/face_190871.png" alt=""><img src="images/face_190042.png" alt=""><img src="images/face_41236.png" alt=""><img src="images/face_7826.png" alt=""><img src="images/face_176580.png" alt=""><img src="images/face_183277.png" alt=""></div>
   </div>
 </header>
-
-<div class="wrap">
-  <nav class="toc" aria-label="Mục lục">
-    <div class="grp"><b><i>★</i>Bắt đầu</b>
-    <a href="#gioi-thieu">Giới thiệu nhanh</a>
-    <a href="#lan-dau">Chuẩn bị lần đầu</a>
-    </div>
-    <div class="grp"><b><i>1</i>Launcher</b>
-    <a href="#launcher">Tổng quan</a>
-    <a class="sub" href="#l-choi">Vào game</a>
-    <a class="sub" href="#l-tuychon">Tùy chọn</a>
-    <a class="sub" href="#l-congcu">Công cụ</a>
-    <a class="sub" href="#l-kiemtra">Kiểm tra hệ thống</a>
-    <a class="sub" href="#l-nhatky">Nhật ký hoạt động</a>
-    <a class="sub" href="#l-capnhat">Cập nhật bản vá</a>
-    </div>
-    <div class="grp"><b><i>2</i>Web GM Tool</b>
-    <a href="#gm">Mở GM Tool</a>
-    <a class="sub" href="#gm-giaodien">Bố cục giao diện</a>
-    <a class="sub" href="#gm-tongquan">Tổng quan</a>
-    <a class="sub" href="#gm-cauthu">Cầu thủ CLB</a>
-    <a class="sub" href="#gm-them">Thêm cầu thủ</a>
-    <a class="sub" href="#gm-the">Chi tiết thẻ</a>
-    <a class="sub" href="#gm-hangloat">Thêm hàng loạt</a>
-    <a class="sub" href="#gm-goithe">Gói thẻ &amp; Túi đồ</a>
-    <a class="sub" href="#gm-qua">Quà hằng ngày</a>
-    <a class="sub" href="#gm-hlv">HLV</a>
-    <a class="sub" href="#gm-doi">Đổi cầu thủ</a>
-    <a class="sub" href="#gm-nhatky">Nhật ký server</a>
-    </div>
-    <div class="grp"><b><i>?</i>Khác</b>
-    <a href="#dulieu">Dữ liệu &amp; sao lưu</a>
-    <a href="#meo">Mẹo hay</a>
-    <a href="#faq">Câu hỏi thường gặp</a>
-    <a href="#ho-tro">Hỗ trợ</a>
-    </div>
+<div class="layout">
+  <nav class="side" aria-label="Các mục hướng dẫn">
+    <div class="side-title">Các mục</div>
+    <a href="#batdau"><span class="num">★</span><span>Trước khi bắt đầu</span></a>
+    <a href="#tongquan"><span class="num">1</span><span>Bảng điều khiển</span></a>
+    <a href="#cauthu"><span class="num">2</span><span>Cầu thủ</span></a>
+    <a href="#vatpham"><span class="num">3</span><span>Vật phẩm</span></a>
+    <a href="#kinhte"><span class="num">4</span><span>Kinh tế</span></a>
+    <a href="#trandau"><span class="num">5</span><span>Trận đấu</span></a>
+    <a href="#hethong"><span class="num">6</span><span>HLV &amp; hệ thống</span></a>
+    <a href="#mua"><span class="num">♦</span><span>Mùa thẻ 26 / 25 LIVE</span></a>
   </nav>
-
   <main>
-    <section class="card" id="gioi-thieu">
-      <h2><span class="no">★</span>Giới thiệu nhanh</h2>
-      <p class="lead">FO3 Offline chạy hoàn toàn trên máy của bạn: không cần tài khoản online, không mất phí. Bạn chỉ cần biết hai thứ:</p>
-      <div class="grid2">
-        <div class="note"><b>🎮 Launcher</b> (<code>FO3 Offline Launcher.exe</code> trong thư mục game)<br>Tự bật máy chủ offline, kiểm tra máy, mở game và <b>tải bản vá mới</b>, tất cả chỉ bằng vài cú bấm.</div>
-        <div class="note"><b>🛠️ Web GM Tool</b> (trình duyệt, địa chỉ <code>127.0.0.1:8088</code>)<br>Trang quản trị CLB: EP, cầu thủ (có ảnh mặt), nâng cấp thẻ, HLV, gói thẻ, quà hằng ngày…</div>
-      </div>
-      <p>Mỗi lần chơi chỉ cần: <b>Mở Launcher → bấm CHƠI → (tuỳ thích) mở GM Tool chỉnh CLB → vào lại màn hình CLB trong game để thấy thay đổi.</b></p>
+    <section class="card" id="batdau">
+      <h2><span class="num">★</span>Trước khi bắt đầu</h2>
+      <p class="lead">GM Tool chỉ chạy khi <b>FO3 Launcher</b> đang mở.</p>
+      <ul>
+        <li>Mở <b>FO3 Launcher</b> → bấm <b>Mở GM Tool</b> (hoặc vào <b>127.0.0.1:8088</b> trên trình duyệt).</li>
+        <li>Mọi thay đổi được <b>lưu ngay</b>. Phần lớn thiết lập cần <b>vào lại game</b> (hoặc mở lại màn hình đó) mới thấy.</li>
+        <li><b>Quà GM hiện ngay trong game:</b> khi game đang mở, các thao tác thêm cầu thủ, tặng gói, gửi quà vào Túi, thêm HLV được đẩy thẳng vào game. Biểu tượng thư sáng lên với dòng <b>"Bạn có Vật Phẩm Mới"</b>. Nếu chưa thấy (CLB quá lớn), mở lại màn hình đó là có.</li>
+        <li>Dòng thông báo phía trên nội dung cho biết thao tác vừa làm đã xong hay bị lỗi.</li>
+      </ul>
+      <h3>Thanh trên cùng và menu</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_header.png" alt="Thanh trên cùng và menu của GM Tool" loading="lazy"></details>
+      <ul>
+        <li><b>Tên HLV · Đội</b>, huy hiệu <b>PC</b> và <b>VVIP</b> (luôn bật sẵn), đồng hồ <b>giờ server</b> (giờ Việt Nam).</li>
+        <li>Nút <b>mặt trăng / mặt trời</b> cạnh chữ "GM TOOL FO3 OFFLINE": đổi giao diện tối / sáng.</li>
+        <li>Nút vàng <b>Hướng Dẫn Dùng GM Tool</b>: mở trang hướng dẫn này ở tab mới. Ô <b>Số dư EP</b> ở góc phải luôn hiện số EP hiện tại.</li>
+        <li><b>Menu 2 tầng</b>: hàng trên (nền xanh navy) là <b>6 nhóm</b>, số nhỏ cạnh tên cho biết nhóm có bao nhiêu mục. Nhóm đang mở có màu vàng. Hàng dưới là các mục của nhóm đó, mục đang mở có gạch chân.</li>
+        <li>Bấm một nhóm sẽ mở mục đầu tiên của nhóm (hoặc mục bạn mở lần trước trong nhóm đó).</li>
+      </ul>
+      <table class="map">
+        <thead><tr><th>Nhóm</th><th>Các mục</th></tr></thead>
+        <tbody>
+          <tr><td><b>Bảng điều khiển</b></td><td>Tổng quan</td></tr>
+          <tr><td><b>Cầu thủ</b></td><td>Cầu thủ CLB · Thêm cầu thủ · Thêm hàng loạt · Đổi cầu thủ · Tỷ lệ đập thẻ · Team Color</td></tr>
+          <tr><td><b>Vật phẩm</b></td><td>Gói thẻ &amp; Túi đồ · Gói tự chọn · Quà hằng ngày</td></tr>
+          <tr><td><b>Kinh tế</b></td><td>Giá EP thẻ · Thị trường</td></tr>
+          <tr><td><b>Trận đấu</b></td><td>Cài đặt trước trận · Thưởng sau trận · Sức mạnh BOT · Xếp hạng HLV ảo</td></tr>
+          <tr><td><b>HLV &amp; hệ thống</b></td><td>HLV · Nhiệm vụ · Reset nhân vật · Nhật ký server</td></tr>
+        </tbody>
+      </table>
+      <h3>Hộp xác nhận</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" style="max-width:460px" src="images/gm_dialog.png" alt="Hộp xác nhận của GM Tool" loading="lazy"></details>
+      <p>Trước các thao tác quan trọng, GM Tool hiện một hộp hỏi lại ở giữa màn hình:</p>
+      <ul>
+        <li>Biểu tượng <b style="color:#dc2626">!</b> đỏ: xoá, thanh lý, reset (thao tác không hoàn tác được có thêm dòng cảnh báo đỏ). Nút được chọn sẵn là <b>Huỷ</b> để tránh bấm nhầm.</li>
+        <li>Biểu tượng <b style="color:#d97706">i</b> vàng: đặt lại, đổi cách chọn. Biểu tượng <b style="color:#2563eb">?</b> xanh: xác nhận thông thường.</li>
+        <li>Phím <b>Esc</b> hoặc bấm ra ngoài hộp = Huỷ. Phím <b>Enter</b> = nút đang được chọn.</li>
+      </ul>
+      <h3>Ô chọn có tìm kiếm</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" style="max-width:360px" src="images/gm_dropdown.png" alt="Ô chọn có ô tìm kiếm" loading="lazy"></details>
+      <p>Các danh sách dài (giải đấu, đội bóng, quốc gia…) mở ra có <b>ô tìm ở trên cùng</b> và số thẻ bên phải mỗi dòng. Gõ vài chữ để lọc, bấm <b>Enter</b> hoặc bấm vào dòng để chọn.</p>
+      <div class="tip"><strong>Mẹo:</strong> gõ không dấu cũng được, ví dụ gõ "huyen" vẫn ra "Huyền thoại". Dòng <i>Tìm tất cả tên chứa "…"</i> chọn mọi đội có chữ đó.</div>
+      <p>Các ô chọn <b>Mùa</b> luôn xếp: <b>26 LIVE, 25 LIVE</b> trên cùng, rồi mùa theo năm (2006 → 2017), sau đó các mùa đặc biệt theo tên A–Z.</p>
     </section>
 
-    <section class="card" id="lan-dau">
-      <h2><span class="no">0</span>Chuẩn bị lần đầu</h2>
-      <p class="lead">Chỉ làm một lần trên mỗi máy tính.</p>
-      <ol class="steps">
-        <li><b>Chép đầy đủ thư mục game</b> (ví dụ <code>D:\Games\FO3</code>) sang máy. Bên trong phải có <code>fifazf.exe</code>, thư mục <code>Server</code>, thư mục <code>HuongDan</code> (tài liệu này) và <code>FO3 Offline Launcher.exe</code>.</li>
-        <li><b>Cho phép trong phần mềm diệt virus.</b> Nếu Windows Defender báo lạ, thêm cả thư mục game vào danh sách cho phép (Exclusion). Launcher đóng gói từ Python nên đôi khi bị nhận nhầm.</li>
-        <li><b>Mở Launcher</b> bằng cách nhấp đúp <code>FO3 Offline Launcher.exe</code>. Nếu Windows hiện “Windows protected your PC”, bấm <b>More info → Run anyway</b>. Launcher <b>tự bật máy chủ</b> ngay khi mở.</li>
-        <li><b>Cài hosts.</b> Ở mục <b>Kiểm tra hệ thống</b>, nếu dòng Hosts báo “Cài ngay ›” thì bấm vào đó và chọn <b>Có / Yes</b> khi Windows hỏi quyền Admin.</li>
-        <li><b>(Tuỳ chọn)</b> Bấm nút nhỏ hình màn hình cạnh <span class="btn g">Mở GM Tool</span> để tạo lối tắt ngoài Desktop.</li>
-      </ol>
-      <div class="tip"><b>💡 Mẹo:</b> Chép thư mục game sang ổ khác thì bấm <b>Đổi</b> ở mục “Thư mục game” trong Launcher và chọn lại thư mục có <code>fifazf.exe</code>.</div>
+    <section class="card" id="tongquan">
+      <h2><span class="num">1</span>Bảng điều khiển</h2>
+      <p class="lead">Mục <b>Tổng quan</b>: xem nhanh tình trạng tài khoản, sửa thông tin HLV và EP.</p>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_ringkasan.png" alt="Màn hình Tổng quan" loading="lazy"></details>
+      <h3>Tổng quan CLB</h3>
+      <p>Số cầu thủ trong CLB (tối đa 9999), số gói trong kho, quà chưa nhận trong Túi, chuỗi ngày đăng nhập, quà hôm nay, hạn <b>VVIP + quán net</b>.</p>
+      <h3>Thông tin HLV</h3>
+      <ol><li>Sửa <b>Tên HLV</b> (2–16 ký tự), <b>Cấp độ</b> (tối đa 100), <b>Kinh nghiệm</b>.</li><li>Bấm <b>Lưu</b>, vào lại game để thấy.</li></ol>
+      <h3>Số dư EP</h3>
+      <p>Nhập số (tối đa 999.999.999.999) rồi bấm <b>Cộng EP</b>, <b>Trừ EP</b> hoặc <b>Đặt số dư</b>.</p>
     </section>
 
+    <section class="card" id="cauthu">
+      <h2><span class="num">2</span>Cầu thủ</h2>
+      <p class="lead">Quản lý cầu thủ trong CLB, thêm thẻ mới, đổi cầu thủ, tỷ lệ đập thẻ và Team Color.</p>
 
-    <!-- LAUNCHER -->
-    <section class="card" id="launcher">
-      <h2><span class="no">1</span>Launcher</h2>
-      <p class="lead">Màn hình chính của Launcher. Các số màu vàng tương ứng với phần giải thích bên dưới.</p>
-      <figure>
-        <div class="shot">
-          <img src="images/launcher.png" alt="Màn hình chính của FO3 Offline Launcher v1.2.0" width="1100" height="724">
-          <span class="pin" style="left:16%;top:47%">1</span>
-          <span class="pin" style="left:79.5%;top:14%">2</span>
-          <span class="pin" style="left:47%;top:26.5%">3</span>
-          <span class="pin" style="left:47%;top:57.5%">4</span>
-          <span class="pin" style="left:84.5%;top:26.5%">5</span>
-          <span class="pin" style="left:65%;top:72.6%">6</span>
-          <span class="pin" style="left:20%;top:82.7%">7</span>
-          <span class="pin" style="left:50.5%;top:82.7%">8</span>
-        </div>
-        <figcaption>Launcher v1.2.0 (bấm vào ảnh để phóng to)</figcaption>
-      </figure>
-      <ul class="legend">
-        <li><span class="n">1</span><div><b>Vào sân</b>: nút tròn <b>CHƠI</b> để mở game.</div></li>
-        <li><span class="n">2</span><div><b>Trạng thái máy chủ</b>: chấm xanh là đang chạy. Bấm để bật / tắt.</div></li>
-        <li><span class="n">3</span><div><b>Tùy chọn</b>: thư mục game và hai công tắc tự động.</div></li>
-        <li><span class="n">4</span><div><b>Công cụ</b>: phiên bản / thông báo cập nhật, Mở GM Tool, lối tắt, Hướng dẫn, Cập nhật.</div></li>
-        <li><span class="n">5</span><div><b>Kiểm tra hệ thống</b>: Hosts, Máy chủ game, GM Tool, Game.</div></li>
-        <li><span class="n">6</span><div><b>Kiểm tra ngay / Khởi động lại</b> máy chủ.</div></li>
-        <li><span class="n">7</span><div><b>Nhật ký hoạt động</b> của Launcher và máy chủ.</div></li>
-        <li><span class="n">8</span><div><b>Liên kết nhanh</b>: Mở thư mục game, Hướng dẫn, Cập nhật, Hỗ trợ: Siêu Nhân Hồng, Xoá.</div></li>
-      </ul>
-
-      <h3 id="l-choi">① Vào game với nút CHƠI</h3>
-      <ol class="steps">
-        <li>Mở Launcher: máy chủ tự bật, dòng chữ dưới nút đổi thành <b>“Máy chủ sẵn sàng”</b>.</li>
-        <li>Bấm nút tròn <span class="btn">CHƠI</span>. Game tự mở, bạn đăng nhập như bình thường.</li>
-        <li>Trong lúc chơi <b>hãy giữ Launcher mở</b> (có thể thu nhỏ). Đóng Launcher sẽ tắt máy chủ và game mất kết nối.</li>
-      </ol>
-
-      <h3 id="l-tuychon">③ Tùy chọn</h3>
-      <div class="tbl"><table>
-        <tr><th>Mục</th><th>Ý nghĩa</th></tr>
-        <tr><td><b>Thư mục game</b> · nút <span class="btn o">Đổi</span></td><td>Đường dẫn tới thư mục có <code>fifazf.exe</code>.</td></tr>
-        <tr><td><b>Tự mở GM Tool khi vào game</b></td><td>Mỗi lần bấm CHƠI, GM Tool tự mở trong trình duyệt.</td></tr>
-        <tr><td><b>Tự tắt máy chủ khi thoát game</b></td><td>Thoát game là máy chủ tự tắt theo.</td></tr>
-      </table></div>
-
-      <h3 id="l-congcu">④ Công cụ</h3>
+      <h3>Cầu thủ CLB</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_pemain.png" alt="Màn hình Cầu thủ CLB" loading="lazy"></details>
       <ul>
-        <li><b>Launcher</b>: phiên bản hiện tại. Khi có bản vá mới, chữ đổi thành <b style="color:#22a35a">Có bản cập nhật ›</b>, bấm vào để cài (xem <a href="#l-capnhat">Cập nhật bản vá</a>).</li>
-        <li><b>GM Tool</b>: địa chỉ <code>127.0.0.1:8088</code>.</li>
-        <li><span class="btn g">Mở GM Tool</span>: mở trang quản trị trong trình duyệt mặc định.</li>
-        <li><b>Nút hình màn hình</b>: tạo lối tắt <b>“FO3 Offline”</b> ngoài Desktop.</li>
-        <li><span class="btn o">Hướng dẫn</span>: mở tài liệu này trong trình duyệt.</li>
-        <li><span class="btn o">Cập nhật</span>: kiểm tra và cài bản vá mới ngay.</li>
+        <li><b>Bộ lọc</b>: tên, đội bóng, quốc gia, vị trí, vai trò (Chính / Thay / Dự bị / Đội phụ), mùa. Bấm <b>Xóa lọc</b> để bỏ lọc. Bấm tiêu đề cột để sắp xếp.</li>
+        <li><b>Sửa từng cầu thủ</b>: đổi trực tiếp ô <b>Cấp thẻ</b> (+0 → +20) và <b>Cấp độ</b> (LV 1 → 30) ở mỗi dòng.</li>
+        <li><b>Sửa hàng loạt</b>: tích ô đầu dòng (hoặc ô trên tiêu đề để chọn hết), thanh công cụ hiện ra: <b>Đặt cấp thẻ</b>, <b>Đặt cấp độ</b>, <b>Sang đội phụ</b>, <b>Về đội chính</b>, <b>Thanh lý</b>, <b>Bỏ chọn</b>.</li>
+        <li><b>Thanh lý nhanh theo mùa</b>: chọn mùa rồi bấm <b>Thanh lý</b> để bỏ toàn bộ thẻ dự bị (kể cả Đội phụ) của mùa đó.</li>
+        <li><b>Thanh lý tất cả cầu thủ</b> (nút đỏ bên phải): bỏ toàn bộ cầu thủ dự bị và Đội phụ trong một lần.</li>
       </ul>
+      <div class="tip"><strong>Yên tâm:</strong> 18 cầu thủ trong đội hình (Chính + Thay) không bao giờ bị thanh lý từ GM Tool.</div>
+      <div class="warn"><strong>Lưu ý:</strong> thanh lý không hoàn tác được; GM Tool luôn hỏi lại trước khi làm.</div>
+      <p><b>Xem chi tiết và so sánh thẻ:</b> bấm <b>tên cầu thủ</b> (ở đây hoặc ở Thêm cầu thủ) để mở thẻ chi tiết (OVR, vị trí, chiều cao, chân thuận, kỹ thuật, giá EP, đủ chỉ số). Đổi ô Cấp thẻ / Cấp độ trong thẻ để xem trước chỉ số. Bấm <b>Ghim để so sánh</b>, mở thẻ khác rồi bấm <b>So sánh với …</b>. Bấm <b>×</b> hoặc <b>Esc</b> để đóng.</p>
+      <details class="shotbox"><summary>Xem ảnh thẻ chi tiết</summary><img class="shot" style="max-width:700px" src="images/gm_card.png" alt="Chi tiết thẻ cầu thủ" loading="lazy"></details>
 
-      <h3 id="l-kiemtra">⑤ ⑥ Kiểm tra hệ thống</h3>
-      <p>Chấm <b style="color:#22a35a">xanh</b> là ổn, <b style="color:#9ca3af">xám</b> là chưa chạy, <b style="color:#d97706">vàng</b> / <b style="color:#ef4444">đỏ</b> là cần xử lý.</p>
-      <div class="tbl"><table>
-        <tr><th>Dòng</th><th>Bình thường</th><th>Nếu có vấn đề</th></tr>
-        <tr><td><b>Hosts</b></td><td>Đã cài</td><td>Bấm <b>Cài ngay ›</b> và đồng ý quyền Admin.</td></tr>
-        <tr><td><b>Máy chủ game</b></td><td>Đang chạy</td><td><b>Bản cũ (.bat)</b> hoặc <b>Không phản hồi</b>: bấm <b>Khởi động lại</b>. Nếu cổng 443 bị phần mềm khác chiếm (Skype, IIS, VMware…), hãy tắt phần mềm đó.</td></tr>
-        <tr><td><b>GM Tool</b></td><td>Mở được</td><td>Chỉ chạy khi máy chủ đang chạy.</td></tr>
-        <tr><td><b>Game</b></td><td>Đang chạy / Chưa mở</td><td>Chỉ để theo dõi.</td></tr>
-      </table></div>
-
-      <h3 id="l-nhatky">⑦ ⑧ Nhật ký hoạt động</h3>
-      <p>Khung dưới cùng hiện các thông báo theo thời gian. Gặp lỗi thì chụp khung này gửi Siêu Nhân Hồng để được hỗ trợ nhanh hơn.</p>
-      <ul>
-        <li><b>Mở thư mục game</b>: mở thư mục game trong File Explorer.</li>
-        <li><b>Hướng dẫn</b>: mở tài liệu này (file <code>HuongDan\index.html</code> trong thư mục game).</li>
-        <li><b>Cập nhật</b>: kiểm tra bản vá mới ngay.</li>
-        <li><b>Hỗ trợ: Siêu Nhân Hồng</b>: mở trang fo3th.online.</li>
-        <li><b>Xoá</b>: xoá các dòng đang hiển thị.</li>
-      </ul>
-
-      <h3 id="l-capnhat">🔄 Cập nhật bản vá <span class="new">MỚI</span></h3>
-      <p>Khi Siêu Nhân Hồng sửa lỗi hay thêm tính năng, bạn <b>không cần tải lại cả bộ game</b>. Launcher tự so từng file với bản mới nhất và <b>chỉ tải những file đã thay đổi</b>.</p>
-      <ol class="steps">
-        <li>Mở Launcher (cần có mạng). Vài giây sau, nếu có bản vá, nhật ký báo <i>“Có bản vá …: n file (… MB)”</i> và mục Công cụ hiện <b style="color:#22a35a">Có bản cập nhật ›</b>. Bạn cũng có thể bấm link <b>Cập nhật</b> trong nhật ký để kiểm tra ngay.</li>
-        <li><b>Thoát game</b> trước (game khoá file khi đang chạy).</li>
-        <li>Bấm <b>Có bản cập nhật ›</b> và chọn <b>Có / Yes</b>. Launcher tải file, kiểm tra từng file có tải đúng không, <b>sao lưu dữ liệu tài khoản</b>, tắt máy chủ, thay file rồi bật lại máy chủ.</li>
-        <li>Nếu bản vá có cả Launcher mới, Launcher tự đóng và mở lại.</li>
+      <h3>Thêm cầu thủ</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_tambah.png" alt="Màn hình Thêm cầu thủ" loading="lazy"></details>
+      <ol>
+        <li>Gõ <b>Tên cầu thủ</b> (ví dụ Haaland) hoặc lọc theo giải đấu, đội bóng, quốc gia, vị trí, mùa.</li>
+        <li>Chọn <b>Cấp thẻ</b> (+1 → +20) và <b>Cấp độ</b> (LV 1 → 30) muốn thêm. Cột OVR và Giá EP tự đổi theo cấp thẻ.</li>
+        <li>Bấm <b>Thêm vào CLB</b> ở dòng cầu thủ, hoặc <b>Gửi vào Túi</b> để vào game bấm Nhận (nhận từ Túi vẫn đúng cấp thẻ và cấp độ đã chọn).</li>
+        <li>Thêm nhiều thẻ một lúc: tích chọn các dòng rồi bấm <b>Thêm tất cả vào CLB</b> (dùng cấp thẻ và cấp độ ở trên).</li>
       </ol>
-      <div class="note"><b>✅ Dữ liệu của bạn được giữ nguyên.</b> Cập nhật <b>không bao giờ</b> ghi đè tài khoản (CLB, cầu thủ, EP, HLV…) và cài đặt GM Tool. Trước mỗi lần cập nhật, Launcher còn chép một bản sao lưu vào <code>Server\gamedata\backup\</code> (xem <a href="#dulieu">Dữ liệu &amp; sao lưu</a>).</div>
-      <div class="tip"><b>💡</b> Nếu tải giữa chừng bị lỗi mạng, Launcher chưa thay file nào cả. Cứ bấm cập nhật lại là được.</div>
+      <p>Dùng các nút <b>« ‹ Trước / Sau › »</b> và ô <b>Mỗi trang</b> (25 – 200) để chuyển trang. Cột <b>Chợ</b> cho biết thẻ có bán trên thị trường chuyển nhượng hay không.</p>
+
+      <h3>Thêm hàng loạt</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_theomua.png" alt="Màn hình Thêm hàng loạt" loading="lazy"></details>
+      <ol>
+        <li><b>Giải đấu</b> (không bắt buộc): giúp thu hẹp danh sách đội.</li>
+        <li>Chọn <b>Đội bóng</b> và/hoặc <b>Mùa</b>. Phải chọn ít nhất một trong hai.</li>
+        <li>Chọn <b>Cấp độ</b> (LV 1 → 30) và <b>Cấp thẻ</b> (+1 → +20) cho các thẻ sẽ thêm.</li>
+        <li>Danh sách hiện ra, mặc định đã tích các thẻ bạn <b>chưa có</b>. Dùng các nút: <b>Chọn tất cả</b>, <b>Bỏ chọn</b>, <b>Chọn vừa chỗ trống</b>, <b>Bỏ thẻ đã có</b>. Có thể lọc thêm theo quốc gia, vị trí, tên.</li>
+        <li>Bấm <b>Thêm cầu thủ đã chọn vào CLB</b>. Thẻ vào mục dự bị.</li>
+      </ol>
+      <div class="tip"><strong>Mẹo:</strong> chọn nhiều hơn số chỗ trống thì GM Tool chỉ thêm các thẻ OVR cao nhất cho vừa CLB.</div>
+
+      <h3>Đổi cầu thủ</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_scout.png" alt="Màn hình Đổi cầu thủ" loading="lazy"></details>
+      <ul>
+        <li>Bảng hiện từng tuyển trạch viên (gồm cả <b>Tuyển trạch viên VVIP</b>), trạng thái, giờ dùng lại và điều kiện thưởng thêm.</li>
+        <li><b>Mở khóa tất cả tuyển trạch viên</b>: dùng lại ngay, không phải chờ.</li>
+        <li>Cầu thủ muốn đem đổi phải ở <b>Đội phụ</b> (chuyển ở Cầu thủ CLB, nút <b>Sang đội phụ</b>).</li>
+      </ul>
+
+      <h3>Tỷ lệ đập thẻ</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_enhance.png" alt="Tỷ lệ đập thẻ" loading="lazy"></details>
+      <ol>
+        <li>Kéo thanh <b>Tỷ lệ thành công</b> (1% – 100%). Mặc định là <b>30%</b>.</li>
+        <li>Bấm <b>Lưu tỷ lệ</b>. Dòng trên cùng cho biết tỷ lệ đang áp dụng.</li>
+      </ol>
+      <p><b>Dùng tỷ lệ gốc</b>: trả về cách tính của game (theo cấp thẻ và nguyên liệu). Áp dụng ngay cho các lần đập tiếp theo, không cần vào lại game, không đổi thẻ đã có.</p>
+
+      <h3>Team Color</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_trandau_tc.png" alt="Team Color" loading="lazy"></details>
+      <p>Game có đủ bộ Team Color: CLB / quốc gia (kèm chỉ số cộng), <b>mùa thẻ</b> (Season 06, 17…, có cả <b>Season 26L</b> và <b>Season 25L</b>), các bộ đặc biệt (14 WC, EC/Copa, BEST, MSN, BBC, Galacticos…) và <b>Team Color nâng cấp</b> theo cấp thẻ đội hình chính (+2 đến +20). Mỗi màu đều có icon riêng trong game.</p>
+      <p>Ô <b>Bật Team Color nâng cấp (thẻ +2 … +20)</b>: mặc định bật, tích / bỏ tích là lưu ngay. Thay đổi hiện trong game từ lần đăng nhập sau.</p>
     </section>
 
-    <!-- GM TOOL -->
-    <section class="card" id="gm">
-      <h2><span class="no">2</span>Web GM Tool</h2>
-      <p class="lead">Trang quản trị CLB chạy ngay trên máy bạn. Mọi thay đổi được lưu ngay lập tức.</p>
-      <ol class="steps">
-        <li>Đảm bảo máy chủ đang chạy (chấm xanh trên Launcher).</li>
-        <li>Bấm <span class="btn g">Mở GM Tool</span>, hoặc gõ <code>http://127.0.0.1:8088</code> vào trình duyệt (Chrome, Edge, Cốc Cốc…).</li>
+    <section class="card" id="vatpham">
+      <h2><span class="num">3</span>Vật phẩm</h2>
+      <p class="lead">Tặng gói thẻ, gửi quà vào Túi, dọn kho đồ, tạo gói tự chọn và chỉnh quà đăng nhập hằng ngày.</p>
+
+      <h3>Gói thẻ &amp; Túi đồ</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_item.png" alt="Tặng gói thẻ và gửi quà" loading="lazy"></details>
+      <ul>
+        <li><b>Tặng gói thẻ</b>: chọn <b>Gói</b>, nhập <b>Số lượng</b> (tối đa 999), bấm <b>Tặng</b>. Gói vào <b>Kho đồ</b>.</li>
+        <li><b>Gửi quà vào Túi đồ</b>: đặt <b>Tên quà</b>, điền <b>EP</b>, <b>Gói</b> + <b>Số gói</b>, <b>SPID cầu thủ</b> + <b>Cấp thẻ</b>, bấm <b>Gửi quà</b>. Trong game vào <b>Kho đồ → tab Kho</b>, bấm <b>Nhận</b>.</li>
+        <li><b>Kho đồ của HLV</b>: bảng gói và vật phẩm trong kho. Nhập số rồi bấm <b>Xoá</b> để xoá một phần, để trống ô để xoá hết món đó. <b>Xoá toàn bộ kho đồ</b> dọn sạch kho (có hỏi lại).</li>
+        <li><b>Các gói trong cửa hàng</b>: danh sách mọi gói đang bán kèm <b>mã gói</b> và <b>giá EP</b>. Trong game mỗi gói mua được <b>1, 10, 30, 50, 100 hoặc 200</b> cái một lần.</li>
+      </ul>
+      <details class="shotbox"><summary>Xem ảnh Kho đồ</summary><img class="shot" src="images/gm_item_kho.png" alt="Kho đồ của HLV" loading="lazy"></details>
+      <div class="warn"><strong>Lưu ý:</strong> đồ đã xoá không lấy lại được. Vào lại game để thấy kho đã đổi.</div>
+
+      <h3>Gói tự chọn</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_goitc.png" alt="Tạo gói tự chọn" loading="lazy"></details>
+      <ol>
+        <li>Đặt <b>Tên gói</b> (ví dụ "Gói Huyền thoại MU").</li>
+        <li>Chọn <b>Số cộng từ … đến …</b> (+1 → +20, cấp thấp ra nhiều hơn). Muốn cố định thì chọn 2 số bằng nhau.</li>
+        <li>Chọn <b>Màu icon gói</b>: icon "CUSTOM · GÓI TỰ CHỌN" có 8 màu.</li>
+        <li>Chọn <b>Cách chọn thẻ cho gói</b> (một trong ba): <b>Theo mùa</b> (chọn mùa → <b>+ Thêm mùa</b>), <b>Chọn cầu thủ</b> (gõ tên, bấm <b>Thêm</b>), hoặc <b>Chọn HLV</b> (gói HLV: chọn HLV → <b>+ Thêm HLV</b>, chọn <b>Sao HLV từ … đến …</b>; mỗi lần mở ra 1 HLV ngẫu nhiên).</li>
+        <li>Bấm <b>Tạo gói</b>. <b>Làm lại từ đầu</b> để xoá form.</li>
       </ol>
-      <div class="tip"><b>💡 Quan trọng:</b> Sau khi chỉnh trong GM Tool, hãy <b>vào lại màn hình CLB trong game</b> để game tải dữ liệu mới. Thông tin HLV và HLV mới thêm cần <b>đăng nhập lại game</b>.</div>
-
-      <h3 id="gm-giaodien">Bố cục giao diện</h3>
-      <figure>
-        <img src="images/gm_header.png" alt="Thanh tiêu đề GM Tool" loading="lazy">
-        <figcaption>Thanh tiêu đề: tên HLV, số đội, huy hiệu PC / VIP, đồng hồ và số dư EP</figcaption>
-      </figure>
       <ul>
-        <li><b>Thanh tiêu đề</b>: tên HLV, số đội, đồng hồ và <b>Số dư EP</b> ở góc phải. Nút mặt trăng cạnh “Quản trị CLB” để đổi giao diện <b>sáng / tối</b>.</li>
-        <li><b>Thanh menu bên trái</b> (biểu tượng, từ trên xuống): Tổng quan, Cầu thủ CLB, Thêm cầu thủ, Thêm hàng loạt, Gói thẻ &amp; Túi đồ, Quà hằng ngày, HLV, Đổi cầu thủ, Nhật ký server.</li>
-        <li><b>Dòng thông báo</b> phía trên: báo kết quả mỗi thao tác (xanh thành công, đỏ lỗi).</li>
-        <li><b>Ảnh mặt cầu thủ</b> hiện ở mọi bảng. Thẻ chưa có ảnh sẽ được máy chủ tự tải bổ sung.</li>
+        <li>Trong game: <b>Cửa hàng → Gói cầu thủ</b>, gói tự chọn nằm đầu danh sách (giá 0 EP). Mua xong vào <b>Kho đồ</b> để mở.</li>
+        <li>Bảng <b>Các gói tự chọn đã tạo</b>: mỗi dòng có <b>Sửa</b>, <b>Gửi 10 gói vào Túi</b>, <b>Xoá</b>.</li>
       </ul>
-      <figure>
-        <img src="images/gm_dark.png" alt="GM Tool ở giao diện tối" loading="lazy">
-        <figcaption>Giao diện tối</figcaption>
-      </figure>
+      <details class="shotbox"><summary>Xem ảnh gói HLV và danh sách gói</summary><img class="shot" src="images/gm_goitc_hlv.png" alt="Tạo gói HLV" loading="lazy"><img class="shot" src="images/gm_goitc_list.png" alt="Các gói tự chọn đã tạo" loading="lazy"></details>
+      <div class="warn"><strong>Lưu ý:</strong> xoá gói thì gói đó cũng biến mất khỏi Cửa hàng và kho đồ. Đổi cách chọn thẻ sẽ bỏ các mục đã chọn ở cách cũ (có hỏi lại).</div>
 
-      <h3 id="gm-tongquan">🏠 Tổng quan</h3>
-      <figure>
-        <img src="images/gm_ringkasan.png" alt="Mục Tổng quan" loading="lazy">
-      </figure>
-      <h4>Tổng quan CLB</h4>
-      <p>Số cầu thủ / sức chứa (200), gói thẻ trong kho, quà chưa nhận trong Túi, chuỗi ngày đăng nhập, quà hôm nay và hạn VIP.</p>
-      <h4>Thông tin HLV</h4>
-      <p>Đổi <b>Tên HLV</b>, <b>Cấp độ</b> (tối đa 100) và <b>Kinh nghiệm</b>, bấm <span class="btn">Lưu</span>. Đăng nhập lại game để thấy.</p>
-      <h4>Giá EP thẻ cầu thủ</h4>
+      <h3>Quà hằng ngày</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_harian.png" alt="Màn hình Quà hằng ngày" loading="lazy"></details>
+      <p>Quà nhận khi vào game lần đầu mỗi ngày. Vào liên tục để lên ngày tiếp theo; bỏ một ngày sẽ quay về Ngày 1. Hết vòng thì bắt đầu lại.</p>
       <ul>
-        <li><b>Thanh trượt “Giá thẻ +0”</b>: thẻ +0 bản gốc giá 0 EP; kéo để thẻ +0 có giá bằng một phần trăm giá thẻ +1.</li>
-        <li><b>Hệ số nhân giá</b> (0,1 – 10) và <span class="btn o">Về mặc định</span>.</li>
-        <li><b>Giá tự đặt cho từng thẻ</b>: nhập <b>SPID</b> và giá ở +1, bấm <span class="btn">Lưu giá</span>.</li>
+        <li><b>Nhận quà ngày kế tiếp ngay</b>: lấy luôn quà của ngày tiếp theo. <b>Đặt lại chuỗi ngày</b>: quay về Ngày 1.</li>
+        <li><b>Bảng quà</b>: mỗi ngày gồm <b>EP</b>, <b>Gói</b>, <b>Số lượng</b> (tối đa 999). Sửa xong bấm <b>Lưu bảng</b>. <b>Thêm ngày</b> để kéo dài vòng quà.</li>
       </ul>
-      <h4>Số dư EP</h4>
-      <p>Nhập số EP rồi chọn <span class="btn">Cộng EP</span>, <span class="btn o">Trừ EP</span> hoặc <span class="btn o">Đặt số dư</span>.</p>
-      <h4>Tỷ lệ đập thẻ</h4>
-      <p>Kéo thanh trượt chọn tỷ lệ thành công khi nâng cấp thẻ, bấm <span class="btn">Lưu tỷ lệ</span>; <span class="btn o">Dùng tỷ lệ gốc</span> để trở về như game gốc.</p>
-
-      <h3 id="gm-cauthu">👕 Cầu thủ CLB</h3>
-      <figure>
-        <img src="images/gm_pemain.png" alt="Mục Cầu thủ CLB" loading="lazy">
-      </figure>
-      <p>Toàn bộ cầu thủ đang sở hữu kèm ảnh mặt và vai trò <b>Chính</b>, <b>Thay</b>, <b>Dự bị</b>, <b>Đội phụ</b>. Bấm tiêu đề cột có dấu ↕ để sắp xếp.</p>
-      <ul>
-        <li><b>Lọc</b>: tên, Đội bóng, Quốc gia, Vị trí, Vai trò, Mùa; <span class="btn o">Xóa lọc</span> để hiện lại tất cả.</li>
-        <li><b>Cấp thẻ</b> (+1 … +10) và <b>Cấp độ</b> (LV): chọn ngay trong bảng, lưu tức thì.</li>
-        <li><span class="btn o">Sang đội phụ</span> / <span class="btn o">Về đội chính</span>, <span class="btn o" style="color:#dc2626">Thanh lý</span>.</li>
-        <li><b>Thao tác hàng loạt</b>: tích ô đầu dòng (hoặc ô ở tiêu đề), rồi dùng thanh thao tác: Đặt cấp thẻ, Đặt cấp độ, Sang đội phụ, Về đội chính, Thanh lý.</li>
-        <li><b>Thanh lý nhanh theo mùa</b>: bỏ toàn bộ thẻ dự bị của một mùa; <b>18 cầu thủ trong đội hình luôn được giữ lại</b>.</li>
-      </ul>
-      <div class="warn"><b>⚠️</b> Thanh lý không thể hoàn tác.</div>
-
-      <h3 id="gm-them">➕ Thêm cầu thủ</h3>
-      <figure>
-        <img src="images/gm_tambah.png" alt="Mục Thêm cầu thủ" loading="lazy">
-        <figcaption>Hơn 60.000 thẻ cầu thủ, có ảnh mặt, giá EP và tình trạng chợ</figcaption>
-      </figure>
-      <ol class="steps">
-        <li>Lọc theo <b>Tên</b>, <b>Giải đấu</b> → <b>Đội bóng</b>, <b>Quốc gia</b>, <b>Vị trí</b>, <b>Mùa</b>. Kết quả hiện ngay khi gõ.</li>
-        <li>Chọn <b>Cấp thẻ</b> (+1 … +10).</li>
-        <li>Bấm <span class="btn">Thêm vào CLB</span> (vào thẳng CLB) hoặc <span class="btn o">Gửi vào Túi</span> (vào game bấm Nhận).</li>
-        <li>Thêm nhiều thẻ: tích chọn các dòng rồi bấm <span class="btn">Thêm tất cả vào CLB</span>.</li>
-      </ol>
-
-      <h3 id="gm-the">🃏 Chi tiết thẻ &amp; so sánh</h3>
-      <figure>
-        <img src="images/gm_card.png" alt="Cửa sổ chi tiết thẻ cầu thủ" loading="lazy">
-        <figcaption>Bấm vào tên cầu thủ ở bất kỳ bảng nào để mở chi tiết thẻ (ảnh lớn, OVR, toàn bộ chỉ số)</figcaption>
-      </figure>
-      <ul>
-        <li>Ảnh cầu thủ cỡ lớn, OVR và vị trí, CLB, quốc tịch, chiều cao, cân nặng, chân thuận, ngày sinh, kỹ thuật, chân yếu, công / thủ, giá EP.</li>
-        <li>Đổi <b>Cấp thẻ</b> và <b>Cấp độ</b> ngay trên cửa sổ để xem chỉ số tăng thêm bao nhiêu.</li>
-        <li><span class="btn o">Ghim để so sánh</span>: ghim thẻ này rồi mở thẻ khác để so sánh hai thẻ cạnh nhau.</li>
-      </ul>
-
-      <h3 id="gm-hangloat">📚 Thêm hàng loạt</h3>
-      <figure>
-        <img src="images/gm_theomua.png" alt="Mục Thêm hàng loạt" loading="lazy">
-        <figcaption>Ví dụ: chọn Mùa 2009 và cấp thẻ +5, sẽ hiện toàn bộ thẻ của mùa này</figcaption>
-      </figure>
-      <p class="lead">Thêm cả loạt thẻ: toàn bộ một <b>mùa</b>, toàn bộ một <b>đội</b>, hoặc <b>một đội trong một mùa</b>.</p>
-      <ol class="steps">
-        <li><b>Giải đấu</b> (Ngoại Hạng Anh và LaLiga luôn ở đầu) → <b>Đội bóng</b> (tuỳ chọn) → <b>Mùa</b> (tuỳ chọn).</li>
-        <li>Chọn <b>Cấp độ</b> và <b>Cấp thẻ</b> cho các thẻ sẽ thêm; cột “OVR sau khi thêm” cập nhật theo.</li>
-        <li>Lọc thêm theo tên, Quốc gia, Vị trí nếu cần.</li>
-        <li>Mặc định đã chọn sẵn <b>các thẻ bạn chưa có</b>. Bấm nút <span class="btn">Thêm … cầu thủ vào CLB</span> ở cuối bảng và xác nhận.</li>
-      </ol>
-      <div class="tbl"><table>
-        <tr><th>Nút</th><th>Tác dụng</th></tr>
-        <tr><td><span class="btn o">Chọn tất cả</span> / <span class="btn o">Bỏ chọn</span></td><td>Chọn / bỏ chọn mọi thẻ đang hiện.</td></tr>
-        <tr><td><span class="btn o">Chọn vừa chỗ trống</span></td><td>Chỉ chọn đủ số chỗ còn trống trong CLB, ưu tiên OVR cao.</td></tr>
-        <tr><td><span class="btn o">Bỏ thẻ đã có</span></td><td>Bỏ chọn thẻ đã sở hữu (nhãn “Đã có”).</td></tr>
-      </table></div>
-
-      <h3 id="gm-goithe">🎁 Gói thẻ &amp; Túi đồ</h3>
-      <figure>
-        <img src="images/gm_item.png" alt="Mục Gói thẻ và Túi đồ" loading="lazy">
-      </figure>
-      <ul>
-        <li><b>Tặng gói thẻ</b>: chọn Gói và Số lượng, bấm <span class="btn">Tặng</span>. Gói nằm trong kho đồ trong game.</li>
-        <li><b>Gửi quà vào Túi đồ</b>: đặt tên quà, EP, kèm gói hoặc một thẻ (SPID + cấp thẻ), bấm <span class="btn">Gửi quà</span>, vào game bấm <b>Nhận</b>.</li>
-        <li><b>Các gói trong cửa hàng</b>: bảng tham khảo tên, mã và giá gói.</li>
-      </ul>
-
-      <h3 id="gm-qua">📅 Quà hằng ngày</h3>
-      <figure>
-        <img src="images/gm_harian.png" alt="Mục Quà hằng ngày" loading="lazy">
-      </figure>
-      <ul>
-        <li>Lần vào game <b>đầu tiên mỗi ngày</b> nhận quà vào Túi đồ; bỏ một ngày sẽ quay về Ngày 1.</li>
-        <li><span class="btn o">Nhận quà ngày kế tiếp ngay</span>, <span class="btn o">Đặt lại chuỗi ngày</span>.</li>
-        <li><b>Bảng quà</b>: sửa EP, gói, số lượng từng ngày; <span class="btn o">Thêm ngày</span>; nhớ bấm <span class="btn">Lưu bảng</span>.</li>
-      </ul>
-
-      <h3 id="gm-hlv">🧑‍💼 HLV <span class="new">MỚI</span></h3>
-      <figure>
-        <img src="images/gm_hlv.png" alt="Thêm HLV trong GM Tool" loading="lazy">
-        <figcaption>Thêm HLV: ảnh, vị trí, chỉ số hỗ trợ (tiếng Việt), số sao và số lượng</figcaption>
-      </figure>
-      <h4>Thêm HLV</h4>
-      <ol class="steps">
-        <li>Lọc theo <b>vị trí</b> (HLV trưởng, HLV thủ môn, Y tế…) hoặc gõ tên.</li>
-        <li>Chọn số <b>sao</b> (có nửa sao như trong game, tối đa <b>5 sao</b>) và <b>số lượng</b>.</li>
-        <li>Bấm <span class="btn">Thêm</span>. HLV được gửi thẳng vào game, không cần tuyển.</li>
-      </ol>
-      <figure>
-        <img src="images/gm_hlv_clb.png" alt="Danh sách HLV của CLB" loading="lazy">
-        <figcaption>HLV của CLB: đổi sao, chọn chỉ số được cộng, Full tất cả</figcaption>
-      </figure>
-      <h4>HLV của CLB</h4>
-      <ul>
-        <li><span class="btn">Full tất cả HLV</span>: đưa mọi HLV lên <b>5 sao</b>, mỗi dòng chỉ số <b>+5</b>.</li>
-        <li>Cột <b>Sao</b>: đổi số sao từng HLV.</li>
-        <li>Cột <b>Chỉ số đang cộng</b>: các dòng có ô chọn cho phép đổi chỉ số được cộng (tên tiếng Việt: Chuyền dài, Thể lực, Tốc độ…).</li>
-        <li><span class="btn o" style="color:#dc2626">Xoá</span>: bỏ HLV. HLV đang bổ nhiệm phải bỏ bổ nhiệm trong game trước.</li>
-        <li>CLB giữ tối đa <b>30 HLV</b>. Trong game vào <b>Quản lý đội → Quản lý HLV → HLV của tôi</b> để bổ nhiệm.</li>
-      </ul>
-
-      <h3 id="gm-doi">🔁 Đổi cầu thủ</h3>
-      <figure>
-        <img src="images/gm_scout.png" alt="Mục Đổi cầu thủ" loading="lazy">
-      </figure>
-      <p>Trong game, đưa 2–10 cầu thủ ở <b>Đội phụ</b> cho tuyển trạch viên để đổi thẻ mới. Tại đây xem trạng thái tuyển trạch viên, thời gian chờ và điều kiện thưởng; <span class="btn o">Mở khóa tất cả tuyển trạch viên</span> để dùng ngay.</p>
-
-      <h3 id="gm-nhatky">🖥️ Nhật ký server</h3>
-      <figure>
-        <img src="images/gm_log.png" alt="Mục Nhật ký server" loading="lazy">
-      </figure>
-      <p>Các dòng mới nhất của máy chủ; <span class="btn o">Tải lại</span> hoặc bật <b>Tự tải lại mỗi 3 giây</b>. Dùng để tìm lỗi, gặp sự cố thì chụp gửi Siêu Nhân Hồng.</p>
+      <p>Mặc định mỗi ngày: <b>100 triệu EP + 100 gói All Season Top 200 +8</b>. Quà vào <b>Kho đồ → Kho</b>, bấm Nhận.</p>
     </section>
 
+    <section class="card" id="kinhte">
+      <h2><span class="num">4</span>Kinh tế</h2>
+      <p class="lead">Giá EP của thẻ và thị trường chuyển nhượng.</p>
 
-    <!-- DỮ LIỆU -->
-    <section class="card" id="dulieu">
-      <h2><span class="no">💾</span>Dữ liệu &amp; sao lưu</h2>
+      <h3>Giá EP thẻ</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_giaep.png" alt="Giá EP thẻ cầu thủ" loading="lazy"></details>
       <ul>
-        <li>Toàn bộ dữ liệu tài khoản (CLB, cầu thủ, EP, HLV, cup đang đá…) nằm trong file <code>Server\gamedata\state.json</code>.</li>
-        <li>Cài đặt GM Tool (tỷ lệ đập thẻ…) nằm trong <code>Server\gamedata\enhancement_settings.json</code>.</li>
-        <li>Mỗi lần cập nhật bản vá, Launcher chép một bản sao lưu vào <code>Server\gamedata\backup\state-ngày-giờ.json</code> (giữ 10 bản gần nhất).</li>
+        <li>Thanh trượt <b>Giá thẻ +0</b>: đặt giá thẻ +0 bằng bao nhiêu % giá thẻ +1 (0% như bản gốc).</li>
+        <li><b>Hệ số nhân giá</b> (0,1 – 10): nhân giá mọi thẻ. Bấm <b>Lưu</b>, hoặc <b>Về mặc định</b>.</li>
+        <li><b>Giá tự đặt cho từng thẻ</b>: nhập <b>SPID</b> và <b>Giá EP ở +1</b>, bấm <b>Lưu giá</b>. Các cấp khác tự tính theo (+1 → +20 luôn tăng dần). Thẻ đã đặt giá hiện ở bảng bên dưới, xoá được từng dòng.</li>
+        <li><b>Shop tính phí</b>: tắt = Shop miễn phí như trước. Bật: mọi món có giá đúng giá trị của nó (Lucky EP / hộp quà = EP trung bình nhận được, gói thẻ = giá trị trung bình thẻ ra × <b>Hệ số giá gói thẻ</b>, gói quà / gói tháng = tổng bên trong, món không chứa EP = giá cơ bản × hệ số giá ở trên). Khi bật không còn cách "in" EP: nâng cấp tốn ít nhất giá trị nó thêm vào thẻ, phục hồi sau khi rớt cấp trả bằng EP, đề nghị trao đổi / tuyển trạch không vượt giá trị thẻ đã đưa, giá rao bán tối đa 105%, Shop MP ẩn. Lưu xong, lần mở Shop tiếp theo trong game sẽ thấy giá mới.</li>
       </ul>
-      <h4>Khôi phục từ bản sao lưu</h4>
-      <ol class="steps">
-        <li>Thoát game và đóng Launcher.</li>
-        <li>Vào <code>Server\gamedata\backup\</code>, chép file sao lưu muốn dùng ra <code>Server\gamedata\</code> và đổi tên thành <code>state.json</code> (ghi đè file cũ).</li>
-        <li>Mở lại Launcher và vào game.</li>
-      </ol>
-      <div class="tip"><b>💡</b> Muốn chuyển tài khoản sang máy khác: chép file <code>state.json</code> sang cùng vị trí trên máy kia.</div>
+
+      <h3>Thị trường</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_trandau_market.png" alt="Thị trường chuyển nhượng" loading="lazy"></details>
+      <ul>
+        <li><b>Ẩn thẻ mùa 0</b> (thẻ mẫu của engine, chỉ số 120+): mặc định tắt. Khi bật, thẻ mùa 0 không có người bán, không vào Top 50 và không mua được. Tích / bỏ tích là lưu ngay.</li>
+        <li><b>Chế độ</b>: <b>Thị trường sống</b> (mặc định; thẻ bạn rao bán được một HLV ảo mua sau một lúc, giá càng thấp bán càng nhanh, bán xong game báo; trong lúc chờ có thể <b>Hủy</b> hoặc <b>Đăng lại</b>) hoặc <b>Bán ngay</b>.</li>
+        <li><b>Mẫu kinh tế</b>: <b>Dễ</b> (giá cố định, bán sau 10 giây – 2 phút), <b>Thực tế</b> (mặc định; giá lên xuống ±12% theo ngày, có hàng rẻ, bán sau 20 giây – 5 phút), <b>Khó</b> (±20%, bán 1 – 15 phút), <b>Tùy chỉnh</b>.</li>
+        <li>Các ô chi tiết: <b>Kinh tế động</b>, <b>Biên độ giá</b> (0 – 30%), <b>Giá bán tối đa</b> (100 – 150% giá thị trường), <b>Bán nhanh nhất</b> / <b>Bán chậm nhất</b> (giây). Sửa bất kỳ ô nào thì mẫu tự chuyển sang Tùy chỉnh.</li>
+        <li>Bấm <b>Lưu thị trường</b>, có hiệu lực ngay. Dòng chữ cạnh nút cho biết số thẻ <b>đang rao</b> và <b>đã bán chờ nhận EP</b>.</li>
+      </ul>
+      <p>Trong game, cửa sổ thẻ cầu thủ có thêm <b>biểu đồ giá 30 ngày</b>.</p>
     </section>
 
-    <section class="card" id="meo">
-      <h2><span class="no">💡</span>Mẹo hay</h2>
+    <section class="card" id="trandau">
+      <h2><span class="num">5</span>Trận đấu</h2>
+      <p class="lead">Sân và thời tiết, phần thưởng sau trận, sức mạnh đội máy và Xếp hạng với HLV ảo.</p>
+
+      <h3>Cài đặt trước trận</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_trandau_prematch.png" alt="Cài đặt trước trận" loading="lazy"></details>
+      <p>Dùng cho các trận <b>Giải đấu, Cup, World Cup và Giao hữu</b> (trong game các mục này chỉ hiện, không đổi được).</p>
       <ul>
-        <li><b>Vào lại màn hình CLB</b> trong game sau mỗi lần chỉnh trên GM Tool.</li>
-        <li>Có thể mở thẳng một mục GM Tool bằng địa chỉ, ví dụ <code>127.0.0.1:8088/#theomua</code>, <code>#pemain</code>, <code>#hlv</code>, rồi lưu vào dấu trang.</li>
-        <li>Đội hình mạnh nhanh: <a href="#gm-hangloat">Thêm hàng loạt</a> theo đội yêu thích ở +5 trở lên, rồi <b>Full tất cả HLV</b>.</li>
-        <li>CLB chứa tối đa <b>200</b> cầu thủ; game chậm khi CLB quá đông thì thanh lý bớt.</li>
-        <li>Mở Launcher khi có mạng để nhận bản vá mới nhất.</li>
+        <li><b>Sân</b>: <b>Sân nhà của đội chủ nhà</b>, <b>Ngẫu nhiên</b>, hoặc một sân cụ thể.</li>
+        <li><b>Thời điểm</b>: <b>Ban ngày</b> (mặc định), <b>Ban đêm</b> hoặc <b>Ngẫu nhiên</b>.</li>
+        <li><b>Thời tiết</b>: <b>Trời đẹp</b> (mặc định), <b>Mưa</b>, <b>Tuyết</b>, <b>Âm u</b> hoặc <b>Ngẫu nhiên</b> (không ra tuyết).</li>
+        <li><b>Thời lượng trận</b>: <b>6, 8, 10 hoặc 12 phút</b> (mặc định 6). <b>Bóng</b>: quả bóng thi đấu.</li>
+      </ul>
+      <p>Bấm <b>Lưu cài đặt trận</b>. Áp dụng từ trận tạo sau khi lưu.</p>
+
+      <h3>Thưởng sau trận</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_trandau_reward.png" alt="Thưởng sau trận" loading="lazy"></details>
+      <ol>
+        <li>Bảng trên: mỗi kết quả <b>Thắng / Hoà / Thua</b> có <b>EP</b>, <b>EXP HLV</b> và <b>EXP cầu thủ</b> (cho mỗi cầu thủ ra sân, thêm <b>+20 mỗi bàn</b>, <b>+10 mỗi kiến tạo</b>).</li>
+        <li>Bảng <b>Thẻ thưởng</b>: màn thưởng chia <b>3 thẻ</b>, bạn nhận thẻ đầu tiên, rút ngẫu nhiên theo <b>Trọng số</b> (1 – 1000). Mỗi dòng chọn <b>EP</b> hoặc <b>Gói / vật phẩm</b>. Cột <b>Tỉ lệ</b> tự tính %.</li>
+        <li><b>Thêm dòng thẻ</b> / <b>Xoá</b> ở cuối dòng. Bấm <b>Lưu thưởng sau trận</b> (không cần khởi động lại).</li>
+      </ol>
+      <p>Mặc định: Thắng 2.000 EP / 300 EXP HLV / 150 EXP cầu thủ; Hoà 1.000 / 200 / 100; Thua 500 / 100 / 60. Thẻ thưởng mặc định có 7 dòng (EP 1.000 – 10.000, gói Premier League 65+, gói 14 Top 200, vật phẩm EP may mắn).</p>
+
+      <h3>Sức mạnh BOT</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_bot.png" alt="Sức mạnh BOT" loading="lazy"><img class="shot" src="images/gm_bot_rank.png" alt="Sức mạnh BOT: các dòng Xếp hạng" loading="lazy"></details>
+      <ol>
+        <li>Mỗi chế độ có ô <b>Thẻ cộng</b> (+0 → +20) và <b>Cấp cầu thủ</b> (LV 1 → 30) của đội máy: <b>Đá với máy</b>, <b>Giải đấu (League)</b>, <b>từng giải Cúp riêng</b> (UEFA Champions League, Cúp CLB Nam Mỹ, các cúp quốc gia, EURO, Copa América, FIFA World Cup…), <b>World Cup</b>, <b>Xếp hạng 1vs1</b> và <b>Xếp hạng Giả lập</b>.</li>
+        <li>Hai dòng Xếp hạng mặc định là <b>Theo HLV ảo</b>: mỗi HLV ảo giữ thẻ và cấp riêng theo trình độ (Elo), càng lên hạng càng gặp đội mạnh. Chọn một mức cụ thể thì cả đội HLV ảo dùng mức đó.</li>
+        <li>Bấm <b>Lưu</b>. Áp dụng từ trận tiếp theo, không cần khởi động lại.</li>
+      </ol>
+      <p><b>Về mặc định</b>: mọi chế độ +10, LV 30; Xếp hạng về "Theo HLV ảo".</p>
+
+      <h3>Xếp hạng HLV ảo</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_trandau_rank.png" alt="Xếp hạng với HLV ảo" loading="lazy"></details>
+      <p><b>Xếp hạng 1vs1</b> và <b>Xếp hạng giả lập</b> (menu Đá với người): đá trận thật trên máy với đội hình của một HLV ảo có Elo gần bạn. Ba nút <b>Xếp Hạng 1vs1</b>, <b>Xếp Hạng Giả Lập</b> và <b>Xếp hạng</b> trong game là cùng một chế độ (hai nút đầu là lối tắt, nút cuối là sảnh chính có bảng xếp hạng, bạn bè, phần thưởng).</p>
+      <ul>
+        <li>Có <b>100 → 162 HLV ảo</b> mang <b>tên streamer Việt Nam và thế giới</b> (mỗi ngày có 0–3 người mới, đội hình mua bán và nâng cấp hằng ngày). <b>Mixigaming</b> là HLV mạnh nhất (Real Madrid, thẻ +9 → +12, LV 27–30, lối đá pressing) và <b>luôn đứng top 1</b>.</li>
+        <li>5 trận phân hạng, hạng từ <b>Nghiệp dư</b> đến <b>Huyền thoại</b>, 20 HLV ảo là bạn bè trong Tin nhắn, chat trong trận.</li>
+        <li><b>Bật Xếp hạng + bạn bè HLV ảo</b> và <b>HLV ảo chat trong trận</b>: mặc định bật, tích / bỏ tích là lưu ngay.</li>
+        <li>Bảng của bạn: <b>Elo</b>, <b>Hạng</b>, <b>Thứ hạng</b>, <b>Thắng / Hòa / Thua</b> mỗi chế độ. <b>Top 10 Xếp hạng 1vs1</b>: dòng của bạn in đậm.</li>
+        <li><b>Đặt lại Xếp hạng mùa này của tôi</b>: xoá Elo và kết quả mùa này (có hỏi lại).</li>
       </ul>
     </section>
 
-    <section class="card" id="faq">
-      <h2><span class="no">?</span>Câu hỏi thường gặp</h2>
-      <details open>
-        <summary>Bấm CHƠI nhưng game không vào được / báo lỗi kết nối?</summary>
-        Xem khung <b>Kiểm tra hệ thống</b>: Hosts phải “Đã cài” và Máy chủ game “Đang chạy”. Nếu chưa, bấm <b>Cài ngay</b> hoặc <b>Khởi động lại</b>. Kiểm tra thêm phần mềm diệt virus.
-      </details>
-      <details>
-        <summary>Cập nhật bản vá có làm mất tài khoản không?</summary>
-        Không. Launcher không bao giờ ghi đè <code>state.json</code> và còn tự sao lưu trước mỗi lần cập nhật.
-      </details>
-      <details>
-        <summary>Launcher báo “Hãy thoát game trước khi cập nhật”?</summary>
-        Game khoá các file giao diện khi đang chạy. Thoát game rồi bấm cập nhật lại.
-      </details>
-      <details>
-        <summary>Không kiểm tra được cập nhật?</summary>
-        Cần có mạng Internet. Không có mạng thì game vẫn chơi bình thường, chỉ là chưa nhận bản vá mới.
-      </details>
-      <details>
-        <summary>GM Tool không tải được?</summary>
-        Bấm <b>Khởi động lại</b> trên Launcher rồi tải lại trang GM Tool (<kbd>F5</kbd>).
-      </details>
-      <details>
-        <summary>Đã thêm cầu thủ / EP / HLV nhưng trong game chưa thấy?</summary>
-        Thoát ra rồi vào lại màn hình CLB (hoặc cửa hàng, túi đồ). HLV và thông tin HLV cần đăng nhập lại game. Quà trong Túi đồ cần bấm <b>Nhận</b>.
-      </details>
-      <details>
-        <summary>Một số cầu thủ không có ảnh mặt?</summary>
-        Máy chủ tự tải ảnh còn thiếu khi có mạng; đăng nhập lại game để thấy. Cầu thủ không tìm được ảnh sẽ hiện hình bóng người.
-      </details>
-      <details>
-        <summary>Có cần cài Python không?</summary>
-        Không. Launcher đã có sẵn mọi thứ cần thiết.
-      </details>
+    <section class="card" id="hethong">
+      <h2><span class="num">6</span>HLV &amp; hệ thống</h2>
+      <p class="lead">Tạo và thêm HLV, reset nhân vật, xem nhật ký server.</p>
+
+      <h3>HLV</h3>
+      <details class="shotbox" open><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_hlv_tao.png" alt="Tạo HLV tùy chỉnh" loading="lazy"></details>
+      <p><b>Tạo HLV tùy chỉnh:</b></p>
+      <ol>
+        <li>Nhập <b>Tên HLV</b> (ít nhất 2 ký tự), chọn <b>Vị trí / vai trò</b>.</li>
+        <li>Bấm <b>Ảnh HLV</b>, chọn ảnh <b>PNG hoặc JPG</b>, <b>đúng 128 × 128 px</b>, tối đa <b>2 MB</b>.</li>
+        <li>Bấm <b>Tạo HLV</b>. HLV mới hiện ở danh sách <b>Thêm HLV</b> (nhãn <b>Tùy chỉnh</b>); chỉ số hỗ trợ ngẫu nhiên +5 → +10, có trong chiêu mộ và gói HLV.</li>
+      </ol>
+      <div class="tip"><strong>Ảnh sai cỡ?</strong> Bấm <b>Resize ảnh online ↗</b>, chọn <i>By pixels</i>, nhập 128 × 128, tải ảnh về rồi chọn lại.</div>
+      <p><b>Thêm HLV:</b> lọc theo vị trí hoặc tên, chọn <b>số sao</b> (½ → 5) và <b>số lượng</b> (1 – 30), bấm <b>Thêm</b>. Trong game: <b>Quản lý đội → Quản lý HLV → HLV của tôi</b>. <b>Xoá loại</b> (chỉ HLV tùy chỉnh) bỏ hẳn loại đó, ảnh được cất vào sao lưu.</p>
+      <details class="shotbox"><summary>Xem ảnh Thêm HLV và HLV của CLB</summary><img class="shot" src="images/gm_hlv.png" alt="Danh sách Thêm HLV" loading="lazy"><img class="shot" src="images/gm_hlv_clb.png" alt="HLV của CLB" loading="lazy"></details>
+      <p><b>HLV của CLB:</b> đổi số sao, chọn chỉ số, <b>Xoá</b> từng HLV. <b>Full tất cả HLV</b>: 5 sao và chỉ số tối đa. <b>Xoá tất cả HLV</b>: xoá các HLV đang <b>Chờ</b> (HLV đang bổ nhiệm / tập huấn được giữ lại).</p>
+
+      <h3>Nhiệm vụ</h3>
+      <p>Bật/tắt <b>Nhiệm vụ &amp; thành tích</b>, chọn ngôn ngữ (Tiếng Việt / English / Bahasa Indonesia), hệ số <b>Mục tiêu</b> (0,1 – 10) và <b>Phần thưởng</b> (0 – 10). Bảng bên dưới hiện tiến độ 5 nhiệm vụ tuần của bạn.</p>
+      <ul>
+        <li>Trong game, <b>Manager &gt; Danh sách thành tích</b>: 8 thành tích × 5 cấp (cấp HLV, số trận, trận thắng, nâng cấp, thẻ cấp cao, giá trị đội, bàn thắng, thắng Rank), thưởng EP + gói + vật phẩm; xong cả hàng được <b>huy hiệu</b> để đeo. Dòng <b>Nhiệm vụ hằng ngày</b> làm mới 00:00.</li>
+        <li>Nút <b>Quest</b> trên thanh trên cùng: 5 nhiệm vụ tuần (làm mới thứ Hai 00:00), thưởng GP để đổi hộp quà trong cửa sổ Quest.</li>
+        <li><b>Manager &gt; Info Manager</b> giờ có số liệu thật: số trận, thắng/hoà/thua, bàn thắng, chuỗi thắng ở Giải đấu, Cúp và Rank; vô địch, tiền thưởng cúp, thẻ mua/bán đắt nhất, thời gian chơi (tính từ bản này). <b>Xếp hạng HLV</b> có biểu đồ giá trị đội 30 ngày so với 20 bạn bè.</li>
+        <li>Ngôn ngữ và nút Quest có hiệu lực sau khi vào lại game.</li>
+      </ul>
+
+      <h3>Reset nhân vật</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_reset.png" alt="Reset nhân vật" loading="lazy"></details>
+      <ol>
+        <li><b>Thoát game trước.</b></li>
+        <li>Chọn HLV cần xoá (HLV 1, HLV 2 hoặc cả hai), bấm <b>Reset nhân vật</b>, xác nhận rồi gõ chữ <b>RESET</b> vào hộp xác nhận lần cuối.</li>
+        <li>Vào game tạo HLV lại từ đầu.</li>
+      </ol>
+      <div class="warn"><strong>Lưu ý:</strong> Reset xoá HLV, CLB, cầu thủ, EP và túi đồ của HLV đó. Dữ liệu cũ được tự sao lưu vào <code>Server\gamedata\backup</code>; thiết lập GM (tỷ lệ đập thẻ, giá EP, quà hằng ngày, sức mạnh BOT) giữ nguyên.</div>
+
+      <h3>Nhật ký server</h3>
+      <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_log.png" alt="Nhật ký server" loading="lazy"></details>
+      <ul>
+        <li>Mặc định đã tích <b>Chỉ hiện lỗi</b> và <b>Ẩn dòng lặp (giờ máy chủ)</b>. Bỏ tích để xem toàn bộ.</li>
+        <li><b>Tải lại</b>: lấy các dòng mới nhất. <b>Tự tải lại mỗi 3 giây</b>: theo dõi trực tiếp khi đang chơi.</li>
+        <li><b>Xuất log lỗi</b> (nút cam): tải file zip gồm nhật ký máy chủ, game, lỗi Windows và thông tin máy, gửi cho người hỗ trợ khi gặp lỗi.</li>
+      </ul>
     </section>
 
-    <section class="card" id="ho-tro">
-      <h2><span class="no">☎</span>Hỗ trợ</h2>
-      <p>Gặp khó khăn, bạn chụp màn hình lỗi (kèm khung <b>Nhật ký hoạt động</b> của Launcher nếu có) và gửi cho mình nhé.</p>
-      <p style="font-size:18px">Cần Hỗ Trợ Cứ Nhắn <a class="genta" href="https://www.fo3th.online/" target="_blank" rel="noopener">Siêu Nhân Hồng</a> Nhé !!</p>
-      <p class="lead">Chúc bạn có những trận cầu thật vui cùng FO3 Offline ⚽</p>
+    <section class="card" id="mua">
+      <h2><span class="num">♦</span>Mùa thẻ 26 LIVE / 25 LIVE</h2>
+      <p class="lead">Hai mùa thẻ mới lấy từ FO4: <b>26 LIVE</b> (666 thẻ) và <b>25 LIVE</b> (51 thẻ).</p>
+      <ul>
+        <li>Nằm trên cùng danh sách <b>Mùa</b> ở Chuyển nhượng trong game và mọi ô chọn mùa của GM Tool (huy hiệu <b>26L</b> / <b>25L</b>).</li>
+        <li>Cầu thủ đã có trong game giữ nguyên mặt và tên. Cầu thủ hoàn toàn mới (Lamine Yamal, Pedri…) dùng mặt chung trên sân, ảnh đại diện lấy từ FO4.</li>
+        <li>Thẻ của CLB không có trong game (Milan, Porto, Benfica, Ajax…) hiện đội <b>Rest of the World</b>.</li>
+        <li>Có gói <b>26L Top 200</b> và <b>25L Top 200</b> trong Cửa hàng, Team Color <b>Season 26L</b> / <b>Season 25L</b>.</li>
+      </ul>
     </section>
   </main>
 </div>
-
-<footer>FIFA Online 3 Offline · Bản phi lợi nhuận, dùng cho mục đích giải trí cá nhân.</footer>
-
-<div class="lb" id="lb" role="dialog" aria-label="Ảnh phóng to"><img alt=""></div>
-
+<footer>FIFA Online 3 Offline · Hướng dẫn GM Tool</footer>
 <script>
   (function () {
-    var root = document.documentElement;
-    try { if (localStorage.getItem("fo3-guide-theme") === "dark") root.dataset.theme = "dark"; } catch (e) {}
-    document.getElementById("themeBtn").addEventListener("click", function () {
-      root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
-      try { localStorage.setItem("fo3-guide-theme", root.dataset.theme); } catch (e) {}
-    });
-    var links = [].slice.call(document.querySelectorAll("nav.toc a"));
-    var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
-    function spy() {
-      var y = window.scrollY + 120, idx = 0;
-      targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top + window.scrollY <= y) idx = i; });
-      links.forEach(function (a, i) { a.classList.toggle("on", i === idx); });
-    }
-    window.addEventListener("scroll", spy, {passive: true}); spy();
-    var lb = document.getElementById("lb"), lbi = lb.querySelector("img");
-    document.querySelectorAll("figure img").forEach(function (img) {
-      img.addEventListener("click", function () { lbi.src = img.src; lbi.alt = img.alt; lb.classList.add("on"); });
-    });
-    lb.addEventListener("click", function () { lb.classList.remove("on"); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") lb.classList.remove("on"); });
+    const links = [...document.querySelectorAll('.side a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.remove('on'));
+      const a = map.get(e.target.id);
+      if (a) { a.classList.add('on'); a.scrollIntoView({block: 'nearest', inline: 'nearest'}); }
+    }), {rootMargin: '-25% 0px -65% 0px'});
+    document.querySelectorAll('main section[id]').forEach(sec => io.observe(sec));
   })();
 </script>
 </body>
