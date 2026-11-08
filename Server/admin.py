@@ -1017,6 +1017,23 @@ def player_remove_all(p):
     return {"done": len(gone), "kept": len(keep)}
 
 
+@api("player_remove_grade0")
+def player_remove_grade0(p):
+    """Xoa moi the +0 cua CLB (ca doi hinh 18 nguoi): cho trong doi hinh duoc tu lap bang the con lai
+    (http_config.repair_squad). Can con it nhat 11 the khac; thieu thi giu the +0 dang trong doi hinh."""
+    st = hc._state(); t = team(st)
+    zero = [x for x in t["players"] if hc.grade_of(x) == 0]
+    if not zero:
+        return {"done": 0, "kept": 0, "left": len(t["players"])}
+    others = [x for x in t["players"] if hc.grade_of(x) > 0 and not x.get("team2")]
+    gone = zero if len(others) >= 11 else [x for x in zero if not hc.in_squad(t, x)]
+    for x in gone:
+        hc.remove_player(t, x)
+    hc.repair_squad(t)
+    hc._save(st)
+    return {"done": len(gone), "kept": len(zero) - len(gone), "left": len(t["players"])}
+
+
 @api("player_add_bulk")
 def player_add_bulk(p):
     """{spids: [...], grade, level} -> {done, skipped, players, max}: them nhieu the vao CLB (du bi)."""
@@ -1257,20 +1274,24 @@ def bot_settings_set(p):
 @api("enhancement_settings")
 def enhancement_settings_get(p):
     import enhancement_settings
-    return {"success_percent": enhancement_settings.get_rate()}
+    return {"success_percent": enhancement_settings.get_rate(), "per_grade": enhancement_settings.get_grades(),
+            # goi y khi mo che do theo tung cap lan dau: ty le goc cua game (chua tinh thuong phoi)
+            "original": [round(r * 100, 1) for r in hc.ENHANCE_RATE[:enhancement_settings.GRADES]]}
 
 
 @api("enhancement_settings_set")
 def enhancement_settings_set(p):
     import enhancement_settings
-    value = p.get("success_percent")
-    if "success_percent" not in p:
-        raise AdminError("Thiếu tỷ lệ thành công.")
     try:
-        enhancement_settings.set_rate(value)
+        if "per_grade" in p:
+            enhancement_settings.set_grades(p.get("per_grade"))
+        elif "success_percent" in p:
+            enhancement_settings.set_rate(p.get("success_percent"))
+        else:
+            raise AdminError("Thiếu tỷ lệ thành công.")
     except ValueError as e:
         raise AdminError(str(e))
-    return {"success_percent": value}
+    return enhancement_settings_get(p)
 
 
 

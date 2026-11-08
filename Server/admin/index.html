@@ -900,7 +900,8 @@
           <select id="qrSeason"><option value="">— Chọn mùa —</option></select>
           <button class="b small danger" type="button" id="qrGo" disabled="">Thanh lý</button>
           <span class="muted" id="qrNote">Chỉ thanh lý thẻ dự bị (kể cả Đội phụ); cầu thủ trong đội hình 18 người được giữ lại.</span>
-          <button class="b small danger" type="button" id="qrAll" style="margin-left:auto">Thanh lý tất cả cầu thủ</button>
+          <button class="b small danger" type="button" id="qrZero" style="margin-left:auto">Xoá tất cả thẻ +0</button>
+          <button class="b small danger" type="button" id="qrAll">Thanh lý tất cả cầu thủ</button>
         </div>
         <div class="bulk" id="bulkClub" hidden="">
           <span class="bulk-n"><strong id="bulkClubN">0</strong> cầu thủ đã chọn</span>
@@ -1020,6 +1021,53 @@
         </div>
         <p class="hint">Áp dụng cho các lần đập tiếp theo của mọi HLV. Không thay đổi thẻ đã có hoặc dữ liệu profile.</p>
       </div>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-layers"></use></svg></span><h2 class="display">Tỷ lệ theo từng cấp thẻ</h2></div>
+        <p class="lead">Đặt tỷ lệ thành công riêng cho từng bước nâng, ví dụ +1→+2: 100%, +2→+3: 80%… <b>Kéo hàng loạt</b>: chọn khoảng cấp rồi kéo thanh, các ô trong khoảng đổi theo ngay (tick <i>Giảm dần tới</i> để giảm đều từ giá trị thanh kéo xuống số bên cạnh); xong bấm <b>Lưu theo từng cấp</b>. Khi đã lưu, bảng này được dùng thay cho tỷ lệ chung ở trên (phôi cao cấp không cộng thêm; bùa tăng tỉ lệ và điểm nâng cấp vẫn nhân thêm như trong game). 0% = không thể nâng ở cấp đó. Bấm <b>Lưu tỷ lệ</b> hoặc <b>Dùng tỷ lệ gốc</b> ở trên để tắt bảng này.</p>
+        <div class="enh-bulk">
+          <div class="enh-bulk-title">Kéo hàng loạt</div>
+          <div class="enh-bulk-range">
+            <label>Từ <select id="enhFrom"></select></label>
+            <label>đến <select id="enhTo"></select></label>
+          </div>
+          <div class="enh-bulk-slider">
+            <input id="enhBulk" type="range" min="0" max="100" step="1" value="50">
+            <span class="enh-bulk-val" id="enhBulkVal">50%</span>
+          </div>
+          <div class="enh-bulk-step">
+            <label class="check"><input type="checkbox" id="enhBulkStep"> Giảm dần tới</label>
+            <span class="enh-pct"><input type="number" id="enhBulkEnd" min="0" max="100" step="0.1" value="5"><i>%</i></span>
+          </div>
+        </div>
+        <div class="enh-grid" id="enhGrades"></div>
+        <div class="row">
+          <button id="enhGradeSave" class="b primary" type="button">Lưu theo từng cấp</button>
+          <button id="enhGradeOrig" class="b" type="button">Điền tỷ lệ gốc của game</button>
+          <button id="enhGradeFill" class="b" type="button">Điền đều theo tỷ lệ chung</button>
+        </div>
+      </div>
+      <style>
+        #dapthe .enh-bulk { display: grid; grid-template-columns: auto auto 1fr auto; align-items: center; gap: 12px 20px;
+          margin: 14px 0 6px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card-2); }
+        #dapthe .enh-bulk-title { font-weight: 700; white-space: nowrap; }
+        #dapthe .enh-bulk-range { display: flex; gap: 12px; }
+        #dapthe .enh-bulk-range label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        #dapthe .enh-bulk-range select { width: auto; min-width: 120px; }
+        #dapthe .enh-bulk-slider { display: flex; align-items: center; gap: 12px; min-width: 200px; }
+        #dapthe .enh-bulk-slider input { flex: 1; }
+        #dapthe .enh-bulk-val { min-width: 48px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+        #dapthe .enh-bulk-step { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+        #dapthe .enh-pct { position: relative; display: inline-flex; align-items: center; }
+        #dapthe .enh-pct input { width: 84px !important; min-width: 0; padding-right: 26px !important; text-align: right; }
+        #dapthe .enh-pct i { position: absolute; right: 10px; font-style: normal; color: var(--mute); pointer-events: none; }
+        #dapthe .enh-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 12px 0 16px; }
+        #dapthe .enh-cell { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 14px;
+          border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+        #dapthe .enh-cell span.lv { white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums; }
+        @media (max-width: 1200px) { #dapthe .enh-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        @media (max-width: 900px) { #dapthe .enh-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          #dapthe .enh-bulk { grid-template-columns: 1fr; } }
+      </style>
     </section>
     <section id="teamcolor" hidden="">
       <div class="card">
@@ -1821,6 +1869,18 @@ $("#qrAll").addEventListener("click", async () => {
   await act(async () => {
     const r = await api("player_remove_all", {});
     say(`Đã thanh lý ${fmt(r.done)} cầu thủ, giữ lại ${r.kept} cầu thủ trong đội hình.`, "ok");
+    await loaders.pemain();
+  });
+});
+$("#qrZero").addEventListener("click", async () => {
+  const zero = clubPlayers.filter(x => x.grade === 0);
+  if (!zero.length) return say("CLB không có thẻ +0 nào.", "err");
+  const inSq = zero.filter(x => x.role === "MAIN" || x.role === "SUB").length;
+  if (!await uiConfirm(`Xoá ${fmt(zero.length)} thẻ +0${inSq ? ` (có ${inSq} thẻ đang trong đội hình: chỗ trống sẽ tự lấp bằng cầu thủ dự bị)` : ""}? Không thể hoàn tác.`)) return;
+  await act(async () => {
+    const r = await api("player_remove_grade0", {});
+    say(`Đã xoá ${fmt(r.done)} thẻ +0` + (r.kept ? `, giữ lại ${r.kept} thẻ trong đội hình vì CLB chưa đủ 11 thẻ khác.` : ".")
+        + " Vào lại màn Quản lý đội trong game để thấy.", "ok");
     await loaders.pemain();
   });
 });
@@ -2672,12 +2732,49 @@ packsReady = api("packs").then(j => {
   $("#bagPack").innerHTML = '<option value="">Không kèm gói</option>' + packOpts();
 }).catch(e => say("Không tải được danh sách gói: " + e.message, "err"));
 
+let ENH_ORIG = [];
 function renderEnhance(j) {
   const rate = j.success_percent;
+  ENH_ORIG = j.original || ENH_ORIG;
   $("#enhanceRate").value = rate === null ? 50 : rate;
   $("#enhanceValue").textContent = $("#enhanceRate").value + "%";
-  $("#enhanceStatus").textContent = rate === null ? "Đang dùng tỷ lệ gốc theo cấp thẻ và nguyên liệu." : "Đang áp dụng tỷ lệ thành công: " + rate + "%";
+  $("#enhanceStatus").textContent = j.per_grade ? "Đang dùng tỷ lệ theo từng cấp thẻ (bảng bên dưới)."
+    : rate === null ? "Đang dùng tỷ lệ gốc theo cấp thẻ và nguyên liệu." : "Đang áp dụng tỷ lệ thành công: " + rate + "% cho mọi cấp";
+  fillEnhGrades(j.per_grade || ENH_ORIG);
 }
+function fillEnhGrades(vals) {
+  $("#enhGrades").innerHTML = Array.from({length: 20}, (_, g) =>
+    `<label class="enh-cell"><span class="lv">+${g} → +${g + 1}</span><span class="enh-pct"><input type="number" min="0" max="100" step="0.1" data-eg="${g}" value="${vals[g] ?? 0}"><i>%</i></span></label>`).join("");
+}
+$("#enhGradeSave").addEventListener("click", () => act(async () => {
+  const vals = [...document.querySelectorAll("#enhGrades [data-eg]")].map(i => Math.round(Number(i.value) * 10) / 10);
+  if (vals.some(v => !(v >= 0 && v <= 100))) throw new Error("Mỗi tỷ lệ phải từ 0 đến 100.");
+  renderEnhance(await api("enhancement_settings_set", {per_grade: vals}));
+}, "Đã lưu tỷ lệ theo từng cấp."));
+$("#enhGradeOrig").addEventListener("click", () => fillEnhGrades(ENH_ORIG));
+// keo hang loat: dat 1 ty le cho khoang cap Tu..Den (hoac giam dan deu tu gia tri thanh keo toi o "Giam dan toi")
+(function () {
+  const opts = Array.from({length: 20}, (_, g) => `<option value="${g}">+${g} → +${g + 1}</option>`).join("");
+  $("#enhFrom").innerHTML = opts; $("#enhTo").innerHTML = opts;
+  $("#enhFrom").value = "1"; $("#enhTo").value = "19";
+  const apply = () => {
+    let a = Number($("#enhFrom").value), b = Number($("#enhTo").value);
+    if (a > b) [a, b] = [b, a];
+    const v = Number($("#enhBulk").value), end = Math.max(0, Math.min(100, Number($("#enhBulkEnd").value) || 0));
+    $("#enhBulkVal").textContent = v + "%";
+    $("#enhBulk").style.setProperty("--fill", v + "%");  // phan to mau cua thanh keo theo vi tri nut
+    for (let g = a; g <= b; g++) {
+      const t = b > a ? (g - a) / (b - a) : 0;
+      const val = $("#enhBulkStep").checked ? Math.round((v + (end - v) * t) * 10) / 10 : v;
+      const inp = document.querySelector(`#enhGrades [data-eg="${g}"]`);
+      if (inp) inp.value = val;
+    }
+  };
+  $("#enhBulk").style.setProperty("--fill", $("#enhBulk").value + "%");
+  $("#enhBulk").addEventListener("input", apply);
+  ["#enhBulkStep", "#enhBulkEnd", "#enhFrom", "#enhTo"].forEach(sel => $(sel).addEventListener("change", apply));
+})();
+$("#enhGradeFill").addEventListener("click", () => fillEnhGrades(Array(20).fill(Number($("#enhanceRate").value))));
 $("#enhanceRate").addEventListener("input", () => { $("#enhanceValue").textContent = $("#enhanceRate").value + "%"; });
 $("#enhanceSave").addEventListener("click", () => act(async () => {
   renderEnhance(await api("enhancement_settings_set", {success_percent: Number($("#enhanceRate").value)}));

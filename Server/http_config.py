@@ -3897,6 +3897,9 @@ def enhance_pair(team, a, b):
 
 def enhance_rate(target, material):
     import enhancement_settings
+    grades = enhancement_settings.get_grades()  # GM Tool: ty le rieng tung cap (+g -> +g+1)
+    if grades is not None:
+        return grades[min(len(grades) - 1, max(0, grade_of(target)))] / 100.0
     override = enhancement_settings.get_rate()
     if override is not None:
         return override / 100.0

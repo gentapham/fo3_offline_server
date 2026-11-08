@@ -173,20 +173,20 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "372fd904d6576fe523a6ce283d7c054c86a031e495e178a8536455b58444ea60",
-   "size": 39637
+   "sha256": "9721c3cd729be947bcb75cee53344131211042299ae504da1d8796631b4d7c3d",
+   "size": 40500
   },
   "Server/admin.py": {
-   "sha256": "e1c64a77a3ec96a2593857f5be41b21be64c083a843165fb267ff058dca568f0",
-   "size": 70838
+   "sha256": "656c1123b93e71608cdea4ed1faf7e45704ccd965ec1f58af8f8c5683920e7f5",
+   "size": 71979
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "299ba36fcd858f2d6c5193e7fe112af10ef4c9dc27364191e95759f1247bef3c",
-   "size": 243750
+   "sha256": "c4876b74bc25ead101a80d029f8e95de0f8a84c6976a2f01a9382e7c3476c224",
+   "size": 251274
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -209,8 +209,8 @@
    "size": 6549
   },
   "Server/enhancement_settings.py": {
-   "sha256": "64380693da0663f2fff2ab0a7c867eef7b89ee36be26b5ddd0219f232dfb7121",
-   "size": 1554
+   "sha256": "61d1468e8e1446a218776782d7c2a6538c2ddf1c0cace4d8b8c5b8ec6e5376eb",
+   "size": 3074
   },
   "Server/gamedata/card_index.json": {
    "sha256": "b0a7c97c76b10b4b4c25dc9c8e79b8c86113df68a82fa461009771698e1833d5",
@@ -249,8 +249,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "79b356a88cff763d151c56e91e8f36afdbbb1d9e5806ec7769581825c1329761",
-   "size": 324904
+   "sha256": "5ca5d9a0280758bfcef59062217916255071aa44b4e6d7bcfbed76b5ec2ba6e8",
+   "size": 325102
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -180505,6 +180505,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.08-0232",
- "notes": "Ảnh hộp quà Quest gọn hơn, không đè lên tên vật phẩm"
+ "version": "2026.11.08-1136",
+ "notes": "Tỷ lệ đập thẻ theo từng cấp + kéo hàng loạt (GM Tool); nút Xoá tất cả thẻ +0; sửa thanh kéo"
 }
