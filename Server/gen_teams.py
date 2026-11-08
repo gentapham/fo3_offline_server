@@ -48,6 +48,17 @@ NATION_NAMES = {45: "Spanyol", 14: "Inggris", 27: "Italia", 21: "Jerman"}
 NUMBERS = {0: 1, 3: 2, 4: 4, 6: 5, 7: 3, 12: 7, 13: 8, 15: 6, 16: 11, 24: 9, 26: 10}
 
 
+# CLB bi go khoi ban Thai (khong con the nao mang teamid nay): doi hinh co dinh tu the co san.
+# AC Milan 2017/18 - the cua ho nam o doi "vo danh" 999998 / CLB cu, nhieu the licensed=0.
+EXTRA_SQUADS = {
+    47: (300230621, 15201179, 16137854,                                    # Donnarumma, A. Donnarumma, Storari
+         88184344, 300210413, 35186547, 88177983, 88193352, 16228881,      # Bonucci, Romagnoli, Musacchio, Zapata, R. Rodriguez, Calabria
+         16168312, 16223329, 16173204, 300218191,                          # Abate, Conti, Antonelli, G. Gomez
+         35158963, 300230938, 35159287, 300222077, 35189125, 300208128,    # Biglia, Kessie, Montolivo, Locatelli, Bonaventura, Calhanoglu
+         16202651, 35185431, 16186200),                                    # Suso, Kalinic, Borini
+}
+
+
 def jersey_name(c, playerid):
     r = c.execute("SELECT jersey FROM namesind WHERE playerid = ?", (playerid,)).fetchone()
     return r[0] if r else ""
@@ -74,7 +85,11 @@ def team(c, teamid, nationality=None, nationalteam=False):
     hc = _hc()
     field, value = (("nationalteamid", teamid) if nationalteam else ("teamid", teamid) if nationality is None
                     else ("nationality", nationality))
-    rows = c.execute(f"""SELECT p.* FROM players p JOIN permid m ON m.spid = p.spid AND m.licensed = 1
+    if nationality is None and not nationalteam and teamid in EXTRA_SQUADS:
+        spids = EXTRA_SQUADS[teamid]
+        rows = c.execute(f"SELECT p.* FROM players p WHERE p.spid IN ({','.join('?' * len(spids))})", spids).fetchall()
+    else:
+        rows = c.execute(f"""SELECT p.* FROM players p JOIN permid m ON m.spid = p.spid AND m.licensed = 1
                         WHERE p.{field} = ? ORDER BY (p.spid / 1000000 != ?), (p.spid < 1000000), p.spid""",
                      (value, CURRENT_SEASON)).fetchall()
     best = {}
@@ -82,7 +97,7 @@ def team(c, teamid, nationality=None, nationalteam=False):
     # a 2006 Ronaldinho at Barcelona) and season 0 (engine template cards, ratings 120+, not on
     # fifaaddict) only when the current squad is too small
     for r in rows:
-        if r["spid"] // 1000000 == CURRENT_SEASON or len(best) < SELECTABLE:
+        if r["spid"] // 1000000 == CURRENT_SEASON or len(best) < SELECTABLE or teamid in EXTRA_SQUADS:
             best.setdefault(r["playerid"], r)
     rows = sorted(best.values(), key=lambda r: -r["overallrating"])[:30]
     if len(rows) < 11:

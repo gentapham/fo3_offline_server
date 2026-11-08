@@ -217,8 +217,8 @@
    "size": 6193161
   },
   "Server/gamedata/club_catalog.json": {
-   "sha256": "087c61ab3ebaa32cdbbf68a5e3ea7121374cab7d82eb42e887e4986e5b967149",
-   "size": 695370
+   "sha256": "ab6fe2edc21ce06bcd129be2bb610f9658629fb54a9ce3d43c45ee19080e7239",
+   "size": 769668
   },
   "Server/gamedata/fifadb.sqlite": {
    "sha256": "ad15056ea5dcd493cf4199a25e5387f8bdb54d2fe9eecd02c7cb8ea7f511517a",
@@ -241,16 +241,16 @@
    "size": 78507
   },
   "Server/gen_teams.py": {
-   "sha256": "e964f24f89293201c5444633cd03a62749766c7902c9b94009192c455b00647d",
-   "size": 9084
+   "sha256": "2f3e2e70012ceeedd6c2ccda38ef5b4e1dcf8880efc5c266c0573a4018e28b5a",
+   "size": 10179
   },
   "Server/growth.py": {
    "sha256": "b76cfc7f3abaedfe2f25636059d989ca323c1e464f38f44cbe6632c9e86bb42e",
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "5ca5d9a0280758bfcef59062217916255071aa44b4e6d7bcfbed76b5ec2ba6e8",
-   "size": 325102
+   "sha256": "f54e7d8375a727bb1e2de56b0d78fb4428b00681a6f1e08ebe3a2ccfe800d70c",
+   "size": 325873
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -3013,8 +3013,8 @@
    "size": 15984
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s47.png": {
-   "sha256": "5f2e592d3c7f273ea2766d5b056181d1218f2e27a5756ef072b3738e9bbdb4db",
-   "size": 12432
+   "sha256": "5571afd8fdcaa7e4980cfbb07c6b6c977a2e65499b06254ae5fbaef3a7b8dd57",
+   "size": 8967
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s472.png": {
    "sha256": "d4cfa7fc8faa0c31795e20819dcbb1264dd27975d746818958cb99b0ca1038ca",
@@ -4563,6 +4563,10 @@
   "_cache/games/fo3sg/externalAssets/crests/small/s467.png": {
    "sha256": "c047f3a31ca6f6aea6dee99cee4c3d5be5cb4ee055f518c93c093a9b5c9bba94",
    "size": 11854
+  },
+  "_cache/games/fo3sg/externalAssets/crests/small/s47.png": {
+   "sha256": "eee4d7155454d7dc8f231a305b0953dc8eb2a9a236871c0894a0dbaf2f83ddb7",
+   "size": 13436
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s472.png": {
    "sha256": "f85a68cd055672a3f12ea15e6b7807ac8c71a1b00bc0be83f4329d6b9e9d1414",
@@ -180297,7 +180301,7 @@
    "size": 167
   },
   "data/data_0.big": {
-   "sha256": "0c53f1b3512ef1141b0b4d77492a9bb34488d05cabcec03bef6048dc880aeb7e",
+   "sha256": "d717a4286ccee328076c94330159cf9be0ef496404ccdb9ebec32c2576934ae2",
    "size": 74560206
   },
   "data/loc/locale_eng.big.dl": {
@@ -180517,6 +180521,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.08-1220",
- "notes": "Sửa ảnh mảnh ghép bị lệch tên (Ronaldo/Messi/Zidane); thêm mảnh ghép Zidane WL/UL/WB"
+ "version": "2026.11.08-1657",
+ "notes": "Thêm CLB AC Milan (Serie A, áo, logo, đội hình 2017/18); sửa lỗi 'Giải cup này không còn tồn tại' sau khi bỏ giải"
 }

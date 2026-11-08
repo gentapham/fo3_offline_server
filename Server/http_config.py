@@ -2230,6 +2230,11 @@ def club_index():
             if count < CLUB_MIN_PLAYERS or not goalie or lid not in _CLUB_LEAGUES or lid in (76, 78, 2028):
                 continue
             leagues.setdefault(lid, []).append(tid)
+        # CLB them tay (gen_teams.EXTRA_SQUADS, vd AC Milan 47): khong co the nao mang teamid nay
+        for tid in gen_teams.EXTRA_SQUADS:
+            lid = _CLUB_LINKS.get(tid)
+            if tid in _CLUB_TEAMS and lid in _CLUB_LEAGUES and tid not in leagues.get(lid, []):
+                leagues.setdefault(lid, []).append(tid)
         nations = {}
         for lid, teams in leagues.items():
             nation = _CLUB_LEAGUES[lid]["countryid"]
@@ -3429,8 +3434,9 @@ def ep_cup_new(query, body):
 
 def cup_step(cupid, fn):
     st = _state(); cup = (st.get("cups") or {}).get(cupid)
-    if cup is None:
-        return _json({"result": False, "reason": "Giải cup này không còn tồn tại."})
+    if cup is None:  # client con giu cup da bo: day lai coach (path=cups) cho the cup het "Dang choi"
+        return _json({"result": False, "reason": "Giải cup này không còn tồn tại.",
+                      "resources": coach_me_resources(st, _default_slot(st))})
     out = fn(st, cup) or {}
     _save(st)
     return _json(dict({"result": True, "resources": cup_resources(cup)}, **out))
@@ -3503,7 +3509,10 @@ def ep_cup_leave(cupid, query, body):
             r["best"] = {"prize": ep, "metaid": cup["metaid"], "date": w3c(time.time())}
     add_ep(st, ep)
     _save(st)
-    return _json({"result": True, "rewards": [{"itemid": 1, "count": ep}] if ep else []})
+    # CoachProxy.onCupInfoChanged nghe /coach/me?path=cups: khong day lai coach thi CupProxy.cupPlayList
+    # van giu cup vua bo -> the cup hien "Dang choi", bam vao bao "Giai cup nay khong con ton tai"
+    return _json({"result": True, "rewards": [{"itemid": 1, "count": ep}] if ep else [],
+                  "resources": coach_me_resources(st, _default_slot(st))})
 
 
 def ep_cup_match(cupid, query, body):
