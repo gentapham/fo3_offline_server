@@ -201,8 +201,8 @@
    "size": 601
   },
   "Server/craft.py": {
-   "sha256": "c76926964434eeccc632790694e3a3c3b86bc1e0ad0420238a7aa16fc598ce02",
-   "size": 7203
+   "sha256": "f123a8554cabe441b663fd1e4b6109e061d9e1ecdf45f2cf88560832c3cc8b93",
+   "size": 7732
   },
   "Server/draftpack.py": {
    "sha256": "5e5b73ce6dd3cfcda2dea696c6571ce3c9b47add290c617d51b9eb1cf0c17576",
@@ -172964,6 +172964,18 @@
    "sha256": "ca9b53c5c74efc52b2e4122aa4428863631f4381b28a4529afd8f46d0e6456fd",
    "size": 23568
   },
+  "_cache/games/fo3sg/externalAssets/shop/87100040.png": {
+   "sha256": "c1197c7fdb327aaf5b704f6b4cdc750f0a8822a6825606bd77c55b29da8202da",
+   "size": 21792
+  },
+  "_cache/games/fo3sg/externalAssets/shop/87100041.png": {
+   "sha256": "5dcb053b432f5fa7ef0aa14a89e8f42a604607b9d0a2ec0c5284b15dd75c995e",
+   "size": 22700
+  },
+  "_cache/games/fo3sg/externalAssets/shop/87100042.png": {
+   "sha256": "409aad093a84f92d83e09c5d7fcd7068ab28baac7af043b45e8166ad6c319b69",
+   "size": 21901
+  },
   "_cache/games/fo3sg/externalAssets/shop/880047.png": {
    "sha256": "6a54a8ba076c47c5043a74ee222d6f8f72e24ccc4eed6ba5472b21e92f1b6e78",
    "size": 12564
@@ -180505,6 +180517,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.08-1136",
- "notes": "Tỷ lệ đập thẻ theo từng cấp + kéo hàng loạt (GM Tool); nút Xoá tất cả thẻ +0; sửa thanh kéo"
+ "version": "2026.11.08-1220",
+ "notes": "Sửa ảnh mảnh ghép bị lệch tên (Ronaldo/Messi/Zidane); thêm mảnh ghép Zidane WL/UL/WB"
 }

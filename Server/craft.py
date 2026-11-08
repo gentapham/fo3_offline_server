@@ -23,7 +23,13 @@ SEASONS = ((93, "WL", 6), (30, "UL", 3), (91, "WB", 3))  # (ma mua, nhan, so con
 # Zidane, Cruyff, Baggio, Puskas, Eusebio (Beckham chi co the 2010).
 EXTRA = (30028130, 30001625, 91138449, 93005589, 23001238, 91007763, 93001075, 93013128, 93006235,
          91054050, 91190871, 91001179, 91010535, 93191189, 93226764, 93214100, 93004000, 93001040,
-         93001183, 27045661, 27000488, 27004231, 27005003, 91041236, 91013743, 91005471, 91005479)
+         93001183, 27045661, 27000488, 27004231, 27005003, 91041236, 91013743, 91005471, 91005479,
+         93001397, 30001397, 91001397)  # Zidane WL / UL / WB (them 2026-11-08)
+# 12 manh dau = top the cac mua WL/UL/WB luc tao (CO DINH: truoc day tinh lai tu DB moi lan -> them Zidane
+# vao DB lam ca danh sach lech 1 bac, ten manh khong khop anh / mang ghep trong kho doi sang cau thu khac)
+BASE = (93190043, 93001109, 93168473, 93192181, 93166906, 93190053,  # WL: Pele, Maldini, Beckenbauer, Van Basten, Baresi, ...
+        30037576, 30190042, 30238380,  # UL: Ronaldo, Maradona, Yashin
+        91020801, 91158023, 91000041)  # WB: C. Ronaldo, Messi, Iniesta
 PIECE_BASE = 87_100_000  # manh ghep: PIECE_BASE + stt (stt < 100, CONTRACT = PIECE_BASE + 100)
 # Hinh rieng tung manh: externalAssets/shop/<id manh>.png (anh cau thu, tao offline); thieu -> PIECE_ICON
 CONTRACT = 87_100_100
@@ -48,10 +54,10 @@ def build():
     cards = []  # (spid, playerid, nhan mua) theo stt
     with closing(hc._db()) as c:
         import gen_teams
-        for season, label, count in SEASONS:
-            rows = c.execute(f"SELECT p.spid, p.playerid, {hc.POSOVR} AS o FROM players p "
-                             f"WHERE p.spid / 1000000 = ? ORDER BY o DESC, p.spid LIMIT ?", (season, count)).fetchall()
-            cards += [(spid, playerid, label) for spid, playerid, _ in rows]
+        season_label = {season: label for season, label, _ in SEASONS}
+        for spid in BASE:
+            row = c.execute("SELECT playerid FROM players WHERE spid = ?", (spid,)).fetchone()
+            cards.append((spid, row[0] if row else spid % 1000000, season_label.get(spid // 1000000, "")))
         have = {spid for spid, _, _ in cards}
         for spid in EXTRA:
             if spid not in have and c.execute("SELECT 1 FROM players WHERE spid = ?", (spid,)).fetchone():
