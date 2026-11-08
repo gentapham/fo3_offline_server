@@ -1817,12 +1817,12 @@
    "size": 48344
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s113710.png": {
-   "sha256": "6980023b7a5058fac08ec3840d4074d53a2747996b88df8e82e61974b943fd0a",
-   "size": 66670
+   "sha256": "3a853e568f101fdd15fbcc779e8844432b23f3f2872f171de56e9ee91eeccc77",
+   "size": 106871
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s113711.png": {
-   "sha256": "0a3a8b87bfdbab70bb3d60ade9a54890123e26a5143eb62586e0a68ab2f4d1c6",
-   "size": 65327
+   "sha256": "4556ca72ff016664ba15831aed692e7578dee959d45941c2b5ed7acefa9ae4bd",
+   "size": 107996
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s113719.png": {
    "sha256": "62dcaf5f76595ba343154452b25383364be5f369ecd9c4baf1e0df007109a481",
@@ -4025,12 +4025,12 @@
    "size": 23054
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s113710.png": {
-   "sha256": "b15e76316c2931a2949981fc7cf7e40ffd35441f76cc2ffbfbcd0482b880d749",
-   "size": 22587
+   "sha256": "8eb1882265351c928c74883b8a2c73fc28947de3249e8b9cc0d3bee0a022ed02",
+   "size": 31668
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s113711.png": {
-   "sha256": "4d5dd9b3927297021b00b34cdf6b3295e3be7328be790f22b55df48eb3ade589",
-   "size": 21895
+   "sha256": "b3d98db779e987f16e7a827226068b32556bd22e5ed1a92c6661a1acd384ad59",
+   "size": 32049
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s113719.png": {
    "sha256": "39a8cb38505d5f20864656e45584d3ca7bb9cd8912939c2c79dca3e886ee9dfd",
@@ -190841,6 +190841,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.08-2002",
- "notes": "Mùa PRIME + INFINITY PRIME (đội riêng) cho mọi huyền thoại; 157 siêu sao mới + bù mùa huyền thoại; miniface riêng từng mùa; giảm giá +11..+20; ẩn thẻ mùa 0; HLV: sửa tập huấn/nhận lại, GM chỉnh chỉ số, HLV tùy chỉnh mở rộng; giải đấu 20 đội; sửa sơ đồ chồng cầu thủ; tên C. Ronaldo/Andy Cole/Ashley Cole"
+ "version": "2026.11.08-2004",
+ "notes": "Logo đội PRIME / INFINITY PRIME mới"
 }
