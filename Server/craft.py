@@ -38,6 +38,8 @@ PIECE_ICON, CONTRACT_ICON, SUPER_ICON = 80711, 80712, 80713
 PIECES_NEEDED, CONTRACTS_NEEDED, SUPER_MAX = 10, 1, 5
 RESULT_GRADE = 5
 FEE = 0  # mien phi (SHOP_FREE / ban offline)
+# ten ao trung nhau: Cristiano Ronaldo (20801) va Ronaldo Nazario (37576) deu la "Ronaldo"
+NAME_FIX = {20801: "C. Ronaldo"}
 NOUSE = "Vật phẩm này dùng trong Quản lý cầu thủ > Mảnh ghép cầu thủ."
 RECIPES = {}  # recipeid: {"spid", "piece"}
 
@@ -65,7 +67,7 @@ def build():
                 cards.append((spid, spid % 1000000, labels.get(spid // 1000000, f"S{spid // 1000000}")))
         for n, (spid, playerid, label) in enumerate(cards, 1):
             assert n < 100, "PIECE_BASE + n trung CONTRACT"
-            name = (gen_teams.jersey_name(c, playerid) or str(spid)).title()
+            name = NAME_FIX.get(playerid) or (gen_teams.jersey_name(c, playerid) or str(spid)).title()
             piece = PIECE_BASE + n
             icon = piece if os.path.isfile(os.path.join(shop, f"{piece}.png")) else PIECE_ICON
             items[piece] = (f"Mảnh ghép {name} ({label})", icon, "PLAYER_PIECE", {"nouse": NOUSE},

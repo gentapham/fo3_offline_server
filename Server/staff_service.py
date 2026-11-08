@@ -126,6 +126,20 @@ def team_state(st):
     return slot, team
 
 
+def client_staff(staff):
+    """Ban gui client: study.boost/prevboost.effectidx dem tu 0 (TeamManagementStaffStudyTabPage doc
+    staff.effect[boost.effectidx] - mang effect chi so 0..2); server luu 1..3 -> dong 3 loi #1010 khi "Nhan lai"."""
+    st = staff.get('study')
+    if not isinstance(st, dict):
+        return staff
+    out = dict(staff, study=dict(st))
+    for k in ('boost', 'prevboost'):
+        b = st.get(k)
+        if isinstance(b, dict) and isinstance(b.get('effectidx'), int):
+            out['study'][k] = dict(b, effectidx=max(0, b['effectidx'] - 1))
+    return out
+
+
 def reply(st, slot, **extra):
     return hc._json({"result": True, **extra, "resources": hc.coach_me_resources(st, slot)})
 
@@ -272,15 +286,19 @@ def unappoint(staffid, query, body):
 STUDY = {str(i): {'location': 'LOCATION_NAME_%02d' % i, 'grade': 1,
                  'position': [t[0] for t in TYPE_LABELS], 'matchcount': 1,
                  'fee': 1000 if i <= 3 else 2000,
-                 'effectstring': 'Đổi một chỉ số thưởng trong cùng nhóm.' if i <= 3 else 'Tăng một chỉ số thưởng thêm +1 (HLV thường tối đa +5, HLV custom tối đa +5 đến +10 tuỳ HLV).',
+                 'effectstring': 'Đổi một chỉ số thưởng trong cùng nhóm (nhóm chỉ có 1 chỉ số: đổi sang chỉ số khác).' if i <= 3 else 'Tăng một chỉ số thưởng thêm +1 (tối đa +5 so với mức gốc của HLV).',
                  'effectidx': (i - 1) % 3 + 1,
                  'boosttype': 'change' if i <= 3 else 'enhance'} for i in range(1, 7)}
 STUDY_MAX_FEE = 100000
 
+STUDY_EXTRA = 5  # tap huan cong them toi da +5 so voi muc goc (HLV 5 sao da o muc goc ngay khi tuyen)
+
+
 def amount_cap(staff):
-    """Tran muc cong khi tap huan: +5 (HLV goc) hoac suc manh cua HLV mod."""
+    """Tran muc cong khi tap huan: muc goc (+5 HLV goc / suc manh HLV mod, tuy chinh) + STUDY_EXTRA."""
     info = CATALOG.get(str(staff.get('stfid'))) or {}
-    return max(5, int(info.get('power') or 0))
+    # gm_cap: muc GM Tool tu dat cho HLV nay (Chinh tung chi so) - khong bi normalize ha xuong
+    return max(max(5, int(info.get('power') or 0)) + STUDY_EXTRA, int(staff.get('gm_cap') or 0))
 
 
 def study_boost(staff, rule):
@@ -297,6 +315,11 @@ def study_boost(staff, rule):
         return None
     choices = [STAT_KEYS[label] for label in info['boost_groups'][idx - 1]
                if label in STAT_KEYS and STAT_KEYS[label] != current['effect']]
+    if not choices and current['effect'] != 'ovr':
+        # nhom chi co 1 chi so (vd Van Gaal: Toc do) -> doi sang chi so cung loai (thu mon / cau thu thuong)
+        gk = current['effect'].startswith('gk')
+        choices = [STAT_KEYS[k] for k in STAT_KEYS if k != 'Overall Rating' and k.startswith('GK ') == gk
+                   and STAT_KEYS[k] != current['effect']]
     if not choices:
         return None
     return {'effectidx': idx, 'boosttype': 'change', 'effect': random.choice(choices), 'inc': 0}
@@ -312,15 +335,21 @@ def study_start(lid, query, body):
     st = hc._state()
     slot, team = team_state(st)
     if any(p.get('status') == 'studying' and (p.get('study') or {}).get('lid') == lid for p in team['staffs']):
-        return fail('ITEM_USE_ERROR')
+        return fail('Đã có HLV đang tập huấn ở nơi này. Chờ xong hoặc chọn nơi khác.')
     staff = next((p for p in team['staffs'] if p['_id'] == ids[0]), None)
     if staff is None or staff.get('status') != 'idle' or staff.get('material') or staff.get('life', 0) <= 0:
         return fail('INVALID_STAFF')
     if staff.get('grade', 0) < rule['grade'] or staff.get('position') not in rule['position']:
         return fail('INVALID_STAFF')
     boost = study_boost(staff, rule)
-    if boost is None:
-        return fail('ITEM_USE_ERROR')
+    if boost is None:  # bao ro ly do (truoc: ITEM_USE_ERROR "Loi dung do" kho hieu)
+        idx = rule['effectidx']
+        cur = next((e for e in staff.get('effect', []) if e.get('effectidx') == idx and e.get('open')), None)
+        if cur is None:
+            return fail(f'HLV này chưa mở chỉ số thưởng thứ {idx} nên không tập huấn ở đây được.')
+        if rule['boosttype'] == 'enhance':
+            return fail(f'Chỉ số thưởng thứ {idx} đã đạt tối đa +{amount_cap(staff)}. Hãy chọn nơi tập huấn khác.')
+        return fail(f'Chỉ số thưởng thứ {idx} (Tất cả chỉ số) không đổi được. Hãy chọn nơi tập huấn khác.')
     history = (staff.get('study') or {}).get('history') or {}
     count = len(history.get(lid, []))
     fee = min(STUDY_MAX_FEE, rule['fee'] * 2 ** min(count, 16))
@@ -332,7 +361,7 @@ def study_start(lid, query, body):
     staff['study'] = {'lid': lid, 'mcdate': int(team.get('staffsmc') or 0),
                       'history': history, 'boost': boost}
     hc._save(st)
-    return reply(st, slot, staffs={staff['_id']: staff})
+    return reply(st, slot, staffs={p['_id']: client_staff(p) for p in team['staffs']})
 
 def study_complete(lid, query, body):
     rule = STUDY.get(lid)
@@ -361,7 +390,9 @@ def study_complete(lid, query, body):
     # Keep the result for the client's return popup, while freeing the location.
     study['lid'] = None
     hc._save(st)
-    return reply(st, slot, staffs={staff['_id']: staff})
+    # TeamManagementStaffStudyTabPage dung staffs cua phan hoi de dung lai danh sach tung khu vuc: chi gui HLV vua
+    # nhan -> khu vuc khac mat studyInfo.staffs -> "Nhan lai" HLV thu 2 loi #1010. Gui du moi HLV.
+    return reply(st, slot, staffs={p['_id']: client_staff(p) for p in team['staffs']})
 
 
 # --------------------------------------------------------------------------- #
@@ -438,16 +469,41 @@ def _static_stafflist():
         return None
 
 
+# Ma HLV tuy chinh: <tien to vi tri><tram><2 so>. Giu nguyen hang nghin (= tien to vi tri nhu ma goc), chi
+# dung cac hang tram con trong (ma goc dung x0xx, x1xx, 49xx, 95xx, 96xx) -> 600..800 ma / tien to
+# (truoc chi x7xx = toi da 99). FRONT va PREMIUM chung tien to 9.
+CUSTOM_HUNDREDS = (7, 8, 2, 3, 4, 5, 6, 9)
+CUSTOM_MAX_POWER = 50
+
+
 def new_custom_id(position):
     prefix = POS_PREFIX[position]
     listed = set((_static_stafflist() or {}).get('stafflist') or {})
-    for n in range(1, 100):
-        sid = prefix * 1000 + 700 + n
-        if (str(sid) in CATALOG or str(sid) in listed or sid in CUSTOM['deleted']
-                or any(os.path.exists(os.path.join(d, f'{sid}.png')) for d in staff_dirs())):
+    used_h = {(int(k) % 1000) // 100 for k in listed if str(k).isdigit() and int(k) // 1000 == prefix
+              and not (CATALOG.get(str(k)) or {}).get('custom')}
+    for h in CUSTOM_HUNDREDS:
+        if h in used_h:
             continue
-        return sid
-    raise ValueError('Đã hết mã cho HLV tùy chỉnh ở vị trí này (tối đa 99).')
+        for n in range(1, 100):
+            sid = prefix * 1000 + h * 100 + n
+            if (str(sid) in CATALOG or str(sid) in listed or sid in CUSTOM['deleted']
+                    or any(os.path.exists(os.path.join(d, f'{sid}.png')) for d in staff_dirs())):
+                continue
+            return sid
+    raise ValueError('Đã hết mã cho HLV tùy chỉnh ở vị trí này.')
+
+
+def custom_groups(groups):
+    """Chi so tu chon tu GM Tool: 3 nhom, moi nhom 1..5 chi so (nhan tieng Anh nhu STAT_KEYS)."""
+    if not isinstance(groups, list) or len(groups) != 3:
+        raise ValueError('Cần chọn đủ 3 chỉ số hỗ trợ.')
+    out = []
+    for g in groups:
+        g = [g] if isinstance(g, str) else g
+        if not isinstance(g, list) or not 1 <= len(g) <= 5 or any(x not in STAT_KEYS for x in g):
+            raise ValueError('Chỉ số hỗ trợ không hợp lệ.')
+        out.append(list(dict.fromkeys(g)))
+    return out
 
 
 def random_boost_groups(position):
@@ -478,7 +534,7 @@ def _rebuild():
     TYPE_BY_PORTRAIT = {pid: row[0] for row in TYPES for pid in row[2]}
 
 
-def custom_create(name, position, data):
+def custom_create(name, position, data, groups=None, power=None):
     """Tao loai HLV moi: kiem tra anh truoc, roi ghi anh (ca 2 thu muc) + custom_staff.json."""
     name = ' '.join(str(name or '').split())
     if not 2 <= len(name) <= 30:
@@ -489,10 +545,14 @@ def custom_create(name, position, data):
         raise ValueError('Đã có HLV trùng tên này. Hãy đặt tên khác.')
     if position not in POS_PREFIX:
         raise ValueError('Vị trí HLV không hợp lệ.')
+    if power is not None:
+        if type(power) is not int or not 1 <= power <= CUSTOM_MAX_POWER:
+            raise ValueError(f'Mức cộng tối đa phải là số nguyên từ 1 đến {CUSTOM_MAX_POWER}.')
+    groups = custom_groups(groups) if groups is not None else None
     check_image(data)
     sid = new_custom_id(position)
-    info = {'name': name, 'position': position, 'boost_groups': random_boost_groups(position),
-            'power': random.randint(5, 10), 'material': False, 'verified': False, 'custom': True,
+    info = {'name': name, 'position': position, 'boost_groups': groups or random_boost_groups(position),
+            'power': power if power is not None else random.randint(5, 10), 'material': False, 'verified': False, 'custom': True,
             'created': time.strftime('%Y-%m-%d %H:%M:%S')}
     written = []
     try:

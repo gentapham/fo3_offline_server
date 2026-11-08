@@ -321,7 +321,7 @@ def season_table():
         name = name or (f"Mùa {tag}" if tag else f"Mùa đặc biệt (mã {c})")
         tag = tag or (name if 0 < len(name) <= 6 else f"S{c}")
         low = name.lower()
-        legend = {"WL", "UL", "EL", "KL02", "ML", "TL", "VL", "CL", "MUL", "MUA", "CEL", "TCO92", "KXI"}
+        legend = {"WL", "UL", "EL", "KL02", "ML", "TL", "VL", "CL", "MUL", "MUA", "CEL", "TCO92", "KXI", "PRM", "IPRM"}
         cup = {"06WC", "10WC", "14WC", "08E", "10U", "06U", "16EC"}
         kind = ("base" if c == 0 else "year" if tag.isdigit() or c in (300, 325) else
                 "legend" if tag in legend or any(w in low for w in ("legend", "huyền thoại", "icons"))
@@ -332,10 +332,18 @@ def season_table():
     return out
 
 
+def visible_cards():
+    """card_index() tru the mua 0 (the mau engine, chi so 120+, hien nham '17') khi bat "An the mua 0"."""
+    rows = card_index()
+    if hc.server_options().get("hide_engine_cards"):
+        rows = [r for r in rows if r["spid"] >= 1000000]
+    return rows
+
+
 @api("seasons")
 def seasons(p):
     count = {}
-    for r in card_index():
+    for r in visible_cards():
         count[r["season"]] = count.get(r["season"], 0) + 1
     global _SEASONS
     _SEASONS = None  # dung lai sau khi da co danh sach the
@@ -379,7 +387,7 @@ def facets(p):
 def _facets(p):
     """Danh sach giai dau / doi bong / quoc gia (kem so the) cho dropdown co o tim kiem.
     Co league=... -> doi bong + quoc gia chi lay trong giai do (loc day chuyen)."""
-    all_rows = card_index()
+    all_rows = visible_cards()
     leagues, teams, nations, top = {}, {}, {}, {}
     for r in all_rows:
         if r["league"]:
@@ -404,7 +412,7 @@ def search(p):
     q, tq, nq = _fold(p.get("q", "").strip()), _fold(p.get("team", "").strip()), _fold(p.get("nation", "").strip())
     pq = str(p.get("pos") or "").strip().upper()
     sq = str(p.get("season") or "").strip()
-    rows = _by_league(card_index(), p)
+    rows = _by_league(visible_cards(), p)
     if q:
         rows = [r for r in rows if q in r["_n"]]
     # chon tu dropdown -> loc dung ten (team_exact / nation_exact), go tay -> loc chua chuoi
@@ -1070,7 +1078,7 @@ def season_cards(p):
         raise AdminError("Hãy chọn mùa hoặc đội bóng")
     grade = as_int(p.get("grade") or 1, 1, 20, "grade")
     level = as_int(p.get("level") or 1, 1, hc.PLAYER_MAX_LEVEL, "level")
-    rows = card_index()
+    rows = visible_cards()
     if season:
         code = as_int(season, 0, 999, "season")
         rows = [r for r in rows if r["season"] == code]
@@ -1340,7 +1348,10 @@ def staff_catalog(p):
     out.sort(key=lambda x: (list(STAFF_POS).index(x["position"]) if x["position"] in STAFF_POS else 99, -x["power"], x["name"]))
     return {"staff": out, "max_grade": ss.MAX_GRADE,
             "positions": [{"position": k, "name": v} for k, v in STAFF_POS.items() if k in ss.POS_PREFIX],
-            "img_size": ss.IMG_SIZE, "img_max_bytes": ss.IMG_MAX_BYTES}
+            "img_size": ss.IMG_SIZE, "img_max_bytes": ss.IMG_MAX_BYTES,
+            # chi so cho o "Tu chon chi so" khi tao HLV tuy chinh
+            "stats": sorted(({"key": k, "name": stat_vi(k)} for k in ss.STAT_KEYS), key=lambda x: x["name"]),
+            "max_power": getattr(ss, "CUSTOM_MAX_POWER", 10)}
 
 
 def _staff_brief(stfid):
@@ -1366,7 +1377,16 @@ def staff_custom_create(p):
     except (binascii.Error, ValueError):
         raise AdminError("Không đọc được file ảnh") from None
     try:
-        sid, info = ss.custom_create(p.get("name"), str(p.get("position") or ""), data)
+        power = p.get("power")
+        if power not in (None, ""):
+            try:
+                power = int(power)
+            except (TypeError, ValueError):
+                raise AdminError("Mức cộng tối đa phải là số.") from None
+        else:
+            power = None
+        sid, info = ss.custom_create(p.get("name"), str(p.get("position") or ""), data,
+                                     groups=p.get("groups") or None, power=power)
     except ValueError as e:
         raise AdminError(str(e)) from None
     return {"stfid": sid, "name": info["name"], "position": info["position"],
@@ -1448,9 +1468,10 @@ def _staff_choices(staff, idx):
 
 def _full(staff):
     ss = _ss(); ss.set_grade(staff, ss.MAX_GRADE); staff["exp"] = 0
-    cap = ss.amount_cap(staff)  # +5 HLV thuong, HLV noi tieng: muc tran rieng (+15..+95)
+    # muc goc (+5 HLV thuong, HLV noi tieng / tuy chinh: suc manh rieng); tap huan con cong them duoc +5
+    base = max(5, int((ss.CATALOG.get(str(staff.get("stfid"))) or {}).get("power") or 0))
     for e in staff.get("effect") or []:
-        e["amount"] = cap; e["open"] = True
+        e["amount"] = max(base, int(e.get("amount") or 0)); e["open"] = True
 
 
 @api("staff_full")
@@ -1481,6 +1502,28 @@ def staff_effect(p):
     e["effect"] = p["key"]
     hc._save(st)
     return {"ok": True}
+
+@api("staff_set")
+def staff_set(p):
+    """GM Tool > HLV cua CLB: dat chi so (bat ky) va muc cong (1..99) cho 1 dong cua 1 HLV."""
+    ss = _ss(); st = hc._state(); t = team(st)
+    x = next((x for x in t.get("staffs", []) if x["_id"] == p.get("id")), None)
+    if x is None:
+        raise AdminError("Không tìm thấy HLV")
+    idx = as_int(p.get("idx"), 1, 3, "idx")
+    e = next((e for e in x.get("effect") or [] if e.get("effectidx") == idx), None)
+    if e is None:
+        raise AdminError("HLV chưa mở dòng chỉ số này")
+    key = p.get("key") or e.get("effect")
+    if key not in set(ss.STAT_KEYS.values()):
+        raise AdminError("Chỉ số không hợp lệ")
+    amount = as_int(p.get("amount", e.get("amount")), 1, 99, "Mức cộng")
+    e["effect"], e["amount"], e["open"] = key, amount, True
+    if amount > ss.amount_cap(x):
+        x["gm_cap"] = amount  # giu muc nay (normalize_team khong ha xuong)
+    hc._save(st)
+    return {"ok": True}
+
 
 @api("staff_remove")
 def staff_remove(p):

@@ -708,6 +708,13 @@
   .hc-prev [hidden] { display: none !important; }
   .hc-form { flex: 1 1 320px; min-width: 0; }
   .hc-form .row { align-items: flex-end; }
+  .hc-stats { margin-top: 12px; }
+  .hlv-effs { display: grid; gap: 6px; }
+  .hlv-eff { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+  .hlv-eff select { min-width: 0; max-width: 170px; }
+  .hlv-eff input { width: 64px; }
+  .hc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 8px; }
+  .hc-grid .f, .hc-grid select, .hc-grid input { width: 100%; min-width: 0; }
   .hc-tag { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; font-weight: 600;
     background: color-mix(in srgb, var(--gold, #d8a300) 22%, transparent); color: var(--ink-2); vertical-align: middle; }
   .cp-staff { display: inline-flex; align-items: center; gap: 8px; padding: 4px 6px 4px 4px; margin: 0 8px 8px 0; border: 1px solid var(--line);
@@ -1246,8 +1253,8 @@
     <section id="thitruong" hidden="">
       <div class="card">
         <div class="card-head"><span class="ico"><svg class="i"><use href="#i-chart"></use></svg></span><h2 class="display">Thị trường chuyển nhượng</h2></div>
-        <label class="check"><input type="checkbox" id="optHide0"> Ẩn thẻ mùa 0 (thẻ mẫu của engine, chỉ số 120+) khỏi Thị trường</label>
-        <p class="hint">Mặc định tắt (giữ như cũ). Khi bật: thẻ mùa 0 không có người bán, không nằm trong Top 50 và không mua được trên Thị trường. Danh sách tìm kiếm trong game do client tự lọc nên tên thẻ vẫn có thể hiện (nhưng không có người bán).</p>
+        <label class="check"><input type="checkbox" id="optHide0"> Ẩn thẻ mùa 0 (thẻ mẫu của engine, chỉ số 120+, game hiện nhầm là "17") khỏi Thị trường và GM Tool</label>
+        <p class="hint">Mặc định bật. Khi bật: thẻ mùa 0 không có người bán, không nằm trong Top 50 và không mua được trên Thị trường. Danh sách tìm kiếm trong game do client tự lọc nên tên thẻ vẫn có thể hiện (nhưng không có người bán).</p>
         <h3>Thị trường sống</h3>
         <p class="lead"><b>Thị trường sống</b>: thẻ bạn rao bán sẽ được một HLV ảo mua sau một lúc (giá càng thấp bán càng nhanh); bán xong game hiện thông báo. Trong lúc chờ có thể <b>Hủy</b> (thẻ về Đội phụ) hoặc <b>Đăng lại</b> với giá khác. <b>Bán ngay</b>: như trước, rao là bán liền. Cửa sổ thẻ có <b>biểu đồ giá</b> 30 ngày. Có hiệu lực ngay, không cần khởi động lại.</p>
         <div class="row">
@@ -1355,7 +1362,7 @@
     <section id="hlv" hidden="">
       <div class="card" id="hcCard">
         <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-plus"></use></svg></span><h2 class="display">Tạo HLV tùy chỉnh</h2></div>
-        <p class="lead">Tạo HLV mới với <b>tên</b>, <b>vị trí</b> và <b>ảnh</b> của riêng bạn. Chỉ số hỗ trợ và mức cộng tối đa (<b>+5 đến +10</b>) được chọn ngẫu nhiên như các HLV nổi tiếng. HLV mới hiện ngay ở danh sách <b>Thêm HLV</b> bên dưới, trong chiêu mộ HLV của game và có thể cho vào <b>Gói tự chọn</b>.</p>
+        <p class="lead">Tạo HLV mới với <b>tên</b>, <b>vị trí</b> và <b>ảnh</b> của riêng bạn. Chỉ số hỗ trợ và mức cộng tối đa được chọn ngẫu nhiên (<b>+5 đến +10</b>) như các HLV nổi tiếng, hoặc tích <b>Tự chọn chỉ số hỗ trợ</b> để tự đặt 3 chỉ số và mức cộng (tới +50). HLV mới hiện ngay ở danh sách <b>Thêm HLV</b> bên dưới, trong chiêu mộ HLV của game và có thể cho vào <b>Gói tự chọn</b>.</p>
         <div class="hc-wrap">
           <div class="hc-prev"><img id="hcPrev" alt="Xem trước ảnh HLV" hidden><span id="hcPrevEmpty">128 × 128</span></div>
           <div class="hc-form">
@@ -1366,6 +1373,15 @@
             <div class="row" style="margin-top:10px">
               <label class="f">Ảnh HLV (PNG hoặc JPG)<input type="file" id="hcFile" accept=".png,.jpg,.jpeg,image/png,image/jpeg"></label>
               <a class="b" href="https://www.iloveimg.com/resize-image" target="_blank" rel="noopener noreferrer" title="Mở trang thu nhỏ ảnh trong tab mới">Resize ảnh online ↗</a>
+            </div>
+            <div class="hc-stats">
+              <label class="check"><input type="checkbox" id="hcCustom"> Tự chọn chỉ số hỗ trợ (bỏ trống = ngẫu nhiên như HLV nổi tiếng)</label>
+              <div class="hc-grid" id="hcStatBox" hidden>
+                <label class="f">Chỉ số 1<select id="hcS1"></select></label>
+                <label class="f">Chỉ số 2<select id="hcS2"></select></label>
+                <label class="f">Chỉ số 3<select id="hcS3"></select></label>
+                <label class="f">Mức cộng tối đa (+)<input type="number" id="hcPower" min="1" max="50" step="1" value="10"></label>
+              </div>
             </div>
             <p class="hint">Yêu cầu ảnh: <b>PNG hoặc JPG</b>, <b>đúng 128 × 128 px</b> (ảnh vuông, đúng cỡ game dùng), dung lượng <b>tối đa 2 MB</b>. Ảnh sai cỡ: bấm <b>Resize ảnh online</b> → chọn <i>By pixels</i>, nhập 128 × 128 (ảnh chưa vuông thì nên cắt vuông trước để không bị méo), tải ảnh về rồi chọn lại ở đây.</p>
             <div class="row" style="margin-top:10px"><button class="b primary" type="button" id="hcSave" disabled>Tạo HLV</button><span class="muted" id="hcNote"></span></div>
@@ -1661,6 +1677,13 @@ document.addEventListener("change", e => {
   if (e.target.id === "hlvPos") hlvPaint();
   const ef = e.target.dataset && e.target.dataset.hlveff;
   if (ef) act(async () => { await api("staff_effect", {id: ef, idx: +e.target.dataset.idx, key: e.target.value}); await loaders.hlv(); }, "Đã đổi chỉ số HLV.");
+  const hk = e.target.dataset.hlvkey, ha = e.target.dataset.hlvamt;
+  if (hk) act(async () => { await api("staff_set", {id: hk, idx: +e.target.dataset.idx, key: e.target.value}); await loaders.hlv(); }, "Đã đổi chỉ số HLV.");
+  if (ha) {
+    const v = parseInt(e.target.value, 10);
+    if (!(v >= 1 && v <= 99)) { say("Mức cộng phải từ 1 đến 99.", "err"); return; }
+    act(async () => { await api("staff_set", {id: ha, idx: +e.target.dataset.idx, amount: v}); await loaders.hlv(); }, "Đã đổi mức cộng HLV.");
+  }
   const g = e.target.dataset && e.target.dataset.hlvgrade;
   if (g) act(async () => { await api("staff_grade", {id: g, grade: +e.target.value}); await loaders.hlv(); }, "Đã đổi số sao. Vào lại màn HLV trong game để thấy.");
 });
@@ -1721,10 +1744,16 @@ $("#hcFile").addEventListener("change", () => {
   };
   rd.readAsDataURL(f);
 });
+$("#hcCustom").addEventListener("change", () => { $("#hcStatBox").hidden = !$("#hcCustom").checked; });
 $("#hcName").addEventListener("input", hcCheck);
 $("#hcPos").addEventListener("change", hcCheck);
 $("#hcSave").addEventListener("click", () => act(async () => {
-  const r = await api("staff_custom_create", {name: $("#hcName").value.trim(), position: $("#hcPos").value, image: HC.data});
+  const body = {name: $("#hcName").value.trim(), position: $("#hcPos").value, image: HC.data};
+  if ($("#hcCustom").checked) {
+    body.groups = ["#hcS1", "#hcS2", "#hcS3"].map(id => [$(id).value]);
+    body.power = parseInt($("#hcPower").value, 10);
+  }
+  const r = await api("staff_custom_create", body);
   hcReset(); CP.staffCat = null; await loaders.hlv();
   say(`Đã tạo HLV ${r.name} (mã ${r.stfid}, ${r.pos_name}, tối đa +${r.power}). Bấm Thêm ở danh sách bên dưới để đưa vào CLB, rồi vào lại màn HLV trong game để thấy.`, "ok");
 }));
@@ -1981,10 +2010,15 @@ const _loadersRest = {
     renderDaily(d.table);
   },
   async hlv() {
-    const [{staff, max_grade, positions, img_size, img_max_bytes}, mine] = await Promise.all([apiFetch("staff_catalog"), apiFetch("staffs")]);
-    HLV.cat = staff; HLV.max = max_grade;
+    const [{staff, max_grade, positions, img_size, img_max_bytes, stats, max_power}, mine] = await Promise.all([apiFetch("staff_catalog"), apiFetch("staffs")]);
+    HLV.cat = staff; HLV.max = max_grade; if (stats) HLV.stats = stats;
     if (img_size) { HLV.imgSize = img_size; HLV.imgMax = img_max_bytes; }
     const hp = $("#hcPos");
+    if (stats && !$("#hcS1").options.length) {
+      const opts = stats.map(x => `<option value="${esc(x.key)}">${esc(x.name)}</option>`).join("");
+      ["#hcS1", "#hcS2", "#hcS3"].forEach((id, i) => { $(id).innerHTML = opts; $(id).value = ["Sprint Speed", "Short Pass", "Overall Rating"][i]; });
+      if (max_power) $("#hcPower").max = max_power;
+    }
     if (positions && !hp.options.length) { hp.innerHTML = positions.map(x => `<option value="${x.position}"${x.position === "PREMIUM" ? " selected" : ""}>${esc(x.name)}</option>`).join(""); hcCheck(); }
     const pos = $("#hlvPos"), cur = pos.value;
     const kinds = [...new Map(staff.map(x => [x.position, x.pos_name])).entries()];
@@ -1997,9 +2031,10 @@ const _loadersRest = {
       <td><img src="/staffimg/${x.stfid}.png" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:8px" onerror="this.style.visibility='hidden'"></td>
       <td><b>${esc(x.name)}</b></td><td>${esc(x.pos_name)}</td>
       <td><select data-hlvgrade="${x.id}">${stars(x.grade)}</select></td>
-      <td>${x.effect.map(e => (e.choices || []).length
-          ? `<select data-hlveff="${x.id}" data-idx="${e.idx}">${e.choices.map(c => `<option value="${c.key}"${c.key === e.key ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> +${e.amount}`
-          : `${esc(e.effect)} +${e.amount}`).join("<br>") || "—"}</td>
+      <td><div class="hlv-effs">${x.effect.map(e => `<div class="hlv-eff">
+          <select data-hlvkey="${x.id}" data-idx="${e.idx}">${(HLV.stats || []).map(c => `<option value="${c.key}"${c.key === e.key ? " selected" : ""}>${esc(c.name)}</option>`).join("") || `<option value="${esc(e.key)}">${esc(e.effect)}</option>`}</select>
+          <span>+</span><input type="number" min="1" max="99" step="1" value="${e.amount}" data-hlvamt="${x.id}" data-idx="${e.idx}" title="Mức cộng (1–99)">
+        </div>`).join("") || "—"}</div></td>
       <td>${st[x.status] || esc(x.status)}</td>
       <td><button class="b danger" data-hlvdel="${x.id}">Xoá</button></td></tr>`).join("")
       : '<tr><td colspan="7" class="muted">CLB chưa có HLV nào.</td></tr>';

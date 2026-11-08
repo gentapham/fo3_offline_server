@@ -82,7 +82,8 @@ def props_for(give, rng):
     normal = OFFERS[str(len(give))]
     props = []
     for i, boost in enumerate([None] * normal + ["igr", "vip"]):
-        price, s, t, g = pick(pool, tp * rng.uniform(*VALUE_RANGE), gmax, rng)
+        target = tp * rng.uniform(*VALUE_RANGE)
+        price, s, t, g = hc.prime_pick(target, gmax, rng) or pick(pool, target, gmax, rng)  # 30%: PRIME / INFINITY PRIME
         offer = {"spid": s, "grade": g, "teamid": t, "price": price}
         if i == normal - 1 and normal > 1:  # de nghi cuoi kem them EP
             offer["ep"] = hc.sig3(max(1000, tp * rng.uniform(0.05, 0.15)))

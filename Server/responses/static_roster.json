@@ -2,6 +2,22 @@
  "curseason": "17",
  "seasons": [
   {
+   "season": "$TRANSFERMARKET_SEASON_94",
+   "value": [
+    94
+   ],
+   "open": "2013-01-01T00:00:00.000Z",
+   "close": "2099-12-31T00:00:00.000Z"
+  },
+  {
+   "season": "$TRANSFERMARKET_SEASON_76",
+   "value": [
+    76
+   ],
+   "open": "2013-01-01T00:00:00.000Z",
+   "close": "2099-12-31T00:00:00.000Z"
+  },
+  {
    "season": "$TRANSFERMARKET_SEASON_300",
    "value": [
     300

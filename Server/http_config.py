@@ -876,8 +876,8 @@ def roster_summary(teamid):
 GRADE_BOOST = (0, 5, 6, 7, 8, 10, 12, 14, 17, 20, 24, 28, 32, 36, 40, 44, 48, 52, 55, 58, 60)
 # EP price of grade g relative to +1: geometric mean over 16 fifaaddict cards (Indonesia server);
 # +11..+20: x2.3 per grade (ours), card_price caps them under a rising ceiling (price_ladder: strictly increasing)
-GRADE_PRICE = (0, 1, 2.65, 7.1, 19.6, 53, 162, 420, 1090, 2680, 6290,
-               14500, 33300, 76500, 176000, 405000, 931000, 2140000, 4930000, 11300000, 26100000)
+# +1..+10: bang gia that FO3 (fifaaddict). +11..+20 (tu them): truoc x2.3 moi cap -> the +20 toi ~1000B; nay x1.5
+GRADE_PRICE = (0, 1, 2.65, 7.1, 19.6, 53, 162, 420, 1090, 2680, 6290) + tuple(round(6290 * 1.5 ** k) for k in range(1, 11))
 FA_PRICES = os.path.join(HERE, "gamedata", "fa_prices.json")
 _FA = None
 _OVR = {}
@@ -1052,7 +1052,7 @@ def card_price(spid, grade=1):
     return price_ladder(base * ps["multiplier"])[g]
 
 
-PRICE_TOP = 999_000_000_000  # gia cao nhat cua 1 the (+20); < MAX_EP (de hien thi/tong khong tran)
+PRICE_TOP = 50_000_000_000  # gia cao nhat cua 1 the (+20) (truoc 999B - qua cao); < MAX_EP
 PRICE_CAP_STEP = 1.2  # tran gia moi cap +11..+20: PRICE_TOP / 1.2^(20 - cap)
 
 
@@ -1663,6 +1663,37 @@ def squad_presets(team):
     return team['teamsquadlist']
 
 
+def fix_starting(positions, formationid):
+    """So do tren san (Doi hinh) ve moi cau thu tai starting[2:4]. Hai cau thu trung toa do (toa do
+    cu sot lai khi doi so do / doi nguoi) -> mot nguoi bi che, so do chi con 10 (vd Isco LW).
+    Cau thu thieu toa do hoac trung voi nguoi khac lay toa do o cua so do dang dung (hoac so do
+    thuong dau tien co o do)."""
+    t = formation_table()
+    forms = t.get("common", []) + list(t.get("teams", {}).values())
+    cur = next((f for f in forms if f.get("formationid") == formationid), None)
+
+    def spot(pos):
+        for f in ([cur] if cur else []) + forms:
+            if pos in f.get("positions", []):
+                o = f["offsets"][f["positions"].index(pos)]
+                return [o["x"], o["y"]]
+        return None
+    seen = []
+    for p in positions:
+        if not isinstance(p, dict) or p.get("pos", POS_SUB) >= POS_SUB:
+            continue
+        st = p.get("starting")
+        xy = st[2:4] if isinstance(st, list) and len(st) >= 4 else None
+        if xy is None or any(abs(xy[0] - a) < 0.03 and abs(xy[1] - b) < 0.03 for a, b in seen):
+            new = spot(p["pos"])
+            if new is not None and not any(abs(new[0] - a) < 0.03 and abs(new[1] - b) < 0.03 for a, b in seen):
+                p["starting"] = (list(st[:2]) if xy is not None else [1, 1]) + new
+                xy = new
+        if xy is not None:
+            seen.append((xy[0], xy[1]))
+    return positions
+
+
 def owned_team(raw):
     """A stored team ({players:[{spid,...}], squad:{positions,captain,kickers,...}}) in the
     shape the client expects for a club it can show and play with (coach.team, match side.team)."""
@@ -1694,6 +1725,7 @@ def owned_team(raw):
         sq["positions"] += [{"spid": p["spid"], "pos": POS_SUB, "id": p["id"]} for p in bench[:7]]
     sq["captain"] = str(sq["captain"]) if sq.get("captain") else ""
     sq["kickers"] = [str(k) for k in sq.get("kickers", [])]
+    fix_starting(sq["positions"], sq.get("formation"))
     team["squad"] = sq
     team.update({"staffs": team.get("staffs", []),
                  "staffroles": team.get("staffroles") or [
@@ -1704,7 +1736,11 @@ def owned_team(raw):
     # PlayerListUtil.generateCaptainFromCoachInfo (Tim > Formasi) reads these at team level
     team.update({"captain": sq["captain"], "kickers": sq["kickers"]})
     squad_presets(team)
+    for pr in (team.get("teamsquadlist") or {}).get("preset") or []:
+        if isinstance(pr, dict) and isinstance(pr.get("positions"), list):
+            fix_starting(pr["positions"], pr.get("formation", sq.get("formation")))
     staff_service.normalize_team(team)
+    team["staffs"] = [staff_service.client_staff(x) for x in team.get("staffs", [])]  # effectidx 0-based cho client
     team.setdefault("formations", [])
     return team
 
@@ -1985,7 +2021,8 @@ def ep_tactic(i, query, body):
 #   or POST /league2/match/sim (no play), POST /league2/sleep (bye round)
 # laststatus "league:<round>" tells the client which day it is (LeagueCupProxy.setToday).
 # --------------------------------------------------------------------------- #
-LEAGUE_SIZE = 10  # the creation screen shows 10 opponent crests
+LEAGUE_SIZE = 20  # toi da (ca giai that, vd La Liga 20 doi); man tao giai chi ve 10 logo dau (makeSchedule lap 10 lan),
+# bang xep hang la ScrollingList nen cuon duoc
 
 
 def _db():
@@ -2130,7 +2167,9 @@ MISSION_TARGET = {"2": 3, "3": 3, "4": 2}  # keep in sync with LEAGUE2SPONSOR lv
 def ep_l2_sponsor(difficulty, query, body):
     """POST /league2/sponsor/<difficulty>: offers. OnReceivedSponsorList reads level, maxround
     and sponsors[] {_id, sponsorid, missions[{mid}]} (names/logos/goals from LEAGUE2SPONSOR)."""
-    return _json({"result": True, "level": 1, "maxround": 2 * (LEAGUE_SIZE - 1) - 1,
+    st = _state(); me = my_teamid(st)
+    n = len(league_teams(roster_summary(me).get("league", {}).get("id", 0), me))
+    return _json({"result": True, "level": 1, "maxround": 2 * (max(2, n) - 1) - 1,
                   "sponsors": [{"_id": sid, "sponsorid": sid, "missions": [{"mid": mid}]} for sid, mid in SPONSORS.items()]})
 
 
@@ -2567,7 +2606,7 @@ def season_leaders(st, me, rank, goals):
                   for p in starters if p["pos"] in r] for line, r in lines.items()}
     best = lambda line: max((p["spid"] for p in starters if p["pos"] in lines[line]),
                             key=lambda s: rating.get(s, 0), default=0)
-    played = 2 * (LEAGUE_SIZE - 1)
+    played = 2 * (len((st.get("league2") or {}).get("league", {}).get("teams") or [0] * LEAGUE_SIZE) - 1)
     out.update(ratings=[entry(best("FW"), 7.5, 3000)], goals=[entry(best("FW"), max(1, goals // 2), 3000)],
                assists=[entry(best("MF"), max(1, goals // 3), 2000)], tackles=[entry(best("DF"), played * 3, 2000)],
                passes=[entry(best("MF"), 0.85, 1000)],  # pass success rate; the UI shows value*100 %
@@ -2585,9 +2624,10 @@ def ep_l2_end(query, body):
     if not league:
         return _json({"result": False, "reason": "LEAGUE_FAIL"})
     me = my_teamid(st); stats = league["statistics"][str(me)]; rank = stats["rank"]
+    n = len(league["teams"])
     cur = lg.get("difficultyselect", 10)
     if cur >= 20:  # ultimate: promote top 3, demote bottom 3
-        nxt = min(24, cur + 1) if rank <= 3 else max(20, cur - 1) if rank > LEAGUE_SIZE - 3 else cur
+        nxt = min(24, cur + 1) if rank <= 3 else max(20, cur - 1) if rank > n - 3 else cur
     else:
         nxt = min(19, cur + 1) if rank <= 3 else cur
     mid = SPONSORS.get(str(lg.get("sponsor")), "2")
@@ -2597,8 +2637,9 @@ def ep_l2_end(query, body):
     leaders = season_leaders(st, me, rank, stats["goals"])
     leader_ep = sum(e["reward"]["count"] for k in ("ratings", "goals", "assists", "tackles", "passes", "saves")
                     for e in leaders[k])
-    base_ep = (LEAGUE_SIZE - rank + 1) * 2000
-    season_exp = (LEAGUE_SIZE - rank + 1) * 100
+    place = round((n - rank + 1) * 10 / n)  # thuong theo thu hang quy ve thang 10 nhu giai 10 doi cu
+    base_ep = place * 2000
+    season_exp = place * 100
     cprev, ccur = gain_exp(my_coach(st), season_exp, coach_need, COACH_MAX_LEVEL)
     out = {"result": True, "promotion": {"current": cur, "next": nxt},
            # setRewardRankExp: coach.prev/current/reward.total; setRewardRankEP: money.prev +
@@ -2918,6 +2959,17 @@ def ep_match_end(mid, query, body):
     opponentTeam, motm, ...}. It comes back as match.result (PostMatchResultDefaultScene
     .onResultReceived reads exactly these fields) plus a match.reward."""
     req = json.loads(body or b"{}")
+    try:  # log goc bi cat 2000 ky tu, mat ti so -> ghi rieng ti so + ban thang tung cau thu de doi chieu
+        _h, _a = req.get("home") or {}, req.get("away") or {}
+        _g = lambda s: sum(_num(x.get("goals")) for x in (s.get("players") or []) if isinstance(x, dict))
+        _line = (f"{time.strftime('%H:%M:%S')} MATCH END {mid} home={_h.get('id')} score={_h.get('score')!r} "
+                 f"(ban thang cau thu {_g(_h)}) away={_a.get('id')} score={_a.get('score')!r} (ban thang cau thu {_g(_a)}) "
+                 f"myTeam={req.get('myTeam')} forfeits={req.get('forfeits')}")
+        print(_line, flush=True)
+        with open(LOG, "a", encoding="utf-8") as _f:
+            _f.write(_line + "\n")
+    except Exception:
+        pass
     st = _state(); lg = st.get("league2") or {}; p = lg.get("pending")
     match = st.get("match") if (st.get("match") or {}).get("id") == mid else None
     out = {"result": True}
@@ -3688,7 +3740,7 @@ def balance_first_team(team):
 
 
 SERVER_OPTIONS_FILE = os.path.join(HERE, "gamedata", "server_options.json")
-SERVER_OPTIONS_DEFAULT = {"hide_engine_cards": False, "tc_grade": True}  # tc_grade: Team Color nang cap (the +2..+20)  # GM Tool > Tran dau > Thi truong
+SERVER_OPTIONS_DEFAULT = {"hide_engine_cards": True, "tc_grade": True}  # an the mua 0 mac dinh (2026-11-08)  # tc_grade: Team Color nang cap (the +2..+20)  # GM Tool > Tran dau > Thi truong
 
 
 def server_options():
@@ -4162,7 +4214,7 @@ def trade_pool():
     if not _TRADE_POOL:
         with closing(_db()) as c:
             for s, t, o in c.execute(f"SELECT p.spid, p.teamid, {POSOVR} FROM players p"):
-                if on_market(s):
+                if on_market(s) and s >= 1000000:  # bo the mua 0 (the mau engine, hien nham '17')
                     _TRADE_POOL.setdefault(o, []).append((s, t))
     return _TRADE_POOL
 
@@ -4181,6 +4233,9 @@ def trade_props(give, rng):
         while ovr < min(lo + 8, lim["CardMaxValue"]) and rng.random() < 0.55:  # sometimes better
             ovr += 1
         s, t = rng.choice(pool[min(pool, key=lambda r: (abs(r - ovr), -r))])
+        pp = prime_pick(0, MAX_GRADE, rng, by_ovr=ovr)
+        if pp:
+            s, t = pp[1], pp[2]
         if i == 1 and boost is None:  # a club buys the lot for EP
             props.append({"teamid": t, "ep": sig3(total * rng.uniform(0.9, 1.15))})
             continue
@@ -4336,6 +4391,32 @@ def trade3_pool():
     return _T3_POOL
 
 
+# Giao dich / Trao doi: the PRIME (94) va INFINITY PRIME (76) chi ~1.4% kho the -> gan nhu khong bao gio ra.
+# Moi de nghi co PRIME_TRADE_CHANCE co hoi la mot the 2 mua nay gia tri gan nhat.
+PRIME_SEASONS = (94, 76)
+PRIME_TRADE_CHANCE = 0.3
+_T3_PRIME = []
+
+
+def prime_pick(target, gmax, rng, by_ovr=None):
+    """(price, spid, teamid, grade) the PRIME/INFINITY PRIME gan target nhat (cap <= gmax), hoac None.
+    by_ovr: chon theo chi so (giao dich thuong) thay vi theo gia."""
+    if not _T3_PRIME:
+        _T3_PRIME.extend(r for r in trade3_pool() if r[1] // 1000000 in PRIME_SEASONS)
+    if not _T3_PRIME or rng.random() >= PRIME_TRADE_CHANCE:
+        return None
+    if by_ovr is not None:
+        cands = [r for r in _T3_PRIME if r[3] <= gmax]
+        cands = [r for r in cands if abs(card_ovr(r[1]) - by_ovr) <= 3]
+        return rng.choice(cands) if cands else None
+    ok = [r for r in _T3_PRIME if r[3] <= gmax]  # da sap theo gia
+    if not ok:
+        return None
+    k = bisect.bisect_left(ok, (target,))
+    near = sorted(ok[max(0, k - 20):k + 20], key=lambda r: abs(r[0] - target))[:20]
+    return rng.choice(near)
+
+
 def trade3_props(give, scout, rng):
     """playertrade3_normal[n] cards worth total x the scout's range (capped at the reward max;
     the last of them adds an EP top-up) + PC warnet and VIP extras."""
@@ -4348,7 +4429,7 @@ def trade3_props(give, scout, rng):
     for i, boost in enumerate([None] * normal + ["igr", "vip"]):
         target = min(TRADE3_STATIC["playertrade3_limit"]["max"], total * rng.uniform(lo, hi))
         k = bisect.bisect_left(pool, (target,))
-        price, s, t, gr = rng.choice(pool[max(0, k - 10):k + 10])  # one of the 20 cards nearest in value
+        price, s, t, gr = prime_pick(target, MAX_GRADE, rng) or rng.choice(pool[max(0, k - 10):k + 10])  # 20 the gan gia nhat
         offer = {"spid": s, "grade": gr, "teamid": t, "price": price}
         if i == normal - 1 and normal > 1:
             offer["ep"] = sig3(max(1000, total * rng.uniform(0.05, 0.15)))
@@ -4485,6 +4566,7 @@ FA_SEASONS = (
     ("CC", (24,), 8547), ("17TH", (44,), 8545), ("TCO92", (49,), 8546), ("MUA", (55,), 8547), ("ML", (71,), 8549),
     ("TL", (51,), 8549), ("VL", (61,), 8549), ("CL", (89,), 8549), ("KL02", (95,), 8546), ("CEL", (31, 33), 8335),
     ("U23", (29,), 8545), ("KXI", (97,), 8546), ("MUL", (48,), 8547), ("VS", (73,), 2000006),
+    ("PRM", (94,), 8335), ("IPRM", (76,), 8335),  # PRIME / INFINITY (ma 94/76: ma 838/865 lam treo man Quan ly doi): 2 mua moi cua moi huyen thoai (icon FC Online)
 )
 # each one the season's 200 best cards (user: "all session pack  top 50 ganti menjadi top 200")
 PACKS.update({92000000 + codes[0]: (f"{label} Top 200", {"seasons": codes, "icon": icon, "top": 200, "all": True})
