@@ -50,11 +50,18 @@ STAT_KEYS = dict(zip(
     ('Acceleration|Aggresion|Agility|Balance|Ball Control|Cross|Dribble|Finishing|Free Kick|GK Diving|GK Goal Kick|GK Handling|GK Positioning|GK Reaction|Heading|Interception|Jump|Long Pass|Long Shot|Marking|Overall Rating|Penalty Kick|Positioning|Reaction|Shoot Curve|Shoot Power|Short Pass|Sliding Tackle|Sprint Speed|Stamina|Strength|Tackle|Vision|Volley').split('|'),
     ('acceleration|aggression|agility|balance|ballcontrol|crossing|dribbling|finishing|freekickaccuracy|gkdiving|gkkicking|gkhandling|gkpositioning|gkreflexes|headingaccuracy|interceptions|jumping|longpassing|longshots|marking|ovr|penalties|positioning|reactions|curve|shotpower|shortpassing|slidingtackle|sprintspeed|stamina|strength|standingtackle|vision|volleys').split('|')))
 
+def used_effects(staff, idx):
+    """Chi so cua cac dong khac (khac effectidx idx) cua 1 HLV: 3 dong khong duoc trung nhau."""
+    return {e.get('effect') for e in staff.get('effect') or [] if e.get('effectidx') != idx}
+
+
 def recruit_effects(info, grade):
     # Option groups are sourced; numeric values remain offline balancing values.
     effects = []
     for index, group in enumerate(info['boost_groups'][:min(3, grade)], 1):
         choices = [STAT_KEYS[label] for label in group if label in STAT_KEYS]
+        taken = {e['effect'] for e in effects}
+        choices = [c for c in choices if c not in taken] or choices  # 3 dong khong trung (nhom chi 1 chi so trung thi danh chiu)
         if choices:
             # HLV mod (power): muc cong rieng theo dang cap HLV (+15..+95), tang dan theo so sao
             power = info.get('power')
@@ -313,13 +320,14 @@ def study_boost(staff, rule):
     info = CATALOG.get(str(staff.get('stfid')))
     if info is None:
         return None
+    taken = used_effects(staff, idx)  # khong doi sang chi so dong khac dang co
     choices = [STAT_KEYS[label] for label in info['boost_groups'][idx - 1]
-               if label in STAT_KEYS and STAT_KEYS[label] != current['effect']]
+               if label in STAT_KEYS and STAT_KEYS[label] != current['effect'] and STAT_KEYS[label] not in taken]
     if not choices and current['effect'] != 'ovr':
         # nhom chi co 1 chi so (vd Van Gaal: Toc do) -> doi sang chi so cung loai (thu mon / cau thu thuong)
         gk = current['effect'].startswith('gk')
         choices = [STAT_KEYS[k] for k in STAT_KEYS if k != 'Overall Rating' and k.startswith('GK ') == gk
-                   and STAT_KEYS[k] != current['effect']]
+                   and STAT_KEYS[k] != current['effect'] and STAT_KEYS[k] not in taken]
     if not choices:
         return None
     return {'effectidx': idx, 'boosttype': 'change', 'effect': random.choice(choices), 'inc': 0}
@@ -503,6 +511,9 @@ def custom_groups(groups):
         if not isinstance(g, list) or not 1 <= len(g) <= 5 or any(x not in STAT_KEYS for x in g):
             raise ValueError('Chỉ số hỗ trợ không hợp lệ.')
         out.append(list(dict.fromkeys(g)))
+    singles = [g[0] for g in out if len(g) == 1]
+    if len(singles) != len(set(singles)):
+        raise ValueError('3 chỉ số hỗ trợ phải khác nhau.')
     return out
 
 
@@ -517,7 +528,8 @@ def random_boost_groups(position):
             and not info.get('custom') and any(info.get('boost_groups') or [])]
     if not pool:
         first = random.choice(STAT_POOL)
-        return [[first], random.sample(STAT_POOL, 5), random.sample(STAT_POOL, 5)]
+        rest = [k for k in STAT_POOL if k != first]
+        return [[first], random.sample(rest, 5), random.sample(rest, 5)]
     return [list(g) for g in random.choice(pool)]
 
 

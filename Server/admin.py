@@ -352,12 +352,15 @@ def seasons(p):
                         if count.get(c)]}
 
 
+SEASON_NEW = (18, 19, 94, 76)  # 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME: mua moi them, xep dau danh sach
 SEASON_YEARS = (300, 325, 6, 7, 8, 9, 10, 11, 14, 15, 16, 41, 88)  # FO4 26 LIVE, 25 LIVE dau tien (nhu trong game); 2006 .. 2016, 2016 phu, 2017 (nhu static_roster trong game)
 
 
 def season_order(code, v):
     """Thu tu mua tren GM Tool (giong danh sach trong game): mua theo nam truoc (2006 -> 2017), roi mua
-    dac biet / huyen thoai theo ten (bo dau, A-Z), the goc cuoi cung."""
+    dac biet / huyen thoai theo ten (bo dau, A-Z), the goc cuoi cung. Mua moi them (SEASON_NEW) len dau."""
+    if code in SEASON_NEW:
+        return (-1, SEASON_NEW.index(code), "")
     if code in SEASON_YEARS:
         return (0, SEASON_YEARS.index(code), "")
     if v.get("kind") == "year":
@@ -1424,7 +1427,10 @@ def staffs(p):
                                                    "amount": e.get("amount"), "choices": _staff_choices(x, e.get("effectidx"))}
                                                   for e in x.get("effect") or []]}
            for x in t.get("staffs", [])]
-    return {"staffs": out, "max": t.get("maxstaff", 30)}
+    # o chon chi so o bang HLV cua CLB: ma noi bo (= effect cua HLV), KHONG phai nhan tieng Anh cua catalog
+    # (truoc day dung nhan -> khong khop -> o chon hien muc dau "Chuyen dai", doi chi so bi tu choi)
+    keys = sorted({v for v in ss.STAT_KEYS.values()}, key=lambda k: STAT_VI.get(k, k))
+    return {"staffs": out, "max": t.get("maxstaff", 30), "stats": [{"key": k, "name": STAT_VI.get(k, k)} for k in keys]}
 
 
 @api("staff_add")
@@ -1499,6 +1505,8 @@ def staff_effect(p):
     e = next((e for e in x.get("effect") or [] if e.get("effectidx") == idx), None)
     if e is None:
         raise AdminError("HLV chưa mở dòng chỉ số này")
+    if p["key"] in _ss().used_effects(x, idx):
+        raise AdminError(f"HLV đã có chỉ số {stat_vi(p['key'])} ở dòng khác. 3 chỉ số phải khác nhau.")
     e["effect"] = p["key"]
     hc._save(st)
     return {"ok": True}
@@ -1517,6 +1525,8 @@ def staff_set(p):
     key = p.get("key") or e.get("effect")
     if key not in set(ss.STAT_KEYS.values()):
         raise AdminError("Chỉ số không hợp lệ")
+    if p.get("key") and key in ss.used_effects(x, idx):
+        raise AdminError(f"HLV đã có chỉ số {stat_vi(key)} ở dòng khác. 3 chỉ số phải khác nhau.")
     amount = as_int(p.get("amount", e.get("amount")), 1, 99, "Mức cộng")
     e["effect"], e["amount"], e["open"] = key, amount, True
     if amount > ss.amount_cap(x):
@@ -1664,3 +1674,6 @@ def _safe(fn):
         fn()
     except Exception as e:
         print("Không dựng được danh sách thẻ:", e, flush=True)
+
+
+import admin_db  # noqa: E402,F401  GM Tool > Database (dang ky API khi nap admin)

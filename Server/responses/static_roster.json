@@ -18,6 +18,22 @@
    "close": "2099-12-31T00:00:00.000Z"
   },
   {
+   "season": "$TRANSFERMARKET_SEASON_18",
+   "value": [
+    18
+   ],
+   "open": "2013-01-01T00:00:00.000Z",
+   "close": "2099-12-31T00:00:00.000Z"
+  },
+  {
+   "season": "$TRANSFERMARKET_SEASON_19",
+   "value": [
+    19
+   ],
+   "open": "2013-01-01T00:00:00.000Z",
+   "close": "2099-12-31T00:00:00.000Z"
+  },
+  {
    "season": "$TRANSFERMARKET_SEASON_300",
    "value": [
     300

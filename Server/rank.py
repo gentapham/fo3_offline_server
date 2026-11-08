@@ -10,8 +10,7 @@
 - Giao dien: LadderMatchController (data/ui/libs/Module.big) + cac man LadderMatch*.big; phong =
   RoomController (POST /room, /room/<id>/matchmaking); tran = loai PvP Ladder_PvP_1v1 /
   Ladder_MGR_PvP_1v1 (man doi hinh -> man cai dat MultiplayGameSettingScreen -> da).
-- Can them ban va client MenuScreen.big (menuClickHandler hien OFFLINE_ONLINE_ONLY cho
-  ladder1on1/manager/ladder) - xem bao cao port. Feature flags them o GET /account (tat duoc o
+- Phong cung dung cho Giao huu / dau voi may / KOTH / Exhibition (room_kind; xem multiplay.py). Feature flags them o GET /account (tat duoc o
   GM Tool > Tran dau > Xep hang).
 Cai dat: gamedata/rank_settings.json {enabled, chat}.
 """
@@ -669,6 +668,34 @@ def ep_vm_ladder_info(vid, query, body):
     return hc._json({"sid": str(ladder_season()[0]), "ladder_pvp_1v1": {"rank": rank, "elo": vm["elo"][0]}})
 
 
+def ep_my_ladder_info(cid, query, body):
+    """GET /ladder/<id cua toi>/info (popup ho so cua chinh minh): hang + Elo Rank 1vs1 mua nay."""
+    st = hc._state()
+    if not any(str(c.get("_id")) == cid for c in st.get("coaches", [])):
+        return hc._json({})
+    lad = my_ladder(st)
+    return hc._json({"sid": str(ladder_season()[0]),
+                     "ladder_pvp_1v1": {"rank": my_rank(st, 0) if lad["games"][0] else 0, "elo": lad["elo"][0]}})
+
+
+def ep_my_coach(cid, query, body):
+    """GET /coach/<id cua HLV dang choi> (kinh lup o o cua minh trong phong Giao huu / Exhibition / Rank ->
+    popup Thong tin doi): truoc day khong co route -> {} -> popup trong + loi. Tra nhu ep_vm_coach."""
+    st = hc._state()
+    slot = next((c["slot"] for c in st.get("coaches", []) if str(c.get("_id")) == cid), None)
+    if slot is None:
+        return hc._json({})
+    me = hc.coach_me(st, slot)
+    team = me["team"]
+    if "path=team" in query:
+        return hc._json(team)
+    return hc._json({"id": me["id"], "_id": me["id"], "name": me["name"], "teamid": me["teamid"],
+                     "badges": me.get("badges") or [], "currentbadge": me.get("currentbadge") or 0,
+                     "levelinfo": me["levelinfo"], "team": team, "kit": team.get("kit") or me.get("kit"),
+                     "summary": team.get("summary") or me.get("summary"), "formations": team.get("formations", []),
+                     "teamsquadlist": me.get("teamsquadlist") or hc.squad_presets(team)})
+
+
 def ep_vm_coach(vid, query, body):
     """GET /coach/<vm>?path=team: doi; GET /coach/<vm>: HLV nhu /coach/me (popup doi hinh)."""
     vm = vm_by_id(vid)
@@ -677,7 +704,10 @@ def ep_vm_coach(vid, query, body):
     team = vm_side(vm)["team"]
     if "path=team" in query:
         return hc._json(team)
+    # badges: tab Nhiem vu cua popup ho so (CoachAchievementBadgePopup) lap _myBadges = coach.badges;
+    # thieu -> TypeError #1009 + popup "chua ho tro offline". HLV ao chua co huy hieu nao.
     return hc._json({"id": vm["_id"], "_id": vm["_id"], "name": vm["name"], "teamid": vm["teamid"],
+                     "badges": [], "currentbadge": 0,
                      "levelinfo": {"level": vm["level"], "exp": 0}, "team": team, "kit": team.get("kit"),
                      "summary": team.get("summary"), "formations": team.get("formations", []),
                      "teamsquadlist": team.get("teamsquadlist") or hc.squad_presets(team)})
@@ -693,16 +723,140 @@ def ladder_room_reply(room):
     return hc._json({"result": True, "resources": [{"uri": f"/room/{room['roomid']}", "body": room}]})
 
 
+def room_kind(room_type):
+    """Loai phong (RoomController.createARoom: POST /room {type}): ladder (Rank), koth (esports2 =
+    King of the Hill), exhibition (pvp_exhibition), vscom (pve*: dau voi may o phong tu tao),
+    friendly (Giao huu: dau nhanh / ngau nhien pvp_random / phong tu tao pvp_custom, pvp_referee)."""
+    t = str(room_type)
+    return ("ladder" if "ladder" in t else "koth" if t == "esports2" else "exhibition" if t == "pvp_exhibition"
+            else "vscom" if t.startswith("pve") else "friendly")
+
+
+def room_slots(room_type, want):
+    """So nguoi moi ben: Giao huu / dau voi may luon 1 (ban offline la phien 1 nguoi: minh dieu khien ca
+    doi, 2vs2..5vs5 can nguoi that) -> dau tich o man phong luon o 1on1. Rank / KOTH / Exhibition giu nhu client gui."""
+    if room_kind(room_type) in ("friendly", "vscom"):
+        return 1
+    try:
+        return max(1, int(want or 1))
+    except (TypeError, ValueError):
+        return 1
+
+
+def _room_slotsize(st, room, req):
+    """PUT /room/<id>/slotsize {slotsize}: giu 1 (room_slots); phong tra lai lam client ve lai dau tich 1on1."""
+    room["slotsize"] = room_slots(room["type"], req.get("slotsize"))
+
+
+def room_ai_team(room):
+    """CLB o o chon may cua phong (chi so vao danh sach SORTNATION / SORTLEAGUE / SORTTEAM cua client, bo 2111)."""
+    idx = (room.get("AI") or {}).get("index") or {}
+
+    def pick(xs, k):
+        xs = [x for x in xs if int(x) != 2111]
+        return xs[max(0, min(int(idx.get(k) or 0), len(xs) - 1))] if xs else None
+    nations = hc.club_index()
+    nation = pick([n for n, _ in nations], "nation")
+    league = pick([lid for lid, _ in dict(nations).get(nation, [])], "league")
+    teams = json.loads(hc.ep_sortteam("", b"")[1]).get(str(league)) or [hc.my_teamid(hc._state())]
+    return int(pick(teams, "team"))
+
+
+def room_vm(vm):
+    """HLV ao trong phong (o phong tu tao doc summary.id va summary.ovr)."""
+    return {"id": vm["_id"], "_id": vm["_id"], "name": vm["name"], "teamid": vm["teamid"],
+            "levelinfo": {"level": vm["level"], "exp": 0}, "captain": True,
+            "summary": {"id": vm["teamid"], "ovr": vm_ovr(vm["_id"])}}
+
+
+def room_change(change):
+    """Handler PUT /room/<id>/...: change(st, room, req, *groups) tren phong cua toi, tra lai phong."""
+    def handler(*args):
+        *groups, query, body = args
+        st = hc._state(); room = st.get("room")
+        if room is None:
+            return hc._json({"result": False, "reason": "invalid room"})
+        try:
+            req = json.loads(body or b"{}")
+        except ValueError:
+            req = {}
+        out = change(st, room, req if isinstance(req, dict) else {}, *groups)
+        if st.get("room") is not None or out is not None:
+            hc._save(st)
+        return out or ladder_room_reply(room)
+    return handler
+
+
+def _room_type(st, room, req):
+    """PUT /room/<id>/type {type}: vs Ban / vs May / vs Ngau nhien trong phong tu tao."""
+    room["type"] = str(req.get("type") or room["type"])
+    room["side"]["left"]["ready"] = room["side"]["right"]["ready"] = False
+    if room_kind(room["type"]) == "vscom":
+        room["side"]["right"]["players"] = []
+
+
+def _room_ai(st, room, req):
+    """PUT /room/<id>/AI {index}: quoc gia / giai / CLB / do kho (0..4) cua may."""
+    room.setdefault("AI", {"index": {}})["index"].update(
+        {k: int(v) for k, v in (req.get("index") or {}).items()
+         if k in ("nation", "league", "team", "difficulty") and str(v).lstrip("-").isdigit()})
+
+
+def _room_ready(st, room, req, side):
+    """PUT /room/<id>/side/<side>/ready {ready}: San sang voi ban da moi, hoac Bat dau voi may -> 1 giay sau co tran."""
+    if side not in room["side"]:
+        return hc._json({"result": False, "reason": "invalid side"})
+    room["side"][side]["ready"] = ready = bool(req.get("ready", True))
+    kind = room_kind(room["type"])
+    if ready and side == "left" and room["stage"] == "room" and (
+            kind == "vscom" or kind in ("friendly", "exhibition") and room["side"]["right"]["players"]):
+        room["search"] = os.urandom(4).hex()
+        _later(1, ladder_found, room["search"])
+
+
+def _room_leave(st, room, req):
+    """PUT /room/<id>/leave: roi phong (RoomProxy thay minh khong con trong phong: ON_LEAVE)."""
+    st.pop("room", None)
+    hc._save(st)
+    gone = dict(room, side={**room["side"], "left": {"players": [], "ready": False}})
+    return hc._json({"result": True, "resources": [{"uri": f"/room/{room['roomid']}", "body": gone}]})
+
+
+def _room_invite(st, room, req, vid):
+    """POST /room/<id>/invite/<coachid>: ban (HLV ao) vao ben phai sau 2-4 giay, san sang."""
+    if not vm_by_id(vid) or room_kind(room["type"]) not in ("friendly", "exhibition"):
+        return hc._json({"result": False, "reason": "invalid coach"})
+    _later(random.uniform(2, 4), room_join, room["roomid"], vid)
+    return hc._json({"result": True})
+
+
+def room_join(roomid, vid):
+    try:
+        with hc.STATE_LOCK:
+            st = hc._state(); room = st.get("room"); vm = vm_by_id(vid)
+            if room and room["roomid"] == roomid and vm and room["stage"] == "room" \
+                    and room_kind(room["type"]) in ("friendly", "exhibition"):
+                room["side"]["right"].update(players=[room_vm(vm)], ready=True)
+                if room_kind(room["type"]) == "exhibition":  # HLV ao tu chon 1 CLB de cu
+                    room["side"]["right"]["authTeamId"] = hc.multiplay.exhibition_pick(vid, room["side"]["left"].get("authTeamId"))
+                hc._save(st)
+                hc.messenger_push(f"/room/{roomid}", room)
+    except Exception as e:
+        print(f"room join: {e!r}", flush=True)
+
+
 def ep_room(query, body):
     """POST /room {slotsize, type, properties}: phong cua toi, stage "room"."""
     if not settings()["enabled"]:
         return hc.ep_online_only(query, body)
     req = json.loads(body or b"{}")
     st = hc._state(); me = hc.coach_me(st, hc._default_slot(st))
-    i = ladder_index(req.get("type"))
-    room = {"roomid": int(time.time()) % 1000000, "type": req.get("type", "pvp_ladder_mgr"), "stage": "room",
-            "slotsize": int(req.get("slotsize") or 1), "option": {}, "publicset": True, "state": None,
-            "ladder": {"elo": my_ladder(st)["elo"][i]}, "matchmaking": None,
+    rtype = req.get("type", "pvp_ladder_mgr")
+    i = ladder_index(rtype)
+    room = {"roomid": int(time.time()) % 1000000, "type": rtype, "stage": "room",
+            "slotsize": room_slots(rtype, req.get("slotsize")), "option": {}, "publicset": True, "state": None,
+            **({"ladder": {"elo": my_ladder(st)["elo"][i]}} if room_kind(rtype) == "ladder" else {}),
+            "AI": {"index": {"nation": 0, "league": 0, "team": 0, "difficulty": 2}}, "matchmaking": None,
             "side": {"left": {"players": [room_player(me)], "ready": False}, "center": {"players": []},
                      "right": {"players": [], "ready": False}, "referee": {"players": []}}}
     st["room"] = room
@@ -782,7 +936,9 @@ def ep_room_back(query, body):
     res = hc.coach_me_resources(st, hc._default_slot(st)) + [{"uri": "/ladder/my/info", "body": ladder_my_info(st)}]
     if room:
         room.update(stage="room", matchmaking=None, search=None)
-        room["side"]["right"]["players"] = []
+        room["side"]["left"]["ready"] = False
+        if room_kind(room["type"]) in ("ladder", "koth") or room["type"] == "pvp_random":
+            room["side"]["right"]["players"] = []  # ban da moi / may o phong tu tao thi giu lai
         hc._save(st)
         res.append({"uri": f"/room/{room['roomid']}", "body": room})
     vm_say_result()
@@ -794,7 +950,8 @@ def ladder_found(search):
     try:
         with hc.STATE_LOCK:
             st = hc._state(); room = st.get("room")
-            if room and room.get("search") == search and room["stage"] == "searching":
+            if room and room.get("search") == search and (  # chua huy; o phong: San sang chua bo
+                    room["stage"] == "searching" or room["stage"] == "room" and room["side"]["left"].get("ready")):
                 ladder_match(st, room)
                 hc._save(st)
                 mid = st["match"]["id"]
@@ -823,24 +980,55 @@ def ladder_squad(mid):
         print(f"ladder squad: {e!r}", flush=True)
 
 
+MATCH_TYPES = {"friendly": "Friendly_PvP_1v1", "vscom": "Friendly_PvE_1v1", "koth": "Regional_League",
+               "exhibition": "Exhibition_PvP"}
+
+
 def ladder_match(st, room):
-    """Tran voi HLV ao gan Elo minh nhat, vao phong (stage matched)."""
-    i = ladder_index(room["type"])
+    """Tran vao phong (stage matched): Rank voi HLV ao gan Elo minh nhat; Giao huu voi ban da moi
+    hoac 1 HLV ao gan Elo; dau voi may = CLB o o chon may; KOTH = HLV ao cung vung gan diem KOTH;
+    Exhibition = moi ben 1 CLB da chon (doi hinh cua CLB do)."""
+    mp = hc.multiplay
+    i, kind = ladder_index(room["type"]), room_kind(room["type"])
     slot = hc._default_slot(st)
     me = hc.coach_me(st, slot); teamid = me["teamid"]
-    vm = ladder_opponent(st, i)
     user = {"id": me["id"], "name": me["name"], "levelinfo": me["levelinfo"]}
-    match = hc.new_match("League_2_league_MGR" if i == 3 else "League_2_league",
-                         hc.match_side(st["teams"][str(slot)], teamid, user, hc._tactics(st)[1]), vm_side(vm, i))
+    mine = hc.match_side(st["teams"][str(slot)], teamid, user, hc._tactics(st)[1])
+    if kind == "vscom":
+        vm, away = None, room_ai_team(room)
+        match = hc.new_match("League_2_league", mine, hc.match_side(hc.roster_team(away), away))
+    elif kind == "exhibition":
+        guest = room["side"]["right"]["players"]
+        vm = (vm_by_id(guest[0]["id"]) if guest else None) or ladder_opponent(st, i)
+        lt = room["side"]["left"].get("authTeamId") or mp.exhibition_teams()[0]
+        away = room["side"]["right"].get("authTeamId") or mp.exhibition_pick(vm["_id"], lt)
+        mine = hc.match_side(hc.roster_team(lt), lt, user, [hc.default_tactic(0)])
+        theirs = hc.match_side(hc.roster_team(away), away, tactics=[style_tactic(vm_style(vm))])
+        theirs["players"] = [{"id": vm["_id"], "name": vm["name"], "levelinfo": {"level": vm["level"], "exp": 0}}]
+        mine["team"]["teamcolors"] = []
+        match = hc.new_match("League_2_league", mine, theirs)
+    else:
+        guest = room["side"]["right"]["players"] if kind == "friendly" else []
+        vm = (vm_by_id(guest[0]["id"]) if guest else None) or (mp.koth_opponent(st) if kind == "koth" else ladder_opponent(st, i))
+        if kind == "koth":
+            i = mp.KOTH_LADDER
+        match = hc.new_match("League_2_league_MGR" if i == 3 else "League_2_league", mine,
+                             vm_side(vm, i if kind == "ladder" else None))
+        away = vm["teamid"]
     hc.apply_prematch(st, match)
-    match["gamesettings"]["difficulty"] = 10 + min(14, (vm["elo"][i] - LADDER_START) // 55)  # muc Giai dau 10..24
+    # muc Giai dau 10..24 theo Elo doi thu; dau voi may: do kho o chon may 0..4 (Nghiep du..Huyen thoai)
+    match["gamesettings"]["difficulty"] = (max(0, min(4, int(room.get("AI", {}).get("index", {}).get("difficulty") or 0)))
+                                           if kind == "vscom" else 10 + min(14, (vm["elo"][i] - LADDER_START) // 55))
     # man cai dat Xep hang cho doi san/thoi diem/thoi tiet/thoi luong (MultiplayGameSettingScreen)
     match["gamesettings"].update(stadiumchange=True, timechange=True, weatherchange=True, matchtimechange=True)
-    match["leagueparam"] = {"matchtype": "ladder", "round": 0, "home": teamid, "away": vm["teamid"], "leagueid": 0}
-    match["elo"] = {"left": {"rating": my_ladder(st)["elo"][i]}, "right": {"rating": vm["elo"][i]}}
+    match["leagueparam"] = {"matchtype": "ladder" if kind == "ladder" else "friendly", "round": 0, "home": teamid,
+                            "away": away, "leagueid": 0}
+    if vm:
+        mine_elo = mp.my_koth(st)["elo"] if kind == "koth" else my_ladder(st)["elo"][i]
+        match["elo"] = {"left": {"rating": mine_elo}, "right": {"rating": vm["elo"][i]}}
     # loai PvP: MatchController.connectToTheSession mo session native; doc user "ip", "id", "name" la
     # chuoi, "privateip" la mang, va summary.ladderelo (5 Elo) cho loai ladder
-    match["type"] = "Ladder_MGR_PvP_1v1" if i == 3 else "Ladder_PvP_1v1"
+    match["type"] = ("Ladder_MGR_PvP_1v1" if i == 3 else "Ladder_PvP_1v1") if kind == "ladder" else MATCH_TYPES[kind]
     match["id"] = str(int(time.time()) % 1000000000)  # relaySessionInfo.matchid = parseInt(resourceId)
     match["relayServer"] = {"address": "127.0.0.1:28010", "forceRelay": True}  # doc, khong ket noi
     for side in match["side"].values():
@@ -850,16 +1038,23 @@ def ladder_match(st, room):
             p["rankedcards"] = None
     for p in match["side"]["left"]["players"]:
         p.update(ip="127.0.0.1", privateip=[], summary={"ladderelo": my_ladder(st)["elo"][:5]})
+    if kind == "koth":  # diem KOTH cho native (matchstats Regional_League) + the lay the luc tu es2stamina
+        for side, elo in (("left", mp.my_koth(st)["elo"]), ("right", vm["elo"][i])):
+            for p in match["side"][side]["players"]:
+                p["matchstats"] = [{"type": "Regional_League", "elorating": elo}]
+            for card in match["side"][side]["team"]["players"]:
+                card["es2stamina"] = card.get("stamina", 1)
     # doi thu khong ten khi "created": connectToTheSession bo user khong ten -> session 1 nguoi, AI
     # cua client da ben kia; ladder_squad tra ten + ready lai
     for p in match["side"]["right"]["players"]:
         p.pop("name", None)
     match["side"]["right"]["ready"] = False
     st["match"] = match
-    st["ladder_pending"] = {"id": match["id"], "index": i, "opponent": vm["_id"]}
+    st["ladder_pending"] = {"id": match["id"], "index": i, "opponent": vm["_id"] if vm else None, "kind": kind,
+                            "teamid": away, "record": {"vscom": "vscom", "koth": "koth", "exhibition": "exhibition"}.get(
+                                kind, "quick" if room["type"] in ("pvp_random", "pvp_quick") else "custom")}
     VM_CHAT_AFTER.clear()
-    room["side"]["right"]["players"] = [{"id": vm["_id"], "_id": vm["_id"], "name": vm["name"], "teamid": vm["teamid"],
-                                         "levelinfo": {"level": vm["level"], "exp": 0}, "captain": True}]
+    room["side"]["right"]["players"] = [room_vm(vm)] if vm else []
     room.update(stage="matched", search=None, matchmaking={"resources": [{"uri": f"/match/{match['id']}", "body": match}]})
     return match
 
@@ -869,22 +1064,31 @@ def ladder_result(st, mid, req):
     p = st.get("ladder_pending") or {}
     if p.get("id") != mid:
         return None
-    vm = vm_by_id(p.get("opponent")) or {"elo": [LADDER_START] * LADDER_COUNT, "teamid": None}
+    kind = p.get("kind", "ladder")
+    vm = vm_by_id(p.get("opponent")) or {"elo": [LADDER_START] * LADDER_COUNT, "teamid": p.get("teamid")}
+    if kind in ("exhibition", "vscom"):  # doi ben kia da CLB da chon / CLB cua may
+        vm = {**vm, "teamid": p.get("teamid")}
     h, a = req.get("home") or {}, req.get("away") or {}
     mine, theirs = hc._num(h.get("score")), hc._num(a.get("score"))
     sh, sa = hc._num(h.get("shootout")), hc._num(a.get("shootout"))
-    if str(a.get("id")) == str(h.get("id")):  # cung CLB voi HLV ao: id khong phan biet duoc -> myTeam
+    if str(a.get("id")) == str(h.get("id")):  # cung CLB voi doi thu: id khong phan biet duoc -> myTeam
         if req.get("myTeam") == "away":
             mine, theirs, sh, sa = theirs, mine, sa, sh
     elif str(h.get("id")) == str(vm["teamid"]):
         mine, theirs, sh, sa = theirs, mine, sa, sh
-    score = ladder_record(st, p["index"], vm, mine, theirs, sh, sa)
+    if kind == "ladder":
+        score = ladder_record(st, p["index"], vm, mine, theirs, sh, sa)
+    else:
+        score = 1 if (mine, sh) > (theirs, sa) else 0 if (mine, sh) < (theirs, sa) else 0.5
+        hc.multiplay.record_result(st, mid, p, vm, mine, theirs, sh, sa)
     st.pop("ladder_pending", None)
     VM_CHAT.pop(mid, None)
     if "_id" in vm:
         VM_CHAT_AFTER["last"] = {"vm": vm["_id"], "outcome": {1: "loss", 0: "win", 0.5: "draw"}[score]}
     if st.get("room"):
-        st["room"].update(stage="room", matchmaking=None, ladder={"elo": my_ladder(st)["elo"][p["index"]]})
+        st["room"].update(stage="room", matchmaking=None)
+        if "ladder" in st["room"]:
+            st["room"]["ladder"] = {"elo": my_ladder(st)["elo"][p["index"]]}
     return score
 
 
@@ -1034,10 +1238,20 @@ def install(module):
         (re.compile(rf"/coach/{vid}/summary"), ep_vm_summary),
         (re.compile(rf"/ladder/{vid}/info"), ep_vm_ladder_info),
         (re.compile(rf"/coach/{vid}"), ep_vm_coach),
+        (re.compile(r"/coach/([0-9a-f]{24})"), ep_my_coach),
+        (re.compile(r"/ladder/([0-9a-f]{24})/info"), ep_my_ladder_info),
         (re.compile(rf"/achievement/{vid}"), lambda v, q, b: hc._json({"summary": {"done": 0}})),
         (re.compile(r"/room/\d+/matchmaking"), ep_matchmaking),
         (re.compile(r"/room/\d+/back"), ep_room_back),
+        # Giao huu / dau voi may / Exhibition: phong tu tao
+        (re.compile(r"/room/\d+/type"), room_change(_room_type)),
+        (re.compile(r"/room/\d+/AI"), room_change(_room_ai)),
+        (re.compile(r"/room/\d+/side/(\w+)/ready"), room_change(_room_ready)),
+        (re.compile(r"/room/\d+/leave"), room_change(_room_leave)),
+        (re.compile(r"/room/\d+/invite/(\w+)"), room_change(_room_invite)),
+        (re.compile(r"/room/\d+/slotsize"), room_change(_room_slotsize)),
         (re.compile(r"/room/(\d+)/?"), ep_room_get),
+        (re.compile(r"/room/\d+/[\w/]+"), room_change(lambda st, room, req: None)),  # slotsize, drawmode...: giu nguyen
         # tran Rank co id so (relaySessionInfo.matchid = parseInt): GET /match/<id>
         (re.compile(r"/match/(\d{1,10})"), hc.ep_match_get),
     ]

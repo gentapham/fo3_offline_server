@@ -346,7 +346,24 @@ def ep_achievement_me(query, body):
 
 
 def ep_achievement_other(cid, query, body):
-    return hc._json({"summary": {"done": 0, "total": 0, "rewardable": 0}, "achievement": []})
+    """GET /achievement/<HLV khac | chinh toi> (tab Nhiem vu cua popup ho so, CoachAchievementBadgePopup):
+    danh sach rong -> TypeError #1009 + popup "chua ho tro offline". Chinh toi: thanh tich that; HLV ao:
+    du cac thanh tich, chua lam duoc gi."""
+    st = hc._state()
+    mine = achievement_me(st)
+    me = next((c for c in st.get("coaches", []) if str(c.get("_id")) == cid), None)
+    # makeBadgeList: moi huy hieu (/static/db/BADGES asset = nhom lv/upg/tv/gol) doc myAchievement co id = nhom
+    # roi .completedat KHONG kiem tra null -> TypeError #1009 neu thieu. Them 1 dong cho moi nhom huy hieu.
+    done = missions_state(st).get("groups", {}) if me is not None else {}
+    group_rows = [{"id": g, "aon": True, "complete": g in done, "completedat": done.get(g),
+                   "progress": {"grade": 1, "detail": {"current": int(g in done), "total": 1}},
+                   "rewards": {"available": False, "grade": 0}} for g in BADGE_GROUPS]
+    if me is not None:
+        return hc._json({"summary": mine["summary"], "achievement": mine["achievement"] + group_rows})
+    rows = [{"id": a["id"], "aon": a.get("aon", True), "complete": False,
+             "progress": {"grade": 1, "detail": {"current": 0, "total": (a.get("progress") or {}).get("detail", {}).get("total", 1)}},
+             "rewards": {"available": False, "grade": 0}} for a in mine.get("achievement", [])]
+    return hc._json({"summary": {"done": 0, "total": len(rows), "rewardable": 0}, "achievement": rows + group_rows})
 
 
 def ep_static_achievement(query, body):

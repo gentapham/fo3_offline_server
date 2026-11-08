@@ -2582,9 +2582,25 @@ def ep_l2_leaders(query, body):
     entry = lambda r, v: {"spid": r["spid"], "teamid": me, "value": v}
     squad = (st["teams"].get(str(_default_slot(st))) or {"squad": {"positions": []}})["squad"]["positions"]
     out = {}
+    # setBestEleven lap DUNG 11 lan qua FW+MF+DF+GK (khong kiem tra do dai): thieu 1 nguoi -> undefined ->
+    # TypeError, ca tab "Chi so chung" trong. Moi tuyen du so o trong so do: thieu thi lay cau thu da chinh
+    # cua tuyen do (diem 0.0); tong luon 11 (so do khong du 11 o -> bu bang cau thu da chinh con lai).
+    starters = [s for s in squad if s.get("pos", POS_SUB) < POS_SUB and s.get("spid")]
+    used = set()
     for line, rng in LINES.items():
-        slots = sum(s["pos"] in rng for s in squad)
-        out[line] = [entry(r, avg(r)) for r in sorted((r for r in recs if r["role"] in rng), key=avg, reverse=True)[:slots]]
+        slots = sum(s["pos"] in rng for s in starters)
+        rows = [entry(r, avg(r)) for r in sorted((r for r in recs if r["role"] in rng), key=avg, reverse=True)[:slots]]
+        for s in starters:
+            if len(rows) >= slots:
+                break
+            if s["pos"] in rng and s["spid"] not in {x["spid"] for x in rows}:
+                rows.append({"spid": s["spid"], "teamid": me, "value": 0.0})
+        out[line] = rows
+        used |= {x["spid"] for x in rows}
+    extra = [s for s in starters if s["spid"] not in used]
+    while sum(len(out[k]) for k in LINES) < 11 and extra:
+        s = extra.pop(0)
+        out[next(k for k, rng in LINES.items() if s["pos"] in rng)].append({"spid": s["spid"], "teamid": me, "value": 0.0})
     stat = {"ratings": avg, "goals": lambda r: r["goals"], "assists": lambda r: r["assists"],
             "tackles": lambda r: r["tackles"], "saves": lambda r: r["saves"],
             "passes": lambda r: round(r["passes"] / r["passtries"], 2) if r["passtries"] else 0}  # ti le chuyen dung
@@ -4393,7 +4409,7 @@ def trade3_pool():
 
 # Giao dich / Trao doi: the PRIME (94) va INFINITY PRIME (76) chi ~1.4% kho the -> gan nhu khong bao gio ra.
 # Moi de nghi co PRIME_TRADE_CHANCE co hoi la mot the 2 mua nay gia tri gan nhat.
-PRIME_SEASONS = (94, 76)
+PRIME_SEASONS = (94, 76, 18, 19)  # + 26 TOTY / 26 TOTS
 PRIME_TRADE_CHANCE = 0.3
 _T3_PRIME = []
 
@@ -4567,7 +4583,22 @@ FA_SEASONS = (
     ("TL", (51,), 8549), ("VL", (61,), 8549), ("CL", (89,), 8549), ("KL02", (95,), 8546), ("CEL", (31, 33), 8335),
     ("U23", (29,), 8545), ("KXI", (97,), 8546), ("MUL", (48,), 8547), ("VS", (73,), 2000006),
     ("PRM", (94,), 8335), ("IPRM", (76,), 8335),  # PRIME / INFINITY (ma 94/76: ma 838/865 lam treo man Quan ly doi): 2 mua moi cua moi huyen thoai (icon FC Online)
+    ("26TY", (18,), 8335), ("26TS", (19,), 8335),  # 26 TOTY / 26 TOTS (FO4 854/866, add_toty.py): the hien hanh +6 / +4
 )
+OWN_SEASONS_FILE = os.path.join(HERE, "gamedata", "seasons.json")  # GM Tool > Database: mua tu tao (ma < 100)
+
+
+def own_seasons():
+    try:
+        with open(OWN_SEASONS_FILE, encoding="utf-8") as f:
+            d = json.load(f)
+        return {int(k): v for k, v in d.items() if str(k).isdigit() and isinstance(v, dict)} if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+FA_SEASONS += tuple((str(v.get("tag") or f"S{k}")[:6], (k,), 8335) for k, v in sorted(own_seasons().items())
+                    if k not in {c for _, cs, _ in FA_SEASONS for c in cs})  # goi Top 200 + nhan (tu lan bat server sau)
 # each one the season's 200 best cards (user: "all session pack  top 50 ganti menjadi top 200")
 PACKS.update({92000000 + codes[0]: (f"{label} Top 200", {"seasons": codes, "icon": icon, "top": 200, "all": True})
               for label, codes, icon in FA_SEASONS})
@@ -5158,8 +5189,17 @@ def chained_entry(st, first):
     return {**parts[0], "step": min(done, len(steps) - 1), "chained": parts[1:]}
 
 
-# 92000300 = goi "26L Top 200": banner dau tien (trang 1) gioi thieu SOGE Store (sogestore.vn), bam vao mo goi nay
-PROMO_BANNERS = {92000300: (1, "fo3off_soge"), 7675: (3, "fo3off_7675"), 8335: (4, "fo3off_8335"), 8334: (5, "fo3off_8334")}
+# Banner tab Nen mua: trang 1 = SOGE Store - muc rieng shopcategory "SOGELINK" (khong tab nao khac liet ke):
+# Module.big da va (tools/menu_patch/patch_shoplink.py) -> bam vao goi GET /game/inweburl/soge, server mo
+# https://sogestore.vn/ (browser_links), khong mo popup mua. Client chua va: mo popup goi 26L Top 200 nhu truoc.
+PROMO_BANNERS = {7675: (3, "fo3off_7675"), 8335: (4, "fo3off_8335"), 8334: (5, "fo3off_8334")}
+SOGE_SHOPID = 99999990
+
+
+def soge_banner():
+    e = shop_entry(92000300, "SOGELINK", SOGE_SHOPID)
+    e.update(promotion=1, promotionbanner="fo3off_soge")
+    return e
 
 
 def shop_list(st):
@@ -5175,7 +5215,7 @@ def shop_list(st):
         if i in promo:
             e["promotion"], e["promotionbanner"] = promo[i]
         return e
-    return ([entry(i) for i in custom[::-1]] + [entry(i) for i in PACKS if i not in custom]
+    return ([soge_banner()] + [entry(i) for i in custom[::-1]] + [entry(i) for i in PACKS if i not in custom]
             + [shop_entry(i, "USE") for i in ITEMS]
             + [shop_entry(i, "PACKAGE") for i in PACKAGES if i not in CHAIN_STEPS]
             + [shop_entry(i, "MILEAGE", MP_SHOPID + i) for i in (() if shop_paid() else MP_SHOP)]
@@ -5290,18 +5330,23 @@ def ep_locker_jersey(player_id, query, body):
     desired = req.get("desired") if isinstance(req, dict) else None
     if type(desired) is not int or not 1 <= desired <= 99:
         return _json({"result": False, "reason": "INVALID_JERSEY"})
-    holder = next((p for p in players if p is not player and p.get("jersey") == desired), None)
+    # CLB > 99 the nen co so trung (add_player het so thi cho 99: co doi 259 the cung so 99). Truoc day
+    # holder = the DAU TIEN mang so do (khac the client chon -> INVALID_GIVER) va so cu cua cau thu bi
+    # trung voi the khac -> tim so trong, het so -> NO_FREE_JERSEY: the mang so trung khong doi duoc.
+    holders = [p for p in players if p is not player and p.get("jersey") == desired]
     giver = req.get("giverplayerid")
-    if giver is not None and (holder is None or iid(holder) != str(giver)):
-        return _json({"result": False, "reason": "INVALID_GIVER"})
+    if giver is not None:
+        holder = next((p for p in holders if iid(p) == str(giver)), None)
+        if holder is None:
+            return _json({"result": False, "reason": "INVALID_GIVER"})
+    else:
+        holder = holders[0] if holders else None
     if holder is not None:
         old = player.get("jersey", 0)
-        used = {p.get("jersey") for p in players if p is not player and p is not holder}
-        if type(old) is not int or not 1 <= old <= 99 or old in used:
-            old = next((n for n in range(1, 100) if n != desired and n not in used), None)
-        if old is None:
-            return _json({"result": False, "reason": "NO_FREE_JERSEY"})
-        holder["jersey"] = old
+        if type(old) is not int or not 1 <= old <= 99:  # so cu hong: so trong dau tien, het thi 99
+            used = {p.get("jersey") for p in players if p is not player and p is not holder}
+            old = next((n for n in range(1, 100) if n != desired and n not in used), 99)
+        holder["jersey"] = old  # doi cho (so cu co the dang trung voi the khac - van hop le)
     player["jersey"] = desired
     _save(st)
     return _json({"result": True, "jersey": desired, "resources": coach_me_resources(st, slot)})
@@ -6005,6 +6050,9 @@ for _feature in (rank, market, draftpack):
     _feature.install(sys.modules[__name__])
 import manager  # Info Manager, xep hang HLV, nhiem vu / thanh tich / Quest (port fo3-server-indo #33)
 manager.install(sys.modules[__name__])
+import levelreward, multiplay  # thuong len cap HLV; Giao huu / KOTH / Exhibition voi HLV ao (port indo #35 #36)
+for _feature in (levelreward, multiplay):
+    _feature.install(sys.modules[__name__])
 
 
 if __name__ == "__main__":

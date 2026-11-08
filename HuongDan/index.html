@@ -67,7 +67,7 @@
     <div>
       <div class="eyebrow">FIFA Online 3 · Offline</div>
       <h1>Hướng dẫn dùng GM Tool</h1>
-      <p>GM TOOL FO3 OFFLINE là trang quản trị chạy ngay trên máy bạn: thêm cầu thủ (cả mùa 26 / 25 LIVE), tặng gói, tạo gói tự chọn, chỉnh EP, tỷ lệ đập thẻ, sức mạnh BOT cho từng giải, cài đặt trận đấu, thị trường chuyển nhượng, Xếp hạng với HLV ảo, tạo HLV riêng… Các mục bên trái xếp đúng theo 6 nhóm menu của GM Tool.</p>
+      <p>GM TOOL FO3 OFFLINE là trang quản trị chạy ngay trên máy bạn: thêm cầu thủ (cả mùa 26 / 25 LIVE), tặng gói, tạo gói tự chọn, chỉnh EP, tỷ lệ đập thẻ, sức mạnh BOT cho từng giải, cài đặt trận đấu, thị trường chuyển nhượng, Xếp hạng, Giao hữu, Exhibition và King of the Hill với HLV ảo, tạo HLV riêng, sửa thẻ / mặt 3D / logo CLB / tạo mùa thẻ riêng (tab Database)… Các mục bên trái xếp đúng theo 6 nhóm menu của GM Tool, thêm phần các tính năng mới trong game.</p>
       <a class="open" href="http://127.0.0.1:8088/" target="_blank" rel="noopener">Mở GM Tool <code>127.0.0.1:8088</code></a>
     </div>
     <div class="faces" aria-hidden="true"><img src="images/face_158023.png" alt=""><img src="images/face_20801.png" alt=""><img src="images/face_190871.png" alt=""><img src="images/face_190042.png" alt=""><img src="images/face_41236.png" alt=""><img src="images/face_7826.png" alt=""><img src="images/face_176580.png" alt=""><img src="images/face_183277.png" alt=""></div>
@@ -83,7 +83,10 @@
     <a href="#kinhte"><span class="num">4</span><span>Kinh tế</span></a>
     <a href="#trandau"><span class="num">5</span><span>Trận đấu</span></a>
     <a href="#hethong"><span class="num">6</span><span>HLV &amp; hệ thống</span></a>
-    <a href="#mua"><span class="num">♦</span><span>Mùa thẻ 26 / 25 LIVE</span></a>
+    <a href="#database"><span class="num">7</span><span>Database</span></a>
+    <a href="#ingame"><span class="num">♥</span><span>Tính năng trong game</span></a>
+    <a href="#mua"><span class="num">♦</span><span>Mùa thẻ &amp; CLB mới</span></a>
+    <a href="#launcher"><span class="num">⚙</span><span>Launcher &amp; cập nhật</span></a>
   </nav>
   <main>
     <section class="card" id="batdau">
@@ -112,7 +115,7 @@
           <tr><td><b>Vật phẩm</b></td><td>Gói thẻ &amp; Túi đồ · Gói tự chọn · Quà hằng ngày</td></tr>
           <tr><td><b>Kinh tế</b></td><td>Giá EP thẻ · Thị trường</td></tr>
           <tr><td><b>Trận đấu</b></td><td>Cài đặt trước trận · Thưởng sau trận · Sức mạnh BOT · Xếp hạng HLV ảo</td></tr>
-          <tr><td><b>HLV &amp; hệ thống</b></td><td>HLV · Nhiệm vụ · Reset nhân vật · Nhật ký server</td></tr>
+          <tr><td><b>HLV &amp; hệ thống</b></td><td>Database · HLV · Nhiệm vụ · Reset nhân vật · Nhật ký server</td></tr>
         </tbody>
       </table>
       <h3>Hộp xác nhận</h3>
@@ -261,7 +264,7 @@
       <h3>Thị trường</h3>
       <details class="shotbox"><summary>Xem ảnh màn hình</summary><img class="shot" src="images/gm_trandau_market.png" alt="Thị trường chuyển nhượng" loading="lazy"></details>
       <ul>
-        <li><b>Ẩn thẻ mùa 0</b> (thẻ mẫu của engine, chỉ số 120+): mặc định tắt. Khi bật, thẻ mùa 0 không có người bán, không vào Top 50 và không mua được. Tích / bỏ tích là lưu ngay.</li>
+        <li><b>Ẩn thẻ mùa 0</b> (thẻ mẫu của engine, chỉ số 120+, game hiện nhầm là mùa "17"): <b>mặc định bật</b>. Khi bật, thẻ mùa 0 không có người bán, không vào Top 50, không mua được, không ra trong đề nghị trao đổi và bị ẩn khỏi mọi danh sách thẻ của GM Tool. Tích / bỏ tích là lưu ngay.</li>
         <li><b>Chế độ</b>: <b>Thị trường sống</b> (mặc định; thẻ bạn rao bán được một HLV ảo mua sau một lúc, giá càng thấp bán càng nhanh, bán xong game báo; trong lúc chờ có thể <b>Hủy</b> hoặc <b>Đăng lại</b>) hoặc <b>Bán ngay</b>.</li>
         <li><b>Mẫu kinh tế</b>: <b>Dễ</b> (giá cố định, bán sau 10 giây – 2 phút), <b>Thực tế</b> (mặc định; giá lên xuống ±12% theo ngày, có hàng rẻ, bán sau 20 giây – 5 phút), <b>Khó</b> (±20%, bán 1 – 15 phút), <b>Tùy chỉnh</b>.</li>
         <li>Các ô chi tiết: <b>Kinh tế động</b>, <b>Biên độ giá</b> (0 – 30%), <b>Giá bán tối đa</b> (100 – 150% giá thị trường), <b>Bán nhanh nhất</b> / <b>Bán chậm nhất</b> (giây). Sửa bất kỳ ô nào thì mẫu tự chuyển sang Tùy chỉnh.</li>
@@ -313,6 +316,14 @@
         <li>Bảng của bạn: <b>Elo</b>, <b>Hạng</b>, <b>Thứ hạng</b>, <b>Thắng / Hòa / Thua</b> mỗi chế độ. <b>Top 10 Xếp hạng 1vs1</b>: dòng của bạn in đậm.</li>
         <li><b>Đặt lại Xếp hạng mùa này của tôi</b>: xoá Elo và kết quả mùa này (có hỏi lại).</li>
       </ul>
+
+      <h3>Giao hữu · Exhibition · King of the Hill</h3>
+      <p>Thẻ thứ hai trong tab <b>Xếp hạng HLV ảo</b>. Ba chế độ này dùng chung đám đông HLV ảo nên <b>cần bật Xếp hạng</b> ở thẻ trên.</p>
+      <ul>
+        <li><b>Giao hữu</b>, <b>Exhibition</b>, <b>King of the Hill</b>: tích / bỏ tích là lưu ngay. Menu trong game đổi sau khi <b>vào lại game</b>.</li>
+        <li><b>Bộ vùng KOTH</b>: <b>Việt Nam</b> (mặc định: Miền Bắc, Miền Trung, Tây Nguyên, Đông Nam Bộ, Tây Nam Bộ và các thành phố có dấu), <b>Thái Lan</b> hoặc <b>Indonesia</b>. Đổi bộ vùng thì vùng đã chọn trong game hết hiệu lực, game sẽ hỏi chọn vùng lại; HLV ảo tự chia về các thành phố của bộ mới.</li>
+      </ul>
+      <p>Cách chơi từng chế độ trong game xem ở mục <a href="#ingame">Tính năng trong game</a>.</p>
     </section>
 
     <section class="card" id="hethong">
@@ -325,12 +336,13 @@
       <ol>
         <li>Nhập <b>Tên HLV</b> (ít nhất 2 ký tự), chọn <b>Vị trí / vai trò</b>.</li>
         <li>Bấm <b>Ảnh HLV</b>, chọn ảnh <b>PNG hoặc JPG</b>, <b>đúng 128 × 128 px</b>, tối đa <b>2 MB</b>.</li>
-        <li>Bấm <b>Tạo HLV</b>. HLV mới hiện ở danh sách <b>Thêm HLV</b> (nhãn <b>Tùy chỉnh</b>); chỉ số hỗ trợ ngẫu nhiên +5 → +10, có trong chiêu mộ và gói HLV.</li>
+        <li>Chỉ số hỗ trợ: để trống thì <b>ngẫu nhiên +5 → +10</b> như HLV nổi tiếng. Muốn tự đặt thì tích <b>Tự chọn chỉ số hỗ trợ</b>, chọn <b>Chỉ số 1 / 2 / 3</b> và <b>Mức cộng tối đa</b> (tới <b>+50</b>).</li>
+        <li>Bấm <b>Tạo HLV</b>. HLV mới hiện ở danh sách <b>Thêm HLV</b> (nhãn <b>Tùy chỉnh</b>), có trong chiêu mộ HLV của game và cho vào <b>Gói tự chọn</b> được.</li>
       </ol>
       <div class="tip"><strong>Ảnh sai cỡ?</strong> Bấm <b>Resize ảnh online ↗</b>, chọn <i>By pixels</i>, nhập 128 × 128, tải ảnh về rồi chọn lại.</div>
       <p><b>Thêm HLV:</b> lọc theo vị trí hoặc tên, chọn <b>số sao</b> (½ → 5) và <b>số lượng</b> (1 – 30), bấm <b>Thêm</b>. Trong game: <b>Quản lý đội → Quản lý HLV → HLV của tôi</b>. <b>Xoá loại</b> (chỉ HLV tùy chỉnh) bỏ hẳn loại đó, ảnh được cất vào sao lưu.</p>
       <details class="shotbox"><summary>Xem ảnh Thêm HLV và HLV của CLB</summary><img class="shot" src="images/gm_hlv.png" alt="Danh sách Thêm HLV" loading="lazy"><img class="shot" src="images/gm_hlv_clb.png" alt="HLV của CLB" loading="lazy"></details>
-      <p><b>HLV của CLB:</b> đổi số sao, chọn chỉ số, <b>Xoá</b> từng HLV. <b>Full tất cả HLV</b>: 5 sao và chỉ số tối đa. <b>Xoá tất cả HLV</b>: xoá các HLV đang <b>Chờ</b> (HLV đang bổ nhiệm / tập huấn được giữ lại).</p>
+      <p><b>HLV của CLB:</b> đổi số sao, <b>đổi từng chỉ số hỗ trợ</b> (chọn chỉ số khác trong danh sách) và <b>mức cộng</b> của chỉ số đó (1 – 99, vượt giới hạn thường của game), <b>Xoá</b> từng HLV. <b>Full tất cả HLV</b>: 5 sao và chỉ số tối đa. <b>Xoá tất cả HLV</b>: xoá các HLV đang <b>Chờ</b> (HLV đang bổ nhiệm / tập huấn được giữ lại).</p>
 
       <h3>Nhiệm vụ</h3>
       <p>Bật/tắt <b>Nhiệm vụ &amp; thành tích</b>, chọn ngôn ngữ (Tiếng Việt / English / Bahasa Indonesia), hệ số <b>Mục tiêu</b> (0,1 – 10) và <b>Phần thưởng</b> (0 – 10). Bảng bên dưới hiện tiến độ 5 nhiệm vụ tuần của bạn.</p>
@@ -359,14 +371,132 @@
       </ul>
     </section>
 
-    <section class="card" id="mua">
-      <h2><span class="num">♦</span>Mùa thẻ 26 LIVE / 25 LIVE</h2>
-      <p class="lead">Hai mùa thẻ mới lấy từ FO4: <b>26 LIVE</b> (666 thẻ) và <b>25 LIVE</b> (51 thẻ).</p>
+    <section class="card" id="database">
+      <h2><span class="num">7</span>Database</h2>
+      <p class="lead">Tab <b>Database</b> (nhóm <b>HLV &amp; hệ thống</b>): sửa thẻ cầu thủ, mặt 3D, logo CLB, tạo mùa thẻ riêng, chia sẻ bằng file mod.</p>
+
+      <h3>Hai lớp dữ liệu: server và client</h3>
+      <p>Game đọc thông tin thẻ từ <b>hai nơi</b>, nên một thay đổi có hai bước:</p>
+      <table class="map">
+        <thead><tr><th>Lớp</th><th>Nằm ở</th><th>Dùng cho</th><th>Khi nào thấy</th></tr></thead>
+        <tbody>
+          <tr><td><b>Server</b></td><td><code>Server\gamedata\fifadb.sqlite</code></td><td>Giá EP, OVR trong danh sách, Thị trường, gói thẻ, đề nghị trao đổi, tìm kiếm trên GM Tool</td><td><b>Ngay khi bấm Lưu</b></td></tr>
+          <tr><td><b>Client</b></td><td><code>data\data_0.big</code>, <code>data\ui\components\Label.big</code></td><td>Chỉ số <b>trong trận</b>, màn thông tin thẻ, <b>mặt 3D</b>, <b>icon mùa</b></td><td>Sau khi bấm <b>Áp dụng vào game</b></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Áp dụng vào game</h3>
+      <ol>
+        <li>Sửa xong thẻ / mặt / mùa, <b>thoát game</b> (game đang mở thì nút báo lỗi, không đụng vào file nào).</li>
+        <li>Bấm <b>Áp dụng vào game</b> → xác nhận. Server chạy bộ dựng client trong nền khoảng 1 phút; khung nhật ký hiện từng bước.</li>
+        <li>Bộ dựng lấy bản <b>gốc</b> của <code>data_0.big</code> / <code>Label.big</code>, ghép vào đó <b>toàn bộ</b> dữ liệu thẻ hiện tại của server (thẻ mới, mùa huyền thoại, PRIME / INFINITY PRIME, thẻ đã sửa, mùa tự tạo), dòng 3D, icon mùa, AC Milan và 2 đội PRIME. Vì dựng lại từ đầu mỗi lần nên không bao giờ bị chồng lỗi, và sửa của bạn không bị mất khi dựng lại.</li>
+        <li>Cài vào game: 2 file đang dùng được sao lưu vào <code>Server\tools\clientbuild\backup\&lt;ngày-giờ&gt;</code> (giữ 2 bản gần nhất), rồi chép bản mới vào. Dòng cuối nhật ký báo <b>Đã cài vào game</b>.</li>
+        <li>Mở game kiểm tra. Muốn bạn bè có bản này: push cập nhật như thường lệ (launcher của họ sẽ bắt buộc cập nhật).</li>
+      </ol>
+      <div class="warn"><strong>Chỉ máy làm bản vá mới bấm được:</strong> bộ dựng (<code>Server\tools\clientbuild</code>, có bản gốc <code>data_0.big</code>) không gửi cho bạn bè. Máy bạn bè bấm nút này sẽ được báo "không có bộ dựng client". Bạn bè nhận file đã dựng qua cập nhật.</div>
+      <div class="tip"><strong>Muốn quay lại bản trước?</strong> Thoát game, chép 2 file trong thư mục <code>backup\&lt;ngày-giờ&gt;</code> đè lên <code>data\data_0.big</code> và <code>data\ui\components\Label.big</code>.</div>
+
+      <h3>Sửa thẻ</h3>
+      <ol>
+        <li>Gõ tên (vd <i>Messi</i>) hoặc SPID vào ô <b>Tên / SPID</b>, bấm <b>Tìm</b>. Bấm <b>Sửa</b> ở thẻ cần sửa.</li>
+        <li>Sửa <b>33 chỉ số</b> (1 – 150), <b>4 vị trí</b>, <b>chân thuận</b>, <b>chân yếu</b> (1 – 5★), <b>kỹ thuật</b> (1 – 5★), <b>tinh thần tấn công / phòng ngự</b>, <b>CLB</b> (chuyển nhượng: giải đấu tự đổi theo CLB) và <b>đặc điểm (trait)</b> (30 ô tích).</li>
+        <li>Bấm <b>Lưu thẻ</b>. Ô đã sửa có viền màu, rê chuột vào ô thấy giá trị gốc. OVR, giá EP tính lại ngay.</li>
+        <li><b>Khôi phục gốc</b>: trả thẻ về chỉ số / CLB / ngoại hình ban đầu. Bảng <b>Thẻ đã sửa</b> liệt kê mọi thẻ đã sửa, mở hoặc khôi phục từng thẻ.</li>
+      </ol>
+      <p>Giá trị gốc được lưu ở <code>Server\gamedata\card_edits.json</code>. Sửa tay một ô về đúng giá trị gốc thì ô đó tự bỏ khỏi danh sách sửa.</p>
+
+      <h3>Ngoại hình 3D</h3>
       <ul>
-        <li>Nằm trên cùng danh sách <b>Mùa</b> ở Chuyển nhượng trong game và mọi ô chọn mùa của GM Tool (huy hiệu <b>26L</b> / <b>25L</b>).</li>
+        <li><b>Mượn đầu từ (SPID / ID)</b>: nhập SPID hoặc ID cầu thủ của một người có mặt trong game, thẻ đang sửa sẽ dùng <b>đầu, mặt, da, mắt</b> của người đó.</li>
+        <li>Các ô số: <b>kiểu tóc, màu tóc, kiểu râu, màu râu, màu da, màu mắt, dáng người</b> (khoảng giá trị ghi trong ngoặc). Mặt quét thật giữ tóc của nó.</li>
+        <li>Có tác dụng sau khi <b>Áp dụng vào game</b>. Thẻ sửa mặt có dòng 3D riêng; bảng 3D của game giới hạn khoảng 64.300 dòng (quá là game treo lúc tải), bộ dựng tự giữ giới hạn này.</li>
+      </ul>
+
+      <h3>Mùa tự tạo</h3>
+      <ol>
+        <li>Chọn <b>Mã</b> (các mã còn trống, nhỏ hơn 100), nhập <b>Tên mùa</b>, <b>Nhãn</b> (tối đa 5 chữ, hiện trên thẻ / bộ lọc), chọn <b>Icon</b> (ảnh PNG bất kỳ, trang tự thu về 30 × 24 và hiện xem trước). Bấm <b>Lưu mùa</b>.</li>
+        <li>Bấm <b>Thẻ</b> ở dòng mùa đó, nhập <b>SPID thẻ gốc</b> (nhiều thẻ cách nhau dấu phẩy) và <b>Cộng chỉ số</b> (−20 → +20), bấm <b>Thêm thẻ</b>. Thẻ mới = bản sao thẻ gốc (chỉ số + mức cộng; chỉ số thủ môn chỉ cộng cho thủ môn), giữ mặt 3D của thẻ gốc. Sửa tiếp được như thẻ thường.</li>
+        <li>Tên mùa trong game và bộ lọc mùa ở Thị trường có ngay. <b>Gói Top 200</b> và nhãn mùa trên GM Tool có sau khi <b>khởi động lại server</b> (tắt / mở lại launcher). <b>Icon mùa</b> và mặt 3D có sau khi <b>Áp dụng vào game</b>.</li>
+        <li><b>Xoá</b> một thẻ hoặc cả mùa: chỉ được khi thẻ đó không có trong CLB (bán / xoá thẻ trong CLB trước).</li>
+      </ol>
+
+      <h3>Logo CLB</h3>
+      <p>Gõ tên CLB vào ô <b>CLB</b> và chọn trong gợi ý, chọn <b>Ảnh logo</b> (trang tự làm 2 cỡ 256 và 128 px, giữ tỉ lệ, nền trong suốt), bấm <b>Thay logo</b>. Mở lại màn hình trong game là thấy. <b>Khôi phục logo gốc</b> trả lại logo ban đầu (bản gốc giữ ở <code>Server\gamedata\crest_backup</code>).</p>
+
+      <h3>File mod</h3>
+      <ul>
+        <li><b>Xuất file mod</b>: tải một file <code>.json</code> chứa mọi mùa tự tạo (tên, nhãn, icon, danh sách thẻ + mức cộng) và mọi thẻ đã sửa (chỉ số mới, ngoại hình).</li>
+        <li><b>Nhập file mod</b>: chọn file đó trên máy khác. Mùa trùng mã với thẻ có sẵn bị bỏ qua và ghi vào thông báo. Nhập xong bấm <b>Áp dụng vào game</b>.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="ingame">
+      <h2><span class="num">♥</span>Tính năng trong game</h2>
+      <p class="lead">Các chế độ và thay đổi mới bạn sẽ gặp khi chơi.</p>
+
+      <h3>Thưởng lên cấp HLV</h3>
+      <p>Mỗi cấp HLV từ <b>2 đến 100</b> có thưởng theo bảng của FO3: <b>EP</b> (50.000 ở cấp đầu, tới khoảng 29 triệu ở cấp 100) và vật phẩm (gói Top 300 / Top 100 / Best 50 / Best 10 / Best 7, gói giải 65+, gói 70+ theo vị trí, vé giả lập, thẻ đổi đội, thẻ EXP cầu thủ). Thưởng vào <b>Túi đồ</b> với tên "Thưởng lên cấp HLV Lv.x". Màn kết quả sau trận hiện popup lên cấp với các vật phẩm vừa nhận; nút ⓘ xem thưởng các cấp sau. Cấp đã có trước bản này không được trả bù.</p>
+
+      <h3>Giao hữu (Đá với người)</h3>
+      <ul>
+        <li><b>1on1</b> và <b>VS Random</b>: tìm vài giây rồi gặp một HLV ảo có Elo gần bạn.</li>
+        <li><b>VS Custom</b> (phòng tự tạo): bấm <b>Mời bạn</b> chọn một HLV ảo trong danh sách bạn bè (vào phòng sau 2 – 4 giây, tự sẵn sàng), hoặc đổi sang <b>đấu với máy</b>: chọn quốc gia / giải / CLB và độ khó (Nghiệp dư → Huyền thoại) rồi bấm Bắt đầu.</li>
+        <li>Luôn là <b>1vs1</b>: bản offline là phiên 1 người (bạn điều khiển cả đội, đội kia do máy đá), 2vs2 – 5vs5 cần người thật nên luôn về 1on1.</li>
+        <li>Kết quả vào <b>Thành tích HLV</b> (Giao hữu: nhanh / tùy chọn / với máy) và <b>Info Manager</b>, <b>không</b> đổi Elo Xếp hạng.</li>
+      </ul>
+
+      <h3>King of the Hill (Vua đấu trường)</h3>
+      <ol>
+        <li>Lần đầu vào: xem giới thiệu, rồi <b>chọn vùng</b> (bộ Việt Nam: chọn miền rồi thành phố). Ô chọn hiện số người mỗi vùng.</li>
+        <li><b>Bắt đầu</b>: gặp một HLV ảo <b>cùng vùng</b> có điểm KOTH gần bạn. Thắng / thua đổi điểm (Elo), màn thưởng hiện ô "Điểm hạng" trước và sau trận.</li>
+        <li>Bảng xếp hạng theo vùng / thành phố (HLV ảo + bạn). Mỗi <b>tháng</b> (giờ Việt Nam) là một mùa mới, điểm về 1000, giữ vùng cũ. Chưa có quà tuần / quà mùa.</li>
+      </ol>
+
+      <h3>Exhibition (Live Center)</h3>
+      <ul>
+        <li>Mỗi bên đá bằng <b>một CLB có bản quyền</b> (đội hình của CLB đó, không phải đội của bạn): dùng mũi tên để đổi giữa 8 CLB mạnh nhất, hoặc <b>Chọn đội</b> để chọn bất kỳ CLB nào (có đủ 11 đá chính + 7 dự bị).</li>
+        <li>Bấm <b>Mời bạn</b> chọn một HLV ảo, họ vào phòng với CLB của họ và sẵn sàng; bấm <b>Sẵn sàng</b> để đá.</li>
+        <li>Tối đa <b>5 trận / ngày</b>. Có EP và EXP HLV, thẻ của bạn <b>không</b> nhận EXP (bạn đá bằng CLB khác).</li>
+      </ul>
+
+      <h3>Shop và CLB</h3>
+      <ul>
+        <li><b>Giải đấu / Cúp:</b> bấm <b>Bắt đầu trận đấu</b> là vào đá luôn, không còn popup chọn "đá nhanh" (tự nhập tỉ số, dễ ghi sai) hay "đá thường".</li>
+        <li><b>Banner SOGE Store</b> (trang 1 của tab Nên mua trong Cửa hàng): bấm vào mở trang <b>sogestore.vn</b> trên trình duyệt (cửa sổ trình duyệt có thể nằm sau cửa sổ game).</li>
+        <li><b>Đổi số áo</b> (Phòng thay đồ): đổi được cho mọi cầu thủ, kể cả khi nhiều cầu thủ đang trùng số (CLB hơn 99 thẻ). Chọn số đã có người mang thì hai cầu thủ đổi số cho nhau.</li>
+        <li>Màn <b>Chuẩn bị trận đấu</b> (Xếp hạng, Giao hữu, KOTH, Exhibition): tên HLV đội nhà thẳng hàng với tên CLB. Màn <b>Đá với người</b>: 3 nút 1on1 / VS Random / VS Custom nằm giữa màn hình.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="mua">
+      <h2><span class="num">♦</span>Mùa thẻ &amp; CLB mới</h2>
+      <p class="lead">Các mùa thẻ và CLB được thêm vào bản offline.</p>
+      <h3>26 LIVE / 25 LIVE</h3>
+      <ul>
+        <li>Hai mùa lấy từ FO4: <b>26 LIVE</b> (666 thẻ) và <b>25 LIVE</b> (51 thẻ), nằm trên cùng danh sách <b>Mùa</b> ở Chuyển nhượng và mọi ô chọn mùa của GM Tool (huy hiệu <b>26L</b> / <b>25L</b>).</li>
         <li>Cầu thủ đã có trong game giữ nguyên mặt và tên. Cầu thủ hoàn toàn mới (Lamine Yamal, Pedri…) dùng mặt chung trên sân, ảnh đại diện lấy từ FO4.</li>
-        <li>Thẻ của CLB không có trong game (Milan, Porto, Benfica, Ajax…) hiện đội <b>Rest of the World</b>.</li>
+        <li>Thẻ của CLB không có trong game (Porto, Benfica, Ajax…) hiện đội <b>Rest of the World</b>.</li>
         <li>Có gói <b>26L Top 200</b> và <b>25L Top 200</b> trong Cửa hàng, Team Color <b>Season 26L</b> / <b>Season 25L</b>.</li>
+      </ul>
+      <h3>PRIME / INFINITY PRIME</h3>
+      <ul>
+        <li>Hai mùa huyền thoại mới cho <b>mọi huyền thoại</b> trong game, icon lấy đúng từ FO4: <b>PRIME</b> (nhãn PRM, +2 so với thẻ huyền thoại tốt nhất của cầu thủ đó) và <b>INFINITY PRIME</b> (nhãn IPRM, +4).</li>
+        <li>Nằm trên 26 LIVE trong danh sách mùa. Mỗi mùa có đội riêng (logo PRIME / INFINITY PRIME), gói <b>PRM Top 200</b> / <b>IPRM Top 200</b>, và có trong đề nghị trao đổi / giao dịch cầu thủ.</li>
+        <li>Huyền thoại và siêu sao còn thiếu mùa (vd Ferdinand, Beckham, C. Ronaldo, Messi, Gullit) đã được thêm các mùa huyền thoại, mỗi mùa một ảnh đại diện riêng.</li>
+      </ul>
+      <h3>AC Milan</h3>
+      <p>CLB <b>AC Milan</b> (Serie A, sân San Siro, logo và áo đấu riêng) có trong danh sách chọn đội, giải đấu và Cúp, với đội hình các cầu thủ từng khoác áo Milan.</p>
+      <div class="tip"><strong>Thẻ mùa 0:</strong> các thẻ mẫu của engine (chỉ số 120+, game hiện nhầm là mùa "17") mặc định bị ẩn khỏi Thị trường, đề nghị trao đổi và GM Tool (bỏ ẩn ở tab Thị trường).</div>
+    </section>
+
+    <section class="card" id="launcher">
+      <h2><span class="num">⚙</span>Launcher &amp; cập nhật</h2>
+      <p class="lead">FO3 Launcher 1.3.6.</p>
+      <ul>
+        <li><b>Bắt buộc bản mới nhất</b>: bấm <b>CHƠI GAME</b> là launcher kiểm tra bản vá trên GitHub. Có bản mới thì phải cập nhật xong mới vào game được (dữ liệu tài khoản giữ nguyên, có sao lưu tự động; launcher tự mở lại nếu chính nó được cập nhật). Máy mất mạng vẫn vào chơi offline bình thường.</li>
+        <li>Đã bỏ thông báo nhắc tắt bộ gõ tiếng Việt (UniKey, EVKey…).</li>
+        <li>Từ 1.3.5 launcher không còn lỗi <i>"Can't find a usable init.tcl"</i> (máy có thư mục TEMP là <code>C:\Windows\TEMP</code>, hay gặp ở quán net / chạy bằng quyền Admin). Máy đang dùng launcher cũ bị lỗi này thì tải lại file <code>FO3 Launcher.exe</code> mới, chép vào thư mục game rồi chạy.</li>
+        <li>Cập nhật <b>không bao giờ</b> ghi đè dữ liệu của từng máy: tài khoản (<code>state.json</code>), cài đặt GM, thẻ đã sửa, cài đặt Giao hữu / KOTH…</li>
       </ul>
     </section>
   </main>

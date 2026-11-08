@@ -1,4 +1,4 @@
-"""Open the two explicitly configured menu links in the OS default browser."""
+"""Open the explicitly configured menu / banner links in the OS default browser."""
 import os
 import time
 import webbrowser
@@ -6,6 +6,7 @@ import webbrowser
 URLS={
     '/game/inweburl/worldcup':'https://www.youtube.com/@gentapham',
     '/game/inweburl/webevent':'https://www.fo3th.online/',
+    '/game/inweburl/soge':'https://sogestore.vn/',  # banner SOGE Store o tab Nen mua (Module.big da va)
 }
 _last={}
 

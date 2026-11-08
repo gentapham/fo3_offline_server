@@ -258,6 +258,12 @@
   .facts dd { margin: 4px 0 0; font-size: 26px; font-weight: 700; font-family: Bahnschrift, "Segoe UI", sans-serif; font-stretch: semi-condensed; }
 
   /* form */
+  .dbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 10px; margin: 8px 0; }
+  .dbgrid label { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 13px; }
+  .dbgrid input { width: 64px; }
+  .dbgrid input.chg, #dbMisc .chg { outline: 2px solid var(--accent); }
+  .dbtraits { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 10px; margin: 8px 0; font-size: 13px; }
+  .dblog { max-height: 260px; overflow: auto; background: var(--panel-2, rgba(0,0,0,.25)); padding: 8px 10px; border-radius: 8px; font-size: 12px; white-space: pre-wrap; }
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin: 10px 0; }
   label.f { display: grid; gap: 5px; font-size: 12.5px; font-weight: 600; color: var(--mute); }
   label.check { display: inline-flex; gap: 8px; align-items: center; color: var(--ink-2); font-size: 14px; cursor: pointer; }
@@ -274,13 +280,13 @@
   td input[type=number] { width: 120px; }
 
   /* nut */
-  button.b, a.b {
+  button.b, a.b, label.b {
     display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; padding: 0 16px;
     border: 1px solid var(--line-strong); background: var(--card); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600;
     color: var(--ink-2); transition: transform .08s, background .15s, border-color .15s, box-shadow .15s;
   }
-  button.b:hover, a.b:hover { border-color: var(--accent); color: var(--accent); }
-  a.b { text-decoration: none; white-space: nowrap; }
+  button.b:hover, a.b:hover, label.b:hover { border-color: var(--accent); color: var(--accent); }
+  a.b, label.b { text-decoration: none; white-space: nowrap; }
   button.b:active { transform: translateY(1px); }
   button.b.primary {
     background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-color: var(--accent); color: var(--accent-ink);
@@ -845,6 +851,7 @@
       <button role="tab" data-tab="xephang" title="Xếp hạng HLV ảo"><svg class="i"><use href="#i-bolt"></use></svg>Xếp hạng HLV ảo</button>
     </div></div>
     <div class="nav-group"><div class="nav-title">HLV &amp; hệ thống</div><div class="nav-items">
+      <button role="tab" data-tab="database" title="Database: sửa thẻ, mặt 3D, logo CLB, mùa tự tạo"><svg class="i"><use href="#i-chart"></use></svg>Database</button>
       <button role="tab" data-tab="hlv" title="HLV"><svg class="i"><use href="#i-scout"></use></svg>HLV</button>
       <button role="tab" data-tab="nhiemvu" title="Nhiệm vụ &amp; thành tích"><svg class="i"><use href="#i-cal"></use></svg>Nhiệm vụ</button>
       <button role="tab" data-tab="resetnv" title="Reset nhân vật"><svg class="i"><use href="#i-bolt"></use></svg>Reset nhân vật</button>
@@ -1358,6 +1365,17 @@
         </table></div>
         <div class="row"><button class="b" id="rkReset">Đặt lại Xếp hạng mùa này của tôi</button><span class="muted" id="rkInfo"></span></div>
       </div>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Giao hữu · Exhibition · King of the Hill</h2></div>
+        <p class="lead">Chạy cùng HLV ảo (cần bật Xếp hạng ở trên). <b>Giao hữu</b>: đấu nhanh / ngẫu nhiên gặp HLV ảo, phòng tự tạo mời bạn hoặc đá với máy (chọn CLB + độ khó). <b>Exhibition</b> (Live Center): mỗi bên một CLB có bản quyền, tối đa <span id="mpPlays">5</span> trận/ngày, thẻ của bạn không nhận EXP. <b>King of the Hill</b> (Giải khu vực): chọn vùng, bảng xếp hạng vùng, điểm riêng mỗi tháng. Bật/tắt có hiệu lực khi vào lại game; đổi bộ vùng thì phải chọn lại vùng trong game.</p>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="mpFriendly"> Giao hữu</label>
+          <label class="check"><input type="checkbox" id="mpExhib"> Exhibition</label>
+          <label class="check"><input type="checkbox" id="mpKoth"> King of the Hill</label>
+          <label class="f">Bộ vùng KOTH<select id="mpRegions"></select></label>
+          <span class="muted" id="mpInfo"></span>
+        </div>
+      </div>
     </section>
     <section id="hlv" hidden="">
       <div class="card" id="hcCard">
@@ -1420,6 +1438,65 @@
           <button id="resetCoach" class="b danger" type="button">Reset nhân vật</button>
         </div>
         <p class="hint">Dữ liệu cũ được sao lưu tự động vào <code>Server\gamedata\backup</code> trước khi xoá. Thiết lập GM (tỷ lệ đập thẻ, giá EP, quà hằng ngày) giữ nguyên.</p>
+      </div>
+    </section>
+    <section id="database" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-chart"></use></svg></span><h2 class="display">Áp dụng vào game</h2></div>
+        <p class="lead">Mọi sửa ở tab này lưu ngay trên server (giá, OVR, tìm kiếm thấy luôn). <b>Trong trận, màn thông tin thẻ, mặt 3D, icon mùa</b> đọc dữ liệu của client nên cần bấm <b>Áp dụng vào game</b> (dựng lại <code>data_0.big</code> + <code>Label.big</code>, khoảng 1 phút, <b>phải thoát game trước</b>; bản cũ được sao lưu). Muốn bạn bè có bản này thì push cập nhật như thường lệ.</p>
+        <div class="row"><button class="b primary" id="dbApply">Áp dụng vào game</button>
+          <button class="b" id="dbExport">Xuất file mod</button>
+          <label class="b" style="cursor:pointer">Nhập file mod<input type="file" id="dbImport" accept=".json,application/json" hidden></label>
+          <span class="muted" id="dbJobState"></span></div>
+        <pre class="dblog" id="dbLog" hidden></pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-plus"></use></svg></span><h2 class="display">Sửa thẻ</h2></div>
+        <p class="lead">Tìm theo tên hoặc SPID, rồi sửa chỉ số, vị trí, chân, kỹ thuật, tinh thần, đặc điểm (trait), CLB và ngoại hình 3D. Giá trị gốc được giữ để <b>Khôi phục</b>.</p>
+        <form class="row" id="dbFind"><label class="f">Tên / SPID<input id="dbQ" placeholder="vd: Messi hoặc 94158023" required></label><button class="b">Tìm</button></form>
+        <div class="table-wrap" id="dbHitsWrap" hidden><table><thead><tr><th>Mùa</th><th>Cầu thủ</th><th>VT</th><th>OVR</th><th>CLB</th><th></th></tr></thead><tbody id="dbHits"></tbody></table></div>
+        <div id="dbEditor" hidden>
+          <h3 id="dbTitle"></h3>
+          <div class="dbgrid" id="dbStats"></div>
+          <div class="row" id="dbMisc"></div>
+          <details><summary>Đặc điểm (trait)</summary><div class="dbtraits" id="dbTraits"></div></details>
+          <details id="dbLookBox"><summary>Ngoại hình 3D</summary>
+            <p class="muted">Mượn đầu (mặt, da, mắt) của một thẻ / cầu thủ khác: nhập SPID hoặc ID cầu thủ có mặt trong game. Các số bên dưới chỉnh tóc, râu, da, mắt, dáng người (mặt quét thật giữ tóc của nó). Có tác dụng sau khi <b>Áp dụng vào game</b>.</p>
+            <div class="row" id="dbLook"></div></details>
+          <div class="row"><button class="b primary" id="dbSave">Lưu thẻ</button><button class="b danger" id="dbRevert">Khôi phục gốc</button><span class="muted" id="dbCardInfo"></span></div>
+        </div>
+        <h3>Thẻ đã sửa</h3>
+        <div class="table-wrap"><table><thead><tr><th>Mùa</th><th>Cầu thủ</th><th>Đã sửa</th><th></th></tr></thead><tbody id="dbEdits"></tbody></table></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-gift"></use></svg></span><h2 class="display">Mùa tự tạo</h2></div>
+        <p class="lead">Tạo mùa mới (mã còn trống, tên, nhãn ngắn, icon tự thu về 30×24). Thẻ của mùa là bản sao thẻ khác (+ cộng chỉ số, giữ mặt 3D). Server thêm <b>gói Top 200</b> và nhãn mùa sau khi <b>khởi động lại server</b>; tên mùa và bộ lọc Thị trường có ngay; icon + dòng 3D có sau khi <b>Áp dụng vào game</b>.</p>
+        <form class="row" id="dbSeasonForm">
+          <label class="f">Mã<select id="dbSCode"></select></label>
+          <label class="f">Tên mùa<input id="dbSName" maxlength="24" required placeholder="vd: Huyền thoại Việt"></label>
+          <label class="f">Nhãn (≤5)<input id="dbSTag" maxlength="5" placeholder="HTV"></label>
+          <label class="f">Icon (PNG)<input type="file" id="dbSIcon" accept="image/png,image/*"></label>
+          <canvas id="dbSPrev" width="30" height="24" style="width:60px;height:48px;image-rendering:pixelated;border:1px solid var(--line)"></canvas>
+          <button class="b primary">Lưu mùa</button>
+        </form>
+        <div class="table-wrap"><table><thead><tr><th>Mã</th><th>Tên</th><th>Nhãn</th><th>Thẻ</th><th>Icon</th><th></th></tr></thead><tbody id="dbSeasons"></tbody></table></div>
+        <div id="dbSCards" hidden>
+          <h3 id="dbSCTitle"></h3>
+          <form class="row" id="dbSCAdd"><label class="f">SPID thẻ gốc (cách nhau dấu phẩy)<input id="dbSCFrom" required placeholder="30158023, 93001234"></label>
+            <label class="f">Cộng chỉ số<input type="number" id="dbSCBoost" value="2" min="-20" max="20"></label><button class="b primary">Thêm thẻ</button></form>
+          <div class="table-wrap"><table><thead><tr><th>Thẻ</th><th>OVR</th><th>Từ thẻ</th><th>Cộng</th><th></th></tr></thead><tbody id="dbSCRows"></tbody></table></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"></use></svg></span><h2 class="display">Logo CLB</h2></div>
+        <p class="lead">Thay logo của một CLB trong game (ảnh tự thu về 256 và 128 px). Logo gốc được giữ để khôi phục. Có ngay khi mở lại màn hình trong game.</p>
+        <div class="row"><label class="f">CLB<input id="dbClubQ" list="dbClubList" placeholder="gõ tên CLB"></label><datalist id="dbClubList"></datalist>
+          <label class="f">Ảnh logo<input type="file" id="dbCrest" accept="image/png,image/*"></label>
+          <canvas id="dbCrestPrev" width="128" height="128" style="width:64px;height:64px;border:1px solid var(--line)"></canvas>
+          <button class="b primary" id="dbCrestSave">Thay logo</button><button class="b danger" id="dbCrestRevert">Khôi phục logo gốc</button></div>
       </div>
     </section>
     <section id="log" hidden="">
@@ -1516,14 +1593,19 @@ function applySeasons(seasons) {
     `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
 }
 (function () { const c = listCacheGet(); if (c.seasons) applySeasons(c.seasons); })();
-async function loadSeasons() {
+async function loadSeasons(fresh) {
   try {
-    const {seasons} = await api("seasons");
+    const {seasons} = fresh || await api("seasons");
     listCacheSet({seasons});
     SEASONS = Object.fromEntries(seasons.map(x => [x.code, x])); SEASON_LIST = seasons.map(x => Number(x.code));
-    const groups = {year: "Mùa giải", legend: "Huyền thoại", cup: "World Cup / Châu lục", special: "Đặc biệt", base: "Thẻ gốc"};
-    $("#searchSeason").innerHTML = '<option value="">Tất cả</option>' + seasons.map(x =>
-      `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`).join("");
+    const opt = x => `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)} (${fmt(x.count)} thẻ)</option>`;
+    const fill = (sel, head, list) => { const el = $(sel); if (!el || (fresh === undefined && sel !== "#searchSeason")) return;
+      const v = el.value; el.innerHTML = head + list.map(opt).join(""); el.value = v; };
+    // ban moi tu server (mua moi them) -> dung lai moi dropdown mua da ve tu ban cu
+    const real = seasonsOrdered().filter(x => x.kind !== "base" && Number(x.code) > 0);
+    fill("#searchSeason", '<option value="">Tất cả</option>', seasons);
+    fill("#smSeason", '<option value="">Tất cả mùa</option>', seasonsOrdered().filter(x => x.code !== 0));
+    fill("#cpSeasonSel", "", real); fill("#cpQSeason", '<option value="">Tất cả</option>', real);
     if (clubPlayers.length) renderClub();
     if (searchResults.length) renderSearch();
   } catch (e) { /* server cu: giu so mua */ }
@@ -1577,7 +1659,9 @@ async function api(name, body) {
       const before = JSON.stringify(API_MEM.get(name));
       API_BG.set(name, apiFetch(name).then(j => {
         apiRemember(name, j);
-        if (JSON.stringify(j) !== before) apiRerender();
+        if (JSON.stringify(j) === before) return;
+        if (name === "seasons") loadSeasons(j);
+        apiRerender();
       }).catch(() => {}).finally(() => setTimeout(() => API_BG.delete(name), 1500)));
     }
     return API_MEM.get(name);
@@ -1751,6 +1835,7 @@ $("#hcSave").addEventListener("click", () => act(async () => {
   const body = {name: $("#hcName").value.trim(), position: $("#hcPos").value, image: HC.data};
   if ($("#hcCustom").checked) {
     body.groups = ["#hcS1", "#hcS2", "#hcS3"].map(id => [$(id).value]);
+    if (new Set(body.groups.map(g => g[0])).size !== 3) throw new Error("3 chỉ số hỗ trợ phải khác nhau.");
     body.power = parseInt($("#hcPower").value, 10);
   }
   const r = await api("staff_custom_create", body);
@@ -2010,6 +2095,12 @@ const _loadersRest = {
     renderDaily(d.table);
   },
   async hlv() {
+    // o chon chi so 1 dong: ma noi bo cua server (staffs.stats); chi so dong khac dang co bi khoa (3 dong khac nhau)
+    const hlvKeyOpts = (keys, x, e) => {
+      const others = new Set(x.effect.filter(o => o.idx !== e.idx).map(o => o.key));
+      const list = (keys || []).some(c => c.key === e.key) ? keys || [] : [{key: e.key, name: e.effect}, ...(keys || [])];
+      return list.map(c => `<option value="${esc(c.key)}"${c.key === e.key ? " selected" : ""}${others.has(c.key) && c.key !== e.key ? " disabled" : ""}>${esc(c.name)}${others.has(c.key) && c.key !== e.key ? " (dòng khác)" : ""}</option>`).join("");
+    };
     const [{staff, max_grade, positions, img_size, img_max_bytes, stats, max_power}, mine] = await Promise.all([apiFetch("staff_catalog"), apiFetch("staffs")]);
     HLV.cat = staff; HLV.max = max_grade; if (stats) HLV.stats = stats;
     if (img_size) { HLV.imgSize = img_size; HLV.imgMax = img_max_bytes; }
@@ -2032,7 +2123,7 @@ const _loadersRest = {
       <td><b>${esc(x.name)}</b></td><td>${esc(x.pos_name)}</td>
       <td><select data-hlvgrade="${x.id}">${stars(x.grade)}</select></td>
       <td><div class="hlv-effs">${x.effect.map(e => `<div class="hlv-eff">
-          <select data-hlvkey="${x.id}" data-idx="${e.idx}">${(HLV.stats || []).map(c => `<option value="${c.key}"${c.key === e.key ? " selected" : ""}>${esc(c.name)}</option>`).join("") || `<option value="${esc(e.key)}">${esc(e.effect)}</option>`}</select>
+          <select data-hlvkey="${x.id}" data-idx="${e.idx}">${hlvKeyOpts(mine.stats, x, e)}</select>
           <span>+</span><input type="number" min="1" max="99" step="1" value="${e.amount}" data-hlvamt="${x.id}" data-idx="${e.idx}" title="Mức cộng (1–99)">
         </div>`).join("") || "—"}</div></td>
       <td>${st[x.status] || esc(x.status)}</td>
@@ -3160,5 +3251,200 @@ show(((location.hash || "").slice(1) in loaders) ? location.hash.slice(1) : "rin
 </script>
 
 
+<script>
+// ---------------------------------------------------------------- tab Database (admin_db.py)
+const DB = {meta: null, card: null, season: null, crestImg: null, iconImg: null, poll: null};
+const DB_POS = ["GK","SW","RWB","RB","RCB","CB","LCB","LB","LWB","RDM","CDM","LDM","RM","RCM","CM","LCM","LM","RAM","CAM","LAM","RF","CF","LF","RW","RS","ST","LS","LW"];
+const DB_STAT_VI = {acceleration: "Tăng tốc", sprintspeed: "Tốc độ", agility: "Khéo léo", balance: "Thăng bằng", reactions: "Phản ứng",
+  ballcontrol: "Giữ bóng", dribbling: "Rê bóng", positioning: "Chọn vị trí", finishing: "Dứt điểm", shotpower: "Lực sút",
+  longshots: "Sút xa", volleys: "Vô-lê", penalties: "Penalty", crossing: "Tạt bóng", curve: "Độ xoáy", freekickaccuracy: "Sút phạt",
+  shortpassing: "Chuyền ngắn", longpassing: "Chuyền dài", vision: "Tầm nhìn", headingaccuracy: "Đánh đầu", marking: "Kèm người",
+  standingtackle: "Tắc bóng", slidingtackle: "Xoạc bóng", interceptions: "Cắt bóng", aggression: "Quyết đoán", jumping: "Bật cao",
+  stamina: "Thể lực", strength: "Sức mạnh", gkdiving: "TM đổ người", gkhandling: "TM bắt bóng", gkkicking: "TM phát bóng",
+  gkreflexes: "TM phản xạ", gkpositioning: "TM chọn vị trí"};
+const dbWR = ["Trung bình", "Thấp", "Cao"];
+async function dbMeta() { if (!DB.meta) DB.meta = await apiFetch("db_meta"); return DB.meta; }
+const dbSel = (id, opts, val) => `<select id="${id}">${opts.map(([v, t]) => `<option value="${v}"${String(v) === String(val) ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
+
+loaders.database = async () => {
+  await dbMeta();
+  if (!Object.keys(SEASONS).length) await loadSeasons();
+  $("#dbClubList").innerHTML = DB.meta.clubs.map(([t, n]) => `<option value="${esc(n)} · ${t}">`).join("");
+  await Promise.all([dbEdits(), dbSeasons(), dbJob()]);
+};
+
+$("#dbFind").addEventListener("submit", e => { e.preventDefault(); act(async () => {
+  const q = $("#dbQ").value.trim();
+  if (/^\d{4,}$/.test(q)) return dbOpen(+q);
+  const r = await apiFetch(`search?q=${encodeURIComponent(q)}&size=30`);
+  $("#dbHitsWrap").hidden = false;
+  $("#dbHits").innerHTML = r.rows.map(x => `<tr><td>${seasonBadge(x.season)}</td><td><b>${esc(x.name)}</b><div class="muted">${x.spid}</div></td>
+    <td>${esc(x.pos)}</td><td>${x.ovr}</td><td>${esc(x.team)}</td><td><button class="b" data-dbopen="${x.spid}">Sửa</button></td></tr>`).join("")
+    || '<tr><td colspan="6" class="muted">Không thấy thẻ nào</td></tr>';
+}); });
+document.addEventListener("click", e => {
+  const o = e.target.closest("[data-dbopen]"); if (o) act(() => dbOpen(+o.dataset.dbopen));
+  const r = e.target.closest("[data-dbrevert]"); if (r) dbRevert(+r.dataset.dbrevert);
+  const s = e.target.closest("[data-dbseason]"); if (s) act(() => dbSeasonOpen(+s.dataset.dbseason));
+  const d = e.target.closest("[data-dbsdel]"); if (d) dbSeasonDelete(+d.dataset.dbsdel);
+  const c = e.target.closest("[data-dbscdel]"); if (c) act(async () => { dbSCRender(await api("db_season_card_remove", {spid: +c.dataset.dbscdel})); await dbSeasons(); }, "Đã xoá thẻ khỏi mùa.");
+});
+
+async function dbOpen(spid) {
+  const m = await dbMeta(), c = await apiFetch(`db_card?spid=${spid}`);
+  DB.card = c;
+  $("#dbEditor").hidden = false;
+  $("#dbTitle").innerHTML = `${seasonBadge(c.season)} ${esc(c.name)} · OVR <b>${c.ovr}</b> · ${esc(c.club || "")} <span class="muted">SPID ${c.spid}${c.own ? " · mùa tự tạo" : ""}</span>`;
+  const f = c.fields, orig = c.orig || {};
+  const stats = Object.keys(DB_STAT_VI).filter(k => k in f);
+  $("#dbStats").innerHTML = stats.map(k => `<label title="${k}${k in orig ? " · gốc " + orig[k] : ""}">${DB_STAT_VI[k]}<input type="number" min="1" max="150" data-dbf="${k}" value="${f[k]}" class="${k in orig ? "chg" : ""}"></label>`).join("");
+  const pos = (k, none) => dbSel("dbf_" + k, [...(none ? [[-1, "—"]] : []), ...DB_POS.map((p, i) => [i, p])], f[k] ?? -1);
+  const clubName = (m.clubs.find(x => x[0] === f.teamid) || [0, c.club || ""])[1];
+  $("#dbMisc").innerHTML = `<label class="f">Vị trí 1${pos("preferredposition1")}</label><label class="f">Vị trí 2${pos("preferredposition2", 1)}</label>
+    <label class="f">Vị trí 3${pos("preferredposition3", 1)}</label><label class="f">Vị trí 4${pos("preferredposition4", 1)}</label>
+    <label class="f">Chân thuận${dbSel("dbf_preferredfoot", [[1, "Phải"], [2, "Trái"]], f.preferredfoot)}</label>
+    <label class="f">Chân yếu${dbSel("dbf_weakfootabilitytypecode", [1, 2, 3, 4, 5].map(v => [v, v + "★"]), f.weakfootabilitytypecode)}</label>
+    <label class="f">Kỹ thuật${dbSel("dbf_skillmoves", [0, 1, 2, 3, 4].map(v => [v, (v + 1) + "★"]), f.skillmoves)}</label>
+    <label class="f">Tấn công${dbSel("dbf_attackingworkrate", dbWR.map((t, i) => [i, t]), f.attackingworkrate)}</label>
+    <label class="f">Phòng ngự${dbSel("dbf_defensiveworkrate", dbWR.map((t, i) => [i, t]), f.defensiveworkrate)}</label>
+    <label class="f">CLB (chuyển nhượng)<input id="dbf_club" list="dbClubList" value="${esc(clubName)} · ${f.teamid}"></label>`;
+  $("#dbTraits").innerHTML = m.traits.map(([i, k, vi]) => `<label class="check" title="${k}"><input type="checkbox" data-dbtrait="${i}"${(f.trait1 >> i) & 1 ? " checked" : ""}> ${esc(vi)}</label>`).join("");
+  const lk = c.look, le = c.look_edit || {};
+  $("#dbLookBox").hidden = !lk || !lk.row;
+  if (lk && lk.row) {
+    $("#dbLook").innerHTML = `<label class="f" title="Dòng 3D hiện tại: ${lk.row}">Mượn đầu từ (SPID / ID)<input id="dbl_face" value="${le.face || ""}" placeholder="${lk.row}"></label>` +
+      m.look.filter(([k]) => k in lk.ranges).map(([k, vi]) => `<label class="f">${vi} (${lk.ranges[k][0]}–${lk.ranges[k][1]})<input type="number" data-dbl="${k}" min="${lk.ranges[k][0]}" max="${lk.ranges[k][1]}" value="${le[k] ?? lk.fields[k]}" class="${k in le ? "chg" : ""}"></label>`).join("");
+  }
+  $("#dbRevert").hidden = !Object.keys(orig).length && !Object.keys(le).length;
+  $("#dbCardInfo").textContent = Object.keys(orig).length ? `Đã sửa: ${Object.keys(orig).join(", ")}` : "";
+  $("#dbEditor").scrollIntoView({behavior: "smooth", block: "start"});
+}
+$("#dbSave").addEventListener("click", () => act(async () => {
+  const c = DB.card, fields = {};
+  document.querySelectorAll("[data-dbf]").forEach(i => { fields[i.dataset.dbf] = +i.value; });
+  ["preferredposition1", "preferredposition2", "preferredposition3", "preferredposition4", "preferredfoot", "weakfootabilitytypecode",
+   "skillmoves", "attackingworkrate", "defensiveworkrate"].forEach(k => { fields[k] = +$("#dbf_" + k).value; });
+  const t = /·\s*(\d+)\s*$/.exec($("#dbf_club").value); if (t) fields.teamid = +t[1];
+  let traits = 0; document.querySelectorAll("[data-dbtrait]").forEach(i => { if (i.checked) traits |= 1 << +i.dataset.dbtrait; });
+  fields.trait1 = traits >>> 0;
+  const body = {spid: c.spid, fields};
+  if (!$("#dbLookBox").hidden) {
+    body.look = {face: $("#dbl_face").value.trim()};
+    document.querySelectorAll("[data-dbl]").forEach(i => { body.look[i.dataset.dbl] = +i.value; });
+  }
+  await api("db_card_set", body);
+  await dbOpen(c.spid); await dbEdits();
+}, "Đã lưu thẻ trên server. Bấm Áp dụng vào game để thấy trong trận / màn thẻ."));
+$("#dbRevert").addEventListener("click", () => dbRevert(DB.card.spid));
+async function dbRevert(spid) {
+  if (!await uiConfirm("Khôi phục thẻ này về chỉ số / ngoại hình gốc?")) return;
+  act(async () => { await api("db_card_revert", {spid}); if (DB.card && DB.card.spid === spid) await dbOpen(spid); await dbEdits(); }, "Đã khôi phục thẻ.");
+}
+async function dbEdits() {
+  const r = await apiFetch("db_edits");
+  $("#dbEdits").innerHTML = r.rows.map(x => `<tr><td>${seasonBadge(x.season)}</td><td><b>${esc(x.name)}</b><div class="muted">${x.spid}</div></td>
+    <td class="muted">${esc(x.changed.map(k => DB_STAT_VI[k] || (k === "look" ? "ngoại hình 3D" : k)).join(", "))}</td>
+    <td><button class="b" data-dbopen="${x.spid}">Mở</button> <button class="b danger" data-dbrevert="${x.spid}">Khôi phục</button></td></tr>`).join("")
+    || '<tr><td colspan="4" class="muted">Chưa sửa thẻ nào</td></tr>';
+}
+
+// ---- anh: thu nho bang canvas (giu ty le, nen trong suot)
+function dbFit(file, w, h, canvas) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const cv = canvas || document.createElement("canvas"); cv.width = w; cv.height = h;
+      const g = cv.getContext("2d"); g.clearRect(0, 0, w, h); g.imageSmoothingQuality = "high";
+      const k = Math.min(w / img.width, h / img.height), dw = img.width * k, dh = img.height * k;
+      g.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+      res(cv.toDataURL("image/png").split(",")[1]); URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => rej(new Error("Không đọc được ảnh"));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// ---- mua tu tao
+async function dbSeasons() {
+  const r = await apiFetch("db_seasons");
+  $("#dbSCode").innerHTML = r.free.map(c => `<option value="${c}">${c}</option>`).join("") + r.seasons.map(s => `<option value="${s.code}">${s.code} (sửa ${esc(s.name)})</option>`).join("");
+  $("#dbSeasons").innerHTML = r.seasons.map(s => `<tr><td>${s.code}</td><td><b>${esc(s.name)}</b></td><td>${esc(s.tag || "")}</td><td>${fmt(s.cards)}</td>
+    <td>${s.icon ? "✔" : "—"}</td><td><button class="b" data-dbseason="${s.code}">Thẻ</button> <button class="b danger" data-dbsdel="${s.code}">Xoá</button></td></tr>`).join("")
+    || '<tr><td colspan="6" class="muted">Chưa có mùa tự tạo</td></tr>';
+}
+$("#dbSIcon").addEventListener("change", async e => { const f = e.target.files[0]; DB.iconImg = f ? await dbFit(f, 30, 24, $("#dbSPrev")) : null; });
+$("#dbSeasonForm").addEventListener("submit", e => { e.preventDefault(); act(async () => {
+  await api("db_season_set", {code: +$("#dbSCode").value, name: $("#dbSName").value, tag: $("#dbSTag").value, icon: DB.iconImg});
+  DB.iconImg = null; $("#dbSIcon").value = ""; await dbSeasons();
+}, "Đã lưu mùa. Khởi động lại server để có gói Top 200; Áp dụng vào game để có icon."); });
+async function dbSeasonDelete(code) {
+  if (!await uiConfirm(`Xoá mùa ${code} và toàn bộ thẻ của nó khỏi dữ liệu? Không thể hoàn tác.`)) return;
+  act(async () => { await api("db_season_delete", {code}); $("#dbSCards").hidden = true; await dbSeasons(); }, "Đã xoá mùa.");
+}
+async function dbSeasonOpen(code) {
+  DB.season = code; $("#dbSCards").hidden = false; $("#dbSCTitle").textContent = `Thẻ của mùa ${code}`;
+  dbSCRender(await apiFetch(`db_season_cards?code=${code}`));
+}
+function dbSCRender(r) {
+  $("#dbSCRows").innerHTML = r.rows.map(x => `<tr><td><b>${esc(x.name)}</b><div class="muted">${x.spid}</div></td><td>${x.ovr}</td><td>${x.from}</td><td>${x.boost > 0 ? "+" : ""}${x.boost}</td>
+    <td><button class="b" data-dbopen="${x.spid}">Sửa</button> <button class="b danger" data-dbscdel="${x.spid}">Xoá</button></td></tr>`).join("")
+    || '<tr><td colspan="5" class="muted">Chưa có thẻ</td></tr>';
+}
+$("#dbSCAdd").addEventListener("submit", e => { e.preventDefault(); act(async () => {
+  const from = $("#dbSCFrom").value.split(/[\s,;]+/).filter(Boolean).map(Number);
+  const r = await api("db_season_card_add", {code: DB.season, from, boost: +$("#dbSCBoost").value});
+  dbSCRender(r); $("#dbSCFrom").value = ""; await dbSeasons();
+}, "Đã thêm thẻ vào mùa."); });
+
+// ---- logo CLB
+const dbClubId = () => { const m = /·\s*(\d+)\s*$/.exec($("#dbClubQ").value); if (!m) throw new Error("Chọn CLB trong danh sách gợi ý"); return +m[1]; };
+$("#dbCrest").addEventListener("change", async e => { const f = e.target.files[0]; DB.crestImg = f || null; if (f) await dbFit(f, 128, 128, $("#dbCrestPrev")); });
+$("#dbCrestSave").addEventListener("click", () => act(async () => {
+  if (!DB.crestImg) throw new Error("Chọn ảnh logo");
+  await api("db_crest_set", {teamid: dbClubId(), large: await dbFit(DB.crestImg, 256, 256), small: await dbFit(DB.crestImg, 128, 128)});
+}, "Đã thay logo. Mở lại màn hình trong game để thấy."));
+$("#dbCrestRevert").addEventListener("click", () => act(async () => { await api("db_crest_revert", {teamid: dbClubId()}); }, "Đã khôi phục logo gốc."));
+
+// ---- ap dung vao game + file mod
+function dbJobShow(j) {
+  const box = $("#dbLog"); box.hidden = !j.log.length; box.textContent = j.log.join("\n"); box.scrollTop = box.scrollHeight;
+  $("#dbApply").disabled = j.running;
+  $("#dbJobState").textContent = j.running ? "Đang dựng…" : j.code === 0 ? "Xong lần gần nhất." : j.code != null ? "Lần gần nhất bị lỗi (xem nhật ký)." : "";
+  clearTimeout(DB.poll);
+  if (j.running) DB.poll = setTimeout(dbJob, 1500);
+}
+async function dbJob() { try { dbJobShow(await apiFetch("db_job")); } catch (e) {} }
+$("#dbApply").addEventListener("click", async () => {
+  if (!await uiConfirm("Dựng lại data_0.big + Label.big từ dữ liệu server và cài vào game? Hãy thoát game trước (bản cũ được sao lưu).")) return;
+  act(async () => { dbJobShow(await api("db_apply", {})); }, "Đang áp dụng vào game…");
+});
+$("#dbExport").addEventListener("click", () => act(async () => {
+  const mod = await apiFetch("db_mod_export");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(mod, null, 1)], {type: "application/json"}));
+  a.download = `fo3_mod_${new Date().toISOString().slice(0, 10)}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}, "Đã xuất file mod."));
+$("#dbImport").addEventListener("change", e => { const f = e.target.files[0]; if (!f) return; act(async () => {
+  const mod = JSON.parse(await f.text());
+  const r = await api("db_mod_import", {mod});
+  e.target.value = ""; await loaders.database();
+  say("Nhập mod: " + r.log.join(" · "), "ok");
+}); });
+
+// ---- Giao huu / Exhibition / KOTH (tab Xep hang)
+async function mpLoad() {
+  try {
+    const m = await apiFetch("multiplay_info");
+    $("#mpFriendly").checked = m.friendly; $("#mpExhib").checked = m.exhibition; $("#mpKoth").checked = m.koth;
+    $("#mpRegions").innerHTML = m.sets.map(([k, n]) => `<option value="${k}"${k === m.regions ? " selected" : ""}>${esc(n)}</option>`).join("");
+    $("#mpPlays").textContent = m.plays; $("#mpInfo").textContent = `lưu ở ${m.file}`;
+  } catch (e) {}
+}
+const _xhLoader = loaders.xephang;
+loaders.xephang = async () => { await _xhLoader(); await mpLoad(); };
+[["#mpFriendly", "friendly"], ["#mpExhib", "exhibition"], ["#mpKoth", "koth"]].forEach(([id, k]) =>
+  $(id).addEventListener("change", e => act(async () => { await api("multiplay_set", {[k]: e.target.checked}); }, "Đã lưu. Vào lại game để thấy menu.")));
+$("#mpRegions").addEventListener("change", e => act(async () => { await api("multiplay_set", {regions: e.target.value}); }, "Đã đổi bộ vùng KOTH. Vào game chọn lại vùng."));
+</script>
 </body>
 </html>
