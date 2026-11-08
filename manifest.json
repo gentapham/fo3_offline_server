@@ -1,12 +1,12 @@
 {
  "files": {
   "FO3 Launcher.exe": {
-   "sha256": "c3b57fa722fcdd2ebb03b7f09c57b7271f867f361f90f8bd76161a715ff2b811",
-   "size": 21691083
+   "sha256": "34f6df01e8411c067967242ad1db5358b7614106b785c019aa2a3bbabc238732",
+   "size": 21690695
   },
   "FO3 Offline Launcher.exe": {
-   "sha256": "c3b57fa722fcdd2ebb03b7f09c57b7271f867f361f90f8bd76161a715ff2b811",
-   "size": 21691083
+   "sha256": "34f6df01e8411c067967242ad1db5358b7614106b785c019aa2a3bbabc238732",
+   "size": 21690695
   },
   "HuongDan/images/face_158023.png": {
    "sha256": "3e9f3ed4ecd4df8e8b323a4357197086c2d42d3cc7e697859e39d61f32109fa8",
@@ -180521,6 +180521,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.08-1657",
- "notes": "Thêm CLB AC Milan (Serie A, áo, logo, đội hình 2017/18); sửa lỗi 'Giải cup này không còn tồn tại' sau khi bỏ giải"
+ "version": "2026.11.08-1707",
+ "notes": "Launcher 1.3.5: sửa lỗi Tcl khi mở launcher (giải nén vào %LOCALAPPDATA%\\FO3Launcher); không ghi đè missions.json, shop_settings.json"
 }
