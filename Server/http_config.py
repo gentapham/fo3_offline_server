@@ -2021,7 +2021,7 @@ def ep_tactic(i, query, body):
 #   or POST /league2/match/sim (no play), POST /league2/sleep (bye round)
 # laststatus "league:<round>" tells the client which day it is (LeagueCupProxy.setToday).
 # --------------------------------------------------------------------------- #
-LEAGUE_SIZE = 20  # toi da (ca giai that, vd La Liga 20 doi); man tao giai chi ve 10 logo dau (makeSchedule lap 10 lan),
+LEAGUE_SIZE = 64  # = moi doi cua giai (user: "mo khoa tat ca doi bong thay vi gioi han 20"; giai lon nhat 40 doi); man tao giai chi ve 10 logo dau (makeSchedule lap 10 lan),
 # bang xep hang la ScrollingList nen cuon duoc
 
 
@@ -4603,6 +4603,23 @@ FA_SEASONS += tuple((str(v.get("tag") or f"S{k}")[:6], (k,), 8335) for k, v in s
 PACKS.update({92000000 + codes[0]: (f"{label} Top 200", {"seasons": codes, "icon": icon, "top": 200, "all": True})
               for label, codes, icon in FA_SEASONS})
 PACKS[82214356] = ("07 Top 200", {"season": 7, "top": 200, "all": True})  # the original All '07 item
+# Goi theo bac cho 4 mua moi (user: "tao nhieu goi cho 4 mua moi, tu goi cui den goi cao, mo tu +8 -> +20"):
+# itemid 93000000 + ma mua * 100 + bac; the ra o cap ngau nhien grade_min..grade (cap thap ra nhieu hon).
+# Anh goi: externalAssets/shop/<itemid>.png (ve bang tools/season_pack_icons.py). Xep dau tab Goi cau thu.
+SEASON_TIERS = ((None, 8, 8), (100, 8, 10), (50, 10, 13), (20, 13, 16), (10, 16, 18), (3, 18, 20))
+SEASON_TIERS_SMALL = ((None, 8, 8), (15, 8, 10), (10, 10, 13), (5, 13, 16), (3, 16, 18), (1, 18, 20))  # 26TY: 23 the
+SEASON_TIER_SEASONS = (("26TY", 18, SEASON_TIERS_SMALL), ("26TS", 19, SEASON_TIERS), ("PRM", 94, SEASON_TIERS),
+                       ("IPRM", 76, SEASON_TIERS))
+SEASON_TIER_PACKS = []
+for _label, _code, _tiers in SEASON_TIER_SEASONS:
+    for _n, (_top, _gmin, _gmax) in enumerate(_tiers, 1):
+        _iid = 93000000 + _code * 100 + _n
+        _g = f"+{_gmin}" if _gmin == _gmax else f"+{_gmin}~+{_gmax}"
+        _f = {"season": _code, "grade_min": _gmin, "grade": _gmax, "all": True}
+        if _top:
+            _f["top"] = _top
+        PACKS[_iid] = (f"{_label} {'All' if not _top else f'Top {_top}'} {_g}", _f)
+        SEASON_TIER_PACKS.append(_iid)
 # Hinh goi ("icon") khong co trong cache cua may nay -> dung hinh rieng <itemid>.png
 # (da tao san trong _cache/.../externalAssets/shop), de moi goi co hinh rieng.
 for _iid, (_name, _f) in PACKS.items():
@@ -5215,7 +5232,9 @@ def shop_list(st):
         if i in promo:
             e["promotion"], e["promotionbanner"] = promo[i]
         return e
-    return ([soge_banner()] + [entry(i) for i in custom[::-1]] + [entry(i) for i in PACKS if i not in custom]
+    first = [i for i in SEASON_TIER_PACKS if i in PACKS and i not in custom]  # goi 4 mua moi: ngay sau goi tu chon
+    return ([soge_banner()] + [entry(i) for i in custom[::-1]] + [entry(i) for i in first]
+            + [entry(i) for i in PACKS if i not in custom and i not in first]
             + [shop_entry(i, "USE") for i in ITEMS]
             + [shop_entry(i, "PACKAGE") for i in PACKAGES if i not in CHAIN_STEPS]
             + [shop_entry(i, "MILEAGE", MP_SHOPID + i) for i in (() if shop_paid() else MP_SHOP)]
