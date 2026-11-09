@@ -1,12 +1,12 @@
 {
  "files": {
   "FO3 Launcher.exe": {
-   "sha256": "c7860959068af75abc59f48d447f43a6aea4d97a6c85308441071e4093a9e100",
-   "size": 21694372
+   "sha256": "c5f94c1f57d8880be12b85ea94a06f62dc731a1d4c09ece64e919a684cd24084",
+   "size": 21696690
   },
   "FO3 Offline Launcher.exe": {
-   "sha256": "c7860959068af75abc59f48d447f43a6aea4d97a6c85308441071e4093a9e100",
-   "size": 21694372
+   "sha256": "c5f94c1f57d8880be12b85ea94a06f62dc731a1d4c09ece64e919a684cd24084",
+   "size": 21696690
   },
   "HuongDan/images/face_158023.png": {
    "sha256": "3e9f3ed4ecd4df8e8b323a4357197086c2d42d3cc7e697859e39d61f32109fa8",
@@ -173,8 +173,8 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "2a05f85df741d9ef11d3b611f837d58de495de4c8a33043ff8750439c30caa05",
-   "size": 64067
+   "sha256": "9deeff343333faa79b185ecc4060591f764771d02a93def95dc56263223bbbcf",
+   "size": 64397
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
@@ -192793,6 +192793,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-1134",
- "notes": "Launcher 1.3.7: Sao lưu / Khôi phục tài khoản (file .fo3save trên Desktop; chép vào thư mục game là launcher hỏi khôi phục); GM Tool có thẻ Sao lưu tài khoản; cập nhật hướng dẫn"
+ "version": "2026.11.09-2018",
+ "notes": "Launcher 1.3.8: bấm CHƠI GAME vào nhanh (không quét lại 48.000 file khi đã là bản mới nhất; có bản mới chỉ kiểm tra file thay đổi; manifest nén gzip; hiện tiến độ khi quét lần đầu)"
 }
