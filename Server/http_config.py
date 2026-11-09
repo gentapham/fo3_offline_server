@@ -2833,11 +2833,12 @@ def match_cards(st, stats):
 # ket qua, va the [[trong so, itemid | {"ep": so EP}]].
 MATCH_REWARD_FILE = os.path.join(HERE, "gamedata", "match_rewards.json")
 MATCH_REWARD_DEFAULT = {  # = muc thuong truoc day (EP 2000/1000/500, EXP_WIN/DRAW/LOSS) + the thuong
-    "result": {"win": {"ep": 2000, "coach": EXP_WIN[0], "player": EXP_WIN[1]},
-               "draw": {"ep": 1000, "coach": EXP_DRAW[0], "player": EXP_DRAW[1]},
-               "loss": {"ep": 500, "coach": EXP_LOSS[0], "player": EXP_LOSS[1]}},
-    "cards": [[30, {"ep": 1000}], [25, {"ep": 3000}], [15, {"ep": 5000}], [8, {"ep": 10000}],
-              [10, 92000000], [7, 92000014], [5, 501]]}
+    # EP x1000 (2026-11-09, user: goi 26TY All +8 ~139 trieu EP chi nen ton 50-100 tran thang -> thang 2 trieu)
+    "result": {"win": {"ep": 2_000_000, "coach": EXP_WIN[0], "player": EXP_WIN[1]},
+               "draw": {"ep": 1_000_000, "coach": EXP_DRAW[0], "player": EXP_DRAW[1]},
+               "loss": {"ep": 500_000, "coach": EXP_LOSS[0], "player": EXP_LOSS[1]}},
+    "cards": [[30, {"ep": 100_000}], [25, {"ep": 300_000}], [15, {"ep": 500_000}], [8, {"ep": 1_000_000}],
+              [10, 92000300], [7, 92000014], [5, 501]]}  # 92000300 = 26L Top 200 (92000000 khong con)
 
 
 def match_reward_cfg():
@@ -4827,7 +4828,7 @@ def custom_pack_cards(spids, seasons):
 
 custom_packs_sync()
 
-SHOP_FREE = True  # mac dinh: moi mon trong Shop 0 EP (GM Tool > Gia EP the > Shop tinh phi de doi)
+SHOP_FREE = True  # Shop 0 EP chi khi GM Tool tat "Shop tinh phi" (mac dinh bat: SHOP_SETTINGS_DEFAULT)
 
 # --------------------------------------------------------------------------- #
 # Shop tinh phi (port fo3-server-indo #30): gamedata/shop_settings.json {paid, packs}. Khi bat, moi
@@ -4839,7 +4840,7 @@ SHOP_FREE = True  # mac dinh: moi mon trong Shop 0 EP (GM Tool > Gia EP the > Sh
 # the da dua, gia rao ban tren thi truong toi da 105%.
 # --------------------------------------------------------------------------- #
 SHOP_SETTINGS_FILE = os.path.join(HERE, "gamedata", "shop_settings.json")
-SHOP_SETTINGS_DEFAULT = {"paid": False, "packs": 1.0}
+SHOP_SETTINGS_DEFAULT = {"paid": True, "packs": 1.0}  # mac dinh tinh phi (user: "dung de gia 0 EP")
 _SHOP_SET = {"mtime": None, "data": dict(SHOP_SETTINGS_DEFAULT)}
 ES_EP = 1000  # 1 diem nang cap
 EXP_EP = 10  # 1 diem EXP (cau thu / HLV)
@@ -4860,7 +4861,7 @@ def shop_settings():
         except (OSError, ValueError):
             d = {}
         packs = d.get("packs", 1.0)
-        _SHOP_SET.update(mtime=m, data={"paid": bool(d.get("paid")),
+        _SHOP_SET.update(mtime=m, data={"paid": bool(d.get("paid", True)),
                                         "packs": float(packs) if isinstance(packs, (int, float)) and 1 <= packs <= 100 else 1.0})
     return dict(_SHOP_SET["data"])
 

@@ -253,8 +253,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "b4cddd974a273e62cce5a44da1fb5641e19d3d45700cbc44428dd05633167a38",
-   "size": 340715
+   "sha256": "2843611660f1213b6b2c5de7843e37f31005ea51791acaea3914accad6a5baed",
+   "size": 340959
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -192549,6 +192549,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-0930",
- "notes": "Logo mới nhất cho 620 CLB; Đấu giải với máy có đủ mọi đội của giải (bỏ giới hạn 20); 24 gói mới cho 26TY/26TS/PRIME/INFINITY (+8 đến +20)"
+ "version": "2026.11.09-0941",
+ "notes": "Cửa hàng mặc định tính phí; EP thưởng trận x1000 (thắng 2 triệu, hoà 1 triệu, thua 500 nghìn)"
 }
