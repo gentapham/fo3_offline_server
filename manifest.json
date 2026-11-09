@@ -1,12 +1,12 @@
 {
  "files": {
   "FO3 Launcher.exe": {
-   "sha256": "1fa7da444202a673c3677a92a1b6c2bdbf3f53a6fe6273035107d7ca31281a46",
-   "size": 21699414
+   "sha256": "552d061ab12acb47ebcfb8820d618cf78af05976586f757ace5c8488edc586d6",
+   "size": 21701478
   },
   "FO3 Offline Launcher.exe": {
-   "sha256": "1fa7da444202a673c3677a92a1b6c2bdbf3f53a6fe6273035107d7ca31281a46",
-   "size": 21699414
+   "sha256": "552d061ab12acb47ebcfb8820d618cf78af05976586f757ace5c8488edc586d6",
+   "size": 21701478
   },
   "HuongDan/images/face_158023.png": {
    "sha256": "3e9f3ed4ecd4df8e8b323a4357197086c2d42d3cc7e697859e39d61f32109fa8",
@@ -173,8 +173,8 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "8cf12c1d6050691e3b3f164f0edff32ea271b65bffbecf2456d1becdb646272b",
-   "size": 65321
+   "sha256": "cdea429c7b006c01aad0aee5bed6bacf91314f326af6ba74b9dd22cb35ef4263",
+   "size": 64755
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
@@ -193045,6 +193045,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-0019",
- "notes": "23 huyền thoại mùa 0 (Koeman, Cantona, Zico, Papin, Völler, Rivelino...) có thẻ WL, UL, EL, UB, WB, huyền thoại CLB, PRIME, INFINITY với chỉ số theo FC Online và ảnh mini riêng từng mùa"
+ "version": "2026.11.10-0028",
+ "notes": "Launcher 1.3.10: sửa thông báo 'Failed to remove temporary directory' khi tắt launcher lúc game còn chạy; tự dọn thư mục tạm cũ"
 }
