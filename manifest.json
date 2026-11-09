@@ -1,12 +1,12 @@
 {
  "files": {
   "FO3 Launcher.exe": {
-   "sha256": "c5f94c1f57d8880be12b85ea94a06f62dc731a1d4c09ece64e919a684cd24084",
-   "size": 21696690
+   "sha256": "1fa7da444202a673c3677a92a1b6c2bdbf3f53a6fe6273035107d7ca31281a46",
+   "size": 21699414
   },
   "FO3 Offline Launcher.exe": {
-   "sha256": "c5f94c1f57d8880be12b85ea94a06f62dc731a1d4c09ece64e919a684cd24084",
-   "size": 21696690
+   "sha256": "1fa7da444202a673c3677a92a1b6c2bdbf3f53a6fe6273035107d7ca31281a46",
+   "size": 21699414
   },
   "HuongDan/images/face_158023.png": {
    "sha256": "3e9f3ed4ecd4df8e8b323a4357197086c2d42d3cc7e697859e39d61f32109fa8",
@@ -173,8 +173,8 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "9deeff343333faa79b185ecc4060591f764771d02a93def95dc56263223bbbcf",
-   "size": 64397
+   "sha256": "5eb895f060416cbb9c8080f8145e3f123a8b154aaafd4dbaa7b1e36c1970b735",
+   "size": 64977
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
@@ -192465,7 +192465,7 @@
    "size": 167
   },
   "data/data_0.big": {
-   "sha256": "285e0faea618f01fb7f1443ec89b4d666cc17e4cbd4b47f3bf20bb6f76744eb2",
+   "sha256": "e9dd502fa1cd0871e3f009e2dd6701a365337d19304f15e0798281a821f1b5e7",
    "size": 74560206
   },
   "data/loc/locale_eng.big.dl": {
@@ -192793,6 +192793,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-2018",
- "notes": "Launcher 1.3.8: bấm CHƠI GAME vào nhanh (không quét lại 48.000 file khi đã là bản mới nhất; có bản mới chỉ kiểm tra file thay đổi; manifest nén gzip; hiện tiến độ khi quét lần đầu)"
+ "version": "2026.11.09-2100",
+ "notes": "Thay được 5 người trong trận (sửa dữ liệu engine); Launcher 1.3.9: tùy chọn Giới hạn khung hình (giảm CPU, mặc định bật), launcher nhẹ hơn khi đang chơi"
 }
