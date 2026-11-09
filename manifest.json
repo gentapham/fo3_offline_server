@@ -173,20 +173,20 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "169ce70ea2f1b33593efb2d7a159499f0e272cc0af83debe75ec04f0581bad79",
-   "size": 56469
+   "sha256": "8ce85110e49c44c802218160e36b070d759ead55dfb01a355aa6e4ea345d93d9",
+   "size": 62150
   },
   "Server/admin.py": {
-   "sha256": "c7b9819926f3cadbb5d1eb57d49c1794af0a55dd6ec07579cd0c9d768abac914",
-   "size": 76687
+   "sha256": "86731dbbf5d1c19811a6f5f08deeb10ef3a453c3e2d9b7765ac63b04764dd855",
+   "size": 78281
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "497a1abbd12025356b2e03b02f05dc098ec0398a9a8c5d989b8d4341c6b64ae0",
-   "size": 281923
+   "sha256": "7fcb84d47104d6f74f836d2b9846a137711693ccc057329cb08fa8d213b29121",
+   "size": 288912
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -245,16 +245,16 @@
    "size": 78507
   },
   "Server/gen_teams.py": {
-   "sha256": "22225ee9fd0bec76451d7bafd7ef3fd8310e911d71f5099f22d3bb4b5144d16c",
-   "size": 10911
+   "sha256": "6a87ea0ac6b8c478abb484d3b21457b96a78cbfab3df55955ef5dfda87f80d3e",
+   "size": 10947
   },
   "Server/growth.py": {
    "sha256": "b76cfc7f3abaedfe2f25636059d989ca323c1e464f38f44cbe6632c9e86bb42e",
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "e4cecb4a261ada0c3126259488866b4671184fa57ef0917b7fe7c04264c833ae",
-   "size": 342995
+   "sha256": "3e4e4ff96c5f8c729ca2c2f5716d2b049bb989fb23f9d67a712253ca35ee436e",
+   "size": 345638
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -281,8 +281,8 @@
    "size": 22492
   },
   "Server/price_settings.py": {
-   "sha256": "b48a8fd96759bcecf00c22e24df5b562eaaafab147aed3bc9fea418417852a53",
-   "size": 2703
+   "sha256": "fcf7cdcb737d14a25bf7deecc385b00f3ee893731ebb0ee9f0ac5879e024d806",
+   "size": 3137
   },
   "Server/rank.py": {
    "sha256": "f7e49ba1a5b38ed3ddde00146edde879b5f72dca955974bcaf43f785766e307a",
@@ -825,8 +825,8 @@
    "size": 25
   },
   "_cache/games/fo3sg/externalAssets/crests/large/_timestamp.lst": {
-   "sha256": "c0b644904e2a0ac0f10aeb84850a9e304573c835335310594245f32eed3809d0",
-   "size": 18
+   "sha256": "129a64c23e1b6754db177b1cdb3f96f72dc04ee1f1034e576bc7275440e2ccb1",
+   "size": 133
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s0.png": {
    "sha256": "9e1c8c9600f50160ad45484a5879ddc2b0e39fda43da0db2ecf33c7330ca2291",
@@ -1332,6 +1332,14 @@
    "sha256": "0d77881764a734ff135afdabb1b36a0153783dbc3bf1ce5f7429182efade27ab",
    "size": 6380
   },
+  "_cache/games/fo3sg/externalAssets/crests/large/s111114.png": {
+   "sha256": "ef481e1596effb948a6b1e78ee547d1b53f8414f069c18ea4f6f16060e650fdc",
+   "size": 6293
+  },
+  "_cache/games/fo3sg/externalAssets/crests/large/s111115.png": {
+   "sha256": "cc8b27b964b9f6a8e4f359dbe50db6d2a634096c390c149987e191f898463176",
+   "size": 5320
+  },
   "_cache/games/fo3sg/externalAssets/crests/large/s111130.png": {
    "sha256": "3f8118b0297ceaad49dcf9a7ae2d83393087439ef57e59a28fd1482071dd01d7",
    "size": 7449
@@ -1483,6 +1491,14 @@
   "_cache/games/fo3sg/externalAssets/crests/large/s111489.png": {
    "sha256": "89fe17b27afb6d7bdab420ea25375e3333321186e8e93f45c49f79665c66ad36",
    "size": 15522
+  },
+  "_cache/games/fo3sg/externalAssets/crests/large/s111512.png": {
+   "sha256": "6835f741d16325c012fc60090c5233569a13b1437de8ac690b254cbdc0242f13",
+   "size": 4470
+  },
+  "_cache/games/fo3sg/externalAssets/crests/large/s111533.png": {
+   "sha256": "71a7de01cbdb723f29ef5947cc190000b873e8a347c4cc5b1a28c445c3c8d952",
+   "size": 3486
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s111588.png": {
    "sha256": "b0f1b7904d83ccab77e317042492a79f3687f08fef48fb31ffd426bb69a9e7a0",
@@ -1857,8 +1873,8 @@
    "size": 20828
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s113666.png": {
-   "sha256": "37629286bf4baa3e1bb40f3dc27e6de200218a4b366c644a5b027655e920fbdf",
-   "size": 57837
+   "sha256": "70d6f059dc6bacf06de9e73c3e470f0b00aff7ce78d487332a64d668919621f9",
+   "size": 4224
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s113701.png": {
    "sha256": "164c54b7cff4ebe32a3a6e7479523982e5bb5c628113351fe1ee281305b2ea28",
@@ -2073,8 +2089,8 @@
    "size": 7443
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s1411.png": {
-   "sha256": "11ac373552e621e467b5773d0c1cd4668ffcb9b5f9e76f3968b4ab0e4e2aa6b8",
-   "size": 19081
+   "sha256": "06044051896140e789bb653bfffde36041e21674b68e4e4a982c1349dc540416",
+   "size": 4492
   },
   "_cache/games/fo3sg/externalAssets/crests/large/s1413.png": {
    "sha256": "7ad3c59df6308856bdbc83b18446f7ebb9910a2e9e96780d9209655790f48491",
@@ -3520,6 +3536,10 @@
    "sha256": "3f584b58339e3c975cfbb7776f031a635d501c998715b5019a8512b6b8d596b8",
    "size": 13597
   },
+  "_cache/games/fo3sg/externalAssets/crests/large/s974.png": {
+   "sha256": "99462d1afebe141c4693e324a16d0a444e5b923e893f5b0d7a301b619d637adb",
+   "size": 7713
+  },
   "_cache/games/fo3sg/externalAssets/crests/large/s980.png": {
    "sha256": "9a398cf12f6b628fc704fede67ade3e9a5d7b6d4fcd1d823772a103bbe7e16b3",
    "size": 32297
@@ -3545,8 +3565,8 @@
    "size": 27
   },
   "_cache/games/fo3sg/externalAssets/crests/small/_timestamp.lst": {
-   "sha256": "c0b644904e2a0ac0f10aeb84850a9e304573c835335310594245f32eed3809d0",
-   "size": 18
+   "sha256": "129a64c23e1b6754db177b1cdb3f96f72dc04ee1f1034e576bc7275440e2ccb1",
+   "size": 133
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s1.png": {
    "sha256": "55668f0d2b5f927f5c4ed44ca1c5f9ae3cedefeb097079a9dd6a33dc8c126937",
@@ -3944,6 +3964,14 @@
    "sha256": "79e53f750b6815a18931b5714a8a462fbc6ba8434c35d15be9837d1f7748045e",
    "size": 2460
   },
+  "_cache/games/fo3sg/externalAssets/crests/small/s111114.png": {
+   "sha256": "e697c2b4f5fd6503651d7e63f1215e11c0a82956f7b9b1b752cfab64a9ca8568",
+   "size": 8045
+  },
+  "_cache/games/fo3sg/externalAssets/crests/small/s111115.png": {
+   "sha256": "e1821a8625f60c90e063b9950ec674f71ef54fa613e71c22b6e65787bdaadfe4",
+   "size": 7090
+  },
   "_cache/games/fo3sg/externalAssets/crests/small/s111131.png": {
    "sha256": "c540a3e5a9357e1b446b07331f925820bcc99b1d7bafebf1cfbeafec1b8750e7",
    "size": 22126
@@ -4003,6 +4031,14 @@
   "_cache/games/fo3sg/externalAssets/crests/small/s111487.png": {
    "sha256": "1746b75e40aa22055e215f1a04b53dd90f091e2afbf23909157b0d144d72ffab",
    "size": 5916
+  },
+  "_cache/games/fo3sg/externalAssets/crests/small/s111512.png": {
+   "sha256": "04ac4486dd73676a692378f3361f2fabac689183c7bd6c509e6011d4eb5ddd1a",
+   "size": 4854
+  },
+  "_cache/games/fo3sg/externalAssets/crests/small/s111533.png": {
+   "sha256": "c3d9347a21e83f09e65b87c87c09a76033def6046136ee47e421b3bc55443f45",
+   "size": 3601
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s111588.png": {
    "sha256": "3149a42a273028eee42a810ef2a291da5893876f357e3f46fcb391720ae6f16d",
@@ -4369,8 +4405,8 @@
    "size": 10044
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s113666.png": {
-   "sha256": "7a0a1ca81dbb437c4a713bc830c380e8699ed89cdfa4609d81993840c23570c7",
-   "size": 17172
+   "sha256": "c9e0541838d9a2b5e5e21b3f88291b3e60a777de353bd5057a10ee53d7a331be",
+   "size": 4715
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s113701.png": {
    "sha256": "8621f2e875b6bdb23d9c0c5e16845201d6dccd5d952dcab58c82a25a0398d08b",
@@ -4523,6 +4559,10 @@
   "_cache/games/fo3sg/externalAssets/crests/small/s14.png": {
    "sha256": "b7d3583a0abd8a528d5be6ffe8a07238f0efb237f7190b89a65a2dbd31945531",
    "size": 10364
+  },
+  "_cache/games/fo3sg/externalAssets/crests/small/s1411.png": {
+   "sha256": "c81a6d21bdd1a1116a18fe259f47838f6e7101587406560b3a61154f72b341ae",
+   "size": 5005
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s1413.png": {
    "sha256": "6e97317ff911d808ac87c461ba57fa98c876abfc64d3046e58f9e69899693987",
@@ -5695,6 +5735,10 @@
   "_cache/games/fo3sg/externalAssets/crests/small/s97.png": {
    "sha256": "d50656103c8e0c245da6f526d19cf60bee563fc79c8c645db2d3b9c682378ce5",
    "size": 19553
+  },
+  "_cache/games/fo3sg/externalAssets/crests/small/s974.png": {
+   "sha256": "c79f5610b6bb2c79859ba26ce04c6a4a8bc2199a7056db3712ccd5db8ab226b7",
+   "size": 9413
   },
   "_cache/games/fo3sg/externalAssets/crests/small/s980.png": {
    "sha256": "eac8f1b3cdc0435e29ec0b31eb3e24805d455026d9f70be1652386b837e97963",
@@ -191292,6 +191336,14 @@
    "sha256": "2fd2274685163d16551656a1f638ff07ac56dd6e448b226a8d6b267a5506378f",
    "size": 18889
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/111114.png": {
+   "sha256": "7913ef8aea556cf8f6ede330571b8bab9e67b4b9c16adafaeaadb9927b56204d",
+   "size": 17997
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/111115.png": {
+   "sha256": "66b44e7286efc434f716782610ada3ed77c5d3de99d469de4f21124678aa43cd",
+   "size": 19866
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/111130.png": {
    "sha256": "d78fe78086d4e008efef60cf5b2e4be9e45fc5e8f274c967cbb673585807a966",
    "size": 9968
@@ -191315,6 +191367,18 @@
   "_cache/games/fo3sg/externalAssets/wcountries/111487.png": {
    "sha256": "78a0ea8eade93afff7b741ae8adca97bc1f901682f00e81b05d9afaa0917bab6",
    "size": 13683
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/111512.png": {
+   "sha256": "aacf17b90e659bebe9f61c26c1b690755fda47ee612350290d00c8a7b154f479",
+   "size": 14256
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/111533.png": {
+   "sha256": "00e7c0f839aa6b5b9d29c6834d358d0bc3117ad8a874f52a83163b77730e212c",
+   "size": 20061
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/113666.png": {
+   "sha256": "b3a63cafb1bcb3419fd01abf2a33b088b1b12b4625b62ec422e92151f087217e",
+   "size": 18589
   },
   "_cache/games/fo3sg/externalAssets/wcountries/1318.png": {
    "sha256": "b3ad2b4f6aeb5c66c53ea25d6ce1dab4cf1887db052626c7dce5b447aacc66ab",
@@ -191580,6 +191644,10 @@
    "sha256": "156a1dc209ad99e99134995c7ccc593665e3000d07a3147da6a56f9d0ea3a621",
    "size": 13387
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/1411.png": {
+   "sha256": "b1dd4f252a4705c0a8a18420ae81cf7588b8c241ad0c8ecd4116fdac388500a8",
+   "size": 16334
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/1413.png": {
    "sha256": "cd59016d6a4feb302c6be57d40b0d7edad0ecc38d85b04e7e2df5000b2ff3b23",
    "size": 13346
@@ -191592,13 +191660,17 @@
    "sha256": "156a1dc209ad99e99134995c7ccc593665e3000d07a3147da6a56f9d0ea3a621",
    "size": 13387
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/974.png": {
+   "sha256": "760e9a591082339640b2c4f84a9047219f4333bd75ed1fe1680222ccfb77319c",
+   "size": 19426
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/_timestamp": {
    "sha256": "83c2a4378f04c951184b7373f846328405aea3ff63f6fad82b3402b1ab8c6fc6",
    "size": 15
   },
   "_cache/games/fo3sg/externalAssets/wcountries/_timestamp.lst": {
-   "sha256": "af460e20dd0a58f43fd14a39f375478f7c2518255ef2579666a7afc6118b2168",
-   "size": 1615
+   "sha256": "d3d48cc31c58f9950be4a700e5af1631189d684b41b2899074bad615de067ec7",
+   "size": 1722
   },
   "_cache/games/fo3sg/externalAssets/wcountries/continent_2.png": {
    "sha256": "09b515d1afd5df817cc4aadb4d207b0ae4f1fce69e60630564dac4f74e8cc978",
@@ -191648,6 +191720,14 @@
    "sha256": "26f15d6e135a8f4ac492b29ba48fc1738146801b013db231e0be4668399ded72",
    "size": 185
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/111114.png": {
+   "sha256": "98311bb0d57059b624d06fc3508d2cc675e34f4b6cb6c34010d5b5182c591273",
+   "size": 610
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/111115.png": {
+   "sha256": "1455c1d0e21f7c4faa8d083e5ce539d3c7d569edbb305cea66fef9da2d3a1302",
+   "size": 542
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/111130.png": {
    "sha256": "5b9318a76981c768a6158297ffed947a868e18bc76f8ae578d79b1ccb54110d0",
    "size": 99
@@ -191671,6 +191751,18 @@
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/111487.png": {
    "sha256": "15827a3dd7411746dd10774e81335922ab4519631aa93edf45b4d11c9be8a957",
    "size": 103
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/111512.png": {
+   "sha256": "a7038f42f3864cab300e923b0b2be7cf67a86a9939ca35096f88f8dfd3241afd",
+   "size": 445
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/111533.png": {
+   "sha256": "54d0bb2694d449e702807e85d4ef02ca25b8260bd379f15b8fbe9e4ca21c49c4",
+   "size": 170
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/113666.png": {
+   "sha256": "1e7c47a3e6333e5c9cb997be198dab957e52fae14db7cb4036c1c82eca01f89e",
+   "size": 492
   },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1318.png": {
    "sha256": "ecc791dbb8e57e867f8b8f3f8618906105a7a3b59b35f8bfacf1155b57b3a498",
@@ -191796,6 +191888,14 @@
    "sha256": "26f15d6e135a8f4ac492b29ba48fc1738146801b013db231e0be4668399ded72",
    "size": 185
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400111114.png": {
+   "sha256": "98311bb0d57059b624d06fc3508d2cc675e34f4b6cb6c34010d5b5182c591273",
+   "size": 610
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400111115.png": {
+   "sha256": "1455c1d0e21f7c4faa8d083e5ce539d3c7d569edbb305cea66fef9da2d3a1302",
+   "size": 542
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400111130.png": {
    "sha256": "5b9318a76981c768a6158297ffed947a868e18bc76f8ae578d79b1ccb54110d0",
    "size": 99
@@ -191819,6 +191919,18 @@
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400111487.png": {
    "sha256": "15827a3dd7411746dd10774e81335922ab4519631aa93edf45b4d11c9be8a957",
    "size": 103
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400111512.png": {
+   "sha256": "a7038f42f3864cab300e923b0b2be7cf67a86a9939ca35096f88f8dfd3241afd",
+   "size": 445
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400111533.png": {
+   "sha256": "54d0bb2694d449e702807e85d4ef02ca25b8260bd379f15b8fbe9e4ca21c49c4",
+   "size": 170
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400113666.png": {
+   "sha256": "1e7c47a3e6333e5c9cb997be198dab957e52fae14db7cb4036c1c82eca01f89e",
+   "size": 492
   },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/14001318.png": {
    "sha256": "ecc791dbb8e57e867f8b8f3f8618906105a7a3b59b35f8bfacf1155b57b3a498",
@@ -191924,6 +192036,10 @@
    "sha256": "bbbdf48995e0c1612fac2386e0d81d462f53278dc16ad3cbfedbb7cf8f6bd502",
    "size": 14672
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/14001411.png": {
+   "sha256": "e8e07571b2cc8a57c6c50ffdae8732f7cec85b842b603dd9820dcffd319b494c",
+   "size": 471
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/14001413.png": {
    "sha256": "5e6b40d44dc8326826759008c989696b2101a4858281b26379d60ff3fe94e64d",
    "size": 122
@@ -191935,6 +192051,14 @@
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/14001886.png": {
    "sha256": "72b1ca7e12d0de7351faf4b55fa022a25711db4ba35a2dcb1cd1b3c60460998e",
    "size": 100
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1400974.png": {
+   "sha256": "d9581e1e097aecd1899cf3015ea3b587af196c2983235baa13e37804da818911",
+   "size": 1023
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1411.png": {
+   "sha256": "e8e07571b2cc8a57c6c50ffdae8732f7cec85b842b603dd9820dcffd319b494c",
+   "size": 471
   },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/1413.png": {
    "sha256": "5e6b40d44dc8326826759008c989696b2101a4858281b26379d60ff3fe94e64d",
@@ -191948,13 +192072,17 @@
    "sha256": "72b1ca7e12d0de7351faf4b55fa022a25711db4ba35a2dcb1cd1b3c60460998e",
    "size": 100
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/974.png": {
+   "sha256": "d9581e1e097aecd1899cf3015ea3b587af196c2983235baa13e37804da818911",
+   "size": 1023
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/_timestamp": {
    "sha256": "83c2a4378f04c951184b7373f846328405aea3ff63f6fad82b3402b1ab8c6fc6",
    "size": 15
   },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/_timestamp.lst": {
-   "sha256": "ddbe5630a65edb402901f7848cba3c4bdde605abb4b73543c395c62cd056267b",
-   "size": 1423
+   "sha256": "b7342ce63050c20c3aabb714ca6644dab2cc5c630be7a68bc81e69e747ab950d",
+   "size": 1665
   },
   "_cache/games/fo3sg/externalAssets/wcountries/smallFlags/notfound.png": {
    "sha256": "9aefa61408bb18ebfdb56547a09ec8556de898cfa226b47a6fe13f57eb962e0c",
@@ -191977,8 +192105,8 @@
    "size": 15
   },
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/_timestamp.lst": {
-   "sha256": "e65ce9ba284c5fbae376a57ae26ce7869e5d973caf052dd226eeed817ae9abd7",
-   "size": 1583
+   "sha256": "2e958b090fea2c94b14ac872e0bd6ec389eca8453b364a48dbeacfba170fa7c1",
+   "size": 1704
   },
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_105035.png": {
    "sha256": "67d30cce5f2592a34b3300008aafe0b90bd4aeb934a73cd5d192db5734307bf6",
@@ -191999,6 +192127,14 @@
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_111112.png": {
    "sha256": "2fd2274685163d16551656a1f638ff07ac56dd6e448b226a8d6b267a5506378f",
    "size": 18889
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_111114.png": {
+   "sha256": "7913ef8aea556cf8f6ede330571b8bab9e67b4b9c16adafaeaadb9927b56204d",
+   "size": 17997
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_111115.png": {
+   "sha256": "66b44e7286efc434f716782610ada3ed77c5d3de99d469de4f21124678aa43cd",
+   "size": 19866
   },
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_111130.png": {
    "sha256": "d78fe78086d4e008efef60cf5b2e4be9e45fc5e8f274c967cbb673585807a966",
@@ -192023,6 +192159,18 @@
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_111487.png": {
    "sha256": "78a0ea8eade93afff7b741ae8adca97bc1f901682f00e81b05d9afaa0917bab6",
    "size": 13683
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_111512.png": {
+   "sha256": "aacf17b90e659bebe9f61c26c1b690755fda47ee612350290d00c8a7b154f479",
+   "size": 14256
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_111533.png": {
+   "sha256": "00e7c0f839aa6b5b9d29c6834d358d0bc3117ad8a874f52a83163b77730e212c",
+   "size": 20061
+  },
+  "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_113666.png": {
+   "sha256": "b3a63cafb1bcb3419fd01abf2a33b088b1b12b4625b62ec422e92151f087217e",
+   "size": 18589
   },
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_1318.png": {
    "sha256": "b3ad2b4f6aeb5c66c53ea25d6ce1dab4cf1887db052626c7dce5b447aacc66ab",
@@ -192288,6 +192436,10 @@
    "sha256": "156a1dc209ad99e99134995c7ccc593665e3000d07a3147da6a56f9d0ea3a621",
    "size": 13387
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_1411.png": {
+   "sha256": "b1dd4f252a4705c0a8a18420ae81cf7588b8c241ad0c8ecd4116fdac388500a8",
+   "size": 16334
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_1413.png": {
    "sha256": "cd59016d6a4feb302c6be57d40b0d7edad0ecc38d85b04e7e2df5000b2ff3b23",
    "size": 13346
@@ -192300,17 +192452,105 @@
    "sha256": "156a1dc209ad99e99134995c7ccc593665e3000d07a3147da6a56f9d0ea3a621",
    "size": 13387
   },
+  "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/f_974.png": {
+   "sha256": "760e9a591082339640b2c4f84a9047219f4333bd75ed1fe1680222ccfb77319c",
+   "size": 19426
+  },
   "_cache/games/fo3sg/externalAssets/wcountries/wcFlags/notfound.png": {
    "sha256": "7b3ce49afd5fd8193a03693e1a67d432833f9e8c410f338b53b2ea510343fb4f",
    "size": 167
   },
   "data/data_0.big": {
-   "sha256": "09ab828642195b216f5d57fdb2c68d3e2e524e49fdc7c6596f13b64c6efd62a7",
+   "sha256": "285e0faea618f01fb7f1443ec89b4d666cc17e4cbd4b47f3bf20bb6f76744eb2",
    "size": 74560206
   },
   "data/loc/locale_eng.big.dl": {
    "sha256": "6d5e9dc86c4ed43f59290417a97fcf2cd6cf0452b7833d983b6aad839c93742a",
    "size": 2673088
+  },
+  "data/sceneassets/kit/kit_111114_0_0.rx3": {
+   "sha256": "11d9c987a5d9fcfa988c71a91648806dd66ba481e2049f0ecbc81fd85acac2a3",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111114_1_0.rx3": {
+   "sha256": "f988efa86842c9538ac45843891d1f28100bf519e9fee3110c86a42349b8f2a5",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111114_2_0.rx3": {
+   "sha256": "f11588153b70c8f5fe0b6135faabd224e0bb2d39847523a6453155568bcf4b2d",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111115_0_0.rx3": {
+   "sha256": "7e6f91ced4545c1b89e219ab1eb9ab530ef6074508c132ad7167a89282b842f9",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111115_1_0.rx3": {
+   "sha256": "5d5df52747a8b75a405802c9678e4ae3230a90aedf493c7e7496f58fbd0ac426",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111115_2_0.rx3": {
+   "sha256": "acdc6a5492af1bd040c57aca36301fdb5a9a0709702cc879a18efac7f867f53f",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111512_0_0.rx3": {
+   "sha256": "23d97f7813528b15914ccaa1002e97f3ba6bf6e40bfd596fed0c2d0d6d582316",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111512_1_0.rx3": {
+   "sha256": "70a72a681cd996ef657e8623b402d010870f45616d7a7bc0efb9a0d590db88c0",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111512_2_0.rx3": {
+   "sha256": "ef6343015f21dcad1289d7518ecd96bc75630a6bfdb9b2389922f717645e9ba6",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111533_0_0.rx3": {
+   "sha256": "d18354cbfb65fc9f4874935dc23d5724102efe01805976d90a035d9b6aa3b290",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111533_1_0.rx3": {
+   "sha256": "cd664dc0bd8a05ac9ce4f41bbe640d21342c95f5980cfe4fbaf3a5f4b50c87f7",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_111533_2_0.rx3": {
+   "sha256": "603a1c9c5832e739f0bc7be722fc01b8dc8912a23c2e123ec0a1ad62def9da25",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_113666_0_0.rx3": {
+   "sha256": "8b9a9af3779388ce5f64b7b0af97435bdd158fa3c64d5ab9f8ddb9a0b7e6808e",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_113666_1_0.rx3": {
+   "sha256": "ea12ad298464194c15cd476dc5564a95d0957df4d954d177e458a935f9eb8f93",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_113666_2_0.rx3": {
+   "sha256": "2ead17249d780569d1e7caae301ac8ebbc066418075478e281f2060bd48c9441",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_1411_0_0.rx3": {
+   "sha256": "4033ed2f6a6f4c238fa25932941e894e7f15645c9b5277f3087cb48c0c464f23",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_1411_1_0.rx3": {
+   "sha256": "d6de9e269dea257807e072f2b3c60dcf59a9e0dfbc3ac46cf1d936adde3452e0",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_1411_2_0.rx3": {
+   "sha256": "3c284cadd946031df80b306530216db729f593eec7d1d6ff01f8ec20ebce03c0",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_974_0_0.rx3": {
+   "sha256": "7a5ffee706dfaf2d0a8ab196318b25de60be961838d92fbfba19d5d301ea76c7",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_974_1_0.rx3": {
+   "sha256": "49bb1c6a673a4a4fa6b4522db289a1f86370a13264b7a28e17c9c7f96fb66583",
+   "size": 848272
+  },
+  "data/sceneassets/kit/kit_974_2_0.rx3": {
+   "sha256": "3a55ddd23e7879f6ddc46393a8d74053cdb7c5ce077ffb274a83ad1ca7228c3d",
+   "size": 848272
   },
   "data/ui/CommonDynamicObject.big": {
    "sha256": "b337b6982a1b7175a4e70c8d2c00636e858793665b8040d62e1022c51343beab",
@@ -192521,7 +192761,7 @@
    "size": 1079740
   },
   "data/ui/libs/Module.big": {
-   "sha256": "00f8259f144798af36d6f7f858f1063f7bf1d0bed4422e794ba32ecbd4054626",
+   "sha256": "87f24adfb98734ca29dde67d7be45041b39d020338734ed7f60c012ab544a916",
    "size": 711936
   },
   "data/ui/localization/LANGUAGESTRING_ENG.json": {
@@ -192529,12 +192769,12 @@
    "size": 839232
   },
   "data/ui/localization/TEAMNAMES_ENG.json": {
-   "sha256": "fb6b793b41cd719a91792234fc172f32af4f2ae35d1dd93348ef5626125553fa",
-   "size": 50335
+   "sha256": "b37fe770c8f0b236134fc3c7f6ab15cea5cc07d584e06ed150000b7ef975dee8",
+   "size": 50338
   },
   "data/ui/localization/eng.big": {
-   "sha256": "af5f545f1d5801d319c1b87f30ec7626ca69ff91d0bc6c58fa20e38e760c10c9",
-   "size": 71582
+   "sha256": "3cdf35d0b446d94cfa508e5689bbeaf121f976fed35f2319a25ca33197fdac49",
+   "size": 98208
   },
   "data/ui/localization/tha.big": {
    "sha256": "28c7c87b7b9f0958a1cc96575139442f96025dd4287286acd983d2639747777f",
@@ -192549,6 +192789,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-0952",
- "notes": "Sửa Trao đổi cầu thủ ra 5 người giống nhau; đội tuyển Việt Nam trong World Cup (VN Legend + VN STAR, +10, LV20); luật mới 7 dự bị, 5 lượt thay người"
+ "version": "2026.11.09-1108",
+ "notes": "World Cup: thêm 7 đội tuyển châu Á (Việt Nam, Nhật, Hàn, Saudi, Iran, Iraq, Thái) có áo, cờ, logo, +10 LV20; sửa lỗi quay về ở World Cup; bỏ popup lỗi giao diện; MP/Cash mặc định 0 (chỉnh trong GM Tool); phí nâng cấp 5% giá trị thẻ; hệ số giá theo mùa; màu cấp thẻ trong GM Tool; cập nhật hướng dẫn"
 }

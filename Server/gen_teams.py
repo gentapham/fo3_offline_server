@@ -60,10 +60,10 @@ EXTRA_SQUADS = {
 
 
 # Doi tuyen tu dung (World Cup): Viet Nam = doi "VN Star" 113666 cua client (co ten + logo, khong co ao 3D ->
-# http_config.KIT_ALIAS muon ao China PR). Doi hinh = 2 mua VN Legend (61, 12 huyen thoai) + VN STAR (73, 17 the he moi).
+# http_config.KIT_ALIAS muon ao China PR). Doi hinh = 12 huyen thoai VN Legend + 17 VN STAR (73); moi nguoi lay the OVR cao nhat.
 NATIONAL_SQUADS = {
-    113666: (61174673, 61174675, 61174687, 61174692, 61174694, 61195670, 61195710, 61195718, 61217970, 61999500,
-             61999501, 61999502,                                                     # VN Legend
+    113666: (76174673, 76174675, 76174687, 76174692, 76174694, 76195670, 76195710, 76195718, 76217970, 76999500,
+             76999501, 76999502,  # 12 huyen thoai VN Legend, the OVR cao nhat = INFINITY 76 (87-88; 94 = 85-86, 61 = 83-84)
              73238138, 73238139, 73238140, 73238141, 73238142, 73238143, 73238144, 73238145, 73238146, 73238147,
              73238148, 73238149, 73238150, 73238151, 73238152, 73238153, 73238154),  # VN STAR
 }

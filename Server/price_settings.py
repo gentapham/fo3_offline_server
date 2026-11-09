@@ -4,6 +4,7 @@ gamedata/price_settings.json:
     zero_percent : gia the +0 = bao nhieu % gia the +1 (0 = nhu ban goc: the +0 khong co gia)
     multiplier   : nhan gia toan bo the (1 = goc)
     overrides    : {spid: gia EP o +1} gia tu dat cho tung the; cac cap khac tinh theo he so cap the
+    season_mult  : {ma mua: he so 0,1..10} nhan gia moi the cua mua do (TTCN, gia tri doi, goi, trao doi)
 Doc lai file khi no thay doi (theo thoi gian sua file), khong can khoi dong lai server.
 """
 import json
@@ -15,7 +16,7 @@ from pathlib import Path
 
 PATH = Path(__file__).resolve().parent / "gamedata" / "price_settings.json"
 LOCK = threading.RLock()
-DEFAULT = {"zero_percent": 0, "multiplier": 1.0, "overrides": {}}
+DEFAULT = {"zero_percent": 0, "multiplier": 1.0, "overrides": {}, "season_mult": {}}
 _cache = {"mtime": None, "data": dict(DEFAULT), "checked": -1e9}
 RECHECK = 1.0  # s: card_price goi get() hang tram nghin lan / yeu cau -> chi stat file toi da 1 lan/giay
 
@@ -29,7 +30,10 @@ def _clean(d):
     mult = float(mult) if isinstance(mult, (int, float)) and 0.1 <= mult <= 10 else 1.0
     ov = {str(int(k)): int(v) for k, v in ov.items()
           if str(k).isdigit() and isinstance(v, (int, float)) and 0 <= v <= 10 ** 12} if isinstance(ov, dict) else {}
-    return {"zero_percent": zero, "multiplier": mult, "overrides": ov}
+    sm = d.get("season_mult") or {}
+    sm = {str(int(k)): float(v) for k, v in sm.items()
+          if str(k).isdigit() and isinstance(v, (int, float)) and 0.1 <= v <= 10 and v != 1} if isinstance(sm, dict) else {}
+    return {"zero_percent": zero, "multiplier": mult, "overrides": ov, "season_mult": sm}
 
 
 def get():

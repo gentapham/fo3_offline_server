@@ -22,7 +22,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PAGE = os.path.join(HERE, "admin", "index.html")
 POS_NAMES = "GK SW RWB RB RCB CB LCB LB LWB RDM CDM LDM RM RCM CM LCM LM RAM CAM LAM RF CF LF RW RS ST LS LW".split()
 API = {}
-READ_ONLY = {"missions", "shop_settings", "inventory", "custom_packs", "coach_slots", "bot_settings", "enhancement_settings", "summary", "players", "search", "packs", "daily", "log", "seasons", "facets", "season_cards",
+READ_ONLY = {"money", "missions", "shop_settings", "inventory", "custom_packs", "coach_slots", "bot_settings", "enhancement_settings", "summary", "players", "search", "packs", "daily", "log", "seasons", "facets", "season_cards",
              "coach_info", "price_settings", "card", "staff_catalog", "staffs", "match_rewards", "prematch", "server_options",
              "market_settings", "rank_info"}  # the rest must be POST + header
 NO_LOCK = {"search", "facets", "seasons", "packs", "staff_catalog", "log"}
@@ -544,6 +544,23 @@ def set_ep(p):
         hc.add_ep(st, as_int(p.get("add"), -hc.MAX_EP, hc.MAX_EP, "EP"))  # add_ep giu trong 0..MAX_EP
     hc._save(st)
     return {"ep": c["ep"]}
+
+
+@api("money")
+def money_get(p):
+    c = coach(hc._state())
+    return {"mp": hc.coach_money(c, "mp"), "cash": hc.coach_money(c, "cash"), "max": hc.MAX_CASH}
+
+
+@api("money_set")
+def money_set(p):
+    """Dat MP / Cash cua HLV (0..MAX_CASH). Vao lai game de thay."""
+    st = hc._state(); c = coach(st)
+    for k, label in (("mp", "MP"), ("cash", "Cash")):
+        if k in p and str(p[k]).strip() != "":
+            c[k] = as_int(p[k], 0, hc.MAX_CASH, label)
+    hc._save(st)
+    return money_get(p)
 
 
 @api("player_add")
@@ -1143,8 +1160,12 @@ def price_settings_get(p):
     d = price_settings.get()
     ov = d["overrides"]
     nm = names(int(s) for s in ov)
+    st_ = season_table()
     return {"zero_percent": d["zero_percent"], "multiplier": d["multiplier"],
-            "overrides": [{"spid": int(s), "name": nm.get(int(s), "?"), "price": v} for s, v in ov.items()]}
+            "overrides": [{"spid": int(s), "name": nm.get(int(s), "?"), "price": v} for s, v in ov.items()],
+            "season_mult": [{"code": int(c), "tag": (st_.get(int(c)) or {}).get("tag", c),
+                             "name": (st_.get(int(c)) or {}).get("name", ""), "mult": v}
+                            for c, v in sorted(d.get("season_mult", {}).items(), key=lambda x: int(x[0]))]}
 
 
 @api("shop_settings")
@@ -1172,7 +1193,21 @@ def shop_settings_set(p):
 def price_settings_set(p):
     import price_settings
     cur = price_settings.get()
-    data = {"zero_percent": cur["zero_percent"], "multiplier": cur["multiplier"], "overrides": dict(cur["overrides"])}
+    data = {"zero_percent": cur["zero_percent"], "multiplier": cur["multiplier"], "overrides": dict(cur["overrides"]),
+            "season_mult": dict(cur.get("season_mult", {}))}
+    if "season_code" in p:  # he so gia theo mua ("" / 1 = bo)
+        code = as_int(p["season_code"], 0, 999, "mùa")
+        v = p.get("season_mult")
+        try:
+            v = None if v in (None, "") else float(v)
+        except (TypeError, ValueError):
+            raise AdminError("Hệ số mùa phải là số")
+        if v is None or v == 1:
+            data["season_mult"].pop(str(code), None)
+        elif not 0.1 <= v <= 10:
+            raise AdminError("Hệ số mùa phải trong khoảng 0,1 đến 10")
+        else:
+            data["season_mult"][str(code)] = v
     if "zero_percent" in p:
         data["zero_percent"] = as_int(p["zero_percent"], 0, 100, "zero")
     if "multiplier" in p:
@@ -1192,8 +1227,9 @@ def price_settings_set(p):
                 raise AdminError("Không có SPID này trong dữ liệu")
             data["overrides"][str(s)] = as_int(p["override_price"], 0, 10 ** 12, "price")
     price_settings.save(data)
-    try:  # gia goi theo gia the: tinh lai, Shop trong game hoi lai gia
+    try:  # gia goi / kho the trao doi theo gia the: tinh lai, Shop trong game hoi lai gia
         hc.pack_price.cache_clear()
+        hc._PACK_POOL.clear(); hc._T3_POOL.clear(); hc._T3_PRIME.clear()
         hc.shop_changed()
     except Exception:
         pass

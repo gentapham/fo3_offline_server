@@ -610,13 +610,17 @@ def roster(teamid):
             r["summary"].update(name=info["teamname"], league={"id":78},
                                 nation={"id":nation["nationid"], "name":nation["nationname"]}, rival={"name":""})
             return r
-    if teamid in gen_teams.NATIONAL_SQUADS:
+    if teamid in WC_NATION_SQUADS and teamid not in gen_teams.SQUAD_LISTS:
+        gen_teams.SQUAD_LISTS[teamid] = nation_squad_spids(WC_NATION_SQUADS[teamid])
+    if teamid in gen_teams.NATIONAL_SQUADS or teamid in WC_NATION_SQUADS:
         with closing(_db()) as c:
             r = gen_teams.team(c, teamid)
         grade, level = NATIONAL_SQUAD_GRADE
         r["team"]["players"] = [dict(p, grade=grade, levelinfo={"level": level, "exp": 0}) for p in r["team"]["players"]]
-        nat = _CLUB_NATIONS.get(192) or {"nationid": 192, "nationname": "Vietnam"}
-        r["summary"].update(name="Việt Nam", league={"id": 78}, rival={"name": ""},
+        nid = WC_NATION_SQUADS.get(teamid, 192)
+        nat = _CLUB_NATIONS.get(nid) or {"nationid": nid, "nationname": ""}
+        name = "Việt Nam" if teamid == 113666 else (_CLUB_TEAMS.get(teamid) or {}).get("teamname") or nat["nationname"]
+        r["summary"].update(name=name, league={"id": 78}, rival={"name": ""},
                             nation={"id": nat["nationid"], "name": nat["nationname"]})
         return r
     f = os.path.join(RESPONSES, f"static_info_authentic_team_all_{teamid}.json")
@@ -627,9 +631,26 @@ def roster(teamid):
         return gen_teams.team(c, teamid) or {"summary": {}, "team": {"players": [], "squad": {"positions": [], "kickers": []}}}
 
 
-NATIONAL_SQUAD_GRADE = (10, 20)  # doi tuyen Viet Nam (World Cup): moi the +10, LV 20 (user 2026-11-09)
-# Doi khong co ao 3D trong client -> ma ao cua doi khac (ao = teamid << 5 | loai): VN Star 113666 -> China PR 1413
-KIT_ALIAS = {113666: 1413}
+NATIONAL_SQUAD_GRADE = (10, 20)  # doi tuyen tu dung (World Cup): moi the +10, LV 20 (user 2026-11-09)
+# Ao 3D: engine lay ao theo ma doi (teamid << 5 | loai) -> doi khong co ao trong client duoc file ao roi
+# data/sceneassets/kit/kit_<doi>_*.rx3 (tools/borrow_kits.py). KIT_ALIAS chi con cho truong hop thieu file roi.
+KIT_ALIAS = {}
+# Doi tuyen chau A them cho World Cup (user: "chau A con it quoc gia, tuong tu VN, tranh trung cau thu"):
+# ma doi client -> quoc tich; doi hinh = moi cau thu quoc tich do 1 the OVR cao nhat (4 GK + 26 nguoi khac).
+WC_NATION_SQUADS = {1411: 163, 974: 167, 111114: 183, 111115: 161, 111512: 162, 111533: 188}  # Nhat, Han, Saudi, Iran, Iraq, Thai
+
+
+@functools.lru_cache(maxsize=None)
+def nation_squad_spids(nationality):
+    with closing(_db()) as c:
+        best = {}
+        for s, pid, pos, o in c.execute(f"SELECT p.spid, p.playerid, p.preferredposition1, {POSOVR} FROM players p "
+                                        "WHERE p.nationality = ? AND p.spid >= 1000000", (nationality,)):
+            if o is not None and (pid not in best or o > best[pid][2]):
+                best[pid] = (s, pos, o)
+    rows = sorted(best.values(), key=lambda r: -r[2])
+    gk = [r for r in rows if r[1] == 0][:4]
+    return tuple(r[0] for r in gk + [r for r in rows if r[1] != 0][:30 - len(gk)])
 
 
 def roster_team(teamid):
@@ -1067,9 +1088,10 @@ def card_price(spid, grade=1):
     g = min(MAX_GRADE, max(0, int(grade)))
     base = (ps["overrides"].get(str(int(spid))) or player_price_overrides().get(int(spid))
             or stat_price(card_ovr(spid)))
+    mult = ps["multiplier"] * ps.get("season_mult", {}).get(str(int(spid) // 1000000), 1.0)  # GM Tool: he so mua
     if g == 0:  # +0 = 0 EP o ban goc
-        return sig3(base * ps["zero_percent"] / 100 * ps["multiplier"])
-    return price_ladder(base * ps["multiplier"])[g]
+        return sig3(base * ps["zero_percent"] / 100 * mult)
+    return price_ladder(base * mult)[g]
 
 
 PRICE_TOP = 50_000_000_000  # gia cao nhat cua 1 the (+20) (truoc 999B - qua cao); < MAX_EP
@@ -1852,9 +1874,10 @@ def coach_me(st, slot):
         # silently aborts onChangeCoachMeResource before squad/players are read.
         # es = diem nang cap (nang cap v2.5: CoachProxy.expandMoney money.es)
         "money": {"ep": min(MAX_EP, coach.get("ep", START_EP)), "es": int(coach.get("es", 0)),
-                  # MP + Cash luon day (ban offline): Cua hang MP / nut Nap cash khong bi chan
-                  "cash": MAX_CASH, "mp": MAX_CASH, "useable_mp": MAX_CASH,
-                  "mpdata": {"point": MAX_CASH, "until": "2035-01-01T00:00:00.000Z"}},
+                  # MP + Cash: so du rieng cua HLV (mac dinh 0, chinh o GM Tool > Tong quan). Chi hien thi -
+                  # moi mon Cua hang tinh bang EP, khong mon nao tru MP / Cash.
+                  "cash": coach_money(coach, "cash"), "mp": coach_money(coach, "mp"), "useable_mp": coach_money(coach, "mp"),
+                  "mpdata": {"point": coach_money(coach, "mp"), "until": "2035-01-01T00:00:00.000Z"}},
         # always a VIP member playing from an official PC warnet (IGR / GCA): CoachProxy.igr,
         # isVip() = vipDetail > 0 and vipExpireAt in the future; vipStatus.VIP1 = VIP expiry
         # after a VVIP period (updateVipExpireAt)
@@ -3159,7 +3182,7 @@ WC_CONF = {  # WORLDCUP_CONFEDERATION_<n>: 2 chau Au, 3 chau Phi, 4 Nam My, 5 ch
         1356, 1334, 1330, 1327],
     3: [111130, 111112, 1395, 111099],
     4: [1370, 1377, 111109, 111465, 111487, 1375, 111108, 111451],
-    5: [1413, 1415, 111466, 113666],  # 113666 = Viet Nam (gen_teams.NATIONAL_SQUADS)
+    5: [1413, 1415, 111466, 113666, 1411, 974, 111114, 111115, 111512, 111533],  # + Viet Nam, WC_NATION_SQUADS
     7: [1386, 111455, 1387],
 }
 WC_TEAMS = [t for v in WC_CONF.values() for t in v]
@@ -3212,7 +3235,10 @@ def ep_cup_list(query, body):
             cup_refresh_stats(cup)  # du cot ban thang/thua cho giai tao truoc ban sua
             # CupProxy.checkEndatCupByDays doc endat cua giai dang da (thieu -> "con 0 ngay")
             meta = cup_meta_of(cup.get("metaid")) or WC_META
-            cup = dict(cup, startat=meta["startat"], endat=meta["endat"])
+            # CupProxy.onCupListReceived doc joinable.dayofweek cua MOI muc trong danh sach (ke ca giai dang da):
+            # thieu -> TypeError #1010, popup COMMON_ERROR_UI khi quay lai man World Cup (2026-11-09). Lay du
+            # truong cua giai goc (joinable, ...), truong cua giai dang da de len tren.
+            cup = dict(meta, **cup, startat=meta["startat"], endat=meta["endat"])
         return _json(WC_METAS + ([cup] if cup else []))
     return _json(CUPS)
 
@@ -3756,7 +3782,12 @@ def ep_cup_record(query, body):
 # the client fills staticdata (names, position, ratings) from its own DB via `expandme`.
 # --------------------------------------------------------------------------- #
 LINES = {"GK": range(0, 1), "DF": range(1, 9), "MF": range(9, 20), "FW": range(20, 28)}  # Enums.PLAYERPOSITION
-MAX_CASH = 999_999_999  # MP / Cash hien thi (so nguyen 32-bit an toan)
+MAX_CASH = 999_999_999  # MP / Cash toi da (so nguyen 32-bit an toan)
+
+
+def coach_money(coach, key):
+    """MP / Cash cua HLV (coach["mp"] / coach["cash"], mac dinh 0)."""
+    return max(0, min(MAX_CASH, int(coach.get(key) or 0)))
 MAX_PLAYERS = 9999  # coach.limits.players (gioi han cau thu trong CLB; theo yeu cau 9999)
 # Tim inti (player state "first": Formasi lists only these) holds 36 ("Tim inti x/36" in Skuad);
 # cards beyond that wait in Tim Cadangan, which Tukar Scout trades from.
@@ -4014,9 +4045,18 @@ def default_enhance_rate(target, material):
     return min(1.0, ENHANCE_RATE[tg] * bonus)
 
 
+ENHANCE_FEE_PCT = 5  # phi nang cap / phuc hoi = 5% gia tri the (user 2026-11-09: "chi phi nang cap cao qua, de vua phai")
+
+
 def enhance_cost(target, material=None, rate=None, v25=False, mat_value=None):
-    """EP 1 lan nang: 2% gia tri the (it nhat 1.000). Shop tinh phi: it nhat bang gia tri trung binh
-    lan nang them vao the (theo ti le rate) tru gia tri phoi - khong thi phoi +1..+3 re tao ra EP."""
+    """EP 1 lan nang = ENHANCE_FEE_PCT % gia tri the (it nhat 1.000), moi che do Shop. (Truoc: Shop tinh phi lay gia
+    tri trung binh lan nang them vao the - gap 20-40 lan, ban be keu dat.)"""
+    g = grade_of(target)
+    return max(1000, sig3(card_price(target["spid"], g) * ENHANCE_FEE_PCT // 100))
+
+
+def _enhance_cost_value(target, material=None, rate=None, v25=False, mat_value=None):
+    """(Khong dung) cach tinh cu khi Shop tinh phi: gia tri trung binh lan nang them - phoi."""
     g = grade_of(target)
     base = max(1000, sig3(card_price(target["spid"], g) // 50))
     if (material is None and mat_value is None) or rate is None or not shop_paid():
@@ -4196,9 +4236,8 @@ def restore_cost(p, before, now, need):
     phi, EP = gia tri trung binh lan phuc hoi tra lai (diem nang cap kiem duoc mien phi -> khong in EP)."""
     if not shop_paid():
         return {"currency": "ES", "price": need}
-    rolls = range(max(1, before - 2), before + 1)
-    gain = sum(card_price(p["spid"], g) for g in rolls) / len(rolls) - card_price(p["spid"], now)
-    return {"currency": "EP", "price": max(1000, nice_ceil(gain))}
+    # Shop tinh phi: EP = ENHANCE_FEE_PCT % gia tri the o cap truoc khi rot (truoc: gia tri trung binh tra lai, rat dat)
+    return {"currency": "EP", "price": max(1000, nice_ceil(card_price(p["spid"], before) * ENHANCE_FEE_PCT / 100))}
 
 
 def ep_enh25_restore(query, body):

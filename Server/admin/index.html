@@ -886,10 +886,19 @@
         <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">Số dư EP</h2></div>
         <p class="lead">Cộng, trừ hoặc đặt thẳng số EP của bạn.</p>
         <form class="row" id="epForm">
-          <label class="f">Số EP (tối đa 999.999.999.999)<input type="number" id="epValue" min="0" max="999999999999" step="1000" required="" placeholder="VD: 1000000"></label>
+          <label class="f">Số EP (tối đa 999999999999)<input type="number" id="epValue" min="0" max="999999999999" step="1000" required="" placeholder="VD: 1000000"></label>
           <button class="b primary" data-mode="add">Cộng EP</button>
           <button class="b" data-mode="sub">Trừ EP</button>
           <button class="b" data-mode="set">Đặt số dư</button>
+        </form>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">MP và Cash</h2></div>
+        <p class="lead">Số MP và Cash hiển thị trong Cửa hàng (mặc định 0). Mọi món trong Cửa hàng tính bằng EP. Vào lại game để thấy thay đổi.</p>
+        <form class="row" id="moneyForm">
+          <label class="f">MP (tối đa 999999999)<input type="number" id="mpValue" min="0" max="999999999" step="1000" placeholder="0"></label>
+          <label class="f">Cash (tối đa 999999999)<input type="number" id="cashValue" min="0" max="999999999" step="1000" placeholder="0"></label>
+          <button class="b primary">Lưu</button>
         </form>
       </div>
 
@@ -1077,7 +1086,38 @@
         #dapthe .enh-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 12px 0 16px; }
         #dapthe .enh-cell { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 14px;
           border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
-        #dapthe .enh-cell span.lv { white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums; }
+        #dapthe .enh-cell span.lv { white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums;
+          display: inline-flex; align-items: center; gap: 6px; color: var(--mute); }
+        /* Huy hieu cap the nhu trong game (Label.big): nen toi, vien + chu cung mau theo bac */
+        .gbadge { display: inline-block; min-width: 38px; padding: 3px 7px; border-radius: 6px; text-align: center;
+          font: 800 13px/1.15 system-ui, sans-serif; letter-spacing: .2px; font-variant-numeric: tabular-nums;
+          background: linear-gradient(#2a2d33, #16181c); border: 2px solid var(--gb); color: var(--gt);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 1px 2px rgba(0,0,0,.25); text-shadow: 0 1px 0 rgba(0,0,0,.6); }
+        .gbadge.g0 { --gb: #4a4d52; --gt: #8d9096; }
+        .gbadge.g1 { --gb: #b8c0cc; --gt: #c9ced6; }
+        .gbadge.g2, .gbadge.g3, .gbadge.g4 { --gb: #b8714a; --gt: #d98b5f; }
+        .gbadge.g5, .gbadge.g6, .gbadge.g7 { --gb: #8fa0bd; --gt: #d3d9e3; }
+        .gbadge.g8, .gbadge.g9, .gbadge.g10 { --gb: #e3b021; --gt: #ffd84a; }
+        /* +11..+19: nen mau dac, chu trang (xanh la / do / tim theo bac 3 cap); +20: vien cau vong (anh in game) */
+        .gbadge.g11, .gbadge.g12, .gbadge.g13 { --gb: #4fc28c; --gt: #fff; background: linear-gradient(#2a9a66, #156a43); }
+        .gbadge.g14, .gbadge.g15, .gbadge.g16 { --gb: #ff6b6b; --gt: #fff; background: linear-gradient(#c8232b, #8a0f16); }
+        .gbadge.g17, .gbadge.g18, .gbadge.g19 { --gb: #b48cff; --gt: #fff; background: linear-gradient(#7440d6, #4a1f9c); }
+        .gbadge.g20 { --gb: transparent; --gt: #fff; position: relative;
+          background: linear-gradient(#3a2470, #1c1236) padding-box,
+                      linear-gradient(90deg, #ff4d4d, #ffb84d, #fff04d, #4dff88, #4dc3ff, #9b6bff, #ff4dd2) border-box; }
+        .gbadge.g20::after { content: "✦"; position: absolute; top: -7px; right: -5px; font-size: 11px; color: #ffcf3a;
+          text-shadow: 0 0 3px #fff3b0, 0 0 6px #ff9be8; }
+        #dapthe .enh-cell { border-left: 4px solid var(--gb, var(--line)); }
+        #dapthe .enh-cell.g0 { --gb: #4a4d52; } #dapthe .enh-cell.g1 { --gb: #b8c0cc; }
+        #dapthe .enh-cell.g2, #dapthe .enh-cell.g3, #dapthe .enh-cell.g4 { --gb: #b8714a; }
+        #dapthe .enh-cell.g5, #dapthe .enh-cell.g6, #dapthe .enh-cell.g7 { --gb: #8fa0bd; }
+        #dapthe .enh-cell.g8, #dapthe .enh-cell.g9, #dapthe .enh-cell.g10 { --gb: #e3b021; }
+        #dapthe .enh-cell.g11, #dapthe .enh-cell.g12, #dapthe .enh-cell.g13 { --gb: #2a9a66; }
+        #dapthe .enh-cell.g14, #dapthe .enh-cell.g15, #dapthe .enh-cell.g16 { --gb: #c8232b; }
+        #dapthe .enh-cell.g17, #dapthe .enh-cell.g18, #dapthe .enh-cell.g19 { --gb: #7440d6; }
+        #dapthe .enh-cell.g20 { --gb: transparent; position: relative; }
+        #dapthe .enh-cell.g20::before { content: ""; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 4px;
+          border-radius: 10px 0 0 10px; background: linear-gradient(#ff4d4d, #ffb84d, #fff04d, #4dff88, #4dc3ff, #9b6bff); }
         @media (max-width: 1200px) { #dapthe .enh-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
         @media (max-width: 900px) { #dapthe .enh-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           #dapthe .enh-bulk { grid-template-columns: 1fr; } }
@@ -1223,7 +1263,7 @@
     <section id="giaep" hidden="">
       <div class="card">
         <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">Giá EP thẻ cầu thủ</h2></div>
-        <p class="lead">Giá thẻ tính theo OVR và cấp thẻ. Ở bản gốc thẻ +0 có giá 0, nên đội khởi đầu có Giá trị đội 0 EP. Thay đổi ở đây áp dụng cho mọi thẻ: Giá trị đội, giá trong bảng và giá trị khi đổi cầu thủ.</p>
+        <p class="lead">Giá thẻ tính theo OVR và cấp thẻ. Ở bản gốc thẻ +0 có giá 0, nên đội khởi đầu có Giá trị đội 0 EP. Thay đổi ở đây áp dụng cho mọi thẻ: <b>giá mua bán trên Thị trường chuyển nhượng (TTCN)</b>, Giá trị đội, giá gói thẻ, phí nâng cấp và giá trị khi trao đổi cầu thủ. Cầu thủ đắt hay rẻ là do bạn chỉnh: toàn bộ (hệ số nhân), theo mùa, hoặc từng thẻ.</p>
         <label for="zeroPct" class="muted">Giá thẻ +0 bằng <strong id="zeroVal">0%</strong> giá thẻ +1 (0% = như bản gốc)</label>
         <div class="rate-wrap">
           <input id="zeroPct" type="range" min="0" max="100" step="5" value="0">
@@ -1234,6 +1274,17 @@
           <button class="b primary" id="priceSave" type="button">Lưu</button>
           <button class="b" id="priceReset" type="button">Về mặc định</button>
         </div>
+        <h3>Hệ số giá theo mùa</h3>
+        <p class="muted" style="margin:0 0 8px">Nhân giá mọi thẻ của một mùa (0,1 – 10; 1 = như thường). Ví dụ PRIME 0,5 = rẻ một nửa, 26TY 2 = đắt gấp đôi. Nhân cùng hệ số chung ở trên.</p>
+        <form class="row" id="smForm">
+          <label class="f">Mùa<select id="smCode"></select></label>
+          <label class="f">Hệ số<input type="number" id="smMult" min="0.1" max="10" step="0.1" value="1" required=""></label>
+          <button class="b primary">Lưu hệ số</button>
+        </form>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Mùa</th><th class="num">Hệ số</th><th>Thao tác</th></tr></thead>
+          <tbody id="smRows"><tr><td colspan="3" class="muted">Chưa có hệ số theo mùa.</td></tr></tbody>
+        </table></div>
         <h3>Giá tự đặt cho từng thẻ</h3>
         <p class="muted" style="margin:0 0 8px">Giá nhập là giá ở +1; các cấp khác tự tính theo hệ số cấp thẻ. SPID xem trong bảng cầu thủ hoặc trong chi tiết thẻ.</p>
         <form class="row" id="ovForm">
@@ -2374,6 +2425,18 @@ $("#epForm").addEventListener("click", e => {
   act(async () => { const r = await api("ep", body); await loaders.ringkasan(); say(`Số dư EP mới: ${fmt(r.ep)}.`, "ok"); });
 });
 
+async function loadMoney() {
+  try { const m = await apiFetch("money"); $("#mpValue").value = m.mp; $("#cashValue").value = m.cash; } catch (e) {}
+}
+$("#moneyForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const mp = Number($("#mpValue").value || 0), cash = Number($("#cashValue").value || 0);
+  if (![mp, cash].every(n => Number.isInteger(n) && n >= 0 && n <= 999999999)) return say("MP / Cash phải từ 0 đến 999.999.999.", "err");
+  act(async () => { const r = await api("money_set", {mp, cash}); $("#mpValue").value = r.mp; $("#cashValue").value = r.cash;
+    say(`Đã lưu: MP ${fmt(r.mp)}, Cash ${fmt(r.cash)}. Vào lại game để thấy.`, "ok"); });
+});
+loadMoney();
+
 ["#playerFilter", "#pfTeam", "#pfNation"].forEach(id => $(id).addEventListener("input", renderClub));
 ["#pfPos", "#pfRole", "#pfSeason"].forEach(id => $(id).addEventListener("change", renderClub));
 $("#pfClear").addEventListener("click", () => {
@@ -2608,8 +2671,27 @@ async function loadPrices() {
       <td class="num">${o.spid}</td><td class="num">${fmt(o.price)}</td>
       <td><button class="b small danger" type="button" data-ovdel="${o.spid}">Xóa</button></td></tr>`).join("")
       || `<tr><td colspan="4" class="muted">Chưa có giá tự đặt.</td></tr>`;
+    $("#smRows").innerHTML = (d.season_mult || []).map(m => `<tr>
+      <td>${seasonBadge(m.code)} ${esc(m.name || "")}</td><td class="num">× ${m.mult}</td>
+      <td><button class="b small danger" type="button" data-smdel="${m.code}">Xóa</button></td></tr>`).join("")
+      || `<tr><td colspan="3" class="muted">Chưa có hệ số theo mùa.</td></tr>`;
+    if (!Object.keys(SEASONS).length) await loadSeasons();
+    const sel = $("#smCode"), cur = sel.value;
+    sel.innerHTML = seasonsOrdered().filter(x => Number(x.code) > 0).map(x => `<option value="${x.code}">${esc(x.tag)} — ${esc(x.name)}</option>`).join("");
+    if (cur) sel.value = cur;
   } catch (e) { say("Không tải được cài đặt giá: " + e.message, "err"); }
 }
+$("#smForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const v = Number($("#smMult").value);
+  if (!(v >= 0.1 && v <= 10)) return say("Hệ số mùa phải từ 0,1 đến 10.", "err");
+  act(async () => { await api("price_settings_set", {season_code: Number($("#smCode").value), season_mult: v});
+    await loadPrices(); searchCache.clear(); }, "Đã lưu hệ số giá theo mùa.");
+});
+$("#smRows").addEventListener("click", e => {
+  const c = e.target.dataset.smdel; if (!c) return;
+  act(async () => { await api("price_settings_set", {season_code: Number(c), season_mult: ""}); await loadPrices(); searchCache.clear(); }, "Đã xóa hệ số mùa.");
+});
 $("#zeroPct").addEventListener("input", paintZero);
 $("#priceSave").addEventListener("click", () => act(async () => {
   await api("price_settings_set", {zero_percent: Number($("#zeroPct").value), multiplier: Number($("#priceMult").value)});
@@ -2870,7 +2952,7 @@ function renderEnhance(j) {
 }
 function fillEnhGrades(vals) {
   $("#enhGrades").innerHTML = Array.from({length: 20}, (_, g) =>
-    `<label class="enh-cell"><span class="lv">+${g} → +${g + 1}</span><span class="enh-pct"><input type="number" min="0" max="100" step="0.1" data-eg="${g}" value="${vals[g] ?? 0}"><i>%</i></span></label>`).join("");
+    `<label class="enh-cell g${g + 1}"><span class="lv"><b class="gbadge g${g}">${g ? "+" + g : "0"}</b>→<b class="gbadge g${g + 1}">+${g + 1}</b></span><span class="enh-pct"><input type="number" min="0" max="100" step="0.1" data-eg="${g}" value="${vals[g] ?? 0}"><i>%</i></span></label>`).join("");
 }
 $("#enhGradeSave").addEventListener("click", () => act(async () => {
   const vals = [...document.querySelectorAll("#enhGrades [data-eg]")].map(i => Math.round(Number(i.value) * 10) / 10);
