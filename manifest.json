@@ -245,16 +245,16 @@
    "size": 78507
   },
   "Server/gen_teams.py": {
-   "sha256": "2f3e2e70012ceeedd6c2ccda38ef5b4e1dcf8880efc5c266c0573a4018e28b5a",
-   "size": 10179
+   "sha256": "22225ee9fd0bec76451d7bafd7ef3fd8310e911d71f5099f22d3bb4b5144d16c",
+   "size": 10911
   },
   "Server/growth.py": {
    "sha256": "b76cfc7f3abaedfe2f25636059d989ca323c1e464f38f44cbe6632c9e86bb42e",
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "2843611660f1213b6b2c5de7843e37f31005ea51791acaea3914accad6a5baed",
-   "size": 340959
+   "sha256": "e4cecb4a261ada0c3126259488866b4671184fa57ef0917b7fe7c04264c833ae",
+   "size": 342995
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -192549,6 +192549,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-0941",
- "notes": "Cửa hàng mặc định tính phí; EP thưởng trận x1000 (thắng 2 triệu, hoà 1 triệu, thua 500 nghìn)"
+ "version": "2026.11.09-0952",
+ "notes": "Sửa Trao đổi cầu thủ ra 5 người giống nhau; đội tuyển Việt Nam trong World Cup (VN Legend + VN STAR, +10, LV20); luật mới 7 dự bị, 5 lượt thay người"
 }

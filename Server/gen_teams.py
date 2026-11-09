@@ -59,6 +59,17 @@ EXTRA_SQUADS = {
 }
 
 
+# Doi tuyen tu dung (World Cup): Viet Nam = doi "VN Star" 113666 cua client (co ten + logo, khong co ao 3D ->
+# http_config.KIT_ALIAS muon ao China PR). Doi hinh = 2 mua VN Legend (61, 12 huyen thoai) + VN STAR (73, 17 the he moi).
+NATIONAL_SQUADS = {
+    113666: (61174673, 61174675, 61174687, 61174692, 61174694, 61195670, 61195710, 61195718, 61217970, 61999500,
+             61999501, 61999502,                                                     # VN Legend
+             73238138, 73238139, 73238140, 73238141, 73238142, 73238143, 73238144, 73238145, 73238146, 73238147,
+             73238148, 73238149, 73238150, 73238151, 73238152, 73238153, 73238154),  # VN STAR
+}
+SQUAD_LISTS = {**EXTRA_SQUADS, **NATIONAL_SQUADS}
+
+
 def jersey_name(c, playerid):
     r = c.execute("SELECT jersey FROM namesind WHERE playerid = ?", (playerid,)).fetchone()
     return r[0] if r else ""
@@ -85,8 +96,8 @@ def team(c, teamid, nationality=None, nationalteam=False):
     hc = _hc()
     field, value = (("nationalteamid", teamid) if nationalteam else ("teamid", teamid) if nationality is None
                     else ("nationality", nationality))
-    if nationality is None and not nationalteam and teamid in EXTRA_SQUADS:
-        spids = EXTRA_SQUADS[teamid]
+    if nationality is None and not nationalteam and teamid in SQUAD_LISTS:
+        spids = SQUAD_LISTS[teamid]
         rows = c.execute(f"SELECT p.* FROM players p WHERE p.spid IN ({','.join('?' * len(spids))})", spids).fetchall()
     else:
         rows = c.execute(f"""SELECT p.* FROM players p JOIN permid m ON m.spid = p.spid AND m.licensed = 1
@@ -97,7 +108,7 @@ def team(c, teamid, nationality=None, nationalteam=False):
     # a 2006 Ronaldinho at Barcelona) and season 0 (engine template cards, ratings 120+, not on
     # fifaaddict) only when the current squad is too small
     for r in rows:
-        if r["spid"] // 1000000 == CURRENT_SEASON or len(best) < SELECTABLE or teamid in EXTRA_SQUADS:
+        if r["spid"] // 1000000 == CURRENT_SEASON or len(best) < SELECTABLE or teamid in SQUAD_LISTS:
             best.setdefault(r["playerid"], r)
     rows = sorted(best.values(), key=lambda r: -r["overallrating"])[:30]
     if len(rows) < 11:

@@ -610,12 +610,26 @@ def roster(teamid):
             r["summary"].update(name=info["teamname"], league={"id":78},
                                 nation={"id":nation["nationid"], "name":nation["nationname"]}, rival={"name":""})
             return r
+    if teamid in gen_teams.NATIONAL_SQUADS:
+        with closing(_db()) as c:
+            r = gen_teams.team(c, teamid)
+        grade, level = NATIONAL_SQUAD_GRADE
+        r["team"]["players"] = [dict(p, grade=grade, levelinfo={"level": level, "exp": 0}) for p in r["team"]["players"]]
+        nat = _CLUB_NATIONS.get(192) or {"nationid": 192, "nationname": "Vietnam"}
+        r["summary"].update(name="Việt Nam", league={"id": 78}, rival={"name": ""},
+                            nation={"id": nat["nationid"], "name": nat["nationname"]})
+        return r
     f = os.path.join(RESPONSES, f"static_info_authentic_team_all_{teamid}.json")
     if os.path.isfile(f):
         with open(f) as fh:
             return json.load(fh)
     with closing(_db()) as c:
         return gen_teams.team(c, teamid) or {"summary": {}, "team": {"players": [], "squad": {"positions": [], "kickers": []}}}
+
+
+NATIONAL_SQUAD_GRADE = (10, 20)  # doi tuyen Viet Nam (World Cup): moi the +10, LV 20 (user 2026-11-09)
+# Doi khong co ao 3D trong client -> ma ao cua doi khac (ao = teamid << 5 | loai): VN Star 113666 -> China PR 1413
+KIT_ALIAS = {113666: 1413}
 
 
 def roster_team(teamid):
@@ -634,7 +648,8 @@ def match_side(raw, teamid, user=None, tactics=None, mode="friendly", keep_grade
     /game/my/tactic/all): native 0x949170 iterates it ({id, bus, cc, def, teammentality})."""
     # Match kits use five low bits for the type (native fallback: teamid << 5).
     # Lobby/freeroam resources retain their separate ten-bit encoding.
-    kit = {"availables": {k: {"id": int(teamid) << 5 | t}
+    kt = KIT_ALIAS.get(int(teamid), int(teamid))
+    kit = {"availables": {k: {"id": kt << 5 | t}
                           for k, t in (("home", 0), ("away", 1), ("goalie", 2))}}
     if user is None and not keep_grades:
         # AI side: the cong + cap cau thu theo che do (GM Tool > Suc manh BOT, bot_settings.py;
@@ -660,6 +675,11 @@ def match_side(raw, teamid, user=None, tactics=None, mode="friendly", keep_grade
 # gamesettings.halfLength, in 1/10 minute per half (the game setting screen shows
 # halfLength/10*2 "menit"): 30 = a 6-minute match.
 HALF_LENGTH = int(os.environ.get("FO3_HALF_LENGTH", "30"))
+
+
+# Luat thay nguoi hien hanh (user 2026-11-09): 5 luot thay, ca 7 du bi deu duoc dung (truoc: native mac dinh 3 / 5).
+# 7 = toi da cua doi hinh FO3 (11 + 7 SUB, man Quan ly doi). Doc boi native ApplyGameSettings (0x946FD0).
+MATCH_BENCH, MATCH_SUBS = 7, 5
 
 
 def new_match(mtype, left, right, **extra):
@@ -697,7 +717,7 @@ def new_match(mtype, left, right, **extra):
                               "gameSpeed": 1, "crowd": 100, "pitchWear": 1, "refereeIdSelector": 112,
                               "subRefereeIds": [178, 157], "disableMomentum": False, "bookingsOn": True,
                               "offsidesOn": True, "injuriesOn": True, "foulsOn": True, "fatigueOn": True,
-                              "subOnBench": 5, "availableSubs": 3, "drawMode": 0, "gameType": mtype,
+                              "subOnBench": MATCH_BENCH, "availableSubs": MATCH_SUBS, "drawMode": 0, "gameType": mtype,
                               "shootoutmode": False, "prevScore": {"home": 0, "away": 0}}}
     match.update(extra)
     return match
@@ -3139,7 +3159,7 @@ WC_CONF = {  # WORLDCUP_CONFEDERATION_<n>: 2 chau Au, 3 chau Phi, 4 Nam My, 5 ch
         1356, 1334, 1330, 1327],
     3: [111130, 111112, 1395, 111099],
     4: [1370, 1377, 111109, 111465, 111487, 1375, 111108, 111451],
-    5: [1413, 1415, 111466],
+    5: [1413, 1415, 111466, 113666],  # 113666 = Viet Nam (gen_teams.NATIONAL_SQUADS)
     7: [1386, 111455, 1387],
 }
 WC_TEAMS = [t for v in WC_CONF.values() for t in v]
@@ -3709,7 +3729,7 @@ def ep_wc_team(teamid, query, body):
              "preliminary_result": "Vượt qua vòng loại", "worldcup_results": "—",
              "qualification": "—", "coach": "HLV đội tuyển"}
     # ao 3D: engine dung teamid client gui (co the la 1400xxxx) -> ma ao phai theo dung id do
-    kt = int(teamid)
+    kt = KIT_ALIAS.get(t, int(teamid))
     kit = {"availables": {k: {"id": kt << 5 | i} for k, i in (("home", 0), ("away", 1), ("goalie", 2))}}
     return _json(dict(r, team=team, kit=kit, extra=extra))
 
@@ -4276,6 +4296,8 @@ def trade_cap_props(props, give, gmax=MAX_GRADE):
     cap_v = sum(card_price(p["spid"], grade_of(p)) for p in give)
     cap_m = sum(mv(p["spid"], grade_of(p)) for p in give)
     pool = trade3_pool()
+    rng = random.Random()
+    used = {o["spid"] for o in props if "spid" in o}
     out = []
     for o in props:
         o = dict(o)
@@ -4285,11 +4307,25 @@ def trade_cap_props(props, give, gmax=MAX_GRADE):
             out.append(o)
             continue
         val = lambda s, g: max(card_price(s, g), mv(s, g))
-        if val(o["spid"], o["grade"]) > min(cap_v, cap_m):
-            j = bisect.bisect_right(pool, (min(cap_v, cap_m), math.inf)) - 1
-            while j > 0 and (pool[j][3] > gmax or val(pool[j][1], pool[j][3]) > min(cap_v, cap_m)):
+        cap = min(cap_v, cap_m)
+        if val(o["spid"], o["grade"]) > cap:
+            # the vua muc: ngau nhien trong cac the gia 80..100% muc, moi de nghi 1 the khac (truoc: luon the dat
+            # nhat vua muc -> ca 5 de nghi cung 1 cau thu, user 2026-11-09)
+            j = bisect.bisect_right(pool, (cap, math.inf)) - 1
+            cands, first = [], None
+            while j >= 0 and pool[j][0] >= cap * 0.8 and len(cands) < 60:
+                r = pool[j]
+                if r[3] <= gmax and val(r[1], r[3]) <= cap:
+                    first = first or r
+                    if r[1] not in used:
+                        cands.append(r)
                 j -= 1
-            price, s, t, g = pool[max(0, j)]
+            if not cands and first is None:  # khong co the nao trong khoang: the dat nhat vua muc nhu truoc
+                while j > 0 and (pool[j][3] > gmax or val(pool[j][1], pool[j][3]) > cap):
+                    j -= 1
+                first = pool[max(0, j)]
+            price, s, t, g = rng.choice(cands) if cands else first
+            used.add(s)
             o.update(spid=s, teamid=t, grade=g, price=price)
         if o.get("ep"):
             left = min(cap_v - o["price"], cap_m - mv(o["spid"], o["grade"]))
