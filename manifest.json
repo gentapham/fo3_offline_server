@@ -1,12 +1,12 @@
 {
  "files": {
   "FO3 Launcher.exe": {
-   "sha256": "d6b663d19413ee7c88a8150def8706a636f30ddaeef864ff50d77e4ce32c89ef",
-   "size": 21690362
+   "sha256": "c7860959068af75abc59f48d447f43a6aea4d97a6c85308441071e4093a9e100",
+   "size": 21694372
   },
   "FO3 Offline Launcher.exe": {
-   "sha256": "d6b663d19413ee7c88a8150def8706a636f30ddaeef864ff50d77e4ce32c89ef",
-   "size": 21690362
+   "sha256": "c7860959068af75abc59f48d447f43a6aea4d97a6c85308441071e4093a9e100",
+   "size": 21694372
   },
   "HuongDan/images/face_158023.png": {
    "sha256": "3e9f3ed4ecd4df8e8b323a4357197086c2d42d3cc7e697859e39d61f32109fa8",
@@ -173,20 +173,24 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "8ce85110e49c44c802218160e36b070d759ead55dfb01a355aa6e4ea345d93d9",
-   "size": 62150
+   "sha256": "2a05f85df741d9ef11d3b611f837d58de495de4c8a33043ff8750439c30caa05",
+   "size": 64067
+  },
+  "Server/account_backup.py": {
+   "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
+   "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "86731dbbf5d1c19811a6f5f08deeb10ef3a453c3e2d9b7765ac63b04764dd855",
-   "size": 78281
+   "sha256": "110f986d08fbbe641569bb5a668e89981e4e2242636e42593432024e65432648",
+   "size": 79319
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "7fcb84d47104d6f74f836d2b9846a137711693ccc057329cb08fa8d213b29121",
-   "size": 288912
+   "sha256": "e9f6e45bde5e5f0ea98aa2d186c556c6ef8c3fb2e073b64b0365e66dc009abca",
+   "size": 290893
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -192789,6 +192793,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-1108",
- "notes": "World Cup: thêm 7 đội tuyển châu Á (Việt Nam, Nhật, Hàn, Saudi, Iran, Iraq, Thái) có áo, cờ, logo, +10 LV20; sửa lỗi quay về ở World Cup; bỏ popup lỗi giao diện; MP/Cash mặc định 0 (chỉnh trong GM Tool); phí nâng cấp 5% giá trị thẻ; hệ số giá theo mùa; màu cấp thẻ trong GM Tool; cập nhật hướng dẫn"
+ "version": "2026.11.09-1134",
+ "notes": "Launcher 1.3.7: Sao lưu / Khôi phục tài khoản (file .fo3save trên Desktop; chép vào thư mục game là launcher hỏi khôi phục); GM Tool có thẻ Sao lưu tài khoản; cập nhật hướng dẫn"
 }

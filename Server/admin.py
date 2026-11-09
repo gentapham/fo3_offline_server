@@ -563,6 +563,31 @@ def money_set(p):
     return money_get(p)
 
 
+@api("backup_create")
+def backup_create(p):
+    """Sao luu tai khoan (+ cai dat GM, anh HLV tu tao) ra Desktop: file .fo3save (account_backup.py, dung chung Launcher)."""
+    import account_backup
+    path = account_backup.create(hc.GAME)
+    return {"path": path, "name": os.path.basename(path), "meta": account_backup.read_meta(path)}
+
+
+@api("backup_restore")
+def backup_restore(p):
+    """Khoi phuc tu file .fo3save tai len (base64). Tai khoan hien tai tu sao luu vao gamedata/backup truoc."""
+    import account_backup, base64, binascii
+    try:
+        data = base64.b64decode(str(p.get("data") or ""), validate=True)
+    except (binascii.Error, ValueError):
+        raise AdminError("File tải lên bị hỏng.")
+    if not data:
+        raise AdminError("Chưa chọn file sao lưu.")
+    try:
+        meta, before = account_backup.restore_bytes(hc.GAME, data)
+    except ValueError as e:
+        raise AdminError(str(e))
+    return {"meta": meta, "before": os.path.basename(before) if before else ""}
+
+
 @api("player_add")
 def player_add(p):
     st = hc._state(); t = team(st)

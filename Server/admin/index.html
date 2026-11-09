@@ -901,6 +901,17 @@
           <button class="b primary">Lưu</button>
         </form>
       </div>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">Sao lưu tài khoản</h2></div>
+        <p class="lead">Sao lưu đội hình, thẻ, EP, HLV, túi đồ và cài đặt GM ra Desktop (file <b>.fo3save</b>). Khôi phục: chọn file rồi bấm <b>Khôi phục</b> (nên thoát game trước). Tài khoản hiện tại tự được sao lưu vào <code>Server\gamedata\backup</code> trước khi thay. Launcher cũng có nút Sao lưu / Khôi phục.</p>
+        <div class="row">
+          <button class="b primary" id="bkCreate" type="button">Sao lưu ra Desktop</button>
+        </div>
+        <form class="row" id="bkForm">
+          <label class="f">File sao lưu (.fo3save)<input type="file" id="bkFile" accept=".fo3save"></label>
+          <button class="b">Khôi phục</button>
+        </form>
+      </div>
 
 
 
@@ -2436,6 +2447,27 @@ $("#moneyForm").addEventListener("submit", e => {
     say(`Đã lưu: MP ${fmt(r.mp)}, Cash ${fmt(r.cash)}. Vào lại game để thấy.`, "ok"); });
 });
 loadMoney();
+$("#bkCreate").addEventListener("click", () => act(async () => {
+  const r = await api("backup_create", {});
+  say(`Đã sao lưu ra Desktop: ${r.name} (HLV ${r.meta.name}, ${fmt(r.meta.players)} cầu thủ).`, "ok");
+}));
+$("#bkForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const f = $("#bkFile").files[0];
+  if (!f) return say("Chọn file sao lưu (.fo3save) trước.", "err");
+  const rd = new FileReader();
+  rd.onload = async () => {
+    const m = String(rd.result).split(",")[1] || "";
+    if (!(await uiConfirm(`Khôi phục tài khoản từ ${f.name}? Tài khoản đang chơi sẽ được thay (bản hiện tại tự sao lưu trước).`))) return;
+    act(async () => {
+      const r = await api("backup_restore", {data: m});
+      $("#bkFile").value = "";
+      await loaders.ringkasan();
+      say(`Đã khôi phục: HLV ${r.meta.name}, ${fmt(r.meta.players)} cầu thủ (sao lưu lúc ${r.meta.created}). Vào lại game để thấy.`, "ok");
+    });
+  };
+  rd.readAsDataURL(f);
+});
 
 ["#playerFilter", "#pfTeam", "#pfNation"].forEach(id => $(id).addEventListener("input", renderClub));
 ["#pfPos", "#pfRole", "#pfSeason"].forEach(id => $(id).addEventListener("change", renderClub));

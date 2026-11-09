@@ -145,6 +145,12 @@
       <p>Nhập số (tối đa 999999999999) rồi bấm <b>Cộng EP</b>, <b>Trừ EP</b> hoặc <b>Đặt số dư</b>.</p>
       <h3>MP và Cash</h3>
       <p>Số <b>MP</b> và <b>Cash</b> hiện trong Cửa hàng, mặc định <b>0</b>. Nhập số (0 – 999999999) vào hai ô rồi bấm <b>Lưu</b>, vào lại game để thấy. Mọi món trong Cửa hàng tính bằng EP, nên MP / Cash chỉ để hiển thị, đặt 0 không chặn việc mua.</p>
+      <h3>Sao lưu tài khoản</h3>
+      <ul>
+        <li><b>Sao lưu ra Desktop</b>: tạo file <code>FO3_SaoLuu_&lt;tên HLV&gt;_&lt;ngày giờ&gt;.fo3save</code> trên Desktop, gồm đội hình, thẻ, EP, HLV, túi đồ, cài đặt GM và ảnh HLV tự tạo.</li>
+        <li><b>Khôi phục</b>: chọn file .fo3save rồi bấm <b>Khôi phục</b> (nên thoát game trước). Tài khoản đang chơi tự được sao lưu vào <code>Server\gamedata\backup</code> trước khi thay, lỡ tay vẫn lấy lại được.</li>
+        <li>Launcher cũng có nút <b>Sao lưu</b> / <b>Khôi phục</b> (xem <a href="#launcher">Launcher &amp; cập nhật</a>).</li>
+      </ul>
     </section>
 
     <section class="card" id="cauthu">
@@ -522,8 +528,17 @@
 
     <section class="card" id="launcher">
       <h2><span class="num">⚙</span>Launcher &amp; cập nhật</h2>
-      <p class="lead">FO3 Launcher 1.3.6.</p>
+      <p class="lead">FO3 Launcher 1.3.7.</p>
       <ul>
+        <li><b>Sao lưu / Khôi phục tài khoản</b> (mục Công cụ):
+          <ul>
+            <li><b>Sao lưu</b>: tạo file <code>.fo3save</code> trên Desktop (đội hình, thẻ, EP, HLV, túi đồ, cài đặt GM) rồi mở thư mục chứa file.</li>
+            <li><b>Khôi phục</b>: chọn file .fo3save, xem thông tin (tên HLV, cấp, số cầu thủ, EP, ngày sao lưu) rồi xác nhận. Launcher tự tắt / bật lại máy chủ; game phải đang tắt.</li>
+            <li>Cách nhanh: <b>chép file .fo3save vào thư mục game</b> rồi mở launcher, launcher hỏi có khôi phục không. Khôi phục xong file được chuyển vào <code>Server\gamedata\backup</code> (không hỏi lại).</li>
+            <li>Trước khi khôi phục, tài khoản hiện tại luôn được sao lưu vào <code>Server\gamedata\backup\truoc_khoi_phuc_….fo3save</code>.</li>
+          </ul>
+        </li>
+        <li><b>Tự cập nhật launcher</b>: bấm <b>Cập nhật</b> (hoặc CHƠI GAME) là launcher tự tải bản mới, kể cả chính nó, rồi tự mở lại. Không cần tải file launcher bằng tay (trừ máy còn dùng bản cũ hơn 1.3.5).</li>
         <li><b>Bắt buộc bản mới nhất</b>: bấm <b>CHƠI GAME</b> là launcher kiểm tra bản vá trên GitHub. Có bản mới thì phải cập nhật xong mới vào game được (dữ liệu tài khoản giữ nguyên, có sao lưu tự động; launcher tự mở lại nếu chính nó được cập nhật). Máy mất mạng vẫn vào chơi offline bình thường.</li>
         <li>Đã bỏ thông báo nhắc tắt bộ gõ tiếng Việt (UniKey, EVKey…).</li>
         <li>Từ 1.3.5 launcher không còn lỗi <i>"Can't find a usable init.tcl"</i> (máy có thư mục TEMP là <code>C:\Windows\TEMP</code>, hay gặp ở quán net / chạy bằng quyền Admin). Máy đang dùng launcher cũ bị lỗi này thì tải lại file <code>FO3 Launcher.exe</code> mới, chép vào thư mục game rồi chạy.</li>
