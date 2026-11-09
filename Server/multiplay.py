@@ -130,7 +130,12 @@ def ep_koth_presently(query, body):
 def my_koth(st, coach=None):
     """Ban ghi KOTH mua nay {sid, regionid, introid, elo, wins, draws, losses, streak, week, weekwins, weekgames}."""
     sid = koth_sid()
-    r = (coach or hc.my_coach(st)).setdefault("es2", {})
+    if coach is None:
+        try:
+            coach = hc.my_coach(st)
+        except StopIteration:  # chua tao HLV (may moi / ban zip): man khoi dong van goi register -> ban ghi tam
+            coach = {}
+    r = coach.setdefault("es2", {})
     if r.get("sid") != sid:
         r.update(sid=sid, elo=hc.rank.LADDER_START, wins=0, draws=0, losses=0, streak=0, introid="")
     week = time.strftime("%G%V", time.gmtime())
