@@ -3808,7 +3808,7 @@ def balance_first_team(team):
 
 
 SERVER_OPTIONS_FILE = os.path.join(HERE, "gamedata", "server_options.json")
-SERVER_OPTIONS_DEFAULT = {"hide_engine_cards": True, "tc_grade": True}  # an the mua 0 mac dinh (2026-11-08)  # tc_grade: Team Color nang cap (the +2..+20)  # GM Tool > Tran dau > Thi truong
+SERVER_OPTIONS_DEFAULT = {"hide_engine_cards": False, "tc_grade": True}  # the mua 0 hien mac dinh (2026-11-09: Koeman/Cantona/Zico... chi co the mua 0)  # tc_grade: Team Color nang cap (the +2..+20)  # GM Tool > Tran dau > Thi truong
 
 
 def server_options():

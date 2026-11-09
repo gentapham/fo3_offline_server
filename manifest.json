@@ -173,8 +173,8 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "decdc1fd061dc8aecc4cda53574244d5dfee0c9a5b71828df53a695f505e2cce",
-   "size": 65253
+   "sha256": "8cf12c1d6050691e3b3f164f0edff32ea271b65bffbecf2456d1becdb646272b",
+   "size": 65321
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
@@ -257,8 +257,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "3e4e4ff96c5f8c729ca2c2f5716d2b049bb989fb23f9d67a712253ca35ee436e",
-   "size": 345638
+   "sha256": "0e3ee1675fa0ee094077a5224c4b559cd9037f2ff65f79da37ddcc0ba3d61d1f",
+   "size": 345682
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -192625,7 +192625,7 @@
    "size": 249504
   },
   "data/ui/SquadAssets.big": {
-   "sha256": "9562a589ce7c173e14b940c6975401b65e1936bf40292e6aa94e2d09d57acb75",
+   "sha256": "694cbe5a8797a3c74609d02fb294886c7d0317b5ca395d273cab13f1c538d6db",
    "size": 260032
   },
   "data/ui/StartScreen.big": {
@@ -192765,7 +192765,7 @@
    "size": 1079740
   },
   "data/ui/libs/Module.big": {
-   "sha256": "87f24adfb98734ca29dde67d7be45041b39d020338734ed7f60c012ab544a916",
+   "sha256": "ff10fa248ffd9d0d95d3baeb6b61a89f4a8b79a96eba0b0e89a0f1086bba0e8e",
    "size": 711936
   },
   "data/ui/localization/LANGUAGESTRING_ENG.json": {
@@ -192793,6 +192793,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-2118",
- "notes": "Sửa HLV tùy chỉnh nhảy chỉ số: HLV tự chọn chỉ số luôn giữ đúng 3 chỉ số (không tập huấn đổi chỉ số, dòng lệch tự về đúng); tên chỉ số GM Tool khớp game (Cướp bóng, Phạt đền)"
+ "version": "2026.11.09-2358",
+ "notes": "Thay người trong trận tối đa 5 lượt, bảng OUT/IN hiện đủ 5 dòng; hiện lại thẻ mùa 0 (Koeman, Cantona, Zico...) mặc định"
 }
