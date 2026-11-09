@@ -221,16 +221,16 @@
    "size": 3074
   },
   "Server/gamedata/card_index.json": {
-   "sha256": "9fb26e0dddfbcf3a46bb6b11fe98ae6a6a0758fdacc1b382b6d1a62bf89df9a2",
-   "size": 6501980
+   "sha256": "37153997bad6a58c875482fa2875c366ea68553c891c5dcea4f2deeecc99927b",
+   "size": 6527311
   },
   "Server/gamedata/club_catalog.json": {
    "sha256": "834c86b2e877c7093f0e4b22e62fb0cf06ff7a7274dacddb4d2621898fb80f8b",
    "size": 772111
   },
   "Server/gamedata/fifadb.sqlite": {
-   "sha256": "6debecd1e0546ea5f9a6023b5d71e1759a08b3d7c338566b9f3c8a4d6689545c",
-   "size": 53789696
+   "sha256": "276557cd2cc0624ee508c7550978c5070daa3ced33a7a9a92d6df9edabd22a46",
+   "size": 53923840
   },
   "Server/gamedata/formations.json": {
    "sha256": "e30cd1b20ff13fb83a0813e2ace918b9d87d6a096007b5ea63393a0cdfba5fd9",
@@ -146304,9 +146304,21 @@
    "sha256": "7aa44ae90ceeca3b1e3f5dc028546aceac243b69847dbba3845694cfc44a9a38",
    "size": 27375
   },
+  "_cache/games/fo3sg/externalAssets/players/p26166149.png": {
+   "sha256": "05f7120dd2b0f5319e5debf4c710c53f6b46db024c87da37ee1e594d69fcf469",
+   "size": 23002
+  },
+  "_cache/games/fo3sg/externalAssets/players/p26166676.png": {
+   "sha256": "13be491238d5268c12c87311112869f6279a770f089b597e611f4b4f9e527075",
+   "size": 24791
+  },
   "_cache/games/fo3sg/externalAssets/players/p26166906.png": {
    "sha256": "132419a7a03e0c350574e2d55d7ba835bcff9badbbbb2a8ff8b47dd59d92ed86",
    "size": 25535
+  },
+  "_cache/games/fo3sg/externalAssets/players/p26167198.png": {
+   "sha256": "446987ca1f509c8b6822c6a909e6e44fbee0fc4bacbb680fb3fd12c5db5d2a58",
+   "size": 22869
   },
   "_cache/games/fo3sg/externalAssets/players/p26167397.png": {
    "sha256": "00d434342a4915f8adf1f1800406327bbb0ddad8e88d8a8b0c3dfc440a39ac6e",
@@ -146319,6 +146331,10 @@
   "_cache/games/fo3sg/externalAssets/players/p26167664.png": {
    "sha256": "c3a8c5a8e8a3028bab5c58744286cb7f28b0685e5c19e97ba13d34afb44b3d2a",
    "size": 17788
+  },
+  "_cache/games/fo3sg/externalAssets/players/p26167680.png": {
+   "sha256": "a4213dd19e22cb8b4c1b6ba208c32cecaad190ed870f8b94f779e75672eded85",
+   "size": 26268
   },
   "_cache/games/fo3sg/externalAssets/players/p26167948.png": {
    "sha256": "46d7a451c496db7924e936c17476454cab1a5f97323ad6aa227ba73782fa525f",
@@ -147328,13 +147344,33 @@
    "sha256": "b655923df8b78d5e97307be67d95c731d12c2d8aca0816de0e51c411f078eb6f",
    "size": 25920
   },
+  "_cache/games/fo3sg/externalAssets/players/p27166149.png": {
+   "sha256": "250178db8a9ae6f5db17df7e600674029a0e23b683eacdd9a68f7619b51dd663",
+   "size": 18818
+  },
+  "_cache/games/fo3sg/externalAssets/players/p27166676.png": {
+   "sha256": "87c75082b0526cc34d150d7032f36ded585c374cf36d07a33cbafe1bf0cf9b46",
+   "size": 26339
+  },
   "_cache/games/fo3sg/externalAssets/players/p27166906.png": {
    "sha256": "68904cae2d1dc4fcdb88e0c904b18786121931d9f88d2e5782343c07a359db85",
    "size": 22022
   },
+  "_cache/games/fo3sg/externalAssets/players/p27167135.png": {
+   "sha256": "1b992e4269709c8c71c0bb608c29fcbf3987ab43caf44730365ea6a7c1baf803",
+   "size": 29183
+  },
+  "_cache/games/fo3sg/externalAssets/players/p27167198.png": {
+   "sha256": "44fca903b164d170af205a59499668f8434d11140a03a38abf5c8469fe5c5a1a",
+   "size": 23746
+  },
   "_cache/games/fo3sg/externalAssets/players/p27167397.png": {
    "sha256": "84ffe755f45f149dab0d98a2c7c65a4904f14b8a3f96a41bd9f36827ad8c9096",
    "size": 27414
+  },
+  "_cache/games/fo3sg/externalAssets/players/p27167425.png": {
+   "sha256": "5b878a9e16d7cff1695979b8890e7c7bf9925e8842eac7eaf71c543b6177aaac",
+   "size": 24940
   },
   "_cache/games/fo3sg/externalAssets/players/p27167495.png": {
    "sha256": "c0b00e6cc221f850c4381a28dc497077f026d05b74af70096f882b9b3dfc0867",
@@ -147343,6 +147379,10 @@
   "_cache/games/fo3sg/externalAssets/players/p27167664.png": {
    "sha256": "708c8b34e2a8dc02adfef64540c49b961bb4d49a0bd74d75d915a1c05c0e5061",
    "size": 19717
+  },
+  "_cache/games/fo3sg/externalAssets/players/p27167680.png": {
+   "sha256": "d8483d8c0ab44fcc37c5efb9a116786bf7cfde0fb0b725b407cf0d3bde136399",
+   "size": 14605
   },
   "_cache/games/fo3sg/externalAssets/players/p27167948.png": {
    "sha256": "104c68ff590df477266facab10fb61742169af92f5f9e6a1a014ec2d0333825c",
@@ -148380,13 +148420,41 @@
    "sha256": "66036f7da0dffd96a163cc6caa6200fe2ae6a3589e850dff44c90a3f81c8ba22",
    "size": 23815
   },
+  "_cache/games/fo3sg/externalAssets/players/p28166149.png": {
+   "sha256": "65a4750986217cb82d930a2e4fade80230ed4239620c774b909bb1a0ad535062",
+   "size": 30831
+  },
+  "_cache/games/fo3sg/externalAssets/players/p28166676.png": {
+   "sha256": "9b3844660efe83cf5cbaa3226fdb9c3e1bc39dde378610a7951a232096fbeb49",
+   "size": 20999
+  },
+  "_cache/games/fo3sg/externalAssets/players/p28166691.png": {
+   "sha256": "564155720591095ab5cf1c7aeb2e7ab1ac09607856bac5b1a1023184ebac50eb",
+   "size": 18815
+  },
   "_cache/games/fo3sg/externalAssets/players/p28166906.png": {
    "sha256": "020646171c37dd2614cdf0edafaf8b9aa96d643ed66fcec6408d8275d96b1388",
    "size": 22944
   },
+  "_cache/games/fo3sg/externalAssets/players/p28167134.png": {
+   "sha256": "fd81b1d70cd92f45c3c54eead8f20f8b37a0409f8323082eb1fc5692bd895962",
+   "size": 26576
+  },
+  "_cache/games/fo3sg/externalAssets/players/p28167135.png": {
+   "sha256": "c38284395d74d77f5f28dc9c3c8d9a725de285706b8c36095b30b790f37d66d0",
+   "size": 18777
+  },
+  "_cache/games/fo3sg/externalAssets/players/p28167198.png": {
+   "sha256": "3efc1916cdf88c12c9855d5b5c72adb88a45cff05eee1a5f8c81ca27f85f639a",
+   "size": 23618
+  },
   "_cache/games/fo3sg/externalAssets/players/p28167397.png": {
    "sha256": "25b27132d61f087bfc5e1bc0932e7874034d099f8165c6b4739d2834875906a3",
    "size": 24688
+  },
+  "_cache/games/fo3sg/externalAssets/players/p28167425.png": {
+   "sha256": "baa2fe0da22b73b222ede20ca16204d8776ccc3dcc30bdd8cd855bcf03558634",
+   "size": 26067
   },
   "_cache/games/fo3sg/externalAssets/players/p28167495.png": {
    "sha256": "67057d684683b2a1cdea8dc898b532245451631eaab04b7195a0827e09ccf22c",
@@ -148395,6 +148463,10 @@
   "_cache/games/fo3sg/externalAssets/players/p28167664.png": {
    "sha256": "17446fe756f524218eb033ad57467f065eceb4b8911d2b1d36f6dce9ff1c2c38",
    "size": 19272
+  },
+  "_cache/games/fo3sg/externalAssets/players/p28167680.png": {
+   "sha256": "f9cc0e11f3eaba032254466fcea15ca6ffda9c115b71917f3984e636ed8c1759",
+   "size": 20127
   },
   "_cache/games/fo3sg/externalAssets/players/p28167948.png": {
    "sha256": "d85fe66a6b0ec29af5fe9a1075de16489c7a4e4db2330e2feb44fd574e9067bc",
@@ -149488,13 +149560,41 @@
    "sha256": "e67b0b16f7682f57bee095fe7172f66b91d6312a5f743cceac2a68843440fe5e",
    "size": 29523
   },
+  "_cache/games/fo3sg/externalAssets/players/p30166149.png": {
+   "sha256": "204583f4f9b0c50a2f09a3fde3292678a88c390eea7e010dad9c674dd41916d5",
+   "size": 18074
+  },
+  "_cache/games/fo3sg/externalAssets/players/p30166676.png": {
+   "sha256": "ca725e3ab9d9f1b95e87d04bca422de0897198b98307c4b61faad77403ba824d",
+   "size": 31803
+  },
+  "_cache/games/fo3sg/externalAssets/players/p30166691.png": {
+   "sha256": "7dfcf096cf07d9a6e06e451ad262e6071a530ec6fa8023f04a5589dac3d053e0",
+   "size": 29581
+  },
   "_cache/games/fo3sg/externalAssets/players/p30166906.png": {
    "sha256": "0d3f8be53bb2a326dcf9a2f641497f6119ca11e0f9d9d34e7434b40d60a0c282",
    "size": 22408
   },
+  "_cache/games/fo3sg/externalAssets/players/p30167134.png": {
+   "sha256": "a5d615b24ce8209e673780a52b2419c6d4a15ad1b99ba61d47f67d6f46486e91",
+   "size": 25541
+  },
+  "_cache/games/fo3sg/externalAssets/players/p30167135.png": {
+   "sha256": "04533eb515d90e94c7d242ee424d8f9c04494f32a61a0f9cc65001bce92fa2cc",
+   "size": 20183
+  },
+  "_cache/games/fo3sg/externalAssets/players/p30167198.png": {
+   "sha256": "007fa72039a1f68a687cda4453cfd96f1edc1d82b659f5e74d82964f7e5ab1f2",
+   "size": 29802
+  },
   "_cache/games/fo3sg/externalAssets/players/p30167397.png": {
    "sha256": "4910acb92a3c34c750be5327f35c6c67f8d97d2ddcbbf58397179b3a20f13d57",
    "size": 20582
+  },
+  "_cache/games/fo3sg/externalAssets/players/p30167425.png": {
+   "sha256": "cea068ecbcc5efbe985d06b787999498586e2fe734d8637308e154fe507fb2d0",
+   "size": 25281
   },
   "_cache/games/fo3sg/externalAssets/players/p30167495.png": {
    "sha256": "3794500a0456ec984272b8d258fc9d0bf85afa8f844eb013a1e5c106262f6a75",
@@ -149503,6 +149603,10 @@
   "_cache/games/fo3sg/externalAssets/players/p30167664.png": {
    "sha256": "383df7e6ff4b523e246a5a0dcae9253b9ce28443d2350bb0d1213ac43d70a985",
    "size": 14864
+  },
+  "_cache/games/fo3sg/externalAssets/players/p30167680.png": {
+   "sha256": "d24f2caa1616ae1319db3a91f1e9b85ad70cfc92354c681bf6cfbaac89a357b9",
+   "size": 21674
   },
   "_cache/games/fo3sg/externalAssets/players/p30167948.png": {
    "sha256": "9987e8c96cf92fe47c499bdad051b9697281c94e8acc56931df713cb78723e3a",
@@ -150512,9 +150616,21 @@
    "sha256": "193101d339a7e11a5d2c60033778e59604880b2e60a1d66ad93e0425076df85b",
    "size": 24963
   },
+  "_cache/games/fo3sg/externalAssets/players/p31166149.png": {
+   "sha256": "8c5eaf986f280e826d3f251725022682ec78b31f52e7aded4f48a04c2e9aa1df",
+   "size": 23498
+  },
+  "_cache/games/fo3sg/externalAssets/players/p31166676.png": {
+   "sha256": "9ff947b3b7bdf228da6ad005f92415c97bf193cd4538e786214af91ef8d472b3",
+   "size": 20939
+  },
   "_cache/games/fo3sg/externalAssets/players/p31166906.png": {
    "sha256": "0d11cc7c7f6e8a6bfb7888ec9cb58446e1720469bfc4e2968b1b1ef13298d52c",
    "size": 22765
+  },
+  "_cache/games/fo3sg/externalAssets/players/p31167198.png": {
+   "sha256": "bb3f304ace3d83a03dc9a935b7f32cc42c208421551aa00db23611421517a6a6",
+   "size": 25454
   },
   "_cache/games/fo3sg/externalAssets/players/p31167397.png": {
    "sha256": "f560dcd362122d68b8f13b050b729d9f3ffdf9a86900ccb84cd97cba350f21f9",
@@ -150527,6 +150643,10 @@
   "_cache/games/fo3sg/externalAssets/players/p31167664.png": {
    "sha256": "605ff71ca2942ec35542eac2ec8aef74863c24f0be68dadc471b74632c2ee43b",
    "size": 24613
+  },
+  "_cache/games/fo3sg/externalAssets/players/p31167680.png": {
+   "sha256": "40fb4651c5c0c5fd3bd924fd7814d377632064934b85151f4151c7e13562f369",
+   "size": 16967
   },
   "_cache/games/fo3sg/externalAssets/players/p31167948.png": {
    "sha256": "8ec4a1653a42f3b85dec0c40710ef366743ced74921bd4eb527ea2374665aee0",
@@ -151440,9 +151560,17 @@
    "sha256": "b15e793a3d5d27a969e6e642f7670328a688adbac02b2e929db6cc9c19e98f0e",
    "size": 26151
   },
+  "_cache/games/fo3sg/externalAssets/players/p32167198.png": {
+   "sha256": "c3d43b42603ef41b94bb524cd5a5cea24da7244c9d8d139ae622b3ce1e294e23",
+   "size": 25249
+  },
   "_cache/games/fo3sg/externalAssets/players/p32167495.png": {
    "sha256": "6a8dfe150d71fe29d3cfa2d0a62b3c67e83d6bcab1f703506f58d68f1a62cbca",
    "size": 26054
+  },
+  "_cache/games/fo3sg/externalAssets/players/p32167680.png": {
+   "sha256": "d90f9dd54a537bb30a1e7a53a78f1e1219a8ba6f1c689876650bd02b3b723fa8",
+   "size": 22912
   },
   "_cache/games/fo3sg/externalAssets/players/p32167948.png": {
    "sha256": "24afa66077b6fca9c94fddeafeee3cdaee40271485f71f518e54d6fe79cc9972",
@@ -152336,9 +152464,17 @@
    "sha256": "8c2e503cb22fb82ece5903401c400f8cacfd74b8a08d03ef9cf88597ad588d14",
    "size": 28849
   },
+  "_cache/games/fo3sg/externalAssets/players/p33166149.png": {
+   "sha256": "d98f6bd288065b16bc2bf5ff59c7d438bc4cabeda2998c66926c62e19e192c31",
+   "size": 24325
+  },
   "_cache/games/fo3sg/externalAssets/players/p33166906.png": {
    "sha256": "8591bbf5e04e02197903f6c72bba3dd138a85c9b5e69f05c35c87eb8458a46a8",
    "size": 20620
+  },
+  "_cache/games/fo3sg/externalAssets/players/p33167198.png": {
+   "sha256": "82a1391cafa9dc63ff6f3f026b716129f62fb3c01dc55fe98987329470715bc3",
+   "size": 18722
   },
   "_cache/games/fo3sg/externalAssets/players/p33167397.png": {
    "sha256": "e977171a180eed0e7ed2aab317c2f21cbd7eb6abaf0e5251167193d8b81e514e",
@@ -152351,6 +152487,10 @@
   "_cache/games/fo3sg/externalAssets/players/p33167664.png": {
    "sha256": "03d7fbbffb9edac8fec46048e2de300de3534bb291374dd1d43e171d59d1ce0e",
    "size": 19443
+  },
+  "_cache/games/fo3sg/externalAssets/players/p33167680.png": {
+   "sha256": "abc03948e7d9555bde65924dd42d8127b7b60a3232968c88855702fbbc9a089e",
+   "size": 21747
   },
   "_cache/games/fo3sg/externalAssets/players/p33167948.png": {
    "sha256": "432a8d57ba119e1e1248f56e964cbfc3815bb282b2e1daac195deeee08c7fab6",
@@ -171588,13 +171728,41 @@
    "sha256": "0c5a3ce44fdb8643a42c9b382a2144b4de6d481692cf3641244f5052ef23e7f4",
    "size": 33408
   },
+  "_cache/games/fo3sg/externalAssets/players/p76166149.png": {
+   "sha256": "216c1e59baba907a72c0343ef972b5243a0b5673e98b379bbcecf6f6d802b02f",
+   "size": 17956
+  },
+  "_cache/games/fo3sg/externalAssets/players/p76166676.png": {
+   "sha256": "4b9216d79c10da75620c7f86a257e6c6836fe147adca28e448f56dae3c63bed6",
+   "size": 28326
+  },
+  "_cache/games/fo3sg/externalAssets/players/p76166691.png": {
+   "sha256": "06a41192cdcd9aaff7134387d800db5297fbd7b32ac1fe89742d8e283e85ed92",
+   "size": 30370
+  },
   "_cache/games/fo3sg/externalAssets/players/p76166906.png": {
    "sha256": "a695ca1c8a85055c7cc7134c70463099187562a5a8cd493d329a98a4da627294",
    "size": 25370
   },
+  "_cache/games/fo3sg/externalAssets/players/p76167134.png": {
+   "sha256": "e9652a46834a7dec416305964756603b8e04688c7d46b5e3e089ff491e736458",
+   "size": 31161
+  },
+  "_cache/games/fo3sg/externalAssets/players/p76167135.png": {
+   "sha256": "4eac5297bbb6e83ef277b8b07551e3ed3d712966fc0b9e790d4d0f53fe0226e0",
+   "size": 19522
+  },
+  "_cache/games/fo3sg/externalAssets/players/p76167198.png": {
+   "sha256": "b71374b471bf72a4d16fba077605c1117ae6fa31047512c93ca33243cfc7a0f0",
+   "size": 26264
+  },
   "_cache/games/fo3sg/externalAssets/players/p76167397.png": {
    "sha256": "c22468435cc6e0dace797f35b443da51984bced9f9ca8bac16753f46a90dbfb1",
    "size": 20981
+  },
+  "_cache/games/fo3sg/externalAssets/players/p76167425.png": {
+   "sha256": "a107d2779cdd8b6c3539192e479d5279ff1196ea4bb35348abe29cd7b0ffb1cb",
+   "size": 17822
   },
   "_cache/games/fo3sg/externalAssets/players/p76167495.png": {
    "sha256": "dff15b7187cb75897861d8c86d99caf69dab18b728d0efa4cacf9c0c1d03b7fc",
@@ -171603,6 +171771,10 @@
   "_cache/games/fo3sg/externalAssets/players/p76167664.png": {
    "sha256": "5400a0f764a3144e47c96329cfd0f6e95d9885f7b2bed7f40c99df46577fa70f",
    "size": 29226
+  },
+  "_cache/games/fo3sg/externalAssets/players/p76167680.png": {
+   "sha256": "9289a80d961bf2ea52dae5621f594f560daad03bface9d20943ecaa918272a22",
+   "size": 25576
   },
   "_cache/games/fo3sg/externalAssets/players/p76167948.png": {
    "sha256": "b1a443fae1ec0ab806320af417ba7303b1ff3cf45be5068cea4f86294bd29ca1",
@@ -171799,6 +171971,10 @@
   "_cache/games/fo3sg/externalAssets/players/p76191189.png": {
    "sha256": "6803f6b95d74e491daa0bb094a63d2cbb3733452935faf54da02c573dcff66cd",
    "size": 19065
+  },
+  "_cache/games/fo3sg/externalAssets/players/p76191190.png": {
+   "sha256": "feb5eebc2cff927edc39bc76660f88267a53a61c93b4cc59d672221030bf21b7",
+   "size": 21678
   },
   "_cache/games/fo3sg/externalAssets/players/p76191208.png": {
    "sha256": "17575f5ea3b14496231cbf11f13447364435fd9413ea09e2575bc6f25784cace",
@@ -179596,9 +179772,17 @@
    "sha256": "6f2d09c6d38b6256c8cec7a39f99e4de4747cf8baa643d49178271e148baab4a",
    "size": 28039
   },
+  "_cache/games/fo3sg/externalAssets/players/p91166149.png": {
+   "sha256": "0fb2b92e7e6513f83ca37bc385e6672716357f59fc1fc4d1b58f29ee967b29df",
+   "size": 24232
+  },
   "_cache/games/fo3sg/externalAssets/players/p91166906.png": {
    "sha256": "b58749c600272d7d356129bf5a3702fdbc46e0b8853d1eeac86ce3a98af27d06",
    "size": 24018
+  },
+  "_cache/games/fo3sg/externalAssets/players/p91167198.png": {
+   "sha256": "fddf419cd8a208ecf594a26ccbcb3c3cc4ccc2c2d813fab5080c7214d8df1c87",
+   "size": 21127
   },
   "_cache/games/fo3sg/externalAssets/players/p91167397.png": {
    "sha256": "aa0c53161f168ed3f27a6e51852ff082b84835a2928c481824b256e693ea00e8",
@@ -179611,6 +179795,10 @@
   "_cache/games/fo3sg/externalAssets/players/p91167664.png": {
    "sha256": "5445daff05fff04f9540c081aad7a96af16d946348a22faf1d4aa23deb3b1402",
    "size": 29608
+  },
+  "_cache/games/fo3sg/externalAssets/players/p91167680.png": {
+   "sha256": "9bdfa88d6df262fff495d1a99a0f3d2734d81fbad19a0e61390194964e4842a5",
+   "size": 26994
   },
   "_cache/games/fo3sg/externalAssets/players/p91167948.png": {
    "sha256": "cf3ce29497f787fd09babce701221ad45949859dfeef5c7f809d8f16a78500f4",
@@ -181864,13 +182052,37 @@
    "sha256": "e69dea70d4a7117c449e5c00e89ecc42e4a1051b2b1456f92db9177c736e903e",
    "size": 38302
   },
+  "_cache/games/fo3sg/externalAssets/players/p93166149.png": {
+   "sha256": "be936a40efec5266e7695ea0220a0659c49e22004797678f127458773a3195b5",
+   "size": 27113
+  },
+  "_cache/games/fo3sg/externalAssets/players/p93166676.png": {
+   "sha256": "cba6bf418cf3879799243bc8cc172ba719ef05123578fda62a43d2b74be4bc6e",
+   "size": 24358
+  },
   "_cache/games/fo3sg/externalAssets/players/p93166906.png": {
    "sha256": "2a54e5601bfea2345c3dde9dad68af814a58428d6e083e53768ebcc6d9cbfc77",
    "size": 8681
   },
+  "_cache/games/fo3sg/externalAssets/players/p93167134.png": {
+   "sha256": "9fcebf92ed25668d26f1063853824eca6c336a00ae562e7154c661ddf6e05a01",
+   "size": 17444
+  },
+  "_cache/games/fo3sg/externalAssets/players/p93167135.png": {
+   "sha256": "75e4f20781c9ba5d6ad813a93b83b2ae002875683f752b1a16d2554b9547fffd",
+   "size": 19675
+  },
+  "_cache/games/fo3sg/externalAssets/players/p93167198.png": {
+   "sha256": "151cc339f32c05d562013dccb213722cae55520570e33d2e19b8580988a6afbc",
+   "size": 24874
+  },
   "_cache/games/fo3sg/externalAssets/players/p93167397.png": {
    "sha256": "f4594dc09e3421ed1237369e285d4d71d1381d7020f7a60fb3459e661aa8fa06",
    "size": 17567
+  },
+  "_cache/games/fo3sg/externalAssets/players/p93167425.png": {
+   "sha256": "d752069362dd07e5312e9c9d7e7ed33b50a0f9ec9337c3a259b30d92541202cf",
+   "size": 26084
   },
   "_cache/games/fo3sg/externalAssets/players/p93167495.png": {
    "sha256": "d5455fd43a14079f2e59da8b80a8b2a7814f29cb3065a1e806c16dea2c657e22",
@@ -181879,6 +182091,10 @@
   "_cache/games/fo3sg/externalAssets/players/p93167664.png": {
    "sha256": "f49e8ca5895f893cba9942bb6105569ab8e52fe45f9c9f20aee75bed57bc2164",
    "size": 18561
+  },
+  "_cache/games/fo3sg/externalAssets/players/p93167680.png": {
+   "sha256": "837ebce6e504961fef4491c0d55e41a103202c930c378ee925ce91660c1e1112",
+   "size": 27303
   },
   "_cache/games/fo3sg/externalAssets/players/p93167948.png": {
    "sha256": "e3ae367d0c6f3ecdecae4eaf57d8835e45345de471231393c03f7325d9943df2",
@@ -182944,13 +183160,41 @@
    "sha256": "27bb2ac673d6750de1fcc7b5181a5d81ab53d21104185bbbbc32422d18a66728",
    "size": 26643
   },
+  "_cache/games/fo3sg/externalAssets/players/p94166149.png": {
+   "sha256": "732ccf51f7f832b02b2e402090c19f518b995fc6bb3e9b5ab8317b74193213b4",
+   "size": 29830
+  },
+  "_cache/games/fo3sg/externalAssets/players/p94166676.png": {
+   "sha256": "5d5147a98fb8ef3bbda815a9dfa7268a3cef93e06173725333f79d8561368d2c",
+   "size": 23139
+  },
+  "_cache/games/fo3sg/externalAssets/players/p94166691.png": {
+   "sha256": "bb9347fcb76eb04e40ca87fecbf126423ff40c23b6eef32232ff8d5acc95628a",
+   "size": 23542
+  },
   "_cache/games/fo3sg/externalAssets/players/p94166906.png": {
    "sha256": "bc109f08783194555dcb4bc232c24ae0b66522f2dd936d35f94a9c67276366d2",
    "size": 29196
   },
+  "_cache/games/fo3sg/externalAssets/players/p94167134.png": {
+   "sha256": "d41bbc29ec2e5498980a71d9d720ff798d05177410469647d1b59ed369fec9bd",
+   "size": 21503
+  },
+  "_cache/games/fo3sg/externalAssets/players/p94167135.png": {
+   "sha256": "96602116005cd6cfa5c4d727d282088b3926b8546f65c77c65c35a97fd8f7612",
+   "size": 25129
+  },
+  "_cache/games/fo3sg/externalAssets/players/p94167198.png": {
+   "sha256": "8146a7fa736f8ccd5f9f91e4a48b8ac1f0c9a3448823b6fc745789c77765ecf3",
+   "size": 25939
+  },
   "_cache/games/fo3sg/externalAssets/players/p94167397.png": {
    "sha256": "cda0109dae67351c1027d3d2fe5e69e195c312eb0af65e6ac87d8650c33a5894",
    "size": 25597
+  },
+  "_cache/games/fo3sg/externalAssets/players/p94167425.png": {
+   "sha256": "a713d9c063b26a06d75010cfdbaa86c256da94e4df4cf9446cb6e63e505616c1",
+   "size": 24840
   },
   "_cache/games/fo3sg/externalAssets/players/p94167495.png": {
    "sha256": "6b5cb876a6d2ede680cc59c75b2e29ee0ee0bdec4a3c93752dc07c909a51a5f1",
@@ -182959,6 +183203,10 @@
   "_cache/games/fo3sg/externalAssets/players/p94167664.png": {
    "sha256": "7766824639f86069bd4f071c0bdb69f0acff1ca5995b91a874c652571baf9818",
    "size": 29195
+  },
+  "_cache/games/fo3sg/externalAssets/players/p94167680.png": {
+   "sha256": "b4afb487ed9f45e2f029ff1bb46dbe15000a7ec44078bebe49070fc91f549abd",
+   "size": 33409
   },
   "_cache/games/fo3sg/externalAssets/players/p94167948.png": {
    "sha256": "0c39fa3380f1283ab970162df63a3e2437dbc87d43bfa61d52ee2bbe98e6a792",
@@ -183155,6 +183403,10 @@
   "_cache/games/fo3sg/externalAssets/players/p94191189.png": {
    "sha256": "d533781f76990ebfe28f5693e3408fac1b28107bb6603d492a1c333d6877d3d5",
    "size": 25249
+  },
+  "_cache/games/fo3sg/externalAssets/players/p94191190.png": {
+   "sha256": "5335f73c8e185774e303f66cb0ab72d50008affc52a1c80a1cc12b5033464493",
+   "size": 25477
   },
   "_cache/games/fo3sg/externalAssets/players/p94191208.png": {
    "sha256": "17575f5ea3b14496231cbf11f13447364435fd9413ea09e2575bc6f25784cace",
@@ -192465,7 +192717,7 @@
    "size": 167
   },
   "data/data_0.big": {
-   "sha256": "e9dd502fa1cd0871e3f009e2dd6701a365337d19304f15e0798281a821f1b5e7",
+   "sha256": "c0c6d2cc8c7c93f36866ef41fa14ef55ac031df46877e349d48c76aef4d05439",
    "size": 74560206
   },
   "data/loc/locale_eng.big.dl": {
@@ -192793,6 +193045,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-2358",
- "notes": "Thay người trong trận tối đa 5 lượt, bảng OUT/IN hiện đủ 5 dòng; hiện lại thẻ mùa 0 (Koeman, Cantona, Zico...) mặc định"
+ "version": "2026.11.10-0019",
+ "notes": "23 huyền thoại mùa 0 (Koeman, Cantona, Zico, Papin, Völler, Rivelino...) có thẻ WL, UL, EL, UB, WB, huyền thoại CLB, PRIME, INFINITY với chỉ số theo FC Online và ảnh mini riêng từng mùa"
 }
