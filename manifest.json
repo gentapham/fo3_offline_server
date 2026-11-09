@@ -173,16 +173,16 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "5eb895f060416cbb9c8080f8145e3f123a8b154aaafd4dbaa7b1e36c1970b735",
-   "size": 64977
+   "sha256": "decdc1fd061dc8aecc4cda53574244d5dfee0c9a5b71828df53a695f505e2cce",
+   "size": 65253
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
    "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "110f986d08fbbe641569bb5a668e89981e4e2242636e42593432024e65432648",
-   "size": 79319
+   "sha256": "66e8c39b5759c3b3a8d6877968245f24000cf63c5aa2e29a9adcd5a9e7e4dc75",
+   "size": 79472
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
@@ -465,8 +465,8 @@
    "size": 7605
   },
   "Server/staff_service.py": {
-   "sha256": "7529208d6a1d4d77f2aaf595e64a4a92a8152e6e8ab03c78b8dcfae66dd5d176",
-   "size": 31196
+   "sha256": "6cb6384373d120192aceb8216add44c4927f77013254fcc8fe97db0652d0ff4b",
+   "size": 32390
   },
   "Server/trade2.py": {
    "sha256": "03748dcaae7c8d9a3c06513b2669bc35799808ec161795c2f0041778cf272108",
@@ -192793,6 +192793,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.09-2100",
- "notes": "Thay được 5 người trong trận (sửa dữ liệu engine); Launcher 1.3.9: tùy chọn Giới hạn khung hình (giảm CPU, mặc định bật), launcher nhẹ hơn khi đang chơi"
+ "version": "2026.11.09-2118",
+ "notes": "Sửa HLV tùy chỉnh nhảy chỉ số: HLV tự chọn chỉ số luôn giữ đúng 3 chỉ số (không tập huấn đổi chỉ số, dòng lệch tự về đúng); tên chỉ số GM Tool khớp game (Cướp bóng, Phạt đền)"
 }

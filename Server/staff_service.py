@@ -50,6 +50,16 @@ STAT_KEYS = dict(zip(
     ('Acceleration|Aggresion|Agility|Balance|Ball Control|Cross|Dribble|Finishing|Free Kick|GK Diving|GK Goal Kick|GK Handling|GK Positioning|GK Reaction|Heading|Interception|Jump|Long Pass|Long Shot|Marking|Overall Rating|Penalty Kick|Positioning|Reaction|Shoot Curve|Shoot Power|Short Pass|Sliding Tackle|Sprint Speed|Stamina|Strength|Tackle|Vision|Volley').split('|'),
     ('acceleration|aggression|agility|balance|ballcontrol|crossing|dribbling|finishing|freekickaccuracy|gkdiving|gkkicking|gkhandling|gkpositioning|gkreflexes|headingaccuracy|interceptions|jumping|longpassing|longshots|marking|ovr|penalties|positioning|reactions|curve|shotpower|shortpassing|slidingtackle|sprintspeed|stamina|strength|standingtackle|vision|volleys').split('|')))
 
+def fixed_effect(info, idx):
+    """HLV tuy chinh tu chon chi so (GM Tool): dong idx co dung 1 chi so -> ma noi bo cua chi so do, khong thi None."""
+    if not info or not info.get('custom'):
+        return None
+    groups = info.get('boost_groups') or []
+    if 1 <= idx <= len(groups) and len(groups[idx - 1]) == 1 and groups[idx - 1][0] in STAT_KEYS:
+        return STAT_KEYS[groups[idx - 1][0]]
+    return None
+
+
 def used_effects(staff, idx):
     """Chi so cua cac dong khac (khac effectidx idx) cua 1 HLV: 3 dong khong duoc trung nhau."""
     return {e.get('effect') for e in staff.get('effect') or [] if e.get('effectidx') != idx}
@@ -101,6 +111,11 @@ def normalize_team(team):
             for eff in staff.get('effect') or []:
                 if isinstance(eff.get('amount'), (int, float)) and eff['amount'] > cap:
                     eff['amount'] = cap
+                # HLV tuy chinh tu chon chi so: luon dung chi so da chon (truoc: tap huan "doi chi so" doi sang chi so
+                # ngau nhien -> vao game thay "nhay chi so", user 2026-11-09). Dong GM chinh tay (gm) giu nguyen.
+                want = fixed_effect(info, eff.get('effectidx') or 0)
+                if want and not eff.get('gm') and eff.get('effect') != want:
+                    eff['effect'] = want
         elif staff.get('position') not in SLOT_TYPES.values():
             staff['position'] = 'FRONT'
         if str(staff.get('stfid')) in ('9502', '9505'):
@@ -318,7 +333,7 @@ def study_boost(staff, rule):
             return None
         return {'effectidx': idx, 'boosttype': 'enhance', 'effect': current['effect'], 'inc': 1}
     info = CATALOG.get(str(staff.get('stfid')))
-    if info is None:
+    if info is None or fixed_effect(info, idx):  # HLV tuy chinh: chi so da chon khong doi
         return None
     taken = used_effects(staff, idx)  # khong doi sang chi so dong khac dang co
     choices = [STAT_KEYS[label] for label in info['boost_groups'][idx - 1]
@@ -357,6 +372,9 @@ def study_start(lid, query, body):
             return fail(f'HLV này chưa mở chỉ số thưởng thứ {idx} nên không tập huấn ở đây được.')
         if rule['boosttype'] == 'enhance':
             return fail(f'Chỉ số thưởng thứ {idx} đã đạt tối đa +{amount_cap(staff)}. Hãy chọn nơi tập huấn khác.')
+        if fixed_effect(CATALOG.get(str(staff.get('stfid'))), idx):
+            return fail(f'HLV tùy chỉnh giữ đúng chỉ số đã chọn nên không đổi chỉ số thứ {idx}. '
+                        'Hãy chọn nơi tập huấn tăng mức cộng.')
         return fail(f'Chỉ số thưởng thứ {idx} (Tất cả chỉ số) không đổi được. Hãy chọn nơi tập huấn khác.')
     history = (staff.get('study') or {}).get('history') or {}
     count = len(history.get(lid, []))

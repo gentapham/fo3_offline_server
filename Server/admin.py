@@ -1384,9 +1384,9 @@ STAT_VI = {
     "freekickaccuracy": "Đá phạt", "gkdiving": "TM đổ người", "gkkicking": "TM phát bóng", "gkhandling": "TM bắt bóng",
     "gkpositioning": "TM chọn vị trí", "gkreflexes": "TM phản xạ", "headingaccuracy": "Đánh đầu", "interceptions": "Cắt bóng",
     "jumping": "Nhảy", "longpassing": "Chuyền dài", "longshots": "Sút xa", "marking": "Kèm người", "ovr": "Tất cả chỉ số",
-    "penalties": "Penalty", "positioning": "Chọn vị trí", "reactions": "Phản ứng", "curve": "Sút xoáy",
+    "penalties": "Phạt đền", "positioning": "Chọn vị trí", "reactions": "Phản ứng", "curve": "Sút xoáy",
     "shotpower": "Lực sút", "shortpassing": "Chuyền ngắn", "slidingtackle": "Xoạc bóng", "sprintspeed": "Tốc độ",
-    "stamina": "Thể lực", "strength": "Sức mạnh", "Boost Mental Status": "Tinh thần", "standingtackle": "Tranh bóng", "vision": "Tầm nhìn", "volleys": "Vô lê",
+    "stamina": "Thể lực", "strength": "Sức mạnh", "Boost Mental Status": "Tinh thần", "standingtackle": "Cướp bóng", "vision": "Tầm nhìn", "volleys": "Vô lê",
 }
 
 
@@ -1569,6 +1569,7 @@ def staff_effect(p):
     if p["key"] in _ss().used_effects(x, idx):
         raise AdminError(f"HLV đã có chỉ số {stat_vi(p['key'])} ở dòng khác. 3 chỉ số phải khác nhau.")
     e["effect"] = p["key"]
+    e["gm"] = True
     hc._save(st)
     return {"ok": True}
 
@@ -1590,6 +1591,8 @@ def staff_set(p):
         raise AdminError(f"HLV đã có chỉ số {stat_vi(key)} ở dòng khác. 3 chỉ số phải khác nhau.")
     amount = as_int(p.get("amount", e.get("amount")), 1, 99, "Mức cộng")
     e["effect"], e["amount"], e["open"] = key, amount, True
+    if p.get("key"):
+        e["gm"] = True  # GM chon chi so bang tay: giu (HLV tuy chinh khong bi dua ve chi so da chon)
     if amount > ss.amount_cap(x):
         x["gm_cap"] = amount  # giu muc nay (normalize_team khong ha xuong)
     hc._save(st)
