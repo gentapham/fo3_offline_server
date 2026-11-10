@@ -173,8 +173,8 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "cdea429c7b006c01aad0aee5bed6bacf91314f326af6ba74b9dd22cb35ef4263",
-   "size": 64755
+   "sha256": "8b74eda431388373c5bfe818d126a6f318fff9a3cea0e2140e9343fbced26684",
+   "size": 65393
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
@@ -467,6 +467,550 @@
   "Server/staff_service.py": {
    "sha256": "6cb6384373d120192aceb8216add44c4927f77013254fcc8fe97db0652d0ff4b",
    "size": 32390
+  },
+  "Server/tools/clientbuild/apply.py": {
+   "sha256": "2c12abc34576efbe8d634e74f26a95bf9ce39652e20ad28cbc681280067e4d93",
+   "size": 4004
+  },
+  "Server/tools/clientbuild/bc3best.py": {
+   "sha256": "6c17fa7b596e909bf9a7856c78cb303d845b6d34d194ff883b6e9708680715ae",
+   "size": 1966
+  },
+  "Server/tools/clientbuild/bigdir.py": {
+   "sha256": "44d9ae7ef38bea33b7ea9fbc2c6e00ef335eb5db34adc3d123997c8d17df5859",
+   "size": 4959
+  },
+  "Server/tools/clientbuild/build/fo4_heads.json": {
+   "sha256": "8778bd39318d31a6163bb118002fa01b4b2337c54c332b102a74df350081ac86",
+   "size": 5538
+  },
+  "Server/tools/clientbuild/build/fo4_pids.json": {
+   "sha256": "962dd6e0f3493523931ec3e064fe76b855ecb3e4bc18accf96ac2f3501a5aca0",
+   "size": 10896
+  },
+  "Server/tools/clientbuild/chunkzip.py": {
+   "sha256": "716baeb3d0a50bb22b52aeb4a33ad4c24e888e0b9e1bba6f4005c7f117ec1363",
+   "size": 1310
+  },
+  "Server/tools/clientbuild/eadb.py": {
+   "sha256": "aeb3ca4513306e6aacf0d9c99e46e1169dcdfbaadf2e7127e10c50b1f4474423",
+   "size": 3754
+  },
+  "Server/tools/clientbuild/extract_fifadb.py": {
+   "sha256": "e64a079721b1f864a4ba7d0b027f71a176fad0ee0937b588ef4415caac6b8604",
+   "size": 3969
+  },
+  "Server/tools/clientbuild/extras.py": {
+   "sha256": "a251c1dc60bd3a1a6b0ef416d524fe45c66f13a11140c15969470c27733ca44c",
+   "size": 9306
+  },
+  "Server/tools/clientbuild/icons/18.png": {
+   "sha256": "537eaffcea0dfb98aab9ffc5ab1855fd982bb56861b1ba4fc8b9f17b19492ebd",
+   "size": 1845
+  },
+  "Server/tools/clientbuild/icons/19.png": {
+   "sha256": "1a7ad19c1b1fdce868068b64ca96c7e54c5c7a55730ff1d0229c59b9cc2fddb6",
+   "size": 2033
+  },
+  "Server/tools/clientbuild/icons/300.png": {
+   "sha256": "f6ef2319b82783c9e5a4ca6fc439d130de78b704f542148c4b643b1c9812a293",
+   "size": 1562
+  },
+  "Server/tools/clientbuild/icons/300_big.png": {
+   "sha256": "7801f4f342e0b6be2d6e1fa2455fcae539c5d8f19b285528af8b3f23e8adfce6",
+   "size": 1505
+  },
+  "Server/tools/clientbuild/icons/325.png": {
+   "sha256": "0ce77b30f98a9802b679d39f4376970e856f006ef17c2a94d5651b60139c562e",
+   "size": 1336
+  },
+  "Server/tools/clientbuild/icons/325_big.png": {
+   "sha256": "239cdf78540259d17131503b506946ede135e035bb2f12dddaf039fbc2f8e118",
+   "size": 1272
+  },
+  "Server/tools/clientbuild/icons/76.png": {
+   "sha256": "5a796433ede01944877d735878a4468a71fa97a605a799d5318471544310f64b",
+   "size": 1767
+  },
+  "Server/tools/clientbuild/icons/94.png": {
+   "sha256": "ee5716a4c3dec52f7d0d8db1e9bf450c509f0b52d693db2dc7fa294bb101a428",
+   "size": 1947
+  },
+  "Server/tools/clientbuild/labelicons.py": {
+   "sha256": "94f3b0559485a72cc5ae80c02cd481168962a264feb1849718e6329b77a129d8",
+   "size": 8727
+  },
+  "Server/tools/clientbuild/orig/Label.big": {
+   "sha256": "1166c05acba76a8346c0fe5f0b9fa03a401cd5db3a67ba2ad4d2c493c7f6a617",
+   "size": 297184
+  },
+  "Server/tools/clientbuild/orig/data_0.big": {
+   "sha256": "41fb18c33f4f9d84ec4f3a187c154d5489930044110ca11ffd1fbd7c3f41a9fa",
+   "size": 74560206
+  },
+  "Server/tools/clientbuild/pylib/PIL/AvifImagePlugin.py": {
+   "sha256": "d64fe66e4ff27d628780faadd129f664d0e713d65a6bdcf4f946bd422d87d6ad",
+   "size": 9718
+  },
+  "Server/tools/clientbuild/pylib/PIL/BdfFontFile.py": {
+   "sha256": "68909057709d4a55dfbffed11595a4a3dfd074c24361b388a686d40c1867ba82",
+   "size": 3382
+  },
+  "Server/tools/clientbuild/pylib/PIL/BlpImagePlugin.py": {
+   "sha256": "ba361f6039637e1136020155f042002882835ad3402084c9e027d6c063de1af8",
+   "size": 17032
+  },
+  "Server/tools/clientbuild/pylib/PIL/BmpImagePlugin.py": {
+   "sha256": "cd3d30275991e278244b490db80c751342c5e555131204fb428b3875e54bc118",
+   "size": 20917
+  },
+  "Server/tools/clientbuild/pylib/PIL/BufrStubImagePlugin.py": {
+   "sha256": "c8f042b828044ba702b1840d0093ed746b4f4db8d481e2576cba22a30fa18f1f",
+   "size": 1745
+  },
+  "Server/tools/clientbuild/pylib/PIL/ContainerIO.py": {
+   "sha256": "bb8bb2fd765e650e4363c66a90c69ba10e92a4f44318ec075dad7bd222db8479",
+   "size": 4824
+  },
+  "Server/tools/clientbuild/pylib/PIL/CurImagePlugin.py": {
+   "sha256": "992c71d697e796375883d1a0261b3438f88844f54bea5e5c8d6167bbf8726590",
+   "size": 2852
+  },
+  "Server/tools/clientbuild/pylib/PIL/DcxImagePlugin.py": {
+   "sha256": "0938ea04cb87adaced56786ee2239e5a4c875376838140a0c146d0790a777636",
+   "size": 2406
+  },
+  "Server/tools/clientbuild/pylib/PIL/DdsImagePlugin.py": {
+   "sha256": "a03adf884e427d56e0f05638c11fa29cc84fe8ba72e6e3eee3de1b47d6e716ae",
+   "size": 19819
+  },
+  "Server/tools/clientbuild/pylib/PIL/EpsImagePlugin.py": {
+   "sha256": "678faa7c7b712bfdf9c7b6536906ced6c66ab8c7a30374d85ca33030cd9730cc",
+   "size": 17627
+  },
+  "Server/tools/clientbuild/pylib/PIL/ExifTags.py": {
+   "sha256": "8a2248027fbdd9877ee789de6bf8b15e6df5eecc13b30f0f0637a46894ca0794",
+   "size": 10301
+  },
+  "Server/tools/clientbuild/pylib/PIL/FitsImagePlugin.py": {
+   "sha256": "3b116af52aad541376f2125ef93785832dc7bb36fb67e815a85cc917d6abf317",
+   "size": 5536
+  },
+  "Server/tools/clientbuild/pylib/PIL/FliImagePlugin.py": {
+   "sha256": "62ee542fd7c0c79c567b933299c316676bdbd059697a84c004f88debc65f6c17",
+   "size": 5358
+  },
+  "Server/tools/clientbuild/pylib/PIL/FontFile.py": {
+   "sha256": "58bf3a4021a8667f50c6cbc7974f7a14794b5bb4c26ba9a91a6e1855a00a8b63",
+   "size": 4486
+  },
+  "Server/tools/clientbuild/pylib/PIL/FpxImagePlugin.py": {
+   "sha256": "a85c06b977caa670404b998193d75c7bfbcecec266e9a634095fdc1350289a09",
+   "size": 7762
+  },
+  "Server/tools/clientbuild/pylib/PIL/FtexImagePlugin.py": {
+   "sha256": "0e8d7591b3a8b44352652b0f1e0d0aa49a6b21618a87345ef29450055e26ef7e",
+   "size": 3832
+  },
+  "Server/tools/clientbuild/pylib/PIL/GbrImagePlugin.py": {
+   "sha256": "8de0ccf95823b05c8e8b04ecb84539938de70f61a85c30f58323af5710367981",
+   "size": 3166
+  },
+  "Server/tools/clientbuild/pylib/PIL/GdImageFile.py": {
+   "sha256": "dd9031c22d100698bd9e9a0be41d86f0720eb512241c83c70ee6be3c77315c2c",
+   "size": 3041
+  },
+  "Server/tools/clientbuild/pylib/PIL/GifImagePlugin.py": {
+   "sha256": "041d5e36d20d6312f93e0a1c37ede1b23b253a0d68b0931df8b68a708596068c",
+   "size": 40756
+  },
+  "Server/tools/clientbuild/pylib/PIL/GimpGradientFile.py": {
+   "sha256": "1e40e531e47d151f2f894dbd73f5b77a70803a6833e6bcc614e82cc6ef0dfe2f",
+   "size": 4183
+  },
+  "Server/tools/clientbuild/pylib/PIL/GimpPaletteFile.py": {
+   "sha256": "11ed314ce1879a6d15375338a7c175cd3b44292d6e5819987c4b1ca6392b01dd",
+   "size": 1965
+  },
+  "Server/tools/clientbuild/pylib/PIL/GribStubImagePlugin.py": {
+   "sha256": "ab11a4fb573e6407003cd220b03728c181ff8e94ee35adaa3b0194b170953a4d",
+   "size": 1774
+  },
+  "Server/tools/clientbuild/pylib/PIL/Hdf5StubImagePlugin.py": {
+   "sha256": "25535b5b9b989001957216e4483096ca67ac0b646e65457f586d79d001db49b9",
+   "size": 1756
+  },
+  "Server/tools/clientbuild/pylib/PIL/IcnsImagePlugin.py": {
+   "sha256": "e6ca44bcfd36458185869db3941a79e96f64f79a16f2bbdd4612a92ed3bbe0bb",
+   "size": 12885
+  },
+  "Server/tools/clientbuild/pylib/PIL/IcoImagePlugin.py": {
+   "sha256": "8e929e093d1f1c9925bdf0cf7bed986a94565ccf8bc14577315d4fb6284c973b",
+   "size": 14235
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImImagePlugin.py": {
+   "sha256": "87ae476922b90329669da7a8f754e3d57480d69e0beb24641fa56a18a40395a2",
+   "size": 12233
+  },
+  "Server/tools/clientbuild/pylib/PIL/Image.py": {
+   "sha256": "6646cf8a0aa91c440293112934d0e0802cd90c207a07137281a1926c3465e23f",
+   "size": 158236
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageChops.py": {
+   "sha256": "aa3f9d10bf3fa3323cbb36658e5553123da84dc7352821af075ba058c6f4ce72",
+   "size": 7355
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageCms.py": {
+   "sha256": "7da688dee7037961d3c346ef55a8dfec3a6d787b2c9093e9e6d34a2553a1f702",
+   "size": 41232
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageColor.py": {
+   "sha256": "96100944dee28c2b8b69ef70a26fe056e58550bb4f664d0d466e2382ed2b3a19",
+   "size": 9809
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageDraw.py": {
+   "sha256": "01294915e47335edd158415c45c492d54bcef767b4dd51a21d576d9404461000",
+   "size": 36410
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageDraw2.py": {
+   "sha256": "9ecda8290d6bd903d610a1cfab92d73b549665e8bb19e93cf226fdff76a79f56",
+   "size": 7584
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageEnhance.py": {
+   "sha256": "9c6ec5314220bc03833fb234df6143d728431daf9b79e77ea0336850000d3e7b",
+   "size": 3694
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageFile.py": {
+   "sha256": "3de270f19469348052ec2f4937fd6f4cdd487ee998c15590a13fbb2b2032399c",
+   "size": 31184
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageFilter.py": {
+   "sha256": "36c87a7656c2324b6b675eb82b0718e85d0a983abf35d713b8c1913d2489e0af",
+   "size": 19533
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageFont.py": {
+   "sha256": "0b8494851d5cd92126e88903fafdd505f163f4f454d72a1dacba0d141a4b123a",
+   "size": 65235
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageGrab.py": {
+   "sha256": "086bfd888d5a4d3a64d4d9a21cea42ee1e408cb115cfbef0d79c03ddd2fbd70b",
+   "size": 8325
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageMath.py": {
+   "sha256": "934bf61017576ce1f7f5ff914314a9951a831c3590b683a0f8e17354ea79ff4e",
+   "size": 10652
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageMode.py": {
+   "sha256": "d6298e37f99ea7fdb5ed1996741d2bbc55c1c9b8c5e2e06da6aabaac90bd7049",
+   "size": 2480
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageMorph.py": {
+   "sha256": "93b5d16d19caecb69e8124ba690c40e829e6ffcf8acee9bc09464469b00bbe7e",
+   "size": 10702
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageOps.py": {
+   "sha256": "cafa9bfb486530860c624c9399889a581b2e34b78927eb479a2fe359dd8e5819",
+   "size": 28585
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImagePalette.py": {
+   "sha256": "45c408096fb30600b27d3b9b1de85f9d1d645907102188a79e930d88d5bb8814",
+   "size": 10410
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImagePath.py": {
+   "sha256": "6679c9baf40db5b2918429abeb54c4984875bd5579ffdd163043cbf0ea72e65f",
+   "size": 391
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageQt.py": {
+   "sha256": "6f270bf0f2411e2c5f4312b7e08009d93a50d4767e6e80f07f062f493bb34369",
+   "size": 7284
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageSequence.py": {
+   "sha256": "fbe8d8911099d785df6f2c3ba7909ce60c814b0ca80e7ab26dae766ee9108f95",
+   "size": 2406
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageShow.py": {
+   "sha256": "f2029eb1dbd9eba059ce3443b8b12b7568332aeab9e33b3ecc74c4fb703ea99e",
+   "size": 10778
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageStat.py": {
+   "sha256": "cbafd84437cb1ce3717ff7c000bc83ef3f91dae63adbcd850ed1e2d2d288a4c4",
+   "size": 5676
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageText.py": {
+   "sha256": "cbbdbc984427708ed8afe21c53141502b57dd6838eca813816d7f8faa594aa3b",
+   "size": 19169
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageTk.py": {
+   "sha256": "576f31c02699504d32328522ecc1f39ae00fdff5694e59492d57c27c940e95c9",
+   "size": 8441
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageTransform.py": {
+   "sha256": "8d69d1d3ea19c71365ca94bcaba4641391d35203c263abac3dfcbcf189c422fa",
+   "size": 4102
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImageWin.py": {
+   "sha256": "27fddec11b775f810e8c390093a916031f4a0a0766d037ecbb0d86b1baa8e530",
+   "size": 8345
+  },
+  "Server/tools/clientbuild/pylib/PIL/ImtImagePlugin.py": {
+   "sha256": "43d604d4388ecd41dd06336d9575fee504bf1d5e0d12954f50c861da96159d2f",
+   "size": 2768
+  },
+  "Server/tools/clientbuild/pylib/PIL/IptcImagePlugin.py": {
+   "sha256": "5a07318590623d9e2c26c1193960e56a2f5518e2f0f2767aa706c805d3505c43",
+   "size": 6719
+  },
+  "Server/tools/clientbuild/pylib/PIL/Jpeg2KImagePlugin.py": {
+   "sha256": "2e1f0aab8c845a8110ae0a71fa70ab59bc4dece7fa63bf29765f105a5220091d",
+   "size": 15306
+  },
+  "Server/tools/clientbuild/pylib/PIL/JpegImagePlugin.py": {
+   "sha256": "520455ec7590a7372ad0fe52d082f590adf598ef2ac3ffb3457d9c4a081769ad",
+   "size": 32951
+  },
+  "Server/tools/clientbuild/pylib/PIL/JpegPresets.py": {
+   "sha256": "38bacfb90e0ca8ca81ecedcd00ced6feb2d200417cd0f45c468dc96e10b58a73",
+   "size": 12611
+  },
+  "Server/tools/clientbuild/pylib/PIL/McIdasImagePlugin.py": {
+   "sha256": "77159cb1e3322e6aaa8ab6c9c8b2965f694a551c6bead3ef5362ff73d698a14c",
+   "size": 1988
+  },
+  "Server/tools/clientbuild/pylib/PIL/MicImagePlugin.py": {
+   "sha256": "85490810328a3769d2185b43f6161cba8631b08002f1add5d6946f6cbcd9178c",
+   "size": 2793
+  },
+  "Server/tools/clientbuild/pylib/PIL/MpegImagePlugin.py": {
+   "sha256": "f7525282c71c17714b05673bd4353a3f2330299064ae1f173b4bd3772d51b4a9",
+   "size": 2180
+  },
+  "Server/tools/clientbuild/pylib/PIL/MpoImagePlugin.py": {
+   "sha256": "a77a2d046108a1adc47a4399d26cdb08f6808957f8ae5cbee56c046b2f0079bb",
+   "size": 7208
+  },
+  "Server/tools/clientbuild/pylib/PIL/MspImagePlugin.py": {
+   "sha256": "a5c3b0cfad52469b0ff1756398871d329d9e147e4474ccd50a102a63dd9cb2b8",
+   "size": 6348
+  },
+  "Server/tools/clientbuild/pylib/PIL/PSDraw.py": {
+   "sha256": "8303a61dfc2b1ce4a312385f267b877826400444ba31e7930db9c784404746f5",
+   "size": 7745
+  },
+  "Server/tools/clientbuild/pylib/PIL/PaletteFile.py": {
+   "sha256": "6428748a8e9dedfa1a275f9c46baf20e19317aaa372b1dfba8db4e4f2ff4c66c",
+   "size": 1354
+  },
+  "Server/tools/clientbuild/pylib/PIL/PalmImagePlugin.py": {
+   "sha256": "c1cf7ce4a8cc6318334f9dd0e4b8346e72f405f56787a727a60786394b208fe8",
+   "size": 9042
+  },
+  "Server/tools/clientbuild/pylib/PIL/PcdImagePlugin.py": {
+   "sha256": "819b027170c8a845532b6cfe1962a9b53db9a455350143a0a6bdc9d3a7233c28",
+   "size": 1842
+  },
+  "Server/tools/clientbuild/pylib/PIL/PcfFontFile.py": {
+   "sha256": "566c39c442879ed989e35c4b04b04b170868ccf8ece9b73a3e175c32b34a5c9f",
+   "size": 7267
+  },
+  "Server/tools/clientbuild/pylib/PIL/PcxImagePlugin.py": {
+   "sha256": "de3b85748748698e4e728738e1de606268a45c9f7d39442f5b395a94ddff5136",
+   "size": 6681
+  },
+  "Server/tools/clientbuild/pylib/PIL/PdfImagePlugin.py": {
+   "sha256": "62c0eb2e3f64fcb2caf0fccedc58fb44b0054c00b8923ef9a64b3bfc4e5d37a1",
+   "size": 9486
+  },
+  "Server/tools/clientbuild/pylib/PIL/PdfParser.py": {
+   "sha256": "ea722a6d82bee2783fb8c8e73b83189ce4af553dbe0ac8e04138d85b77845a12",
+   "size": 41113
+  },
+  "Server/tools/clientbuild/pylib/PIL/PixarImagePlugin.py": {
+   "sha256": "a78958489e99b851e177ae03b450e093509f549c25608105e463bdcf4c33df4b",
+   "size": 1868
+  },
+  "Server/tools/clientbuild/pylib/PIL/PngImagePlugin.py": {
+   "sha256": "a2e0daf92e893125153d8a012d30b9a6259e82fe36841ecda6ff1d2a809539de",
+   "size": 55767
+  },
+  "Server/tools/clientbuild/pylib/PIL/PpmImagePlugin.py": {
+   "sha256": "0e5d73b94cd0abf6e1d88f241a86453b358bace042dfa68ce35214925c2a7c87",
+   "size": 12813
+  },
+  "Server/tools/clientbuild/pylib/PIL/PsdImagePlugin.py": {
+   "sha256": "308f00e2cfb351e59d96a64e34e4be5a0aaa641365c7b52d83dfede1239c162b",
+   "size": 9324
+  },
+  "Server/tools/clientbuild/pylib/PIL/QoiImagePlugin.py": {
+   "sha256": "60fca52a0771bfbd3d5c3bf46e7e3c0db787f80006154e180f68ceb019711399",
+   "size": 9268
+  },
+  "Server/tools/clientbuild/pylib/PIL/SgiImagePlugin.py": {
+   "sha256": "1acf6d419b289ac80db952c8bf01bc3c13b7bfa93e6db968aa1cb0c5e6fefe81",
+   "size": 6698
+  },
+  "Server/tools/clientbuild/pylib/PIL/SpiderImagePlugin.py": {
+   "sha256": "7f8500ac64f2fbcf9cd884202262dfca77325cf3a354ed88bcdd7ffd9a033d6a",
+   "size": 10623
+  },
+  "Server/tools/clientbuild/pylib/PIL/SunImagePlugin.py": {
+   "sha256": "cddde6e2afdf7fc37808eac728b4206924e8776dc135fca6f7ee3a841f7fb1ed",
+   "size": 4772
+  },
+  "Server/tools/clientbuild/pylib/PIL/TarIO.py": {
+   "sha256": "6a28227e29b71a09b083299061f98bb9b031b830f26e4aef027ac000dbcf259d",
+   "size": 1708
+  },
+  "Server/tools/clientbuild/pylib/PIL/TgaImagePlugin.py": {
+   "sha256": "57fc21d319c1f23a5e36e2be04d049849b8cf9890b3f956dcd59acdf91a58235",
+   "size": 8383
+  },
+  "Server/tools/clientbuild/pylib/PIL/TiffImagePlugin.py": {
+   "sha256": "760a92047f0ad1037e0c85b242b4486bdc1c46304615d748686177c3541826f7",
+   "size": 90539
+  },
+  "Server/tools/clientbuild/pylib/PIL/TiffTags.py": {
+   "sha256": "b0fff0431110dae372f9960305f689997dc60e50c8bae5dfb1fc236f0585a202",
+   "size": 17894
+  },
+  "Server/tools/clientbuild/pylib/PIL/WalImageFile.py": {
+   "sha256": "647699a10bc2cb53f1c39ec2bce2a2706591afe08081b6000417be880ddbaab1",
+   "size": 5981
+  },
+  "Server/tools/clientbuild/pylib/PIL/WebPImagePlugin.py": {
+   "sha256": "7dcc4c8cbb725266615082da2f060be254db4ff81527b01c05e29746b3ea4d72",
+   "size": 11457
+  },
+  "Server/tools/clientbuild/pylib/PIL/WmfImagePlugin.py": {
+   "sha256": "39f197555b7be30242332561afff5f9aecd9b8d67dd61247ba4d9bb07d2c692a",
+   "size": 5711
+  },
+  "Server/tools/clientbuild/pylib/PIL/XVThumbImagePlugin.py": {
+   "sha256": "aee34d7d9b0b869d2222b841026937876e78fd710aa4e39022aba9d2abd473b8",
+   "size": 2209
+  },
+  "Server/tools/clientbuild/pylib/PIL/XbmImagePlugin.py": {
+   "sha256": "7c136acba923d8a8a193e3b7d8626e0bc1d23d576a651edc6ebe8e39105038d6",
+   "size": 3849
+  },
+  "Server/tools/clientbuild/pylib/PIL/XpmImagePlugin.py": {
+   "sha256": "1ae86981783d2a8c6234fe1aca13346129846b127c7099e59e5ed2b4caeebf40",
+   "size": 5300
+  },
+  "Server/tools/clientbuild/pylib/PIL/__init__.py": {
+   "sha256": "3fffff8502f4b59ca61d39cce713d55ffef046954262fce1abac3e97f3803734",
+   "size": 2122
+  },
+  "Server/tools/clientbuild/pylib/PIL/__main__.py": {
+   "sha256": "5fc788a469661df9e9ef36b3a7999d6afdb6f08b5c7f696488c3f4b4b53a5fd7",
+   "size": 140
+  },
+  "Server/tools/clientbuild/pylib/PIL/_avif.cp312-win_amd64.pyd": {
+   "sha256": "3c31d65c8b3b4c91ac2838d5c843a6b2479d775b6904fe654d60b56d41772411",
+   "size": 7893504
+  },
+  "Server/tools/clientbuild/pylib/PIL/_avif.pyi": {
+   "sha256": "cc3f2f0283c2f1a1085637dc90bb45b24456e6c6a255e977fac254036a476867",
+   "size": 66
+  },
+  "Server/tools/clientbuild/pylib/PIL/_binary.py": {
+   "sha256": "b95d3f4e5dde3d80029f4b27aa5b93139803ab2487989971054db7543d710e56",
+   "size": 2728
+  },
+  "Server/tools/clientbuild/pylib/PIL/_deprecate.py": {
+   "sha256": "dcede15593dee08f34af4e5cc29f286959faca1280e6dbbfea6901698924a680",
+   "size": 2141
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imaging.cp312-win_amd64.pyd": {
+   "sha256": "7140f56d38dd6cd51512f8122386bcb914c5df2a82eb5f719c973527d9213cee",
+   "size": 2662400
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imaging.pyi": {
+   "sha256": "8d2446dead5dc2204ca8ec0884bb5305edcb30ac2c8b76244dc0dfb0a577d84d",
+   "size": 924
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingcms.cp312-win_amd64.pyd": {
+   "sha256": "2640857cace64d69735bdcaa3987e9ad70f85168abc1a8662079c77ac44b5301",
+   "size": 275456
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingcms.pyi": {
+   "sha256": "e7f48329eecac13f5a6f911e1bec27e85e6cbff7ecd28db5db1a0f066dc7f88a",
+   "size": 4576
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingft.cp312-win_amd64.pyd": {
+   "sha256": "985228f6086171978abb5d04f2f625c489fdc9d7f0a92f2077a621ff184a599e",
+   "size": 2250752
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingft.pyi": {
+   "sha256": "535ae9c2a417d6150bbd3028f1f634fc8ad79e0f953ee09755a581523da9d73d",
+   "size": 1903
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingmath.cp312-win_amd64.pyd": {
+   "sha256": "01c6f9de6f0d6ed46d1df1d4a9cdf47e399306870453f26a5326368f7db0b3ad",
+   "size": 21504
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingmath.pyi": {
+   "sha256": "cc3f2f0283c2f1a1085637dc90bb45b24456e6c6a255e977fac254036a476867",
+   "size": 66
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingmorph.cp312-win_amd64.pyd": {
+   "sha256": "e74547cf128ee13d81d7c4ef6d5be079f230062b5a8e9ec648afdc9ce228af39",
+   "size": 12288
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingmorph.pyi": {
+   "sha256": "cc3f2f0283c2f1a1085637dc90bb45b24456e6c6a255e977fac254036a476867",
+   "size": 66
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingtk.cp312-win_amd64.pyd": {
+   "sha256": "e1c87f73e96d2269395624d03b3808300f4b0f795f5fad1ecc3d1492e5dcc7c2",
+   "size": 14336
+  },
+  "Server/tools/clientbuild/pylib/PIL/_imagingtk.pyi": {
+   "sha256": "cc3f2f0283c2f1a1085637dc90bb45b24456e6c6a255e977fac254036a476867",
+   "size": 66
+  },
+  "Server/tools/clientbuild/pylib/PIL/_tkinter_finder.py": {
+   "sha256": "1f5530ddd57b8161c88ffa2c527245c56875691b10d8c74aa4d3f7bd0c10716d",
+   "size": 558
+  },
+  "Server/tools/clientbuild/pylib/PIL/_typing.py": {
+   "sha256": "b2658d157a9fced3fe7deb919155779a9dfe96b6242951db1d7f39a399f555ea",
+   "size": 1001
+  },
+  "Server/tools/clientbuild/pylib/PIL/_util.py": {
+   "sha256": "78ff087e658999b13f3ea6d425be2a4ea18d2e2e334f44d369daebaa6ca483b6",
+   "size": 713
+  },
+  "Server/tools/clientbuild/pylib/PIL/_version.py": {
+   "sha256": "ef8061e8a3ed8b658ee877f5693d4d2f6fae25b4a44a4e83c654cd528b55e68c",
+   "size": 91
+  },
+  "Server/tools/clientbuild/pylib/PIL/_webp.cp312-win_amd64.pyd": {
+   "sha256": "bb9c64d38a6e4857bd3358e14dbe6cf3a4593b1efcd1185fdba1ef8931550896",
+   "size": 415744
+  },
+  "Server/tools/clientbuild/pylib/PIL/_webp.pyi": {
+   "sha256": "cc3f2f0283c2f1a1085637dc90bb45b24456e6c6a255e977fac254036a476867",
+   "size": 66
+  },
+  "Server/tools/clientbuild/pylib/PIL/features.py": {
+   "sha256": "377f0ed5a0d19df432fc38dc04160c8565863c48dfef72f676b269d44563d454",
+   "size": 11214
+  },
+  "Server/tools/clientbuild/pylib/PIL/py.typed": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "Server/tools/clientbuild/pylib/PIL/report.py": {
+   "sha256": "ea6ecd3afd5adb8e7bed9889a315fcf62a7925e3a07f63b517de5febed4ae5a3",
+   "size": 105
+  },
+  "Server/tools/clientbuild/refpack.py": {
+   "sha256": "09c2767db0f583368717c1ea3376f437c0184afdca486337bc76333a2796bd6e",
+   "size": 6181
+  },
+  "Server/tools/clientbuild/season.py": {
+   "sha256": "bc59f7ede815403223e98f7d77948d4c146c53a0cca976630f53db5fec8d5c86",
+   "size": 38943
   },
   "Server/trade2.py": {
    "sha256": "03748dcaae7c8d9a3c06513b2669bc35799808ec161795c2f0041778cf272108",
@@ -193045,6 +193589,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1023",
- "notes": "Sửa lỗi 'Không thể truy xuất dữ liệu từ máy chủ (undefined)' khi tài khoản chưa có HLV (cài mới / khôi phục)"
+ "version": "2026.11.10-1045",
+ "notes": "GM Tool > Database: bạn bè cũng dùng được 'Áp dụng vào game' (gửi kèm bộ dựng client); sửa bộ dựng chạy bằng Python của launcher"
 }
