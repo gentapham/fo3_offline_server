@@ -262,8 +262,9 @@ def _gamepad_aliases():
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         added = mod.ensure_aliases()
-        if added:
-            print("Tay cầm: đã thêm", ", ".join(added), flush=True)
+        for kind, names in added.items():
+            if names:
+                print(f"Tay cầm {kind}: đã thêm", ", ".join(names), flush=True)
     except Exception as e:
         print("Tay cầm:", e, flush=True)
 

@@ -1265,8 +1265,8 @@
    "size": 78507
   },
   "Server/gamepad.py": {
-   "sha256": "75014ec18246810b4cc44793724e580912d8eab0d9e6488ba3c271535bae7419",
-   "size": 5030
+   "sha256": "33d49a6d13d857f5507e712b8e02d895d9ddc5525e903ba992678c62b9a77415",
+   "size": 11615
   },
   "Server/gen_teams.py": {
    "sha256": "6a87ea0ac6b8c478abb484d3b21457b96a78cbfab3df55955ef5dfda87f80d3e",
@@ -1281,8 +1281,8 @@
    "size": 351290
   },
   "Server/i18n.py": {
-   "sha256": "5a93ddf2c5f4d16f6ef798ce8d27cac0bf02e3386ee4a7fdc726ebdac87d6b1a",
-   "size": 12990
+   "sha256": "bdc9615cde35a8a59b657e43f025c93b2d063488b2a3b60e9dd71890f9eb0379",
+   "size": 13049
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -194669,6 +194669,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1527",
- "notes": "Sửa tay cầm X-input không nhận trong game (tự thêm tên tay cầm Flydigi, 8BitDo, GameSir, Xbox... vào danh sách của game trước khi mở); HLV Custom: ô Tự chọn chỉ số hỗ trợ tích sẵn"
+ "version": "2026.11.10-1532",
+ "notes": "Tay cầm: tự nhận dạng cả X-input và D-input (Xbox, Flydigi VADER, 8BitDo, GameSir, tay PS, máy chơi game cầm tay GPD/OneXPlayer...), tự thêm tên tay cầm vào game trước khi mở"
 }
