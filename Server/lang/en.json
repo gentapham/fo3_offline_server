@@ -3561,5 +3561,6 @@
 "Cấp thẻ tối đa hiện tại là +{card_cap()}.": "The current max card grade is +{card_cap()}.",
 "Cấp thẻ tối đa hiện tại là +{hc.card_cap()}.": "The current max card grade is +{hc.card_cap()}.",
 "Thẻ đã đạt cấp tối đa (+{card_cap()}).": "The card is at the max grade (+{card_cap()}).",
-"Gói này tạm ngừng bán: cấp thẻ tối đa hiện tại là +{card_cap()}.": "This pack is off sale: the current max card grade is +{card_cap()}."
+"Gói này tạm ngừng bán: cấp thẻ tối đa hiện tại là +{card_cap()}.": "This pack is off sale: the current max card grade is +{card_cap()}.",
+"HLV chưa có đội. Hãy vào game hoàn tất bước tạo đội (chọn CLB), rồi tải lại trang này.": "The coach has no team yet. Finish creating the team in game (pick a club), then reload this page."
 }

@@ -181,8 +181,8 @@
    "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "8e2860a717517166cef35d1603f394fb85379a096a577504a2108b2fb41a56dc",
-   "size": 81313
+   "sha256": "25d75c305468dbdbc0e80c9f177da02ca4d0cff5c776569e73f0721f23af1dbd",
+   "size": 81591
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
@@ -1289,8 +1289,8 @@
    "size": 1537
   },
   "Server/lang/en.json": {
-   "sha256": "cf42505aa2cebc46ac759bc9001f98fe153b682ab6d54280901f32d37c3d7886",
-   "size": 317566
+   "sha256": "1883ef6fc664aab94b7d94aba10823a94d751e72cad1bff606064bd1d229c116",
+   "size": 317785
   },
   "Server/lang/game/LANGUAGESTRING_EN.json": {
    "sha256": "42b811bbe396a85e2c9739b35bbe81f4eea5835c722af45c4191a793cfbfffaf",
@@ -1309,8 +1309,8 @@
    "size": 2980
   },
   "Server/lang/th.json": {
-   "sha256": "ee0ec8e7b71a68da866329c8fa595edc8a9b6e2edb42bf29bb658a854afa61a3",
-   "size": 468131
+   "sha256": "c1efaf427d23498645255070fa23e84b8c656e270aa827601ac3d757cda4d375",
+   "size": 468465
   },
   "Server/levelreward.py": {
    "sha256": "68dbb09cba12fd014466d0661ef862f8e3d6454b1e0307626a71eae9333fc64a",
@@ -194673,6 +194673,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1916",
- "notes": "Sửa sao kỹ thuật trong trận: 751 thẻ huyền thoại / PRIME / INFINITY / TOTY / TOTS dùng đúng số sao kỹ thuật và chân phụ của chính thẻ (trước dùng của thẻ thường)"
+ "version": "2026.11.10-1946",
+ "notes": "GM Tool: báo rõ 'HLV chưa có đội' thay cho lỗi KeyError '0' khi vừa tạo HLV mà chưa chọn CLB"
 }

@@ -3562,5 +3562,6 @@
 "Cấp thẻ tối đa hiện tại là +{card_cap()}.": "เกรดการ์ดสูงสุดตอนนี้คือ +{card_cap()}",
 "Cấp thẻ tối đa hiện tại là +{hc.card_cap()}.": "เกรดการ์ดสูงสุดตอนนี้คือ +{hc.card_cap()}",
 "Thẻ đã đạt cấp tối đa (+{card_cap()}).": "การ์ดถึงเกรดสูงสุดแล้ว (+{card_cap()})",
-"Gói này tạm ngừng bán: cấp thẻ tối đa hiện tại là +{card_cap()}.": "แพ็คนี้งดขายชั่วคราว: เกรดการ์ดสูงสุดตอนนี้คือ +{card_cap()}"
+"Gói này tạm ngừng bán: cấp thẻ tối đa hiện tại là +{card_cap()}.": "แพ็คนี้งดขายชั่วคราว: เกรดการ์ดสูงสุดตอนนี้คือ +{card_cap()}",
+"HLV chưa có đội. Hãy vào game hoàn tất bước tạo đội (chọn CLB), rồi tải lại trang này.": "โค้ชยังไม่มีทีม ให้เข้าเกมสร้างทีมให้เสร็จ (เลือกคลับ) แล้วโหลดหน้านี้ใหม่"
 }

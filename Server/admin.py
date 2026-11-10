@@ -50,7 +50,10 @@ def coach(st):
 
 def team(st):
     coach(st)
-    return st["teams"][str(hc._default_slot(st))]
+    t = (st.get("teams") or {}).get(str(hc._default_slot(st)))
+    if t is None:  # HLV vua tao, chua chon CLB xong (truoc: KeyError '0' o Tong quan / Cau thu CLB / HLV)
+        raise AdminError("HLV chưa có đội. Hãy vào game hoàn tất bước tạo đội (chọn CLB), rồi tải lại trang này.")
+    return t
 
 
 def names(spids):
