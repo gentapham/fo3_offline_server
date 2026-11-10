@@ -1827,7 +1827,7 @@ MAX_EP = 999_999_999_999
 
 def add_ep(st, n):
     """Credit match/season/cup EP to the active coach (shown by /coach/me money.ep)."""
-    coach = next(c for c in st["coaches"] if c["slot"] == _default_slot(st))
+    coach = coach_of(st)
     coach["ep"] = max(0, min(MAX_EP, coach.get("ep", START_EP) + int(n)))
 
 
@@ -1861,7 +1861,7 @@ def coach_me(st, slot):
     """Body of the /coach/me resource (CoachProxy). Field paths are the ones its
     fetchCoach* methods read; values are a fresh account. startFreeRoam waits for this
     resource to validate before signing on."""
-    coach = next(c for c in st["coaches"] if c["slot"] == slot)
+    coach = coach_of(st, slot)
     team = owned_team(st["teams"].get(str(slot), {"squad": {"positions": [], "kickers": []}, "players": []}))
     teamid = coach["teamid"]
     team["formations"] = team_formations(teamid)
@@ -1936,7 +1936,7 @@ def ep_coach_profile(query, body):
         return _json({"result": False})
     st = _state()
     slot = _default_slot(st)
-    coach = next(c for c in st["coaches"] if c["slot"] == slot)
+    coach = coach_of(st, slot)
     if isinstance(pic, str) and not pic.isdigit():
         coach["picture"] = pic
     else:
@@ -1959,6 +1959,25 @@ def coach_me_resources(st, slot):
 def _default_slot(st):
     return next((c["slot"] for c in st["coaches"] if c["_id"] == st["defaultcoachid"]),
                 st["coaches"][0]["slot"] if st["coaches"] else 0)  # default manager deleted: the other one
+
+
+NO_COACH_TEAM = 241  # doi mac dinh cho HLV tam (chi de ve giao dien, khong luu)
+
+
+def coach_of(st, slot=None):
+    """HLV o o `slot` (mac dinh: HLV dang chon). Tai khoan chua co HLV (cai moi, hoac GM Tool "Reset nhan vat"
+    khi game dang mo): tra HLV TAM khong nam trong st["coaches"] -> khong bi luu, cac request dinh ky
+    (/coach/me, /achievement/me, /shop/list...) khong loi StopIteration -> popup "khong nhan duoc du lieu
+    tu may chu (undefined)" (2026-11-10)."""
+    if slot is None:
+        slot = _default_slot(st)
+    c = next((c for c in st.get("coaches") or () if c["slot"] == slot), None)
+    if c is None:
+        c = next(iter(st.get("coaches") or ()), None)
+    if c is None:
+        c = {"_id": coach_id(slot), "slot": slot, "name": "", "state": "active", "teamid": NO_COACH_TEAM,
+             "ep": START_EP, "items": [], "bag": [], "depot": [], "favorites": [], "scout_used": {}, "temp": True}
+    return c
 
 
 def ep_coach_me(query, body):
@@ -2012,7 +2031,7 @@ def ep_default_coach(slot, query, body):
     daily_login(st)  # first login of the day: today's reward goes to the Bag
     if str(slot) in st["teams"]:
         balance_first_team(st["teams"][str(slot)])
-        fix_formation(st["teams"][str(slot)], next(c["teamid"] for c in st["coaches"] if c["slot"] == slot))
+        fix_formation(st["teams"][str(slot)], coach_of(st, slot)["teamid"])
     _save(st)
     return _json({"result": True, "resources": coach_me_resources(st, slot)})
 
@@ -2144,7 +2163,7 @@ def league_stats(teams, records, prev=None):
 
 
 def my_teamid(st):
-    return next(c["teamid"] for c in st["coaches"] if c["slot"] == _default_slot(st))
+    return coach_of(st)["teamid"]
 
 
 def l2_me(st):
@@ -3951,7 +3970,7 @@ def ep_transfer_favorites(query, body):
     luu vao coach["favorites"] (toi da 30), tra lai /coach/me -> CoachEvent.ON_TRANSFERFAVORITES_CHANGED
     doc coach.transferfavorites."""
     req = json.loads(body or b"{}")
-    st = _state(); slot = _default_slot(st); coach = next(c for c in st["coaches"] if c["slot"] == slot)
+    st = _state(); slot = _default_slot(st); coach = coach_of(st, slot)
     fav = [list(x) for x in coach.get("favorites", [])]
     def norm(x):
         try:
@@ -4448,7 +4467,7 @@ def w3c(ts):
 def coach_scouters(st, slot):
     """coach/me `scouters` (CoachProxy.tradeScouters): a scout on cooldown is locked and carries
     `cooltime` (W3C) for the countdown (ScouterController re-asks /trade3/info when it ends)."""
-    used, now = next(c for c in st["coaches"] if c["slot"] == slot).get("scout_used", {}), time.time()
+    used, now = coach_of(st, slot).get("scout_used", {}), time.time()
     out = []
     for key, sid, cool, _, quest in SCOUTS:
         until = used.get(key, 0) + cool
@@ -5369,7 +5388,7 @@ def inventory_add(coach, itemid, count):
 
 
 def my_coach(st):
-    return next(c for c in st["coaches"] if c["slot"] == _default_slot(st))
+    return coach_of(st)
 
 
 # Locker Room catalog uses assets present in this client, not shop products.
@@ -5508,7 +5527,7 @@ def locker_room_access(slot):
 def coach_items(st, slot, key="items"):
     """/coach/me items: one stack per pack ({_id, itemid, remains}); expireable marks an owned
     item (GeneralInventoryTileItemRenderer: Gunakan button instead of Beli). key="depot" = Kho chua."""
-    coach = next(c for c in st["coaches"] if c["slot"] == slot)
+    coach = coach_of(st, slot)
     return ([locker_room_access(slot)] if key == "items" else []) + [{"_id": i["_id"], "id": i["_id"], "itemid": i["itemid"], "remains": i["remains"], "count": i["remains"],
              "expireable": True, "expired": False, "staticdata": item_def(i["itemid"])}
             for i in coach.get(key, []) if i["itemid"] in PACKS or i["itemid"] in ITEMS]

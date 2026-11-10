@@ -257,8 +257,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "0e3ee1675fa0ee094077a5224c4b559cd9037f2ff65f79da37ddcc0ba3d61d1f",
-   "size": 345682
+   "sha256": "8d0a8ee5e0b519950d4fb88d52d0af32ff6f06b27ba9ad8af078a2ef13cabe7a",
+   "size": 346281
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -269,8 +269,8 @@
    "size": 7427
   },
   "Server/manager.py": {
-   "sha256": "b54627f4263bc2869772de61b16f6b3399a58f59f3e91dfe445be1ae92f6816c",
-   "size": 31454
+   "sha256": "20acc6e80d0870b3359b91ef5701c07f464540018e711d1c750d4e4f664e7bc9",
+   "size": 31424
   },
   "Server/market.py": {
    "sha256": "a7f92fede80f6e4c8509c20329e6ad4bb87f0960861c4107286730fb3a3925c6",
@@ -193045,6 +193045,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-0028",
- "notes": "Launcher 1.3.10: sửa thông báo 'Failed to remove temporary directory' khi tắt launcher lúc game còn chạy; tự dọn thư mục tạm cũ"
+ "version": "2026.11.10-1023",
+ "notes": "Sửa lỗi 'Không thể truy xuất dữ liệu từ máy chủ (undefined)' khi tài khoản chưa có HLV (cài mới / khôi phục)"
 }

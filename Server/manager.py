@@ -551,7 +551,7 @@ def install(module):
 
     def coach_me(st, slot):
         me = base_coach_me(st, slot)
-        coach = next(c for c in st["coaches"] if c["slot"] == slot)
+        coach = hc.coach_of(st, slot)
         try:
             me["statistics"] = statistics(st, coach, me)
             me["career"] = career(coach, me)
