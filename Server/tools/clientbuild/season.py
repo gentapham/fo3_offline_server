@@ -369,31 +369,43 @@ def client_db(trim):
 TEAMNAMES_ENTRY = "data/ui/localization/TEAMNAMES_ENG.json"
 
 
+# ten them rieng tung goi ngon ngu (khong co trong club_history): doi tuyen Viet Nam (113666, goc "VN STAR")
+EXTRA_TEAMNAMES = {"tha": {"113666": "เวียดนาม"}}
+
+
 def build_teamnames():
-    """build/eng.big = eng.big cua game + ten cac CLB moi cua club_history.json (id 200000000 + so Q):
-    client goi ten CLB bang Localization.TEAMNAME (TEAMNAMES_ENG.json trong eng.big); id la -> "teamname(<id>)".
-    Chi them / sua cac id >= club_history.NEW_TEAM nen chay lai nhieu lan van giu nguyen ten khac (vd Viet Nam)."""
+    """build/eng.big + build/tha.big = goi ngon ngu cua game + ten cac CLB moi cua club_history.json (id 200000000 +
+    so Q) va EXTRA_TEAMNAMES: client goi ten CLB bang Localization.TEAMNAME (TEAMNAMES_<LANG>.json trong <lang>.big;
+    id la -> "teamname(<id>)"). eng: tieng Viet / tieng Anh (ca hai la language "eng"), tha: tieng Thai (i18n).
+    Chi them / sua cac id moi nen chay lai nhieu lan van giu nguyen ten khac (vd Viet Nam cua eng.big).
+    Tra ve so CLB moi (None neu khong dung gi)."""
     import bigdir, club_history
     from refpack import refpack
     teams = (club_history.load() or {}).get("teams") or {}
-    src = os.path.join(GAME_DATA, "ui", "localization", "eng.big")
-    out = os.path.join(BUILD, "eng.big")
-    if not teams or not os.path.isfile(src):
-        if os.path.exists(out):
-            os.remove(out)
-        return None
-    raw = bigdir.read(src, TEAMNAMES_ENTRY)
-    names = json.loads(raw.decode("utf-8-sig"))
-    if all(names.get(t) == n["eng"] for t, n in teams.items()):
-        new = raw
-    else:
-        new = club_history.teamnames({k: v for k, v in names.items() if int(k) < club_history.NEW_TEAM}, "eng", teams)
-    shutil.copyfile(src, out)
-    if new != raw:
-        bigdir.patch(out, {TEAMNAMES_ENTRY: (refpack(new), len(new))})
-        assert json.loads(bigdir.read(out, TEAMNAMES_ENTRY).decode("utf-8-sig")) == json.loads(new.decode("utf-8-sig"))
-    return len(teams)
-
+    made = None
+    for lang in ("eng", "tha"):
+        src = os.path.join(GAME_DATA, "ui", "localization", f"{lang}.big")
+        out = os.path.join(BUILD, f"{lang}.big")
+        extra = EXTRA_TEAMNAMES.get(lang, {})
+        entry = f"data/ui/localization/TEAMNAMES_{lang.upper()}.json"
+        if not (teams or extra) or not os.path.isfile(src):
+            if os.path.exists(out):
+                os.remove(out)
+            continue
+        raw = bigdir.read(src, entry)
+        names = json.loads(raw.decode("utf-8-sig"))
+        want = {**{t: n["eng"] for t, n in teams.items()}, **extra}
+        if all(names.get(t) == v for t, v in want.items()):
+            new = raw
+        else:
+            keep = {k: v for k, v in names.items() if int(k) < club_history.NEW_TEAM}
+            new = club_history.teamnames({**keep, **extra}, "eng", teams)
+        shutil.copyfile(src, out)
+        if new != raw:
+            bigdir.patch(out, {entry: (refpack(new), len(new))})
+            assert json.loads(bigdir.read(out, entry).decode("utf-8-sig")) == json.loads(new.decode("utf-8-sig"))
+        made = len(teams)
+    return made
 
 def locale_additions():
     with closing(sqlite3.connect(FIFADB)) as c:
@@ -773,7 +785,7 @@ def cmd_client(a):
     print(log[-1])
     n_teams = build_teamnames()
     if n_teams:
-        log.append(f"eng.big: TEAMNAMES + {n_teams} CLB moi (su nghiep CLB)")
+        log.append(f"eng.big / tha.big: TEAMNAMES + {n_teams} CLB moi (su nghiep CLB)")
         print(log[-1], flush=True)
     open(os.path.join(BUILD, "client_log.txt"), "w").write("\n".join(log) + "\n")
 

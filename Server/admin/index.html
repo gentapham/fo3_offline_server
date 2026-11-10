@@ -777,6 +777,61 @@
   @keyframes uiPop { from { opacity: 0; transform: scale(.86); } to { opacity: 1; transform: scale(1); } }
   @keyframes uiRing { 0% { transform: scale(.5) rotate(-12deg); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .ui-dlg-back, .ui-dlg, .ui-dlg .ui-ico { animation: none; } }
+
+  /* tim tinh nang (thanh tim kiem o hang muc con cua menu) */
+  nav .nav-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  nav .nav-row .nav-group.on { flex: 1 1 auto; min-width: 0; }
+  .fsearch { position: relative; flex: 0 0 300px; margin: 6px 10px 6px auto; }
+  .fsearch input {
+    width: 100%; box-sizing: border-box; padding: 8px 60px 8px 34px; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--card-2); color: var(--ink); font: inherit; font-size: 14px; outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .fsearch input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); background: var(--card); }
+  .fsearch svg { position: absolute; left: 10px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%); color: var(--mute); pointer-events: none; }
+  .fsearch kbd { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 11px; line-height: 1; color: var(--mute);
+    border: 1px solid var(--line); border-radius: 5px; padding: 3px 5px; background: var(--card); pointer-events: none; }
+  .fs-pop { position: fixed; z-index: 1000; max-height: min(70vh, 520px); overflow-y: auto; background: var(--card); color: var(--ink);
+    border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: 0 12px 36px rgba(0, 0, 0, .22); padding: 6px; }
+  .fs-pop[hidden] { display: none; }
+  .fs-item { display: block; width: 100%; text-align: left; border: 0; background: none; color: inherit; font: inherit; cursor: pointer;
+    padding: 8px 10px; border-radius: 8px; }
+  .fs-item.on, .fs-item:hover { background: var(--card-2); box-shadow: inset 3px 0 0 var(--gold); }
+  .fs-item .fs-path { font-size: 11.5px; color: var(--mute); }
+  .fs-item .fs-title { font-weight: 700; font-size: 14px; }
+  .fs-item .fs-snip { font-size: 12.5px; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .fs-item mark { background: var(--gold-soft); color: inherit; border-radius: 3px; padding: 0 1px; }
+  .fs-empty { padding: 12px; color: var(--mute); font-size: 13px; }
+  .card.fs-flash { animation: fsflash 1.8s ease; }
+  @keyframes fsflash { 0%, 45% { box-shadow: 0 0 0 3px var(--gold), var(--shadow); } 100% { box-shadow: var(--shadow); } }
+  @media (max-width: 760px) { nav .nav-row { flex-direction: column; align-items: stretch; } .fsearch { flex: none; margin: 6px 10px; } }
+  .hint.mu-note { color: var(--danger, #c62828); border-left-color: var(--danger, #c62828); background: color-mix(in srgb, var(--danger, #c62828) 7%, transparent); }
+
+  /* popup thong bao (say) */
+  .say-pop {
+    position: fixed; z-index: 1200; top: 22px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px;
+    max-width: min(640px, calc(100vw - 32px)); padding: 14px 20px; border-radius: 14px; cursor: pointer;
+    background: var(--card); color: var(--ink); border: 1px solid var(--line-strong); box-shadow: 0 16px 40px rgba(0, 0, 0, .25);
+    font-size: 15px; font-weight: 600; animation: sayIn .2s ease;
+  }
+  .say-pop.out { opacity: 0; transform: translate(-50%, -10px); transition: opacity .18s, transform .18s; }
+  .say-pop .say-ico { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; }
+  .say-pop.ok { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+  .say-pop.ok .say-ico { background: var(--accent); }
+  .say-pop.info .say-ico { background: transparent; border: 3px solid color-mix(in srgb, var(--info) 30%, transparent); border-top-color: var(--info); animation: saySpin .8s linear infinite; width: 22px; height: 22px; }
+  @keyframes sayIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes saySpin { to { rotate: 360deg; } }
+  /* luu y cho nguoi dung: chu do de thay */
+  .hint { color: var(--danger); border-left-color: var(--danger); background: color-mix(in srgb, var(--danger) 7%, var(--card-2)); }
+
+  /* nut tab Nhac nen */
+  #nhacnen .b { font-weight: 600; border: 0; color: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .15); transition: filter .15s, transform .1s; }
+  #nhacnen .b:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+  #nhacnen .b:disabled { opacity: .35; box-shadow: none; }
+  #nhacnen .mu-add { background: linear-gradient(180deg, #3b82f6, #2563eb); }
+  #nhacnen .mu-install { background: linear-gradient(180deg, #22c55e, #16a34a); }
+  #nhacnen .mu-restore { background: linear-gradient(180deg, #fbbf24, #f59e0b); color: #3d2c00; }
+  #nhacnen .mu-move { background: linear-gradient(180deg, #6366f1, #4f46e5); min-width: 40px; }
+  #nhacnen .mu-del { background: linear-gradient(180deg, #ef4444, #dc2626); }
 </style>
 </head>
 <body>
@@ -787,6 +842,7 @@
   <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"></rect><path d="M5 13v8h14v-8M12 8v13"></path><path d="M12 8S10 3 7.5 4.5 9 8 12 8Zm0 0s2-5 4.5-3.5S15 8 12 8Z"></path></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path><path d="m9 15 2 2 4-4"></path></symbol>
   <symbol id="i-scout" viewBox="0 0 24 24"><circle cx="6.5" cy="15.5" r="3.5"></circle><circle cx="17.5" cy="15.5" r="3.5"></circle><path d="M10 15h4M6.5 12 9 5h2l1 5 1-5h2l2.5 7"></path></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></symbol>
   <symbol id="i-log" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="m7 9 3 3-3 3M13 15h4"></path></symbol>
   <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7Z"></path></symbol>
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.8 0-3 .9-3 2s1 1.7 3 2 3 1 3 2.2-1.3 2-3 2c-1.5 0-2.6-.6-3-1.6M12 6v2M12 16v2"></path></symbol>
@@ -855,12 +911,12 @@
       <button role="tab" data-tab="hlv" title="HLV"><svg class="i"><use href="#i-scout"></use></svg>HLV</button>
       <button role="tab" data-tab="nhiemvu" title="Nhiệm vụ &amp; thành tích"><svg class="i"><use href="#i-cal"></use></svg>Nhiệm vụ</button>
       <button role="tab" data-tab="resetnv" title="Reset nhân vật"><svg class="i"><use href="#i-bolt"></use></svg>Reset nhân vật</button>
+      <button role="tab" data-tab="nhacnen" title="Nhạc nền trong game (mp3)"><svg class="i"><use href="#i-music"></use></svg>Nhạc nền</button>
       <button role="tab" data-tab="log" title="Nhật ký server"><svg class="i"><use href="#i-log"></use></svg>Nhật ký server</button>
     </div></div>
   </nav>
 
   <main>
-    <div class="status" id="status" role="status" aria-live="polite">Thay đổi được lưu ngay. Vào lại game hoặc mở lại màn hình CLB để thấy.</div>
 
     <section id="ringkasan">
       <div class="card">
@@ -1717,6 +1773,19 @@
         <div class="table-wrap"><table><thead><tr><th>Cầu thủ</th><th>Đầu mẫu</th><th>Ngày tạo</th><th></th></tr></thead><tbody id="phdRows"></tbody></table></div>
       </div>
     </section>
+    <section id="nhacnen" hidden="">
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-music"></use></svg></span><h2 class="display">Nhạc nền trong game</h2></div>
+        <div class="row">
+          <label class="b mu-add" style="cursor:pointer">＋ Thêm file mp3<input type="file" id="muFile" accept=".mp3,audio/mpeg" multiple hidden></label>
+          <button class="b mu-install" id="muInstall" type="button">♪ Cài Nhạc Vào Game</button>
+          <button class="b mu-restore" id="muRestore" type="button">↺ Trả nhạc gốc</button>
+          <span class="muted" id="muState"></span>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>#</th><th>Bài</th><th>Thời lượng</th><th>Thông số</th><th></th></tr></thead><tbody id="muList"></tbody></table></div>
+        <p class="hint mu-note">File mp3 lưu ở Server\gamedata\music. Sẽ thêm được tối đa 9 bài, vui lòng thoát game vào lại để cập nhật nhạc mới.</p>
+      </div>
+    </section>
     <section id="log" hidden="">
       <div class="card">
         <div class="card-head"><span class="ico"><svg class="i"><use href="#i-log"></use></svg></span><h2 class="display">Nhật ký server</h2></div>
@@ -1846,7 +1915,9 @@ function apiStoreSet(key, val) {
 (function () { const st = apiStoreGet(); for (const k in st) API_MEM.set(k, st[k]); })();
 async function apiFetch(name, body) {
   const opt = body === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json", "X-FO3-Admin": "1"}, body: JSON.stringify(body)};
-  const r = await fetch("/api/" + name, opt);
+  let r;
+  try { r = await fetch("/api/" + name, opt); }
+  catch (e) { throw new Error("Không kết nối được máy chủ. Máy chủ đã tắt (ví dụ launcher tự tắt máy chủ khi thoát game): mở launcher, bật máy chủ rồi thử lại."); }
   const j = await r.json();
   if (j.error) throw new Error(j.error === "Không tìm thấy" ? "server đang chạy bản cũ. Hãy tắt rồi mở lại server (chạy lại game/Launcher) để cập nhật." : j.error);
   return j;
@@ -1938,7 +2009,42 @@ function uiDialog(msg, {input = false} = {}) {
 }
 const uiConfirm = msg => uiDialog(msg);
 const uiPrompt = msg => uiDialog(msg, {input: true});
-function say(msg, kind) { const s = $("#status"); s.textContent = msg; s.className = "status " + (kind || ""); }
+// Thong bao dang popup (thay thanh trang thai o tren cung):
+//  "ok" / "" -> popup giua tren man hinh, tu tat (bam de tat ngay); "err" / "warn" -> hop thoai phai bam "Đã hiểu".
+let sayToast = null, sayTimer = null;
+function sayClose() { clearTimeout(sayTimer); if (sayToast) { const t = sayToast; sayToast = null; t.classList.add("out"); setTimeout(() => t.remove(), 180); } }
+function say(msg, kind) {
+  msg = String(msg || ""); kind = kind || "";
+  if (!msg) return sayClose();
+  if (kind === "err" || kind === "warn") {
+    sayClose();
+    const back = document.createElement("div");
+    back.className = "ui-dlg-back";
+    back.innerHTML = `<div class="ui-dlg ${kind === "err" ? "danger" : "warn"}" role="alertdialog" aria-modal="true">
+      <div class="ui-ico" aria-hidden="true">${kind === "err" ? "!" : "i"}</div>
+      <h3>${kind === "err" ? "Có lỗi" : "Lưu ý"}</h3>
+      <p class="ui-msg">${esc(msg.replace(/^Lỗi:\s*/, ""))}</p>
+      <div class="ui-btns"><button type="button" class="ui-ok">Đã hiểu</button></div></div>`;
+    const close = () => { document.removeEventListener("keydown", onKey, true); back.classList.add("out"); setTimeout(() => back.remove(), 140); };
+    const onKey = e => { if (e.key === "Escape" || e.key === "Enter") { e.preventDefault(); close(); } };
+    back.querySelector(".ui-ok").addEventListener("click", close);
+    back.addEventListener("mousedown", e => { if (e.target === back) close(); });
+    document.addEventListener("keydown", onKey, true);
+    document.body.append(back);
+    back.querySelector(".ui-ok").focus();
+    return;
+  }
+  if (!sayToast) {
+    sayToast = document.createElement("div");
+    sayToast.setAttribute("role", "status"); sayToast.setAttribute("aria-live", "polite");
+    sayToast.addEventListener("click", sayClose);
+    document.body.append(sayToast);
+  }
+  sayToast.className = "say-pop " + (kind === "ok" ? "ok" : "info");
+  sayToast.innerHTML = `<span class="say-ico" aria-hidden="true">${kind === "ok" ? "✓" : ""}</span><span class="say-msg">${esc(msg)}</span>`;
+  clearTimeout(sayTimer);
+  sayTimer = setTimeout(sayClose, kind === "ok" ? 4000 : 12000);
+}
 async function act(fn, okMsg) {
   try { await fn(); if (okMsg) say(okMsg, "ok"); await refreshTop(); }
   catch (e) { say("Lỗi: " + e.message, "err"); }
@@ -2565,6 +2671,121 @@ const NAV_GROUP_ICON = ["home", "shirt", "gift", "coin", "sun", "scout"];
     g._ng = b; bar.append(b);
   });
   nav.prepend(bar);
+})();
+
+// Tim tinh nang: go tu khoa (khong dau cung duoc) -> ra tab / muc tuong ung; Ctrl+K hoac "/" de mo nhanh
+(function featureSearch() {
+  const nav = document.querySelector("nav[role=tablist]"), row = document.createElement("div");
+  row.className = "nav-row";
+  nav.querySelectorAll(".nav-group").forEach(g => row.append(g));
+  const box = document.createElement("div");
+  box.className = "fsearch";
+  box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>'
+    + '<input type="search" id="fsInput" placeholder="Tìm tính năng…" autocomplete="off" aria-label="Tìm tính năng"><kbd>Ctrl K</kbd>';
+  row.append(box); nav.append(row);
+  const pop = document.createElement("div");
+  pop.className = "fs-pop"; pop.hidden = true; pop.setAttribute("role", "listbox"); document.body.append(pop);
+  const inp = box.querySelector("input");
+  const norm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/\s+/g, " ").trim();
+  // tu dong nghia hay go (khong dau) -> so khop them cac tu nay
+  const ALIAS = {tien: "ep", coin: "ep", money: "ep", nhac: "music", music: "nhac", mat: "3d face", face: "mat 3d", logo: "clb crest",
+    goi: "pack", pack: "goi", the: "card", card: "the", rank: "xep hang", ngon: "language", lang: "ngon ngu", hlv: "coach", coach: "hlv"};
+  const txt = el => el ? el.textContent.replace(/\s+/g, " ").trim() : "";
+  let INDEX = null, hits = [], cur = -1;
+  function build() {
+    const out = [];
+    nav.querySelectorAll(".nav-group").forEach(g => {
+      const group = txt(g._ng).replace(/\s*\d+$/, "");
+      g.querySelectorAll("[role=tab]").forEach(b => {
+        const tab = b.dataset.tab, label = txt(b), sec = document.getElementById(tab);
+        out.push({tab, card: null, path: group, title: label, snip: "", hay: norm(group + " " + label), body: ""});
+        if (!sec) return;
+        sec.querySelectorAll(".card").forEach(c => {
+          const h = c.querySelector(".card-head h2, h2, h3"); if (!h) return;
+          const lead = txt(c.querySelector("p.lead, p"));
+          const extra = [...c.querySelectorAll("label, button, th, summary, h3, legend")].map(txt).filter(x => x && x.length < 60).join(" · ");
+          out.push({tab, card: c, path: group + " › " + label, title: txt(h), snip: lead, hay: norm(label + " " + txt(h)), body: norm(lead + " " + extra)});
+        });
+      });
+    });
+    return out;
+  }
+  const esc2 = t => String(t).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  function mark(text, toks) {
+    // to dam tu khoa (so khop khong dau tren tung ky tu, giu nguyen chu goc)
+    const chars = [...text], n = chars.map(ch => norm(ch) || " ");
+    if (n.some(x => x.length !== 1)) return esc2(text);
+    const flat = n.join(""), marks = new Array(chars.length).fill(false);
+    for (const t of toks) { let i = -1; while ((i = flat.indexOf(t, i + 1)) !== -1) for (let k = i; k < i + t.length; k++) marks[k] = true; }
+    let o = "", on = false;
+    chars.forEach((ch, i) => { if (marks[i] !== on) { o += marks[i] ? "<mark>" : "</mark>"; on = marks[i]; } o += esc2(ch); });
+    return o + (on ? "</mark>" : "");
+  }
+  function search(q) {
+    INDEX = INDEX || build();
+    const base = norm(q).split(" ").filter(Boolean);
+    if (!base.length) return [];
+    const res = [];
+    for (const e of INDEX) {
+      let score = 0, ok = true;
+      for (const t of base) {
+        const alts = [t, ...(ALIAS[t] ? ALIAS[t].split(" ") : [])];
+        const inHay = alts.some(a => e.hay.includes(a)), inBody = alts.some(a => e.body.includes(a));
+        if (!inHay && !inBody) { ok = false; break; }
+        score += inHay ? (e.hay.split(" ").some(w => w.startsWith(t)) ? 12 : 8) : 2;
+      }
+      if (!ok) continue;
+      if (!e.card) score += 3;
+      res.push([score, e]);
+    }
+    res.sort((a, b) => b[0] - a[0]);
+    return res.slice(0, 12).map(x => x[1]);
+  }
+  function place() {
+    const r = inp.getBoundingClientRect(), w = Math.max(r.width, Math.min(460, window.innerWidth - 24));
+    pop.style.top = (r.bottom + 6) + "px";
+    pop.style.left = Math.max(12, Math.min(r.right - w, window.innerWidth - w - 12)) + "px";
+    pop.style.width = w + "px";
+  }
+  function render() {
+    const q = inp.value, toks = norm(q).split(" ").filter(Boolean);
+    hits = search(q); cur = hits.length ? 0 : -1;
+    if (!toks.length) { pop.hidden = true; return; }
+    pop.innerHTML = hits.length ? hits.map((e, i) => `<button type="button" class="fs-item${i === cur ? " on" : ""}" data-i="${i}" role="option">
+      <div class="fs-path">${esc2(e.path)}</div><div class="fs-title">${mark(e.title, toks)}</div>${e.snip ? `<div class="fs-snip">${mark(e.snip, toks)}</div>` : ""}</button>`).join("")
+      : `<div class="fs-empty">Không tìm thấy tính năng phù hợp.</div>`;
+    place(); pop.hidden = false;
+  }
+  function go(i) {
+    const e = hits[i]; if (!e) return;
+    pop.hidden = true; inp.value = ""; inp.blur();
+    show(e.tab);
+    if (e.card) {
+      setTimeout(() => {
+        e.card.scrollIntoView({behavior: "smooth", block: "start"});
+        e.card.classList.remove("fs-flash"); void e.card.offsetWidth; e.card.classList.add("fs-flash");
+      }, 60);
+    } else window.scrollTo({top: 0, behavior: "smooth"});
+  }
+  function hl() { pop.querySelectorAll(".fs-item").forEach((b, i) => b.classList.toggle("on", i === cur)); const b = pop.querySelector(".fs-item.on"); if (b) b.scrollIntoView({block: "nearest"}); }
+  inp.addEventListener("focus", () => { INDEX = null; if (inp.value) render(); });
+  inp.addEventListener("input", render);
+  inp.addEventListener("keydown", ev => {
+    if (ev.key === "ArrowDown") { ev.preventDefault(); if (hits.length) { cur = (cur + 1) % hits.length; hl(); } }
+    else if (ev.key === "ArrowUp") { ev.preventDefault(); if (hits.length) { cur = (cur - 1 + hits.length) % hits.length; hl(); } }
+    else if (ev.key === "Enter") { ev.preventDefault(); go(cur); }
+    else if (ev.key === "Escape") { pop.hidden = true; inp.blur(); }
+  });
+  pop.addEventListener("mousedown", ev => ev.preventDefault());
+  pop.addEventListener("click", ev => { const b = ev.target.closest(".fs-item"); if (b) go(+b.dataset.i); });
+  inp.addEventListener("blur", () => setTimeout(() => { pop.hidden = true; }, 120));
+  window.addEventListener("resize", () => { if (!pop.hidden) place(); });
+  window.addEventListener("scroll", () => { if (!pop.hidden) place(); }, {passive: true});
+  document.addEventListener("keydown", ev => {
+    const a = document.activeElement || {}, typing = /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName || "") || a.isContentEditable;
+    if ((ev.ctrlKey || ev.metaKey) && (ev.key === "k" || ev.key === "K")) { ev.preventDefault(); inp.focus(); inp.select(); }
+    else if (ev.key === "/" && !typing) { ev.preventDefault(); inp.focus(); }
+  });
 })();
 function syncNavGroups(tab) {
   document.querySelectorAll("nav .nav-group").forEach(g => {
@@ -3273,6 +3494,48 @@ $("#misSave").addEventListener("click", () => act(async () => {
   await loaders.nhiemvu();
 }, "Đã lưu cài đặt nhiệm vụ."));
 loaders.resetnv = async () => { await loadResetSlots(); };
+// ===== Nhac nen (mp3 -> EA Trax) =====
+const muFmt = sec => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, "0")}`;
+function muRender(r) {
+  const list = $("#muList");
+  list.innerHTML = r.songs.length ? r.songs.map((s, i) => `<tr><td>${i + 1}</td><td>${esc(s.name)}</td><td>${muFmt(s.seconds)}</td>
+    <td class="muted">${s.sr / 1000} kHz · ${s.ch === 2 ? "stereo" : "mono"} · ${s.mb} MB</td>
+    <td style="white-space:nowrap"><button class="b mu-move" data-mumove="up" data-i="${i}"${i ? "" : " disabled"}>▲</button>
+    <button class="b mu-move" data-mumove="down" data-i="${i}"${i < r.songs.length - 1 ? "" : " disabled"}>▼</button>
+    <button class="b mu-del" data-murm="${i}">Xoá</button></td></tr>`).join("")
+    : `<tr><td colspan="5" class="muted">Chưa có bài nào. Bấm "Thêm file mp3".</td></tr>`;
+  const st = [r.installed === "custom" ? `Đang dùng nhạc của bạn: ${(r.installed_songs || []).length} bài.` : "Đang dùng nhạc gốc của game."];
+  if (r.installed === "custom" && r.applied_at) st.push(`Cài lúc ${r.applied_at}.`);
+  if (r.pending) st.push(r.pending === "install" ? "⏳ Chờ thoát game để cài nhạc mới." : "⏳ Chờ thoát game để trả nhạc gốc.");
+  if (r.error) st.push("Lỗi lần cài trước:", r.error);
+  $("#muState").innerHTML = st.map(x => `<span>${esc(x)}</span>`).join(" ");
+}
+async function muLoad() { try { muRender(await apiFetch("music_info")); } catch (e) { say("Lỗi: " + e.message, "err"); } }
+loaders.nhacnen = muLoad;
+const muRead = f => new Promise((ok, bad) => { const rd = new FileReader(); rd.onload = () => ok(String(rd.result).split(",")[1] || ""); rd.onerror = () => bad(rd.error); rd.readAsDataURL(f); });
+$("#muFile").addEventListener("change", async ev => {
+  const files = [...ev.target.files]; ev.target.value = "";
+  for (const f of files) {
+    say(`Đang thêm ${f.name}…`, "");
+    try { muRender(await api("music_upload", {name: f.name, data: await muRead(f)})); say(`Đã thêm ${f.name}. Bấm "Cài Nhạc Vào Game" khi xong danh sách.`, "ok"); }
+    catch (e) { say("Lỗi: " + e.message, "err"); }
+  }
+});
+$("#muList").addEventListener("click", async ev => {
+  const b = ev.target.closest("button"); if (!b) return;
+  try {
+    if (b.dataset.murm !== undefined) muRender(await api("music_remove", {index: +b.dataset.murm}));
+    else if (b.dataset.mumove) muRender(await api("music_move", {index: +b.dataset.i, dir: b.dataset.mumove}));
+  } catch (e) { say("Lỗi: " + e.message, "err"); }
+});
+for (const [id, name, done] of [["#muInstall", "music_install", "Đã cài nhạc mới. Mở game là nghe."], ["#muRestore", "music_restore", "Đã trả nhạc gốc của game."]]) {
+  $(id).addEventListener("click", async () => {
+    say("Đang xử lý…", "");
+    try { const r = await api(name, {}); muRender(r); r.applied_now ? say(done, "ok") : say("Game đang mở: nhạc sẽ tự cài khi bạn thoát game (hoặc lúc bấm CHƠI GAME lần tới).", "warn"); }
+    catch (e) { say("Lỗi: " + e.message, "err"); }
+  });
+}
+
 loaders.thuong = loaders.thitruong = loaders.xephang = loaders.teamcolor = () => loaders.trandau();
 loaders.trandau = async () => {
   const [pm, mr, so] = await Promise.all([apiFetch("prematch"), apiFetch("match_rewards"), apiFetch("server_options")]);
@@ -4159,6 +4422,137 @@ document.addEventListener("click", async e => {
 const _phdDbLoader = loaders.database;
 loaders.database = async () => { await _phdDbLoader(); await phdList(); };
 if (!$("#database").hidden) phdList();  // trang mo thang o tab Database: lan tai dau chay truoc khi gan o tren
+</script>
+<!-- Da ngon ngu (2026-11-10): chon ngon ngu chung cho GM Tool + game + launcher; dich chu tren trang bang tu dien
+     cua server (/api/i18n). Chu tieng Viet chua co ban dich giu nguyen. -->
+<style>
+  .langsel{display:inline-flex;align-items:center;gap:6px;margin-right:10px;font-size:13px}
+  .langsel select{background:rgba(10,24,40,.85);color:#f3d27a;border:1px solid rgba(243,210,122,.45);border-radius:8px;
+    padding:6px 8px;font:inherit;cursor:pointer}
+  .langsel svg{width:16px;height:16px;stroke:#f3d27a;fill:none;stroke-width:1.8}
+</style>
+<script>
+(function () {
+  const V = /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i;
+  const ATTRS = ["placeholder", "title", "aria-label", "data-tip"];
+  let D = {}, RX = null, LANG = "vi", observer = null, PATS = [], TPL = [];
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  function build(d) {
+    D = d || {};
+    for (const [k, v] of Object.entries(D)) if (k.includes("&amp;")) { const k2 = k.replace(/&amp;/g, "&"); if (!(k2 in D)) D[k2] = v.replace(/&amp;/g, "&"); }
+    const ks = Object.keys(D).filter(k => V.test(k) && ((k.trim().includes(" ") && k.trim().length >= 4) || k.trim().length >= 8)).sort((a, b) => b.length - a.length);
+    RX = ks.length ? new RegExp(ks.map(esc).join("|"), "g") : null;
+    // khoa co bien (${...} / {...}): phan chu giu nguyen, bien khop gia tri bat ky (nhu i18n.py _build_templates)
+    TPL = [];
+    const PH = /\$\{[^{}]*\}|\{[^{}]*\}/g;
+    for (const [k, v] of Object.entries(D)) {
+      const phs = k.match(PH);
+      if (!phs || !V.test(k)) continue;
+      const lits = k.split(PH);
+      if (lits.reduce((n, x) => n + x.trim().length, 0) < 6) continue;
+      try { TPL.push([new RegExp(lits.map(esc).join("(.+?)") + (k.trimEnd() === k ? "$" : "")), phs, v]); } catch (e) {}
+    }
+    TPL.sort((a, b) => b[0].source.length - a[0].source.length);
+  }
+  const MEMO = new Map();
+  function tr(s) {
+    if (!s || LANG === "vi" || !V.test(s)) return s;
+    if (Object.prototype.hasOwnProperty.call(D, s)) return D[s];
+    if (MEMO.has(s)) return MEMO.get(s);
+    const t = s.trim();
+    if (t && Object.prototype.hasOwnProperty.call(D, t)) return s.replace(t, D[t]);
+    let out = s;
+    for (const [re, phs, v] of TPL) {
+      const m = out.match(re);
+      if (!m) continue;
+      let rep = v;
+      phs.forEach((ph, i) => { rep = rep.replace(ph, m[i + 1]); });
+      if (/\$\{[^{}]*\}|\{[^{}]*\}/.test(rep)) continue;
+      out = out.slice(0, m.index) + rep + out.slice(m.index + m[0].length);
+      if (!V.test(out)) break;
+    }
+    for (const [re, to] of PATS) out = out.replace(re, to);
+    if (RX && V.test(out)) out = out.replace(RX, m => D[m]);
+    if (MEMO.size > 20000) MEMO.clear();
+    MEMO.set(s, out);
+    return out;
+  }
+  window.fo3tr = tr;
+  function walk(n) {
+    if (!n) return;
+    if (n.nodeType === 3) {
+      const v = n.nodeValue, t = tr(v);
+      if (t !== v) n.nodeValue = t;
+      return;
+    }
+    if (n.nodeType !== 1) return;
+    const tag = n.tagName;
+    if (tag === "SCRIPT" || tag === "STYLE" || tag === "TEXTAREA" || n.isContentEditable || n.id === "langSel") return;
+    for (const a of ATTRS) {
+      if (n.hasAttribute(a)) { const v = n.getAttribute(a), t = tr(v); if (t !== v) n.setAttribute(a, t); }
+    }
+    if (tag === "INPUT" && (n.type === "button" || n.type === "submit") && n.value) {
+      const t = tr(n.value); if (t !== n.value) n.value = t;
+    }
+    if (tag === "OPTION") { const t = tr(n.textContent); if (t !== n.textContent) n.textContent = t; return; }
+    for (const c of Array.from(n.childNodes)) walk(c);
+  }
+  function start() {
+    document.documentElement.lang = LANG;
+    if (LANG === "vi") return;
+    document.title = tr(document.title);
+    walk(document.body);
+    observer = new MutationObserver(ms => {
+      for (const m of ms) {
+        if (m.type === "characterData") walk(m.target);
+        else if (m.type === "attributes") walk(m.target);
+        else for (const x of m.addedNodes) walk(x);
+      }
+    });
+    observer.observe(document.body, {childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS});
+    for (const f of ["alert", "confirm", "prompt"]) {
+      const o = window[f].bind(window);
+      window[f] = (msg, ...rest) => o(tr(String(msg ?? "")), ...rest);
+    }
+  }
+  function selector(langs) {
+    const right = document.querySelector(".hud-right");
+    if (!right || document.getElementById("langSel")) return;
+    const box = document.createElement("label");
+    box.className = "langsel";
+    box.title = "Ngôn ngữ (GM Tool + game + launcher)";
+    box.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
+    const sel = document.createElement("select");
+    sel.id = "langSel";
+    for (const [k, name] of langs) { const o = document.createElement("option"); o.value = k; o.textContent = name; sel.appendChild(o); }
+    sel.value = LANG;
+    sel.addEventListener("change", async () => {
+      const lang = sel.value;
+      try {
+        const r = await fetch("/api/language_set", {method: "POST", headers: {"Content-Type": "application/json", "X-FO3-Admin": "1"},
+                                                     body: JSON.stringify({lang})});
+        const j = await r.json();
+        if (j.error) { alert(j.error); sel.value = LANG; return; }
+        const msg = {vi: "Đã đổi ngôn ngữ. Launcher sẽ tự mở lại và khởi động lại máy chủ (GM Tool mất kết nối vài giây, tải lại trang sau khoảng 15 giây). Nếu game đang mở: thoát game, launcher sẽ tự áp dụng.",
+                     en: "Language changed. The launcher will restart itself and the server (GM Tool disconnects for a few seconds, reload the page after about 15 seconds). If the game is open: exit it and the launcher applies it.",
+                     th: "เปลี่ยนภาษาแล้ว ลันเชอร์จะเปิดใหม่และรีสตาร์ทเซิร์ฟเวอร์เอง (GM Tool จะขาดการเชื่อมต่อสักครู่ รีโหลดหน้าเว็บหลังประมาณ 15 วินาที) หากเปิดเกมอยู่: ออกจากเกม แล้วลันเชอร์จะใช้ภาษาใหม่ให้เอง"}[lang];
+        try { localStorage.removeItem("fo3-api-v1"); localStorage.removeItem("fo3-lists-v1"); } catch (e) {}
+        if (msg) alert(msg);
+        location.reload();
+      } catch (e) { sel.value = LANG; }
+    });
+    box.appendChild(sel);
+    right.insertBefore(box, right.firstChild);
+  }
+  fetch("/api/i18n").then(r => r.json()).then(j => {
+    LANG = j.lang || "vi";
+    build(j.dict);
+    PATS = (j.patterns || []).map(p => { try { return [new RegExp(p.re, "g"), p.to]; } catch (e) { return null; } }).filter(Boolean);
+    // o chon ngon ngu chi con tren launcher (user 2026-11-10): GM Tool chi hien theo ngon ngu da chon
+    // selector(j.langs || [["vi", "Tiếng Việt"], ["en", "English"], ["th", "ภาษาไทย"]]);
+    start();
+  }).catch(() => {});
+})();
 </script>
 </body>
 </html>

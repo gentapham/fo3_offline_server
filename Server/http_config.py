@@ -74,10 +74,12 @@ def ep_locale(query, body):
     # `url` = WebCache base for externalAssets (crests, uniforms, player cards...). Without
     # it the client uses the dead Garena CDN, every refresh fails and crests show
     # "PLACE HOLDER" even though the files sit in its own _cache. Served by cdn_file().
-    return _json({"result": True, "language": LANGUAGE, "url": f"https://APSEODESK172/{CDN_PREFIX}"})
+    # language theo ngon ngu GM Tool chon (i18n: vi / en -> "eng", th -> "tha"; 2026-11-10)
+    return _json({"result": True, "language": LANGUAGE_OF(), "url": f"https://APSEODESK172/{CDN_PREFIX}"})
 
 
 LANGUAGE = os.environ.get("FO3_LANGUAGE", "eng")
+LANGUAGE_OF = lambda: LANGUAGE  # i18n.install thay bang ngon ngu dang chon trong GM Tool
 
 
 def _detect_game_dir():
@@ -6259,6 +6261,8 @@ for _feature in (levelreward, multiplay):
 import events, liveboost, chat  # thuong thoi gian choi / thong bao qua, Live Boost (TOTW), chat kenh (port indo a0b49dd)
 for _feature in (events, liveboost, chat):
     _feature.install(sys.modules[__name__])
+import i18n  # da ngon ngu vi / en / th (GM Tool chon): dich JSON tra ve cho game, locale theo ngon ngu (2026-11-10)
+i18n.install(sys.modules[__name__])
 
 
 if __name__ == "__main__":
@@ -6286,6 +6290,11 @@ if __name__ == "__main__":
     if admin_port:
         import admin
         admin.start(sys.modules[__name__], admin_port)
+        try:  # nhac nen mp3: lenh cai dang cho (game con mo luc server tat) -> theo doi tiep
+            import music
+            music.start(sys.modules[__name__])
+        except Exception as e:
+            print("Nhạc nền:", e, flush=True)
         print(f"Trang quản trị: http://127.0.0.1:{admin_port}/", flush=True)
     threading.Thread(target=warm_packs, daemon=True, name="packs").start()
     for _fn in BACKGROUND:

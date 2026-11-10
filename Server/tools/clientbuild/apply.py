@@ -20,9 +20,10 @@ TARGETS = {"data_0.big": os.path.join(GAME, "data", "data_0.big"),
            "Label.big": os.path.join(GAME, "data", "ui", "components", "Label.big"),
            # ten CLB moi cua su nghiep CLB (season.py build_teamnames); khong co club_history.json -> khong dung
            "eng.big": os.path.join(GAME, "data", "ui", "localization", "eng.big"),
+           "tha.big": os.path.join(GAME, "data", "ui", "localization", "tha.big"),  # ten CLB / Viet Nam cho tieng Thai
            # mat 3D tu anh (season.py build_photo_heads); khong co mat -> khong dung, tra ban goc (xem sources)
            "data_7.big": os.path.join(GAME, "data", "data_7.big")}
-OPTIONAL = ("eng.big", "data_7.big")
+OPTIONAL = ("eng.big", "tha.big", "data_7.big")
 KEEP = 2
 
 

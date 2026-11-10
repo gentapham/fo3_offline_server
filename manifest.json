@@ -1,12 +1,12 @@
 {
  "files": {
   "FO3 Launcher.exe": {
-   "sha256": "552d061ab12acb47ebcfb8820d618cf78af05976586f757ace5c8488edc586d6",
-   "size": 21701478
+   "sha256": "f9fd712bddde5903888b401baa12a9b42fd11ef7070f96893de830588c34c9bd",
+   "size": 21707932
   },
   "FO3 Offline Launcher.exe": {
-   "sha256": "552d061ab12acb47ebcfb8820d618cf78af05976586f757ace5c8488edc586d6",
-   "size": 21701478
+   "sha256": "f9fd712bddde5903888b401baa12a9b42fd11ef7070f96893de830588c34c9bd",
+   "size": 21707932
   },
   "HuongDan/images/face_158023.png": {
    "sha256": "3e9f3ed4ecd4df8e8b323a4357197086c2d42d3cc7e697859e39d61f32109fa8",
@@ -173,24 +173,24 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "b4ba1f436e5452fdf92091725c63562c5de3316252f2af40a8b93293bf8ae919",
-   "size": 68052
+   "sha256": "5194230bf01432031ea4930b1377f644bf106c567275176a3fe0493fcbf73a2c",
+   "size": 78662
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
    "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "72a62a2e8ab965f7ad9827d540b19c58e118c050669cc3008657cb728c1f102a",
-   "size": 79591
+   "sha256": "5dcbbee614d1c687f2216fcaf5604171314c6ee144e1c3cc2a4761d5e29d3a2c",
+   "size": 79242
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "6b0ae22b5fb0f15be616bf41c4ac753a9a278b117f6991bd9a447423fb210e5c",
-   "size": 337248
+   "sha256": "913cb35096f3f4d45460d0b6015717e7cae9ad8d7d624491ce055c19616b9431",
+   "size": 358847
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -203,6 +203,10 @@
   "Server/admin_live.py": {
    "sha256": "6765c43447f091beeb22942298262934f215ec87b68ef36f4fb68c1954c02a59",
    "size": 7040
+  },
+  "Server/admin_music.py": {
+   "sha256": "33e3396f7b60264a29ececbb19ed13496a3f72338eb7d78461e602cd175d3182",
+   "size": 3610
   },
   "Server/bot_settings.py": {
    "sha256": "32fe56db6df344cd122a23b1a2fd12b56e3ccd6687ac2cf7608ddb94c6a20a81",
@@ -252,6 +256,1002 @@
    "sha256": "e30cd1b20ff13fb83a0813e2ace918b9d87d6a096007b5ea63393a0cdfba5fd9",
    "size": 235826
   },
+  "Server/gamedata/photo_heads/99000000.png": {
+   "sha256": "1c98e195f86601e6b287b9dedf69596e2c9f78616c6cd748ee9833459036cbff",
+   "size": 263326
+  },
+  "Server/gamedata/photo_heads/99000000.rx3": {
+   "sha256": "d1cb8f9d7ba3782719dcf9c1aa00be85ac773fb1bcfa8512087b3061c422eae9",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000001.png": {
+   "sha256": "918761f0a0f1ca080ee40d5efc1c142378e53b66dff1a19cde5a3dd4e50ee365",
+   "size": 313280
+  },
+  "Server/gamedata/photo_heads/99000001.rx3": {
+   "sha256": "ac6cf3f2b8b72eca3bc79fdf7dd984ba2ed7c4266207296b0765cc644e52d1a5",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000002.png": {
+   "sha256": "ee8700ad1267d8b4b3d30d643fbb6b522492c1218765c2939dd26f2622ce76f6",
+   "size": 294833
+  },
+  "Server/gamedata/photo_heads/99000002.rx3": {
+   "sha256": "f449b7ed9a6be49b2dd6dfede4ddc0f477c299e5273d800ab17297ef1422962d",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000003.png": {
+   "sha256": "51d5b95f92cdb2d7a89c9f88fca272d30748f93f0d97e57b423bedb3719a97ed",
+   "size": 287500
+  },
+  "Server/gamedata/photo_heads/99000003.rx3": {
+   "sha256": "8bf4b9d4eb89039dd0a1614f002ec56f512eb343b34a7c9aab63489ed0b2790e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000004.png": {
+   "sha256": "dc028188b6510663d159ff378798ff092298264ad41d70df192d175da034eb8e",
+   "size": 248669
+  },
+  "Server/gamedata/photo_heads/99000004.rx3": {
+   "sha256": "7615d66792abff501c743f4b6238f690238e2eacf7885ddd4df64f57fc494712",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000005.png": {
+   "sha256": "dce656fdbdd353e8eea909ab6a3a0c4162db6389f4b171510cd9bf6afe7180e7",
+   "size": 265564
+  },
+  "Server/gamedata/photo_heads/99000005.rx3": {
+   "sha256": "db9e95d173195318d824d4596b4a2c686a0bef3816429bdb973dc97313d38df2",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000006.png": {
+   "sha256": "674a420663262c4402aabeba7b1b760d23078c17a6be1f7fd719f8c60a17760c",
+   "size": 269677
+  },
+  "Server/gamedata/photo_heads/99000006.rx3": {
+   "sha256": "b7953a52e36fc7da62816a58295becaa04917765e51f06ea2fa79e48c2eab0ca",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000007.png": {
+   "sha256": "9194642d94e96f3a00934d8e056a39ad459e68635a5adc3b77336ac933ca0dcc",
+   "size": 253656
+  },
+  "Server/gamedata/photo_heads/99000007.rx3": {
+   "sha256": "811bcc9b33911daded57e39b2f4c3f8bc60a81412e3305408a3b821d6a81ed5b",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000008.png": {
+   "sha256": "6e1110dc7399eaa348c6e2283c45c3d85bcd6a17ca8761b280849aa2eb114679",
+   "size": 251789
+  },
+  "Server/gamedata/photo_heads/99000008.rx3": {
+   "sha256": "2a347a34007c93968fdb2462eb52d0cf78918203a7b49e3af0c9210de3fba675",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000009.png": {
+   "sha256": "bfa8c86af1f4acf6f4608edfb5f8acbe5ea6408d245e1281006bd1d923f5b189",
+   "size": 287394
+  },
+  "Server/gamedata/photo_heads/99000009.rx3": {
+   "sha256": "46e7990a9b87abeea7bd1ec146752594fe4b92b268d488a9b2168ec33f944e2b",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000010.png": {
+   "sha256": "66a89474a4012fe31d7090bf73ea15b91217c351037b98b94b204448e0e249e0",
+   "size": 265252
+  },
+  "Server/gamedata/photo_heads/99000010.rx3": {
+   "sha256": "002b1f98db85012688054439bd503adf6102aa09fb26ecfaa966dfdc2760fa6d",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000011.png": {
+   "sha256": "0e5b19717b8e76fd90d354a5fa505e2b5f8a7dc363c3125ab5a20efe23c5c9d5",
+   "size": 311709
+  },
+  "Server/gamedata/photo_heads/99000011.rx3": {
+   "sha256": "c49944dbb42813c2ad687fa626d01ce85b4e8262d773168d919282e0b175c55e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000012.png": {
+   "sha256": "060924aa7687eadd3e3a2a1db598b08b022921047a8aef7ae9515e75fd1cd419",
+   "size": 247379
+  },
+  "Server/gamedata/photo_heads/99000012.rx3": {
+   "sha256": "eefb74b42360ae47f52bbee99381fd6e93f62c6b75127d07bcc42607db023f65",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000013.png": {
+   "sha256": "feca424b90f5a66181b44ebc310fc883d35dc38eaebedaf8abc2fb63a65260d6",
+   "size": 242021
+  },
+  "Server/gamedata/photo_heads/99000013.rx3": {
+   "sha256": "67f8af461c8a1fd59bb38a92f689ae7be48573d81830bc09cf0f8a8354bf06c7",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000014.png": {
+   "sha256": "9541fdbd5a6fd6c6aadb9b72cb561b43c835031863512da93440a934a75e6b29",
+   "size": 244330
+  },
+  "Server/gamedata/photo_heads/99000014.rx3": {
+   "sha256": "5138d75877d55610beaa370759ab2940885a60fd418903a10b7dae4837820786",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000015.png": {
+   "sha256": "e250201e71fbf1e0ea2e93cc17769b2219ececc5bbd09684984cad66b691cc4d",
+   "size": 295760
+  },
+  "Server/gamedata/photo_heads/99000015.rx3": {
+   "sha256": "cadfb8a28e68c4f6d01123501cde9728cdd40742adf6d2f7f1407bfe172bd8f3",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000016.png": {
+   "sha256": "832d0d55276fba032cbb1065a3f7c96514ec75fe49b0ae9fe882aafd4f0e6a3b",
+   "size": 269575
+  },
+  "Server/gamedata/photo_heads/99000016.rx3": {
+   "sha256": "5bc5fa5cfd930d05f996862f5972842f2b588154d4c59ae61a4d81ddb2fe176e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000017.png": {
+   "sha256": "3a148ead47d22501afe0b59474e1aedb65f394330a98ad62c1074805c8281eee",
+   "size": 251781
+  },
+  "Server/gamedata/photo_heads/99000017.rx3": {
+   "sha256": "216b5b5dfd8ded380872d548485459a33348095fce6f878c0563c41bed6ad5ca",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000018.png": {
+   "sha256": "a54f52e55bd3dea7b6b0a1ffbab85e1f910ae7abf90dccc58944fbb35c2c7cd2",
+   "size": 236493
+  },
+  "Server/gamedata/photo_heads/99000018.rx3": {
+   "sha256": "45b42dcddd74d140f5ddee01cb4678b4844c9108c4fbce5fe068c012f23b8619",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000019.png": {
+   "sha256": "26c724addc1e8e1d2780208fa6818a1e0f836c82fc4f45ce129b6952ce08d6ef",
+   "size": 248573
+  },
+  "Server/gamedata/photo_heads/99000019.rx3": {
+   "sha256": "cf1443441cfb3f0ec20daa924790d7af85780cd152f0600f7541f31d570e4a2c",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000020.png": {
+   "sha256": "8f4eb4ec5826355403de1fd6723163a601db317f6467d0b14a08237d6021b946",
+   "size": 257461
+  },
+  "Server/gamedata/photo_heads/99000020.rx3": {
+   "sha256": "a5485cdf75c2779ef14e0cb4c92b7102f85eb2dbd0f7a6be3f83068f608110b8",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000021.png": {
+   "sha256": "60df47f52ca2cd30d33def46dbd7bd3a9eae619e9bdb0a0f053f366ec26b94e4",
+   "size": 275686
+  },
+  "Server/gamedata/photo_heads/99000021.rx3": {
+   "sha256": "c2b13ca0b15cab5b04cb5495daca8dccab01aadd101e7eb0fb2733cc7679109c",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000022.png": {
+   "sha256": "83a2e8ec24d4d2faa820976658f549b01b0aff3a6376703528b9f496467b4d96",
+   "size": 250966
+  },
+  "Server/gamedata/photo_heads/99000022.rx3": {
+   "sha256": "26be4751f1fc5092489d92b89aeb9c785e3db0ce6befbfcfe692434bcb6d0757",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000023.png": {
+   "sha256": "276423d0f69357ed20dccee1e2b7bb61a090fdf849e1e19db3e97ad8d9d7c136",
+   "size": 267878
+  },
+  "Server/gamedata/photo_heads/99000023.rx3": {
+   "sha256": "f71819378e0927d4d8b70283cc13b78de551cbad66eb5989b09140c705dba803",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000024.png": {
+   "sha256": "3c29989827666955315f68a17b34fb73cc7a984328309a53b3437c52b80ea692",
+   "size": 267285
+  },
+  "Server/gamedata/photo_heads/99000024.rx3": {
+   "sha256": "cf414e9708fbd7a30b4fda27d4b50cf17cefcea1c841aa1c0fcceacfa253a937",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000025.png": {
+   "sha256": "3d85355d6e8f710e1a5dd2fc175ce61b463e8031ba01920db8031a073ca15a61",
+   "size": 286859
+  },
+  "Server/gamedata/photo_heads/99000025.rx3": {
+   "sha256": "fe6cac07e74463f2923665148d462f8cc185efe3df54eefcb77003d797d81ce8",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000026.png": {
+   "sha256": "4ab07c3dd0cca4c92f80517ed63aea362bfc31ac3ae19c998050c42f803a2e8c",
+   "size": 338276
+  },
+  "Server/gamedata/photo_heads/99000026.rx3": {
+   "sha256": "b64f1f38ba700ef4c1739ee3a4fe9cb6a184609370e4a7e94753facaf5dbe0d1",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000027.png": {
+   "sha256": "b0fbbb536ac22c6576de8b05f4dc5d7f2a99046b0685f07dcf3b731624b03c96",
+   "size": 271924
+  },
+  "Server/gamedata/photo_heads/99000027.rx3": {
+   "sha256": "48e1afa946eb17c736a18c125b86174934e494c630de71e324f6b4273408e789",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000028.png": {
+   "sha256": "36bc9cb78651711a4cd25c6f2d27ab3f88304ac3ceaf2fcb895fac755bf608dc",
+   "size": 278386
+  },
+  "Server/gamedata/photo_heads/99000028.rx3": {
+   "sha256": "5c7e350be92f1ab54b874b66437883e691ae7960dd38d212e4ed70c0938f0852",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000029.png": {
+   "sha256": "305111e78aba79e5d4b599366479e63fcc2e7ca36e70960c4c8221ad3a4d7873",
+   "size": 290151
+  },
+  "Server/gamedata/photo_heads/99000029.rx3": {
+   "sha256": "900329c06e72f95ae7f5a4dc8722fa8dc412b9dce602fea0b25390f34b51c950",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000030.png": {
+   "sha256": "2ed0caec771d9662b684bc59cdfd00bea732a52139b9ebdc197848aabe24d4e8",
+   "size": 291215
+  },
+  "Server/gamedata/photo_heads/99000030.rx3": {
+   "sha256": "b8bcc842b15912afa78a49e956693a0758e4fb58b4c949a910d68bc44e097da5",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000031.png": {
+   "sha256": "6a14ce6235d367e983d3677bd9e38af38608b63ef8eac08df10789595402917c",
+   "size": 265636
+  },
+  "Server/gamedata/photo_heads/99000031.rx3": {
+   "sha256": "b5d33c17faf5ebe1e3f6defc3e040f358d1dfd806731bd127864b38a3578e32e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000032.png": {
+   "sha256": "dfe0d44a71502b2bcdaa61b9f5def4c822857d15eb0c0e91a6338d11aea5aa9a",
+   "size": 263688
+  },
+  "Server/gamedata/photo_heads/99000032.rx3": {
+   "sha256": "8382a60ab605a8d12bef0cb30c08d18f2470ab6af88c078163691301521f87a8",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000033.png": {
+   "sha256": "e977a28a4c5550d82f53c9e23a469b4cdacb5a0dee3bc2fa2c3aa36a572da4eb",
+   "size": 269808
+  },
+  "Server/gamedata/photo_heads/99000033.rx3": {
+   "sha256": "0be435936758294a27cc64ed24c8ac099b325131802982026e2ea30ecda14d04",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000034.png": {
+   "sha256": "b59e3c2632743a6f437fcb3cddf06a6cc4a2c84121388291fce177e4e7600d44",
+   "size": 267729
+  },
+  "Server/gamedata/photo_heads/99000034.rx3": {
+   "sha256": "54e8999113c6a1a2034b39b77772d6a7ffea35a936227f8e6999f7bafdeca05f",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000035.png": {
+   "sha256": "ad5aac4748a110afcc5c3910714cdfc590f270969adf6969f0942b94a45fedc1",
+   "size": 253645
+  },
+  "Server/gamedata/photo_heads/99000035.rx3": {
+   "sha256": "f8433d324dd5094a33a83939a2da1c4aa91dfe3a0805c65cb124ac147c652d94",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000036.png": {
+   "sha256": "277dc7a856149b688e165645b238715b76554411bbf369d5a5cfe41827fb95f3",
+   "size": 314314
+  },
+  "Server/gamedata/photo_heads/99000036.rx3": {
+   "sha256": "a528b50a1962835d44864a3825a7fb40d46694ec9c7967f787b66e9db70add86",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000037.png": {
+   "sha256": "774fdb62ec6124a8bbad657888c12fb7c388bdad29549b2cf06bd7cb5e0f552e",
+   "size": 261462
+  },
+  "Server/gamedata/photo_heads/99000037.rx3": {
+   "sha256": "57123c56ad7f89276d49675361a85761eef374349d15d8516dfbe722480dc4a2",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000038.png": {
+   "sha256": "55e1135deab537a2e26a4b19357ffd7d45e7d22e3f1cac5ae48d0482cb71fc47",
+   "size": 250868
+  },
+  "Server/gamedata/photo_heads/99000038.rx3": {
+   "sha256": "65698f6d7b854ed757afeb9e7720b17ea5c0527de04aa01e1495ab2d1ef497b1",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000039.png": {
+   "sha256": "d831f49eb100b72325163d2ad234d39c0fff62f3a6d30ca21d6894d3ac6b31a3",
+   "size": 244034
+  },
+  "Server/gamedata/photo_heads/99000039.rx3": {
+   "sha256": "c6cd68d11543d2555a428f622cca531134e50366b874829789878b59c8ac5c6d",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000040.png": {
+   "sha256": "2482cf24f0d7d9e2b07e3ceb52f07300c80535c79a214dd441ca61ae49455b1b",
+   "size": 278008
+  },
+  "Server/gamedata/photo_heads/99000040.rx3": {
+   "sha256": "7c5355bba7b17491464dcc1dbd6dc648849edfdc4540e2c8e8f728381c0a588a",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000041.png": {
+   "sha256": "bcfcc8ca8ae1b754c43f552bff3740aa3fee06be0327c0321a376b2d08812607",
+   "size": 259406
+  },
+  "Server/gamedata/photo_heads/99000041.rx3": {
+   "sha256": "3b1afabb195e1f657b3de29f0488faee850168d281cf976a9e802b815cae8445",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000042.png": {
+   "sha256": "a73b7feda0f8a53d4ceee704ff59937e1b572212ec3e13ab66441a01b850758a",
+   "size": 275421
+  },
+  "Server/gamedata/photo_heads/99000042.rx3": {
+   "sha256": "402fc0e207843a74dbe7c1a6cc99c86ad6ba30dd00be98792a89fa33238d4f36",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000043.png": {
+   "sha256": "32e2b505255db0a4baef813d5372593da13bea62fc766afb11121bc89f0b276d",
+   "size": 269378
+  },
+  "Server/gamedata/photo_heads/99000043.rx3": {
+   "sha256": "001ba9f29788b281db8ba4bd3dd7794a4f2525752a827e48f1c56ac5a61d1df2",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000044.png": {
+   "sha256": "cb7b6c7848d7b1a808b6376fc6e52d19aca7d0d09c3b7a91d68db5f4550a8d28",
+   "size": 274916
+  },
+  "Server/gamedata/photo_heads/99000044.rx3": {
+   "sha256": "46c426e8fb87a13328a4645121ded2c5feea9daab3d56bf88fbbc174c2c54799",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000045.png": {
+   "sha256": "80ac61d22a2691272674c152c9da0d082417dd28334545d7d8c791e7bdb54c91",
+   "size": 313743
+  },
+  "Server/gamedata/photo_heads/99000045.rx3": {
+   "sha256": "31f540626f87133a8a61c643a45fe1f3a31099bda8a457e58c36a62a8eae6e51",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000046.png": {
+   "sha256": "4b22bec82a29f4f2e84f8b417b7e0c172b19d7f36ec9bf58e6244ede83e0b058",
+   "size": 251450
+  },
+  "Server/gamedata/photo_heads/99000046.rx3": {
+   "sha256": "662e78791f13b89492cfcdb495fd5e151fb73ce6c5416f24393a6ccef2f33e9d",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000047.png": {
+   "sha256": "62fd6fa64be9c4bde9fae3cd2fbac148c1cd6365342d4359d6b0e01a31003617",
+   "size": 240241
+  },
+  "Server/gamedata/photo_heads/99000047.rx3": {
+   "sha256": "733c073587508bbbe36d24b3b32510667968a0ae8d20342ec10860531f560663",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000048.png": {
+   "sha256": "7d24aca3d43ed7d64a8d824aa15e1fc1b9068ed40312e4d6904aaf548d72afc4",
+   "size": 282540
+  },
+  "Server/gamedata/photo_heads/99000048.rx3": {
+   "sha256": "75894a95ffdce7a44762eb81153b7154923f520fb968a82bc31d0995b8a6ca6e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000049.png": {
+   "sha256": "7fcee9641bd40541cc5dcb0e534b7775b51dce9114295231c2fe384233c41df2",
+   "size": 263028
+  },
+  "Server/gamedata/photo_heads/99000049.rx3": {
+   "sha256": "aa05d12de23ce1cf6ce6b4651824a595c225b9ea99407142717ea02c7d8ed451",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000050.png": {
+   "sha256": "9a08ba829ce4e88bb8057338961f88216d2501256883c01f1bee3cf9f4abb95c",
+   "size": 272577
+  },
+  "Server/gamedata/photo_heads/99000050.rx3": {
+   "sha256": "0649380d10e23394dd103e0dafe63caaa344423dfa1c2bbc45e1f56638c5b7ad",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000051.png": {
+   "sha256": "e6cd5104ce80e00f851cfb3cc6053689ba4e8761a40a9da13f476edc5d63ba76",
+   "size": 253448
+  },
+  "Server/gamedata/photo_heads/99000051.rx3": {
+   "sha256": "f5829aa8652cb4787f7fb5af5591218d5da6945e1cf01ddf7850a7e3f8b8908c",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000052.png": {
+   "sha256": "77a16ea1d7c06b711976bb17cfcb7f3c0acd40e959fb9129b522d86c4a92f129",
+   "size": 285536
+  },
+  "Server/gamedata/photo_heads/99000052.rx3": {
+   "sha256": "ba9be9b150bb0898b58bef306b91fc9c6f3a6139e0cba3df5689d49869484336",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000053.png": {
+   "sha256": "c243e374e6bef4842fb3e0bca86ff5b8eab8289d744fcd33c4c6f4ae559f221b",
+   "size": 226598
+  },
+  "Server/gamedata/photo_heads/99000053.rx3": {
+   "sha256": "5b1fb6ef30c33b1b63d48afeeca76f6d6548bea5a0a386767c9a2e89c3e6b312",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000054.png": {
+   "sha256": "186d371ded22d5bd6482edfd25a1105324c17aebc837e00975271c776d594f82",
+   "size": 289959
+  },
+  "Server/gamedata/photo_heads/99000054.rx3": {
+   "sha256": "8a3a7536b0a0c72bb9570eb7bd4748630ece0b91cdfbf0fac9ebf591106b8b1c",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000055.png": {
+   "sha256": "22b2d0938eac2e5259d7f1cd6156ba91d4bafa8979243f051483abfb92032738",
+   "size": 231112
+  },
+  "Server/gamedata/photo_heads/99000055.rx3": {
+   "sha256": "6cd697f24715ae4d882ee399f42b6b7c351bb94c82b3114a6de180b2126d5e1c",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000056.png": {
+   "sha256": "d1e3ac346276ad6bd65274460285e282fbddbe19bc19e2dbe9e5a885cc6bfad7",
+   "size": 280118
+  },
+  "Server/gamedata/photo_heads/99000056.rx3": {
+   "sha256": "d8cf0f83ca6fd4d2f1f4f048af2496ef87c76ca509221a7543cc4e61f1e481ab",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000057.png": {
+   "sha256": "88f52feed187d100a7c51b91c8d0093e56d84da90c9301b40edfdba46908d7f2",
+   "size": 270512
+  },
+  "Server/gamedata/photo_heads/99000057.rx3": {
+   "sha256": "69ae27f87f10706b602abfef79b102e6d0d0e0a477599135dd6863bbf0e90607",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000058.png": {
+   "sha256": "f553c694fc7f85216f3fec7f597836ca74c9e17b0c0751b3a04acbb454b8b4c8",
+   "size": 269361
+  },
+  "Server/gamedata/photo_heads/99000058.rx3": {
+   "sha256": "5e89af00ecfc7bbfa2278d6cdbfe03622ee4e3a286afc8ad0d8ad406ff861d0e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000059.png": {
+   "sha256": "100fa7f0463196537afa52241addf54d374cf76be673eab7f52c106a918d8a71",
+   "size": 261121
+  },
+  "Server/gamedata/photo_heads/99000059.rx3": {
+   "sha256": "a6bb6e0bb6b24422c1cd335f2537926752d8acc1fd242fb7b629486d18d56eec",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000060.png": {
+   "sha256": "ff02aa9f48ea5eb25a1cbef848532d7b3ab1fce458eac811656f98b298b4c5ac",
+   "size": 268955
+  },
+  "Server/gamedata/photo_heads/99000060.rx3": {
+   "sha256": "0f10348eb3a81865f9655a07fe23fb7c96d46b7e3586305ed3265f203817dbc7",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000061.png": {
+   "sha256": "ef7b515d48f905335ce25142ea770e5d2b745f5527ae0a913e0652a5dad72d1d",
+   "size": 290174
+  },
+  "Server/gamedata/photo_heads/99000061.rx3": {
+   "sha256": "2e1a6cadebedc6313f410ca5ba8fe2adac10b842b99db262440f0b3e690e01af",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000062.png": {
+   "sha256": "e24a7ffa5ae0b99d9e2642fff74b636c8f3760fe43aaf4551336809f19add908",
+   "size": 277927
+  },
+  "Server/gamedata/photo_heads/99000062.rx3": {
+   "sha256": "0fc01d9e73abfdb44fe14437708be94c1fcfd3fe1968a9da72a7a8ec0529b59a",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000063.png": {
+   "sha256": "065acb84262f451f2410319e20490f06bf8f048b6897bd1681f7d7855d687bff",
+   "size": 231774
+  },
+  "Server/gamedata/photo_heads/99000063.rx3": {
+   "sha256": "0a6fdc095bbded6bc7215519ba230fb63a42e99bf282be07759c2549f6c27032",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000064.png": {
+   "sha256": "8075d0833842f87f287600efe9c212f9d93b1c50975da5019ed74594a9f8f74c",
+   "size": 247561
+  },
+  "Server/gamedata/photo_heads/99000064.rx3": {
+   "sha256": "954964641a38d180fc2de438034ce772254d3fdbd07fb5b0da1d2eacaad98109",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000065.png": {
+   "sha256": "462a30a86f69df86038c121be7cff06d23fe9f2936aa4d661999895251f73ab3",
+   "size": 299673
+  },
+  "Server/gamedata/photo_heads/99000065.rx3": {
+   "sha256": "3d780a2e110939a27dd1ec955977476030b70ebca35a71f444bbe9e1e78ba452",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000066.png": {
+   "sha256": "0cdf04ea101ed6af74f0059b99060d0c5c4e6fa177dc935945f5163857999444",
+   "size": 246607
+  },
+  "Server/gamedata/photo_heads/99000066.rx3": {
+   "sha256": "e553939572a4395eb772b123ff5395da13d4130dce5b898f473c7ccfb96e94e5",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000067.png": {
+   "sha256": "a61ad026e782b93474fc831e97bf330412e7776fdc2915f32f473da13d3a534d",
+   "size": 253583
+  },
+  "Server/gamedata/photo_heads/99000067.rx3": {
+   "sha256": "7936ad3ae8cda18c44d9ebecfa70ce37ace61594100ce66e5c42a38f57d9470c",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000068.png": {
+   "sha256": "984efba1f7883cbb40967b44e96e321952e2fcc0b1870b302e2cf8164bfa5558",
+   "size": 267335
+  },
+  "Server/gamedata/photo_heads/99000068.rx3": {
+   "sha256": "3f08a2115bc81271052f83b107d94843651ce74427303db82d25e762d7164493",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000069.png": {
+   "sha256": "af35d21215681bf07b7c48b587570912603e71556bb7b0b37c5159c554ae858a",
+   "size": 297504
+  },
+  "Server/gamedata/photo_heads/99000069.rx3": {
+   "sha256": "5813827db776bac6334071b5821b023d4f90524d0ed0b9490c4a48ed08a3cac0",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000070.png": {
+   "sha256": "d629e13b276c54ad210926921ded32861d0452e720b3eeb882dcd55bbc3ee68e",
+   "size": 259370
+  },
+  "Server/gamedata/photo_heads/99000070.rx3": {
+   "sha256": "108e96a9b947f156b423c92644d434f062713a870df7aa484e58826bed23f941",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000071.png": {
+   "sha256": "d469cbe0a5be43c29036d98380b8a691b9636083b744c7c9c34524b1c82da69e",
+   "size": 302614
+  },
+  "Server/gamedata/photo_heads/99000071.rx3": {
+   "sha256": "4cf6ba86c59c496b744b68be039f7715330a2acb5aaba6cfd411af76809d3180",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000072.png": {
+   "sha256": "d48542540164e25de864a762c0f0933b67858a07b4dcb678bc8df4b30863ba40",
+   "size": 284671
+  },
+  "Server/gamedata/photo_heads/99000072.rx3": {
+   "sha256": "56bf427ab71a9ed205130c7ec0f499b498f5440f0cf8b1217f5eb075f8776170",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000073.png": {
+   "sha256": "35235f26861b25e25515fe666b1ba33a8eafdde761ce8b4cf577555faedcde8c",
+   "size": 269860
+  },
+  "Server/gamedata/photo_heads/99000073.rx3": {
+   "sha256": "8b3d892eca13e504c0ba29dee760b6b78976172feb256dbae8cf968ecb6947b4",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000074.png": {
+   "sha256": "4f787dc67e3bfb60ff0716c60a53527214b8381565f6621d5e43084956772532",
+   "size": 316815
+  },
+  "Server/gamedata/photo_heads/99000074.rx3": {
+   "sha256": "4d66f398b8c5553310ce1876f09f98a74b61768bc8ed2bca2fd76a9fcef89d85",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000075.png": {
+   "sha256": "8875a93a3d7e5bea319b157fe9e395dcfa3ce9c66e217f6e004f8605e95bafdd",
+   "size": 287761
+  },
+  "Server/gamedata/photo_heads/99000075.rx3": {
+   "sha256": "2004017c2be20f41598099296265a2484db11fbfed685a5f9da351d870566068",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000076.png": {
+   "sha256": "5497dd85c55fdf29491330f7ba0b63d052885bb84e1c4cd9a6d2c37bbf91177b",
+   "size": 288326
+  },
+  "Server/gamedata/photo_heads/99000076.rx3": {
+   "sha256": "9f42e1ebdf380ef56f67d9c5fb66c49b86e14bd57d7c360c89dbae4a484195d4",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000077.png": {
+   "sha256": "0c4424fced9a7254194749432e8d2762aa63bef165f52b0ca9ca64b3233b931c",
+   "size": 296074
+  },
+  "Server/gamedata/photo_heads/99000077.rx3": {
+   "sha256": "44050a7235edeb0695d5a11faf3d9e8ffbd5d65b945657259253bc8c0502ff7a",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000078.png": {
+   "sha256": "8773b21254db1429530ab98e4fe34e8d50fde141b354eb3f17306fdbe1c009cc",
+   "size": 266962
+  },
+  "Server/gamedata/photo_heads/99000078.rx3": {
+   "sha256": "268a96f7015b624ed6c7297fa880f9b6e7495fce2c1d513cb5df14acc46f7e9e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000079.png": {
+   "sha256": "55e222a249e6a8e97f104569c92a5b863f3593274c12927e0f92ff4334cafc7a",
+   "size": 283061
+  },
+  "Server/gamedata/photo_heads/99000079.rx3": {
+   "sha256": "31737b829ddf3028549386e56536b61d09c53f929f6ff461766fed6f0b4b393f",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000080.png": {
+   "sha256": "4e1223da49f0f79afef2ff462edcb81f2631f1071a2321119108ae3fe4db4799",
+   "size": 272416
+  },
+  "Server/gamedata/photo_heads/99000080.rx3": {
+   "sha256": "a51a1e0ecd6c375689d06572db21cf63f6b2cb4d006408c9de020308e9895113",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000081.png": {
+   "sha256": "8e1fed12c0aa08b764e43a2ad86bd3c2646f1010d459881d56b5ecbb062cb709",
+   "size": 309342
+  },
+  "Server/gamedata/photo_heads/99000081.rx3": {
+   "sha256": "407f75f6af013884786ba9a0dfb160a0d4c94cf7e7e7113954e4e6abb4dfa0bf",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000082.png": {
+   "sha256": "175c88ca2115a236b84a58e629797230e7c4d828c0b46cde216ece1feb310df9",
+   "size": 283438
+  },
+  "Server/gamedata/photo_heads/99000082.rx3": {
+   "sha256": "e06304437878084c2543e560cd6f9639857b32c43c4ceae18d97237e9d42ffaa",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000083.png": {
+   "sha256": "967eb9db490b6c9daec38c2e48dd25b97a4a8f4e8ffffb6dc43ca7ebfae46b9c",
+   "size": 290782
+  },
+  "Server/gamedata/photo_heads/99000083.rx3": {
+   "sha256": "f58f02601d72d18a16e977eb724af97c8937ad83eed146b0e3276a77acb2aa92",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000084.png": {
+   "sha256": "45b9ed6af7f9b616f7682e289de90291a5cc024367187bd26e32f8afc7400092",
+   "size": 273094
+  },
+  "Server/gamedata/photo_heads/99000084.rx3": {
+   "sha256": "8ab2413c675a292388768db3b238251ab8b4d20ec819e02033549e74e32ffce4",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000085.png": {
+   "sha256": "c759670ea907f73149508a11c594f25ec55012f5b8a0f5787a0ae26f5a78079f",
+   "size": 255001
+  },
+  "Server/gamedata/photo_heads/99000085.rx3": {
+   "sha256": "8cc39b9b0c44d38adb9d241b3cfca5b82f0d957031bd9395dfc6de3bd049a5a2",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000086.png": {
+   "sha256": "aec46aa11c4f79eb09cd4286e21299b59058a36f93cf5214b50664ea2efe26b4",
+   "size": 265197
+  },
+  "Server/gamedata/photo_heads/99000086.rx3": {
+   "sha256": "4eeb17faef19d67a832d6fab2055ed13dfe837f3685e14425831c27df9b4af0d",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000087.png": {
+   "sha256": "283bb1d35c799f90d7101d891558f6b86ee040aed814902f64f061252976898e",
+   "size": 307447
+  },
+  "Server/gamedata/photo_heads/99000087.rx3": {
+   "sha256": "21d8ea935398593e72edc58484d413aa10d418ec50f51c7e8bdd9e614b49f3a8",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000088.png": {
+   "sha256": "9240e5b8f1aa62535fb6b5db03cab66a173b3bd1263d0ab09061b5cf227f1406",
+   "size": 264571
+  },
+  "Server/gamedata/photo_heads/99000088.rx3": {
+   "sha256": "6d29d2f7735bfb1d553aecb9d56a82551a2f48cb76cc1bed17366423331b2a8b",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000089.png": {
+   "sha256": "ecc6b4086137680d25f467fccb42ff3edaf13ff8cf69fd281aad57df28507506",
+   "size": 304064
+  },
+  "Server/gamedata/photo_heads/99000089.rx3": {
+   "sha256": "6c18f74bd7841ca12d5bba53ea29b4f5e1960e214c27298b7331582a0179d705",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000090.png": {
+   "sha256": "769b6c50d260bb07b5bfa0826fab7c64dd4e4fcaac68bb8431b9e981279eb2f1",
+   "size": 252235
+  },
+  "Server/gamedata/photo_heads/99000090.rx3": {
+   "sha256": "5a2be8bcca18cfb1f8720e3cbd73aab0362407b15f2f1fcaf99f63a4b1eb1d9f",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000091.png": {
+   "sha256": "6fa5cd22efcb89373d5497db77775078aca747dc6bc512e6a9c644364707b9de",
+   "size": 251009
+  },
+  "Server/gamedata/photo_heads/99000091.rx3": {
+   "sha256": "faf271901811fc28b8ecea02e99b3d87d78c4839c39c64c262e71db05575cf3d",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000092.png": {
+   "sha256": "1f15bbae7055672b78ddb547f7da1a6f6a29038dec30eca68836a1bd682afc49",
+   "size": 308826
+  },
+  "Server/gamedata/photo_heads/99000092.rx3": {
+   "sha256": "b9e9df770b5593161ed3d695b2fe50b6f43fe10324f3cc917c92b370024ed05e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000093.png": {
+   "sha256": "b0a9cf1fa8ac5e6a456b69ba3f2b275e125ed6a04e7add26428c88219c899bc0",
+   "size": 266341
+  },
+  "Server/gamedata/photo_heads/99000093.rx3": {
+   "sha256": "92c5f4a13a6357ca8f884177554d6f7c30c9464524fc6374d9464f8b0185c933",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000094.png": {
+   "sha256": "f27d9f38428e7019e0a84ca8616040915738e642267c752db8a9041eb050d156",
+   "size": 296826
+  },
+  "Server/gamedata/photo_heads/99000094.rx3": {
+   "sha256": "98cbae6c73e9b758cb812319aa3e074a3e730a57b053d24745b136d9c41ff26c",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000095.png": {
+   "sha256": "ed061e37a884b7dfa7f31ce0fac997d9062016996b9e129e6dacbf5576f16b71",
+   "size": 276079
+  },
+  "Server/gamedata/photo_heads/99000095.rx3": {
+   "sha256": "87a3c82d285d40f07c4f38005298a0bb961e6a0e6bf7bbf0647e4726d5ead757",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000096.png": {
+   "sha256": "351a5d88893c7168c30cc8b002a74b2cffd5ae50bc26a56a8655622e5d942445",
+   "size": 311581
+  },
+  "Server/gamedata/photo_heads/99000096.rx3": {
+   "sha256": "dc0248fd3092c0f8db4218750c7e4dc7e2c1085250a25e6372493428e1fc37ee",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000097.png": {
+   "sha256": "f422af1ba1f939a6a083584fefb965ad0054db310670eebc911b12760cdfa5ca",
+   "size": 275549
+  },
+  "Server/gamedata/photo_heads/99000097.rx3": {
+   "sha256": "d989c0e255139f30e3ac46b8551ef826df7b2148c3cffc0c9e730483f7744bf6",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000098.png": {
+   "sha256": "516ec4db84ea86f8f17e44db4f9ff495a0ca9faac99752a15f8a858e3fe9b106",
+   "size": 281800
+  },
+  "Server/gamedata/photo_heads/99000098.rx3": {
+   "sha256": "da3400fbe3ec0470004208cd27d688d170deb131e52d610bf51969471be7ddf2",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000099.png": {
+   "sha256": "ce045e23a7b13b6fb2aa54dcd2d27004b4727fc96206b453f962315ff1275285",
+   "size": 291055
+  },
+  "Server/gamedata/photo_heads/99000099.rx3": {
+   "sha256": "de526e6e8bd2d98b84fac2d9f19071e5bcbc765258a4542bc72641c364648abf",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000100.png": {
+   "sha256": "a551d8613d311838c6347e15ea5b530ae190b76782794f2ff241f0e2d9e894a0",
+   "size": 299742
+  },
+  "Server/gamedata/photo_heads/99000100.rx3": {
+   "sha256": "ce6132b5b73dfa6b02ef61d43bd6da6f936e11fc707cce4626cf1dd709b94856",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000101.png": {
+   "sha256": "2828b9a8ada842b5756ac796fffc2c03b7108d34f73d989b9dca07682e1c78e4",
+   "size": 322254
+  },
+  "Server/gamedata/photo_heads/99000101.rx3": {
+   "sha256": "4d538173f07956e0ced9f66165207e99523f421a4b58f11f2e02f2f423610284",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000102.png": {
+   "sha256": "596a4776fd595b4d309cda9101dbace4ebba1b165c761358ae744c8beb0d0604",
+   "size": 276222
+  },
+  "Server/gamedata/photo_heads/99000102.rx3": {
+   "sha256": "647a8b0a5bdb56ad665876d163e5f11aeb7d45d82120fe1980689845b61043de",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000103.png": {
+   "sha256": "14e690473dbfa2e2f0d0d32d67f0e60b1dd401e1d0c54e79734485a4f5fc5287",
+   "size": 261542
+  },
+  "Server/gamedata/photo_heads/99000103.rx3": {
+   "sha256": "64b7a67db2bec690633041eb731429facc0556d335ae19575cee275c3be2ced1",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000104.png": {
+   "sha256": "bdde34b3b8e8aebc6caaebf17854e7a72e308497600f89df96a725173f3962ff",
+   "size": 245564
+  },
+  "Server/gamedata/photo_heads/99000104.rx3": {
+   "sha256": "545a7f63d2f7c6975407d23e17f17ec6a80fa5b8f3b81f5a7530ef249c6b419e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000105.png": {
+   "sha256": "770c79d5aea5a8c6e3629d05f10a15cc8ca9e6ef14c07dbbe809c22dae331c3b",
+   "size": 274489
+  },
+  "Server/gamedata/photo_heads/99000105.rx3": {
+   "sha256": "eef375619aac06397d1b333172a00ed1fc36edfcf2aa0274c47dac68f33caf88",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000106.png": {
+   "sha256": "d947d3f1ac31ec521f46a80b14967d37cbc70d41396d38186482f74115912f88",
+   "size": 294014
+  },
+  "Server/gamedata/photo_heads/99000106.rx3": {
+   "sha256": "c552cccd19642f0d567f4094775cf20a2586af28e38a9710b7fd6de3af683131",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000107.png": {
+   "sha256": "72ca870c09d7e33fe02846192804657ca0899ba9603a06dd34b1efe1da3fcaf5",
+   "size": 247832
+  },
+  "Server/gamedata/photo_heads/99000107.rx3": {
+   "sha256": "13413edfd82d74945fa5df449c7ee74bea2d29ab6b426378302704355e3415d1",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000108.png": {
+   "sha256": "71dff55895877a08930ffcdd45ad7f7de38defeeda01ab62e2d432e1e93603c1",
+   "size": 286890
+  },
+  "Server/gamedata/photo_heads/99000108.rx3": {
+   "sha256": "b28958c6e0498a4724e4a0bedb2e571beaf740eafb6a01e64aa9f7672cd2f323",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000109.png": {
+   "sha256": "be217d58b8099310a802d5a3f5ad540ac26adeb9124d8b48ad60a13f6edebb98",
+   "size": 252999
+  },
+  "Server/gamedata/photo_heads/99000109.rx3": {
+   "sha256": "40647a070abcd337055d7549d8af58d81ff97b5adf8a3f862c045385f3d92d2a",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000110.png": {
+   "sha256": "ece4b7114289c4b560efc7e2c9c680b937a24853fbdcfa947963a2d1e16c3fcc",
+   "size": 274952
+  },
+  "Server/gamedata/photo_heads/99000110.rx3": {
+   "sha256": "fa755563676947468b712a836309f464259f97f79e0853757c96311799dfe714",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000111.png": {
+   "sha256": "6f6b3f2175b574bcb5f106cae5e8606c12cb2952df0f4439d77c796ab63888fa",
+   "size": 264860
+  },
+  "Server/gamedata/photo_heads/99000111.rx3": {
+   "sha256": "810b626a8e6dc272a4a4048e9d530dcdfad99524c08460d293e9a7fb5c8058da",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000112.png": {
+   "sha256": "88a3fa660879dbaaee4cd2fa88c01ea0a70441cb4bc114b933a4d7c5b10afbc7",
+   "size": 250266
+  },
+  "Server/gamedata/photo_heads/99000112.rx3": {
+   "sha256": "8dab26d6094a9c28608cc921bec2c930d120e5b5f0af0246f73d5a3d0cb2d499",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000113.png": {
+   "sha256": "b049d3be1b9f4c93b9504b0f0d5660bb7794407183b21d7dfbd5bb0bacbc3adb",
+   "size": 267928
+  },
+  "Server/gamedata/photo_heads/99000113.rx3": {
+   "sha256": "0619182f1ce8f29d9e59d7c13ff37c9ca258b432b7188bd02fe46496cb026200",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000114.png": {
+   "sha256": "00205f6e72df55ca6c73706ef4d1b80a358367b2b4f36210013ba8867756f310",
+   "size": 298275
+  },
+  "Server/gamedata/photo_heads/99000114.rx3": {
+   "sha256": "203d8e149c05193af364fa163bb3f15045a6df516e2fdbbf815afec760a57eb5",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000115.png": {
+   "sha256": "8b18a0bd29a5aeb20f40b3a8db202a4fc8593700221513cd64580f7f1e7d8629",
+   "size": 273109
+  },
+  "Server/gamedata/photo_heads/99000115.rx3": {
+   "sha256": "7468ee419c286a65085d876b460d8d21f3a9d95adccba1b51ec7e84ea3d636f8",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000116.png": {
+   "sha256": "0600f766c891c95411199614fa53629c1d6d92d1a59de50b2f8e636713226ba7",
+   "size": 258469
+  },
+  "Server/gamedata/photo_heads/99000116.rx3": {
+   "sha256": "3578aea0f2f1a7186be3729580281ed382e9039eba64ab964eb0fa9a181fdc88",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000117.png": {
+   "sha256": "06c657945c58449d518d021a7063d6183000c16256de6b6fef2ecb1a0f38e935",
+   "size": 278148
+  },
+  "Server/gamedata/photo_heads/99000117.rx3": {
+   "sha256": "8f65e24a83c48193b027168163a7a84f51fdc7daa2d2dd7944924587a38277df",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000118.png": {
+   "sha256": "d940e84fb730d32d1a401008e75ec32a968f9b729e87dc806f97d60056ac1479",
+   "size": 343099
+  },
+  "Server/gamedata/photo_heads/99000118.rx3": {
+   "sha256": "bf0c6000773a9c18771df17d4ab7b6d0c8e456b9f1b6f4775b55698357d61d6e",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000119.png": {
+   "sha256": "7e928f4a6894d4804d035037d2d32203739470db90d7f5504a33026552c63c0c",
+   "size": 304655
+  },
+  "Server/gamedata/photo_heads/99000119.rx3": {
+   "sha256": "a58732f5029ca1b5fed80a3a9324827d76b2e39c28add32f5f742c6607f0f640",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000120.png": {
+   "sha256": "c00b37aafb0bdd2408b43cb0310ed7d7160a378a01bf47d24c66137d2184a132",
+   "size": 256235
+  },
+  "Server/gamedata/photo_heads/99000120.rx3": {
+   "sha256": "ad8216ef37bb45c1849417e40cbb8efac7e24fe3fb008409a0251a278efb76ba",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000121.png": {
+   "sha256": "8e20612a6a1d44521ae7020aa217852ad0df287604f783f2c8df0643ff70ef13",
+   "size": 292103
+  },
+  "Server/gamedata/photo_heads/99000121.rx3": {
+   "sha256": "011a791203f27bbb459d4997134fdd456acc3cd0ea8a9d7be6ff40ab184065c2",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000122.png": {
+   "sha256": "1e0f27de92e725e6d3d6c0b32a4cccbc3a0967e4e671fbf42f202f84571a9ad9",
+   "size": 268437
+  },
+  "Server/gamedata/photo_heads/99000122.rx3": {
+   "sha256": "3fff44562fe58b5972d5694fb01562944a953b36e832a73e5acfdcf1876035cf",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/99000123.png": {
+   "sha256": "921f894ef74b7da30f6d10ca007d7a87f0d852b4a585274b9de077d507493b66",
+   "size": 248294
+  },
+  "Server/gamedata/photo_heads/99000123.rx3": {
+   "sha256": "4994047a6155b21b0011d99d80a532a923b0d710ee9acc865027923c9c2d66dc",
+   "size": 175088
+  },
+  "Server/gamedata/photo_heads/heads.json": {
+   "sha256": "c900c449cd5ea02affcc6257746a62a35d38b429b76c22ddf342353523d61b08",
+   "size": 12493
+  },
   "Server/gamedata/player_price_overrides.json": {
    "sha256": "8ba5b2c028a179cfaa5a8ea10f49bb1ba9ff8d3915722ab8ba867c542587561e",
    "size": 186580
@@ -273,12 +1273,40 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "9c060dfb695584c905683e2edb99b06604e0cad747047b46c3215a1a5bc0bc60",
-   "size": 350694
+   "sha256": "467bbc1dc0078476d9c5629c5a737da680c9bfce75313209ef333931e5ab61c1",
+   "size": 351290
+  },
+  "Server/i18n.py": {
+   "sha256": "eb943109d9ac82bd064cd0765c80b6bd53ea75e6ea606c34e7c2d8c4e4bb67a7",
+   "size": 12398
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
    "size": 1537
+  },
+  "Server/lang/en.json": {
+   "sha256": "f7364af93237f27145338a8d0628a02531e5b15cea884afa7ebdbe82e1f7e9a8",
+   "size": 315716
+  },
+  "Server/lang/game/LANGUAGESTRING_EN.json": {
+   "sha256": "42b811bbe396a85e2c9739b35bbe81f4eea5835c722af45c4191a793cfbfffaf",
+   "size": 769326
+  },
+  "Server/lang/game/LANGUAGESTRING_TH.json": {
+   "sha256": "7619dc02bf7d59bc2d3d602a262a0f8c7612ae552ff7b65d3740be64683c3fc7",
+   "size": 1110048
+  },
+  "Server/lang/game/LANGUAGESTRING_VI.json": {
+   "sha256": "1e0b2732b22d4144a6bbb8b558efcd2bb669b3f787069c2f638b984caffbc2da",
+   "size": 839237
+  },
+  "Server/lang/patterns.json": {
+   "sha256": "dbe6119f11df18d5bf5b4e350a5f0d3ce5274fa3a67db1f6c85f8cb93ed8858b",
+   "size": 2875
+  },
+  "Server/lang/th.json": {
+   "sha256": "ed381b57e1d687aeddaf57eb4e1e9998361ef78bb5a76841ec0a1bb7cc874786",
+   "size": 465247
   },
   "Server/levelreward.py": {
    "sha256": "68dbb09cba12fd014466d0661ef862f8e3d6454b1e0307626a71eae9333fc64a",
@@ -303,6 +1331,10 @@
   "Server/multiplay.py": {
    "sha256": "84cd66f6a992ffd8eca122e27d92294fb0acc97e040a28ee5d6c612f1d338dfa",
    "size": 29960
+  },
+  "Server/music.py": {
+   "sha256": "a0d6fe37877c3796782a06f501c873ebb3a1e14d471bf099cfae6ccccc889458",
+   "size": 18174
   },
   "Server/price_settings.py": {
    "sha256": "fcf7cdcb737d14a25bf7deecc385b00f3ee893731ebb0ee9f0ac5879e024d806",
@@ -501,8 +1533,8 @@
    "size": 32390
   },
   "Server/tools/clientbuild/apply.py": {
-   "sha256": "c614b8829b4a1c750828b7da0a73f053e30c6194e407589380421165f70ecdea",
-   "size": 5936
+   "sha256": "2058b414e6833a160ec243d72cc6511cd360968768ed09a16a194041a3fcb0e5",
+   "size": 6068
   },
   "Server/tools/clientbuild/bc3best.py": {
    "sha256": "6c17fa7b596e909bf9a7856c78cb303d845b6d34d194ff883b6e9708680715ae",
@@ -1061,8 +2093,8 @@
    "size": 6181
   },
   "Server/tools/clientbuild/season.py": {
-   "sha256": "91dc408b8732fe2474b976af91823c3809a81ffe3713b760df9eedf8667bbbbe",
-   "size": 44758
+   "sha256": "31bcaae7839738086a43dc8c0aed16cfeff4dbcf3458e0e468e0fec1358f4099",
+   "size": 45456
   },
   "Server/trade2.py": {
    "sha256": "03748dcaae7c8d9a3c06513b2669bc35799808ec161795c2f0041778cf272108",
@@ -193608,17 +194640,9 @@
    "sha256": "d42c3c06867b68ddb30811efcd9f86b08a31a0523503be2c4b791134bc6157e8",
    "size": 1442656
   },
-  "data/ui/external/LANGUAGESTRING_THA.json": {
-   "sha256": "397d04eea5f086696cda986644d9b8dda0ae644de6434e24cebf91583fef7790",
-   "size": 1079740
-  },
   "data/ui/libs/Module.big": {
    "sha256": "c6fff7bcfd2c8d62b9e47e0e9491e1bf0cdb06534607ff8e02c55e674673859f",
    "size": 711936
-  },
-  "data/ui/localization/LANGUAGESTRING_ENG.json": {
-   "sha256": "1e0b2732b22d4144a6bbb8b558efcd2bb669b3f787069c2f638b984caffbc2da",
-   "size": 839237
   },
   "data/ui/localization/TEAMNAMES_ENG.json": {
    "sha256": "b37fe770c8f0b236134fc3c7f6ab15cea5cc07d584e06ed150000b7ef975dee8",
@@ -193641,6 +194665,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1251",
- "notes": "Port từ bản Indo: hiệp phụ + luân lưu ở Xếp hạng/KOTH; thưởng Rank/KOTH sửa trong GM Tool; sự nghiệp CLB tới mùa hiện tại (Team Color, lọc CLB ở Thị trường); Live Boost đội hình tiêu biểu tuần; quà thời gian chơi + popup quà đăng nhập; trình sửa nhiệm vụ tuần; chat kênh với HLV ảo; mặt 3D từ ảnh (GM Tool); bỏ 6 CLB không có áo (tránh crash); sửa 'undefined (3 món)'; logo gói PRIME/INFINITY mới; bỏ popup Cửa hàng đặc biệt"
+ "version": "2026.11.10-1437",
+ "notes": "Đa ngôn ngữ Việt/Anh/Thái cho game, launcher và GM Tool (chọn ở launcher, tự mở lại); launcher 1.3.13; GM Tool: tab Nhạc nền (thay nhạc nền game bằng file mp3), thanh tìm tính năng (Ctrl+K), thông báo dạng popup, lưu ý chữ đỏ; hướng dẫn GM Tool cập nhật đầy đủ"
 }

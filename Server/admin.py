@@ -26,6 +26,7 @@ READ_ONLY = {"money", "missions", "shop_settings", "inventory", "custom_packs", 
              "coach_info", "price_settings", "card", "staff_catalog", "staffs", "match_rewards", "prematch", "server_options",
              "market_settings", "rank_info"}  # the rest must be POST + header
 NO_LOCK = {"search", "facets", "seasons", "packs", "staff_catalog", "log"}
+READ_ONLY.add("i18n"); NO_LOCK.update({"i18n", "language_set"})  # da ngon ngu (khong dung state)
 hc = None  # the http_config module, set by start() (or by tests)
 
 
@@ -731,6 +732,31 @@ def server_options_set(p):
     with open(hc.SERVER_OPTIONS_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=1)
     return cfg
+
+
+@api("i18n")
+def i18n_info(p):
+    """Ngon ngu dang chon + tu dien (GM Tool: admin/index.html dich chu tren trang)."""
+    import i18n
+    lang = i18n.current()
+    return {"lang": lang, "langs": [[k, i18n.NAMES[k]] for k in i18n.LANGS], "dict": i18n.dictionary(lang),
+            "patterns": [{"re": r["re"], "to": r.get(lang)} for r in i18n.load_patterns() if r.get(lang)]}
+
+
+@api("language_set")
+def language_set(p):
+    """Doi ngon ngu chung (GM Tool + game + launcher): luu server_options.json, chep bo chu cua client."""
+    import i18n
+    lang = str(p.get("lang") or "")
+    if lang not in i18n.LANGS:
+        raise AdminError("Ngôn ngữ không hợp lệ")
+    changed = i18n.set_language(lang)
+    hc.LANGUAGE = i18n.client_lang(lang)
+    for f in ("ball_names", "client_stadium_names"):
+        fn = getattr(hc, f, None)
+        if hasattr(fn, "cache_clear"):
+            fn.cache_clear()
+    return {"ok": True, "lang": lang, "changed": changed}
 
 
 @api("market_settings")
@@ -1701,6 +1727,12 @@ class Admin(http.server.BaseHTTPRequestHandler):
             out = {"error": "Chưa có tài khoản HLV. Hãy vào game tạo HLV trước, rồi tải lại trang này."}
         except Exception as e:  # keep the page usable; the detail shows in its message bar
             out = {"error": f"{type(e).__name__}: {e}"}
+        if isinstance(out, dict) and isinstance(out.get("error"), str):  # thong bao loi theo ngon ngu da chon
+            try:
+                import i18n
+                out["error"] = i18n.tr(out["error"])
+            except Exception:
+                pass
         self._send(200, json.dumps(out).encode())
 
     do_GET = _route
@@ -1742,3 +1774,4 @@ def _safe(fn):
 
 import admin_db  # noqa: E402,F401  GM Tool > Database (dang ky API khi nap admin)
 import admin_live  # noqa: E402,F401  thuong thoi gian choi, nhiem vu tuan, Live Boost, chat kenh (port indo a0b49dd)
+import admin_music  # noqa: E402,F401  GM Tool > Nhac nen (mp3 -> EA Trax)
