@@ -1277,8 +1277,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "9ffdc20008cef91c217ea89248681e6523284116eec65285125decb1012d9296",
-   "size": 354097
+   "sha256": "4fc693267998b6ef311df84523c12cc82b9ffddd083cfe66bf1c8ab47e4339b1",
+   "size": 347844
   },
   "Server/i18n.py": {
    "sha256": "bdc9615cde35a8a59b657e43f025c93b2d063488b2a3b60e9dd71890f9eb0379",
@@ -194669,6 +194669,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1608",
- "notes": "GM Tool > Tỷ lệ đập thẻ: thêm 'Cấp thẻ tối đa' (+5 đến +20, mặc định +20) - giới hạn đập thẻ, gói Shop (ẩn gói vượt giới hạn), quà, đổi cầu thủ, Thị trường; thẻ đang có giữ nguyên"
+ "version": "2026.11.10-1859",
+ "notes": "Đội chính tăng từ 36 lên 68 người (11 đá chính + 7 dự bị + 50 người chờ); ghế dự bị trong trận vẫn 7, thay tối đa 5 lượt"
 }

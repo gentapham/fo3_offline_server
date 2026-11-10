@@ -3896,9 +3896,10 @@ def coach_money(coach, key):
     """MP / Cash cua HLV (coach["mp"] / coach["cash"], mac dinh 0)."""
     return max(0, min(MAX_CASH, int(coach.get(key) or 0)))
 MAX_PLAYERS = 9999  # coach.limits.players (gioi han cau thu trong CLB; theo yeu cau 9999)
-# Tim inti (player state "first": Formasi lists only these) holds 36 ("Tim inti x/36" in Skuad);
+# Tim inti (player state "first": Formasi lists only these) holds 68 = 11 + 7 du bi + 50 cho (user 2026-11-10;
+# client doc /coach/me limits.firstTeam - TeamManagementPlayerPoolTabPage); truoc: 36.
 # cards beyond that wait in Tim Cadangan, which Tukar Scout trades from.
-FIRST_TEAM_MAX = 36
+FIRST_TEAM_MAX = 68
 
 
 def first_team_count(team):
