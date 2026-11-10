@@ -305,6 +305,10 @@ FIFADB_ENTRY = "data/db2/fifadb.db.db2"
 LOCALES = ("chi", "eng", "ind", "kor", "tha", "vie")
 NG_ENTRY, NG_META = "data/db/fifa_ng_db.db", "data/db/fifa_ng_db-meta.xml"
 ENGINE_COPY = ("height", "weight", "nationality", "preferredfoot")
+# So sao ky thuat / chan khong thuan TRONG TRAN doc tu dong engine: dong chep tu cau thu khac (mat muon, dong theo
+# playerid cua the thuong) phai lay lai gia tri cua chinh the (2026-11-10: PRIME/WL Kroos 5 sao o man thong tin
+# nhung trong tran chi 3 sao cua the 17).
+CARD_SKILL = ("skillmoves", "weakfootabilitytypecode")
 LABEL_GFX, LABEL_DDS = "data/ui/components/Label.gfx", "data/ui/components/Label_I1.dds"
 TMP = os.path.join(BUILD, "tmp_edit.sqlite")
 
@@ -573,7 +577,7 @@ def engine_db(db, meta, photo=None):
             missing_head += 1
             src = generic
         row = t.set(src, pk, pid)
-        for name in ENGINE_COPY:
+        for name in ENGINE_COPY + CARD_SKILL:
             sn, lo = fld[name]
             v = r[name] - lo
             if 0 <= v < 1 << t.fields[sn][2]:
@@ -644,16 +648,36 @@ def engine_db(db, meta, photo=None):
     per_season = 0
     with closing(sqlite3.connect(FIFADB)) as c3:
         order = {s: i for i, s in enumerate(SEASON_ROWS)}
-        cards = sorted(c3.execute(f"SELECT spid, playerid FROM players WHERE spid / 1000000 IN ({','.join(map(str, SEASON_ROWS))})"),
+        cards = sorted(c3.execute(f"SELECT spid, playerid, {', '.join(CARD_SKILL)} FROM players "
+                                  f"WHERE spid / 1000000 IN ({','.join(map(str, SEASON_ROWS))})"),
                        key=lambda r: (order[r[0] // 1000000], r[0]))
-        for spid, pid in cards:
+        for spid, pid, *skill in cards:
             if len(by) >= ENGINE_MAX_ROWS:
                 break
             if spid in by or pid not in by or spid >= 100000000:
                 continue
-            by[spid] = t.set(t.set(by[pid], pk, spid), sp[0], spid - sp[1])
+            row = t.set(t.set(by[pid], pk, spid), sp[0], spid - sp[1])
+            for name, v in zip(CARD_SKILL, skill):  # sao ky thuat / chan phu cua chinh the, khong phai the thuong
+                sn, lo = fld[name]
+                if v is not None and 0 <= v - lo < 1 << t.fields[sn][2]:
+                    row = t.set(row, sn, v - lo)
+            by[spid] = row
             per_season += 1
     print(f"engine: +{per_season} legend-season rows keyed by spid (in-match season badge)", flush=True)
+    # Moi dong theo spid (mua rieng GM Tool, mat muon, the moi...) lay sao ky thuat / chan phu cua chinh the
+    fixed_skill = 0
+    with closing(sqlite3.connect(FIFADB)) as c4:
+        card_skill = {r[0]: r[1:] for r in c4.execute(f"SELECT spid, {', '.join(CARD_SKILL)} FROM players WHERE spid >= 1000000")}
+    for key in [k for k in by if 1000000 <= k < 100000000 and k in card_skill]:
+        row = by[key]
+        for name, v in zip(CARD_SKILL, card_skill[key]):
+            sn, lo = fld[name]
+            if v is not None and 0 <= v - lo < 1 << t.fields[sn][2] and t.get(row, sn) != v - lo:
+                row = t.set(row, sn, v - lo)
+        if row != by[key]:
+            by[key] = row
+            fixed_skill += 1
+    print(f"engine: {fixed_skill} spid rows got their own card's skill moves / weak foot", flush=True)
     t.rows = [by[k] for k in sorted(by)]
     assert len(t.rows) + 560 <= 65535, f"bang 3D {len(t.rows)} dong: vuot gioi han engine (+560 maxinsert)"
     raws[i] = t.raw()
