@@ -30,7 +30,7 @@ def is_draft(itemid):
 
 
 def draft_grade(itemid):
-    return max(1, min(hc.MAX_GRADE, int(hc.PACKS[itemid][1].get("grade") or 1)))
+    return max(1, min(hc.card_cap(), int(hc.PACKS[itemid][1].get("grade") or 1)))  # + gioi han GM Tool
 
 
 def draft_top(itemid, n):

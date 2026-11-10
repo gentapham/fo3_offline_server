@@ -193,6 +193,8 @@ def market_rows(spid, t=None):
             rows[(g, price)] = rows.get((g, price), 0) + r.choice((1, 1, 1, 2, 3))
     out = []
     for (g, price), n in sorted(rows.items()):
+        if g > hc.card_cap():  # GM Tool: cap the toi da (giu nguyen chuoi ngau nhien cua cac dong khac)
+            continue
         stock = price == mv[g]
         n -= MARKET_BOUGHT.get((spid, g, price, key), 0)
         if n > 0 or stock:
@@ -362,6 +364,8 @@ def ep_transfer_purchase(spid, grade, price, query, body):
     st = hc._state(); slot = hc._default_slot(st); team = st["teams"][str(slot)]
     if not hc.market_listed(spid) or not 1 <= grade <= hc.MAX_GRADE:
         return hc._json({"result": False, "reason": "NO_SUCH_OFFER"})
+    if grade > hc.card_cap():
+        return hc._json({"result": False, "reason": f"Cấp thẻ tối đa hiện tại là +{hc.card_cap()}."})
     if len(team["players"]) >= hc.MAX_PLAYERS:
         return hc._json({"result": False, "reason": "CLB đã đầy, hãy thanh lý bớt cầu thủ."})
     cost = market_buy(spid, grade, price, budget=hc.coach_me(st, slot)["money"]["ep"])
@@ -441,7 +445,7 @@ def ep_offer_cancel(status, offerid, query, body):
         card = dict(card, team2=True)  # ve Doi du bi nhu the moi
         team["players"].append(card)
     else:
-        hc.add_player(team, o["spid"], o["grade"])
+        hc.add_player(team, o["spid"], o["grade"], cap=False)  # the cua chinh minh tra ve: giu nguyen cap
     st["offers"].remove(o)
     hc._save(st)
     return hc._json({"result": True, "resources": offer_resources(st)})

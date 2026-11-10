@@ -181,16 +181,16 @@
    "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "5dcbbee614d1c687f2216fcaf5604171314c6ee144e1c3cc2a4761d5e29d3a2c",
-   "size": 79242
+   "sha256": "8e2860a717517166cef35d1603f394fb85379a096a577504a2108b2fb41a56dc",
+   "size": 81313
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "60d6fc098dbd6f7f2f1154a3e174b6fdf63b5df14881dd955cf189bb41d732b4",
-   "size": 358848
+   "sha256": "c751369d06e6b72f87939abb604c7b58e0d27aaffcedd4c63b83c3edcb58a8ff",
+   "size": 365713
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -225,8 +225,8 @@
    "size": 8026
   },
   "Server/draftpack.py": {
-   "sha256": "5e5b73ce6dd3cfcda2dea696c6571ce3c9b47add290c617d51b9eb1cf0c17576",
-   "size": 6549
+   "sha256": "af65253d3a78e92aab1f33d44c8efc9721956252e4117c31db5b294f53ffa753",
+   "size": 6572
   },
   "Server/enhancement_settings.py": {
    "sha256": "61d1468e8e1446a218776782d7c2a6538c2ddf1c0cace4d8b8c5b8ec6e5376eb",
@@ -1277,8 +1277,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "467bbc1dc0078476d9c5629c5a737da680c9bfce75313209ef333931e5ab61c1",
-   "size": 351290
+   "sha256": "9ffdc20008cef91c217ea89248681e6523284116eec65285125decb1012d9296",
+   "size": 354097
   },
   "Server/i18n.py": {
    "sha256": "bdc9615cde35a8a59b657e43f025c93b2d063488b2a3b60e9dd71890f9eb0379",
@@ -1289,8 +1289,8 @@
    "size": 1537
   },
   "Server/lang/en.json": {
-   "sha256": "f7364af93237f27145338a8d0628a02531e5b15cea884afa7ebdbe82e1f7e9a8",
-   "size": 315716
+   "sha256": "cf42505aa2cebc46ac759bc9001f98fe153b682ab6d54280901f32d37c3d7886",
+   "size": 317566
   },
   "Server/lang/game/LANGUAGESTRING_EN.json": {
    "sha256": "42b811bbe396a85e2c9739b35bbe81f4eea5835c722af45c4191a793cfbfffaf",
@@ -1305,12 +1305,12 @@
    "size": 839237
   },
   "Server/lang/patterns.json": {
-   "sha256": "dbe6119f11df18d5bf5b4e350a5f0d3ce5274fa3a67db1f6c85f8cb93ed8858b",
-   "size": 2875
+   "sha256": "94e3795de6f7336c2fbf734eb83786f00bf615b067358a7bf9799961df03e2ad",
+   "size": 2980
   },
   "Server/lang/th.json": {
-   "sha256": "ed381b57e1d687aeddaf57eb4e1e9998361ef78bb5a76841ec0a1bb7cc874786",
-   "size": 465247
+   "sha256": "ee0ec8e7b71a68da866329c8fa595edc8a9b6e2edb42bf29bb658a854afa61a3",
+   "size": 468131
   },
   "Server/levelreward.py": {
    "sha256": "68dbb09cba12fd014466d0661ef862f8e3d6454b1e0307626a71eae9333fc64a",
@@ -1325,8 +1325,8 @@
    "size": 36652
   },
   "Server/market.py": {
-   "sha256": "a7f92fede80f6e4c8509c20329e6ad4bb87f0960861c4107286730fb3a3925c6",
-   "size": 23810
+   "sha256": "837b8b6c874f446747e2492df4dbc574089741dd9ea825f71d7b9a8b64b24c50",
+   "size": 24665
   },
   "Server/messenger.py": {
    "sha256": "52238744e0618798bf7c5e2ee71c74bf791454e3bceac36ee7114f2e24556a22",
@@ -1529,8 +1529,8 @@
    "size": 1701
   },
   "Server/seasoncare.py": {
-   "sha256": "cb0db5123dd2df9ae8be05080634ba3fc79c8eb8cf39696642042c5c43d68ec4",
-   "size": 7605
+   "sha256": "dec8974c7ed6c2441759c6f28208e60b47ecf33526d1c1277375390b92a5ec2b",
+   "size": 7640
   },
   "Server/staff_service.py": {
    "sha256": "6cb6384373d120192aceb8216add44c4927f77013254fcc8fe97db0652d0ff4b",
@@ -2101,8 +2101,8 @@
    "size": 45456
   },
   "Server/trade2.py": {
-   "sha256": "03748dcaae7c8d9a3c06513b2669bc35799808ec161795c2f0041778cf272108",
-   "size": 6326
+   "sha256": "40a5f1f4998a1ac2a5b0a03787366a6aecb0645ed3b1ee08aa67c9cb1a98b12c",
+   "size": 6368
   },
   "_cache/games/fo3sg/externalAssets/200.png": {
    "sha256": "535444c3c210fdc4faf089fc82ddad72535814768c65ace0b45c36f3112a0506",
@@ -194669,6 +194669,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1532",
- "notes": "Tay cầm: tự nhận dạng cả X-input và D-input (Xbox, Flydigi VADER, 8BitDo, GameSir, tay PS, máy chơi game cầm tay GPD/OneXPlayer...), tự thêm tên tay cầm vào game trước khi mở"
+ "version": "2026.11.10-1608",
+ "notes": "GM Tool > Tỷ lệ đập thẻ: thêm 'Cấp thẻ tối đa' (+5 đến +20, mặc định +20) - giới hạn đập thẻ, gói Shop (ẩn gói vượt giới hạn), quà, đổi cầu thủ, Thị trường; thẻ đang có giữ nguyên"
 }

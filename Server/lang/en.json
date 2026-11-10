@@ -3550,5 +3550,16 @@
 "♪ Cài Nhạc Vào Game": "♪ Install Music To Game",
 "↺ Trả nhạc gốc": "↺ Restore original music",
 "File mp3 lưu ở Server\\gamedata\\music. Sẽ thêm được tối đa 9 bài, vui lòng thoát game vào lại để cập nhật nhạc mới.": "The mp3 files are stored in Server\\gamedata\\music. You can add up to 9 tracks; please exit and reopen the game to load the new music.",
-"Đã thêm {f.name}. Bấm \"Cài Nhạc Vào Game\" khi xong danh sách.": "Added {f.name}. Click \"Install Music To Game\" when the list is ready."
+"Đã thêm {f.name}. Bấm \"Cài Nhạc Vào Game\" khi xong danh sách.": "Added {f.name}. Click \"Install Music To Game\" when the list is ready.",
+"Cấp thẻ tối đa": "Max card grade",
+"Lưu giới hạn": "Save limit",
+"Đang áp dụng: +{cap}": "Applied: +{cap}",
+"Giới hạn cấp thẻ cao nhất trong game. Thẻ mới (gói, quà, đổi cầu thủ, Thị trường, GM Tool) và đập thẻ không vượt quá mức này. Gói nằm hẳn trên giới hạn bị ẩn khỏi Shop; gói vắt ngang giới hạn ra tối đa bằng giới hạn.": "The highest card grade in the game. New cards (packs, gifts, player trades, Transfer Market, GM Tool) and upgrades never go above it. Packs entirely above the limit are hidden from the Shop; packs that straddle it give at most the limit.",
+"Thẻ đang có sẵn cao hơn giới hạn được giữ nguyên, chỉ không nâng tiếp được. Nâng giới hạn lên lại (ví dụ +20) thì mọi thứ mở lại như cũ. Vào lại Shop trong game để thấy danh sách gói mới.": "Existing cards above the limit are kept, they just cannot be upgraded further. Raise the limit again (e.g. +20) and everything reopens as before. Reopen the Shop in game to see the new pack list.",
+"Đã đặt cấp thẻ tối đa +{r.max_grade}. Vào lại Shop trong game để thấy danh sách gói mới.": "Max card grade set to +{r.max_grade}. Reopen the Shop in game to see the new pack list.",
+"cấp thẻ tối đa": "max card grade",
+"Cấp thẻ tối đa hiện tại là +{card_cap()}.": "The current max card grade is +{card_cap()}.",
+"Cấp thẻ tối đa hiện tại là +{hc.card_cap()}.": "The current max card grade is +{hc.card_cap()}.",
+"Thẻ đã đạt cấp tối đa (+{card_cap()}).": "The card is at the max grade (+{card_cap()}).",
+"Gói này tạm ngừng bán: cấp thẻ tối đa hiện tại là +{card_cap()}.": "This pack is off sale: the current max card grade is +{card_cap()}."
 }

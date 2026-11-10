@@ -1098,6 +1098,16 @@
     </section>
     <section id="dapthe" hidden="">
       <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-layers"></use></svg></span><h2 class="display">Cấp thẻ tối đa</h2></div>
+        <p class="lead">Giới hạn cấp thẻ cao nhất trong game. Thẻ mới (gói, quà, đổi cầu thủ, Thị trường, GM Tool) và đập thẻ không vượt quá mức này. Gói nằm hẳn trên giới hạn bị ẩn khỏi Shop; gói vắt ngang giới hạn ra tối đa bằng giới hạn.</p>
+        <div class="row">
+          <label class="f">Cấp thẻ tối đa<select id="capGrade"></select></label>
+          <button id="capSave" class="b primary" type="button">Lưu giới hạn</button>
+          <span class="muted" id="capNow"></span>
+        </div>
+        <p class="hint">Thẻ đang có sẵn cao hơn giới hạn được giữ nguyên, chỉ không nâng tiếp được. Nâng giới hạn lên lại (ví dụ +20) thì mọi thứ mở lại như cũ. Vào lại Shop trong game để thấy danh sách gói mới.</p>
+      </div>
+      <div class="card">
         <div class="card-head"><span class="ico"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Tỷ lệ đập thẻ</h2></div>
         <p id="enhanceStatus" class="lead">Đang áp dụng tỷ lệ thành công: 1%</p>
         <label for="enhanceRate" class="muted">Tỷ lệ thành công: <strong id="enhanceValue">1%</strong></label>
@@ -2049,7 +2059,8 @@ async function act(fn, okMsg) {
   try { await fn(); if (okMsg) say(okMsg, "ok"); await refreshTop(); }
   catch (e) { say("Lỗi: " + e.message, "err"); }
 }
-const MAX_GRADE = 20;  // = MAX_GRADE trong http_config.py
+let MAX_GRADE = 20;  // = cap the toi da dang mo (GM Tool > Ty le dap the; server: card_cap(), tran +20)
+try { MAX_GRADE = Math.min(20, Math.max(5, +localStorage.getItem("fo3-card-cap") || 20)); } catch (e) {}
 const gradeOpts = (val, lo = 1) => Array.from({length: MAX_GRADE + 1 - lo}, (_, i) => i + lo)
   .map(g => `<option value="${g}"${g == val ? " selected" : ""}>+${g}</option>`).join("");
 const levelOpts = val => Array.from({length: 30}, (_, i) => i + 1)
@@ -3476,7 +3487,27 @@ $("#shopSave").addEventListener("click", () => act(async () => {
   await api("shop_settings_set", {paid: $("#shopPaid").checked, packs: Number($("#shopPacks").value)});
   await loadShopPaid();
 }, "Đã lưu Shop tính phí. Mở lại Shop trong game để thấy giá mới."));
-loaders.dapthe = async () => { renderEnhance(await api("enhancement_settings")); };
+loaders.dapthe = async () => { capRender(await apiFetch("server_options")); renderEnhance(await api("enhancement_settings")); };
+function capRender(so) {
+  const cap = Math.min(20, Math.max(5, +so.max_grade || 20));
+  $("#capGrade").innerHTML = Array.from({length: 16}, (_, i) => i + 5).map(g => `<option value="${g}"${g === cap ? " selected" : ""}>+${g}</option>`).join("");
+  $("#capNow").textContent = `Đang áp dụng: +${cap}`;
+  capRemember(cap);
+}
+function capRemember(cap) {
+  try { localStorage.setItem("fo3-card-cap", String(cap)); } catch (e) {}
+  if (cap !== MAX_GRADE) { MAX_GRADE = cap; return true; }
+  return false;
+}
+apiFetch("server_options").then(so => { if (capRemember(Math.min(20, Math.max(5, +so.max_grade || 20)))) apiRerender(); }).catch(() => {});
+$("#capSave").addEventListener("click", async () => {
+  const g = +$("#capGrade").value;
+  try {
+    const r = await api("server_options_set", {max_grade: g});
+    capRender(r);
+    say(`Đã đặt cấp thẻ tối đa +${r.max_grade}. Vào lại Shop trong game để thấy danh sách gói mới.`, "ok");
+  } catch (e) { say("Lỗi: " + e.message, "err"); }
+});
 loaders.bot = async () => { await loadBot(); };
 loaders.nhiemvu = async () => {
   const d = await api("missions");

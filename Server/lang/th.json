@@ -3551,5 +3551,16 @@
 "♪ Cài Nhạc Vào Game": "♪ ติดตั้งเพลงลงเกม",
 "↺ Trả nhạc gốc": "↺ คืนเพลงดั้งเดิม",
 "File mp3 lưu ở Server\\gamedata\\music. Sẽ thêm được tối đa 9 bài, vui lòng thoát game vào lại để cập nhật nhạc mới.": "ไฟล์ mp3 เก็บอยู่ที่ Server\\gamedata\\music เพิ่มได้สูงสุด 9 เพลง กรุณาออกจากเกมแล้วเข้าใหม่เพื่ออัปเดตเพลงใหม่",
-"Đã thêm {f.name}. Bấm \"Cài Nhạc Vào Game\" khi xong danh sách.": "เพิ่ม {f.name} แล้ว กด \"ติดตั้งเพลงลงเกม\" เมื่อจัดรายการเสร็จ"
+"Đã thêm {f.name}. Bấm \"Cài Nhạc Vào Game\" khi xong danh sách.": "เพิ่ม {f.name} แล้ว กด \"ติดตั้งเพลงลงเกม\" เมื่อจัดรายการเสร็จ",
+"Cấp thẻ tối đa": "เกรดการ์ดสูงสุด",
+"Lưu giới hạn": "บันทึกขีดจำกัด",
+"Đang áp dụng: +{cap}": "ใช้อยู่: +{cap}",
+"Giới hạn cấp thẻ cao nhất trong game. Thẻ mới (gói, quà, đổi cầu thủ, Thị trường, GM Tool) và đập thẻ không vượt quá mức này. Gói nằm hẳn trên giới hạn bị ẩn khỏi Shop; gói vắt ngang giới hạn ra tối đa bằng giới hạn.": "เกรดการ์ดสูงสุดในเกม การ์ดใหม่ (แพ็ค ของขวัญ แลกนักเตะ ตลาดซื้อขาย GM Tool) และการอัปเกรดจะไม่เกินระดับนี้ แพ็คที่อยู่เหนือขีดจำกัดทั้งหมดจะถูกซ่อนจากร้านค้า แพ็คที่คร่อมขีดจำกัดจะได้สูงสุดเท่าขีดจำกัด",
+"Thẻ đang có sẵn cao hơn giới hạn được giữ nguyên, chỉ không nâng tiếp được. Nâng giới hạn lên lại (ví dụ +20) thì mọi thứ mở lại như cũ. Vào lại Shop trong game để thấy danh sách gói mới.": "การ์ดที่มีอยู่ซึ่งสูงกว่าขีดจำกัดจะคงเดิม แค่อัปเกรดต่อไม่ได้ เพิ่มขีดจำกัดกลับ (เช่น +20) ทุกอย่างจะกลับมาเหมือนเดิม เปิดร้านค้าในเกมใหม่เพื่อดูรายการแพ็คใหม่",
+"Đã đặt cấp thẻ tối đa +{r.max_grade}. Vào lại Shop trong game để thấy danh sách gói mới.": "ตั้งเกรดการ์ดสูงสุดเป็น +{r.max_grade} แล้ว เปิดร้านค้าในเกมใหม่เพื่อดูรายการแพ็คใหม่",
+"cấp thẻ tối đa": "เกรดการ์ดสูงสุด",
+"Cấp thẻ tối đa hiện tại là +{card_cap()}.": "เกรดการ์ดสูงสุดตอนนี้คือ +{card_cap()}",
+"Cấp thẻ tối đa hiện tại là +{hc.card_cap()}.": "เกรดการ์ดสูงสุดตอนนี้คือ +{hc.card_cap()}",
+"Thẻ đã đạt cấp tối đa (+{card_cap()}).": "การ์ดถึงเกรดสูงสุดแล้ว (+{card_cap()})",
+"Gói này tạm ngừng bán: cấp thẻ tối đa hiện tại là +{card_cap()}.": "แพ็คนี้งดขายชั่วคราว: เกรดการ์ดสูงสุดตอนนี้คือ +{card_cap()}"
 }

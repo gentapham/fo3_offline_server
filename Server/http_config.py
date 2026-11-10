@@ -3939,6 +3939,28 @@ def server_options():
 _SERVER_OPTIONS_CACHE = [None, {}]
 
 
+def card_cap():
+    """Cap the toi da dang mo trong game (GM Tool > Ty le dap the; server_options "max_grade", mac dinh +20 = MAX_GRADE).
+    Ap cho the MOI (goi, qua, doi cau thu, Thi truong, GM Tool) va dap the; the dang co cao hon duoc giu nguyen."""
+    try:
+        cap = max(5, min(MAX_GRADE, int(server_options().get("max_grade") or MAX_GRADE)))
+    except (TypeError, ValueError):
+        cap = MAX_GRADE
+    if _CARD_CAP[0] != cap:  # vua doi tren GM Tool: gia goi (theo khoang cap) tinh lai, game tai lai Shop
+        first = _CARD_CAP[0] is None
+        _CARD_CAP[0] = cap
+        try:
+            pack_price.cache_clear()
+            if not first:
+                shop_changed()
+        except Exception:
+            pass
+    return cap
+
+
+_CARD_CAP = [None]
+
+
 def market_listed(spid):
     """Co rao ban tren Thi truong chuyen nhuong: on_market, tru the mua 0 (the mau cua engine,
     spid < 1e6, chi so 120+) khi bat "an the mua 0" o GM Tool."""
@@ -3968,11 +3990,13 @@ def ep_transfer_top(position, query, body):
 
 def ep_transfer_search(spid, query, body):
     """GET /transfer/search/<spid>: that card's offers (grades 1..20); none if not tradeable."""
-    return _json([market_offer(int(spid), g) for g in range(1, MAX_GRADE + 1)] if market_listed(spid) else [])
+    return _json([market_offer(int(spid), g) for g in range(1, card_cap() + 1)] if market_listed(spid) else [])
 
 
-def add_player(team, spid, grade=1):
-    """A new card instance in my club (reserves); returns it."""
+def add_player(team, spid, grade=1, cap=True):
+    """A new card instance in my club (reserves); returns it. cap: grade <= card_cap() (GM Tool)."""
+    if cap:
+        grade = min(int(grade), card_cap())
     with closing(_db()) as c:
         r = c.execute("SELECT playerid FROM players WHERE spid = ?", (int(spid),)).fetchone()
         name = gen_teams.jersey_name(c, r[0]) if r else ""
@@ -4014,6 +4038,8 @@ def ep_transfer_purchase(spid, grade, price, query, body):
         return _json({"result": False, "reason": "NOT_EXIST_OFFER"})
     if len(team["players"]) >= MAX_PLAYERS:
         return _json({"result": False, "reason": "CLB đã đầy, hãy thanh lý bớt cầu thủ."})
+    if int(grade) > card_cap():
+        return _json({"result": False, "reason": f"Cấp thẻ tối đa hiện tại là +{card_cap()}."})
     cost = card_price(spid, grade)
     if coach_me(st, slot)["money"]["ep"] < cost:
         return _json({"result": False, "reason": "NOT_ENOUGH_EP"})
@@ -4126,9 +4152,17 @@ ENHANCE_DROP_FROM = 5  # a failed upgrade from +5 or higher drops one grade
 def enhance_pair(team, a, b):
     pa = next((p for p in team["players"] if iid(p) == str(a)), None)
     pb = next((p for p in team["players"] if iid(p) == str(b)), None)
-    if pa is None or pb is None or pa is pb or pa["spid"] != pb["spid"] or grade_of(pa) >= MAX_GRADE:
+    if pa is None or pb is None or pa is pb or pa["spid"] != pb["spid"] or grade_of(pa) >= card_cap():
         return None, None
     return pa, pb
+
+
+def cap_reason(team, a):
+    """Thong bao khi the muc tieu da o cap toi da GM Tool cho phep (thay cho INVALID_PARAM kho hieu)."""
+    p = next((x for x in team["players"] if iid(x) == str(a)), None)
+    if p is not None and grade_of(p) >= card_cap():
+        return f"Thẻ đã đạt cấp tối đa (+{card_cap()})."
+    return "INVALID_PARAM"
 
 
 def enhance_rate(target, material):
@@ -4213,7 +4247,7 @@ def ep_enhance(a, b, boost, guard, query, body):
     st = _state(); slot = _default_slot(st); team = st["teams"][str(slot)]
     pa, pb = enhance_pair(team, a, b)
     if pa is None:
-        return _json({"result": False, "reason": "INVALID_PARAM"})
+        return _json({"result": False, "reason": cap_reason(team, a)})
     cost = enhance_cost(pa, pb, enhance_rate(pa, pb))
     if coach_me(st, slot)["money"]["ep"] < cost:
         return _json({"result": False, "reason": "Giá EP mục tiêu không hợp lệ."})
@@ -4295,7 +4329,7 @@ def ep_enh25(a, b, use_point, item, event, query, body):
     st = _state(); slot = _default_slot(st); team = st["teams"][str(slot)]; coach = my_coach(st)
     pa, pb = enhance_pair(team, a, b)
     if pa is None:
-        return _json({"result": False, "reason": "INVALID_PARAM"})
+        return _json({"result": False, "reason": cap_reason(team, a)})
     need = enh25_need_es(pa)
     use = use_point == "1" and int(coach.get("es", 0)) >= need
     it = None
@@ -4416,13 +4450,13 @@ def trade_props(give, rng):
         while ovr < min(lo + 8, lim["CardMaxValue"]) and rng.random() < 0.55:  # sometimes better
             ovr += 1
         s, t = rng.choice(pool[min(pool, key=lambda r: (abs(r - ovr), -r))])
-        pp = prime_pick(0, MAX_GRADE, rng, by_ovr=ovr)
+        pp = prime_pick(0, card_cap(), rng, by_ovr=ovr)
         if pp:
             s, t = pp[1], pp[2]
         if i == 1 and boost is None:  # a club buys the lot for EP
             props.append({"teamid": t, "ep": sig3(total * rng.uniform(0.9, 1.15))})
             continue
-        g = int(rng.choices(list(weights), list(weights.values()))[0])
+        g = min(card_cap(), int(rng.choices(list(weights), list(weights.values()))[0]))
         offer = {"spid": s, "grade": g, "teamid": t, "price": card_price(s, g)}
         if i == 2 and boost is None:  # card plus a top-up
             offer["ep"] = sig3(total * rng.uniform(0.05, 0.2))
@@ -4432,12 +4466,14 @@ def trade_props(give, rng):
     return props
 
 
-def trade_cap_props(props, give, gmax=MAX_GRADE):
+def trade_cap_props(props, give, gmax=None):
     """Shop tinh phi: khong de nghi trao doi nao (the + EP kem) dang gia hon cac the da dua - ca theo
     gia tri the lan gia thi truong (khong thi doi qua doi lai la in ra EP). The vuot muc -> the dat nhat
     vua muc (cap <= gmax); EP kem bot lai cho vua. Shop mien phi: giu nguyen."""
+    gmax = min(gmax or MAX_GRADE, card_cap())  # GM Tool: cap the toi da
     if not shop_paid() or not give:
-        return props
+        return [dict(o, grade=min(o["grade"], gmax), price=card_price(o["spid"], min(o["grade"], gmax))) if o.get("grade", 0) > gmax else o
+                for o in props]
     mv = getattr(sys.modules[__name__], "market_value", None) or card_price
     cap_v = sum(card_price(p["spid"], grade_of(p)) for p in give)
     cap_m = sum(mv(p["spid"], grade_of(p)) for p in give)
@@ -4628,7 +4664,9 @@ def trade3_props(give, scout, rng):
     for i, boost in enumerate([None] * normal + ["igr", "vip"]):
         target = min(TRADE3_STATIC["playertrade3_limit"]["max"], total * rng.uniform(lo, hi))
         k = bisect.bisect_left(pool, (target,))
-        price, s, t, gr = prime_pick(target, MAX_GRADE, rng) or rng.choice(pool[max(0, k - 10):k + 10])  # 20 the gan gia nhat
+        price, s, t, gr = prime_pick(target, card_cap(), rng) or rng.choice(pool[max(0, k - 10):k + 10])  # 20 the gan gia nhat
+        if gr > card_cap():  # GM Tool gioi han cap the
+            gr = card_cap(); price = card_price(s, gr)
         offer = {"spid": s, "grade": gr, "teamid": t, "price": price}
         if i == normal - 1 and normal > 1:
             offer["ep"] = sig3(max(1000, total * rng.uniform(0.05, 0.15)))
@@ -4857,9 +4895,18 @@ def pack_grades(itemid):
     """[(grade, weight)]: a "+N" pack's card comes at a random grade +1..+N, lower grades more
     likely (weight N-g+1: for +5 that is 33/27/20/13/7%); other packs give +1."""
     f = PACKS[itemid][1]
-    n = f.get("grade", 1)
-    lo = f.get("grade_min", 1)  # goi tu chon: +min..+max (cap thap ra nhieu hon)
+    cap = card_cap()  # GM Tool: cap the toi da -> goi vat ngang gioi han ra toi da +cap
+    n = min(f.get("grade", 1), cap)
+    lo = min(f.get("grade_min", 1), n)  # goi tu chon: +min..+max (cap thap ra nhieu hon)
     return [(g, n - g + 1) for g in range(lo, n + 1)]
+
+
+def pack_over_cap(itemid):
+    """(an khoi Shop?, ghi chu ten goi): goi nam han tren gioi han -> an; vat ngang -> "(tối đa +N)"."""
+    f = PACKS.get(itemid, ("", {}))[1]
+    cap = card_cap()
+    note = f" (tối đa +{cap})" if f.get("grade", 1) > cap else ""  # ca goi da an con trong tui do
+    return f.get("grade_min", 1) > cap, note
 
 
 def pack_grade(itemid):
@@ -5170,6 +5217,8 @@ def item_def(itemid):
         for k in ("name", "description"):
             if isinstance(d.get(k), str):
                 d[k] = vi_name(d[k])
+        if itemid in PACKS and isinstance(d.get("name"), str):
+            d["name"] += pack_over_cap(itemid)[1]  # goi vat ngang gioi han cap the: "(tối đa +N)"
     return d
 
 
@@ -5407,7 +5456,8 @@ def soge_banner():
 
 def shop_list(st):
     """GET /shop/list: every Shop tab's products (ShopController filters them by shopcategory)."""
-    custom = [i for i in PACKS if PACKS[i][1].get("custom")]  # goi tu chon len dau tab Goi cau thu
+    hidden = {i for i in PACKS if pack_over_cap(i)[0]}  # goi nam han tren cap the toi da (GM Tool) -> an
+    custom = [i for i in PACKS if PACKS[i][1].get("custom") and i not in hidden]  # goi tu chon len dau tab Goi cau thu
     # Banner tab Nen mua (ShopRecommendationTabPage: promotion > 0, xep tang dan; anh
     # externalAssets/shop/banner/<promotionbanner>.png, toi da 5)
     promo = dict(PROMO_BANNERS)
@@ -5418,9 +5468,9 @@ def shop_list(st):
         if i in promo:
             e["promotion"], e["promotionbanner"] = promo[i]
         return e
-    first = [i for i in SEASON_TIER_PACKS if i in PACKS and i not in custom]  # goi 4 mua moi: ngay sau goi tu chon
+    first = [i for i in SEASON_TIER_PACKS if i in PACKS and i not in custom and i not in hidden]  # goi 4 mua moi: ngay sau goi tu chon
     return ([soge_banner()] + [entry(i) for i in custom[::-1]] + [entry(i) for i in first]
-            + [entry(i) for i in PACKS if i not in custom and i not in first]
+            + [entry(i) for i in PACKS if i not in custom and i not in first and i not in hidden]
             + [shop_entry(i, "USE") for i in ITEMS]
             + [shop_entry(i, "PACKAGE") for i in PACKAGES if i not in CHAIN_STEPS]
             + [shop_entry(i, "MILEAGE", MP_SHOPID + i) for i in (() if shop_paid() else MP_SHOP)]
@@ -5685,6 +5735,8 @@ def ep_shop_purchase(query, body):
     if itemid in ITEMS and ITEMS[itemid][2] == "PLAYER_POOL_INCREASE":
         # ShopController.onShopPurchaseResponseReceived: result false -> hop thoai voi reason (chu thuong hien nguyen van)
         return _json({"result": False, "reason": player_pool_full_msg()})
+    if itemid in PACKS and pack_over_cap(itemid)[0]:  # goi da an (cap the toi da GM Tool) - Shop cu trong cache
+        return _json({"result": False, "reason": f"Gói này tạm ngừng bán: cấp thẻ tối đa hiện tại là +{card_cap()}."})
     bunches = item_def(itemid)["bunches"]
     b = bunches[min(max(int(req.get("bunch") or 0), 0), len(bunches) - 1)]
     st = _state(); slot = _default_slot(st); coach = my_coach(st)

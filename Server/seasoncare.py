@@ -48,7 +48,7 @@ def season_ok(season, spid):
 
 def find_target(team, a):
     p = next((x for x in team["players"] if hc.iid(x) == str(a)), None)
-    return p if p is not None and hc.grade_of(p) < hc.MAX_GRADE else None
+    return p if p is not None and hc.grade_of(p) < hc.card_cap() else None  # GM Tool: cap the toi da
 
 
 def find_item(coach, target, itemid):
@@ -109,7 +109,7 @@ def ep_enhance(a, itemid, use_point, boost, event, query, body):
     st = hc._state(); slot = hc._default_slot(st); team = st["teams"][str(slot)]; coach = hc.my_coach(st)
     pa = find_target(team, a)
     if pa is None:
-        return hc._json({"result": False, "reason": "INVALID_PARAM"})
+        return hc._json({"result": False, "reason": hc.cap_reason(team, a)})
     it = find_item(coach, pa, itemid)
     if it is None:
         return hc._json({"result": False, "reason": "expired item"})

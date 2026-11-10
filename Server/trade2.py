@@ -59,7 +59,7 @@ def trade_points(give):
 
 
 def max_grade(tp):
-    return next((g for top, g in TP_STEPS if tp < top), TP_STEPS[-1][1])
+    return min(hc.card_cap(), next((g for top, g in TP_STEPS if tp < top), TP_STEPS[-1][1]))  # + gioi han GM Tool
 
 
 def pick(pool, target, gmax, rng):

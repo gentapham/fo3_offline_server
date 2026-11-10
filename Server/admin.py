@@ -728,10 +728,13 @@ def server_options(p):
 @api("server_options_set")
 def server_options_set(p):
     cfg = {**hc.server_options(), **{k: bool(p[k]) for k in ("hide_engine_cards", "tc_grade") if k in p}}
+    if "max_grade" in p:  # cap the toi da trong game (+5..+20): the moi, goi, Thi truong, dap the
+        cfg["max_grade"] = as_int(p["max_grade"], 5, hc.MAX_GRADE, "cấp thẻ tối đa")
     os.makedirs(os.path.dirname(hc.SERVER_OPTIONS_FILE), exist_ok=True)
     with open(hc.SERVER_OPTIONS_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=1)
-    return cfg
+    hc.card_cap()  # doi cap -> tinh lai gia goi, game tai lai Shop
+    return {**cfg, "max_grade": hc.card_cap()}
 
 
 @api("i18n")
