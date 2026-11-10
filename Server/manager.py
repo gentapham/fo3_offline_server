@@ -39,6 +39,12 @@ QUESTS = (("match", 10, 30), ("win", 6, 30), ("goal", 15, 25), ("upgrade", 3, 20
 QUEST_COUNT = 5
 GP_SHOP = ((50021, 40), (501, 20), (8223601, 50), (28007, 30), (50122, 60))  # (vat pham, GP): hop qua cua Quest
 GP_SHOPID = 920_000_000
+# Trinh sua nhiem vu tuan (GM Tool > Nhiem vu, port fo3-server-indo a0b49dd): danh sach nhiem vu tuan boc tu,
+# so nhiem vu / tuan, hop qua GP. Nhiem vu da xong ghi theo bo dem + muc tieu -> sua danh sach khong tra thuong 2 lan.
+QUEST_STATS = ("match", "win", "goal", "rank", "rankwin", "upgrade")  # bo dem mission_event giu theo tuan
+QUEST_MAX, GP_SHOP_MAX = 6, 5  # cua so Quest hien 6 nhiem vu; 5 hop qua (REWARD_BOX_COUNT)
+QUESTS_DEFAULT = [{"stat": s, "todo": t, "gp": g, "name": ""} for s, t, g in QUESTS]
+GP_SHOP_DEFAULT = [{"itemid": i, "gp": g} for i, g in GP_SHOP]
 MISSION_TEXT = {  # bo dem: {ngon ngu: (ten, muc tieu ({0}), mo ta)}
     "level": {"id": ("Level manajer", "Capai level {0}", "Naikkan level manajer sampai level {0}."),
               "en": ("Manager level", "Reach level {0}", "Raise your manager to level {0}."),
@@ -163,13 +169,57 @@ def fold_playtime(st):
 
 
 # --------------------------------------------------------------------------- nhiem vu
+def _quests_ok(quests, count, gpshop):
+    """Loi (chuoi tieng Viet) neu danh sach nhiem vu tuan / hop qua khong hop le, else None."""
+    if not isinstance(quests, list) or not 1 <= len(quests) <= 50:
+        return "Danh sách nhiệm vụ tuần phải có 1-50 dòng."
+    for q in quests:
+        if not isinstance(q, dict) or q.get("stat") not in QUEST_STATS or type(q.get("todo")) is not int \
+                or type(q.get("gp")) is not int or not 1 <= q["todo"] <= 10000 or not 1 <= q["gp"] <= 10000 \
+                or not isinstance(q.get("name", ""), str) or len(q.get("name", "")) > 60:
+            return "Nhiệm vụ không hợp lệ (mục tiêu 1-10.000, GP 1-10.000, tên tối đa 60 ký tự)."
+    if type(count) is not int or not 1 <= count <= min(QUEST_MAX, len(quests)):
+        return f"Số nhiệm vụ mỗi tuần phải từ 1 đến {min(QUEST_MAX, len(quests))}."
+    if not isinstance(gpshop, list) or not 1 <= len(gpshop) <= GP_SHOP_MAX \
+            or any(not isinstance(b, dict) or type(b.get("itemid")) is not int or type(b.get("gp")) is not int
+                   or not 1 <= b["gp"] <= 100000 for b in gpshop) \
+            or len({b["itemid"] for b in gpshop}) < len(gpshop):
+        return f"Hộp quà GP phải có 1-{GP_SHOP_MAX} vật phẩm khác nhau, giá 1-100.000 GP."
+    return None
+
+
 def missions_cfg():
     try:
         with open(MISSIONS_FILE, encoding="utf-8") as f:
             cfg = {**MISSIONS_DEFAULT, **json.load(f)}
+    except (OSError, ValueError, TypeError):
+        cfg = dict(MISSIONS_DEFAULT)
+    if cfg.get("lang") not in MISSION_LANGS:
+        cfg["lang"] = MISSIONS_DEFAULT["lang"]
+    if _quests_ok(cfg.get("quests", QUESTS_DEFAULT), cfg.get("questcount", QUEST_COUNT), cfg.get("gpshop", GP_SHOP_DEFAULT)):
+        # file sua tay hong -> danh sach mac dinh
+        cfg.update(quests=QUESTS_DEFAULT, questcount=QUEST_COUNT, gpshop=GP_SHOP_DEFAULT)
+    cfg.setdefault("quests", QUESTS_DEFAULT)
+    cfg.setdefault("questcount", QUEST_COUNT)
+    cfg.setdefault("gpshop", GP_SHOP_DEFAULT)
+    return copy.deepcopy(cfg)
+
+
+def _write_missions(changes, drop=()):
+    """gamedata/missions.json voi `changes`, giu cac cai dat khac (cai dat chung <-> trinh sua nhiem vu)."""
+    try:
+        with open(MISSIONS_FILE, encoding="utf-8") as f:
+            cur = json.load(f)
+        cur = cur if isinstance(cur, dict) else {}
     except (OSError, ValueError):
-        return dict(MISSIONS_DEFAULT)
-    return cfg if cfg.get("lang") in MISSION_LANGS else {**cfg, "lang": MISSIONS_DEFAULT["lang"]}
+        cur = {}
+    cur = {k: v for k, v in {**cur, **changes}.items() if k not in drop}
+    os.makedirs(os.path.dirname(MISSIONS_FILE), exist_ok=True)
+    tmp = MISSIONS_FILE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(cur, f, indent=1, ensure_ascii=False)
+    os.replace(tmp, MISSIONS_FILE)
+    return missions_cfg()
 
 
 def set_missions(p):
@@ -177,12 +227,29 @@ def set_missions(p):
     if p.get("lang") not in MISSION_LANGS or not (0.1 <= targets <= 10 and 0 <= rewards <= 10):
         raise ValueError("bad mission settings")
     cfg = {"enabled": bool(p.get("enabled")), "lang": p["lang"], "targets": targets, "rewards": rewards}
-    os.makedirs(os.path.dirname(MISSIONS_FILE), exist_ok=True)
-    tmp = MISSIONS_FILE + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(cfg, f, indent=1, ensure_ascii=False)
-    os.replace(tmp, MISSIONS_FILE)
+    _write_missions(cfg)  # giu danh sach nhiem vu tuan da sua
     return cfg
+
+
+def set_quests(p):
+    """Trinh sua nhiem vu tuan: {quests [{stat, todo, gp, name}], questcount, gpshop [{itemid, gp}]} | {reset}.
+    ValueError(thong bao tieng Viet) khi khong hop le."""
+    if p.get("reset"):
+        return _write_missions({}, drop=("quests", "questcount", "gpshop"))
+    try:
+        quests = [{"stat": q["stat"], "todo": int(q["todo"]), "gp": int(q["gp"]), "name": str(q.get("name") or "").strip()}
+                  for q in p["quests"]]
+        gpshop = [{"itemid": int(b["itemid"]), "gp": int(b["gp"])} for b in p["gpshop"]]
+        count = int(p["questcount"])
+    except (KeyError, TypeError, ValueError, AttributeError):
+        raise ValueError("Dữ liệu nhiệm vụ tuần không hợp lệ.")
+    err = _quests_ok(quests, count, gpshop)
+    if err:
+        raise ValueError(err)
+    bad = [b["itemid"] for b in gpshop if b["itemid"] not in hc.PACKS and b["itemid"] not in hc.ITEMS]
+    if bad:
+        raise ValueError(f"Vật phẩm {bad[0]} không tồn tại (hộp quà GP chỉ nhận gói / vật phẩm của server).")
+    return _write_missions({"quests": quests, "questcount": count, "gpshop": gpshop})
 
 
 def week_end(now=None):
@@ -234,11 +301,24 @@ def mission_defs(cfg):
 
 
 def week_quests(cfg, week_end_ts):
-    """Nhiem vu tuan: [(ten, bo dem, muc tieu, GP)], cung tuan -> cung ket qua."""
-    lang = cfg["lang"]
-    return [(MISSION_TEXT[stat][lang][1].format(f"{mission_target(todo, cfg):,}"), stat, mission_target(todo, cfg),
-             max(1, round(gp * cfg["rewards"])))
-            for stat, todo, gp in random.Random(f"quests/{week_end_ts}").sample(QUESTS, QUEST_COUNT)]
+    """Nhiem vu tuan: [(ten, bo dem, muc tieu, GP)], cung tuan + cung danh sach -> cung ket qua. Ten rieng
+    (trinh sua) co the ghi muc tieu bang {0}. Danh sach mac dinh boc giong het ban truoc trinh sua."""
+    out, pool = [], cfg["quests"]
+    for q in random.Random(f"quests/{week_end_ts}").sample(pool, min(cfg["questcount"], len(pool))):
+        todo = mission_target(q["todo"], cfg)
+        name = (q.get("name") or MISSION_TEXT[q["stat"]][cfg["lang"]][1]).replace("{0}", f"{todo:,}")
+        out.append((name, q["stat"], todo, max(1, round(q["gp"] * cfg["rewards"]))))
+    return out
+
+
+def quest_key(stat, todo):
+    """Nhiem vu tuan da xong trong coach missions.quests: bo dem + muc tieu (sua danh sach van giu)."""
+    return f"{stat}:{todo}"
+
+
+def gp_shop_prices():
+    """{vat pham: GP} cua hop qua cua so Quest (GM Tool sua duoc)."""
+    return {b["itemid"]: b["gp"] for b in missions_cfg()["gpshop"]}
 
 
 def mission_gp(coach):
@@ -254,6 +334,10 @@ def missions_state(st, now=None):
         m.update(day=day, daily={}, dailyclaimed=[])
     if m.get("week") != week:
         m.update(week=week, weekly={}, quests={}, gp=0)
+    if any(k.isdigit() for k in m.get("quests", {})):  # ban cu: theo vi tri trong danh sach tuan
+        qs = week_quests(missions_cfg(), week)
+        m["quests"] = {quest_key(*qs[int(k)][1:3]) if k.isdigit() and int(k) < len(qs) else k: v
+                       for k, v in m["quests"].items()}
     for k, v in (("total", {}), ("claimed", {}), ("groups", {}), ("badges", []), ("currentbadge", 0)):
         m.setdefault(k, v)
     return m
@@ -269,9 +353,9 @@ def mission_event(st, now=None, **counts):
     for k, n in counts.items():
         for scope in ("daily", "weekly", "total"):
             m[scope][k] = m[scope].get(k, 0) + int(n)
-    for i, (_, stat, todo, gp) in enumerate(week_quests(cfg, m["week"])):
-        if str(i) not in m["quests"] and m["weekly"].get(stat, 0) >= todo:
-            m["quests"][str(i)] = hc.w3c(now)
+    for _, stat, todo, gp in week_quests(cfg, m["week"]):
+        if quest_key(stat, todo) not in m["quests"] and m["weekly"].get(stat, 0) >= todo:
+            m["quests"][quest_key(stat, todo)] = hc.w3c(now)
             m["gp"] += gp
 
 
@@ -314,7 +398,7 @@ def achievement_me(st, now=None):
     # muc cua nhom chi khi da co huy hieu (client sang huy hieu + ghi ngay khi co muc nay)
     out = rows + [{"id": g, "complete": True, "completedat": m["groups"][g]} for g in groups if g in m["groups"]]
     quests = [{"id": i, "progress": {"detail": {"current": min(m["weekly"].get(stat, 0), todo)}},
-               **({"completedat": m["quests"][str(i)]} if str(i) in m["quests"] else {})}
+               **({"completedat": m["quests"][quest_key(stat, todo)]} if quest_key(stat, todo) in m["quests"] else {})}
               for i, (_, stat, todo, _) in enumerate(week_quests(cfg, m["week"]))]
     return {"summary": {"done": done, "total": len(rows), "rewardable": sum(r["rewards"]["available"] for r in rows)},
             "achievement": out, "quest": quests}
@@ -332,9 +416,9 @@ def match_hook(st, mid, req):
     """Sau moi tran cua toi (Giai dau, Cup, Rank): dem cho nhiem vu."""
     match = st.get("match") or {}
     score = lambda side: hc._num((req.get(side) or {}).get("score"))
-    gf, ga = score(req.get("myTeam", "home")), score(req.get("opponentTeam", "away"))
-    rank = str(match.get("type", "")).startswith("Ladder")
-    mission_event(st, match=1, win=int(gf > ga), goal=gf, rank=int(rank), rankwin=int(rank and gf > ga))
+    gf = score(req.get("myTeam", "home"))
+    rank, won = str(match.get("type", "")).startswith("Ladder"), hc.match_outcome(req) > 0  # thang luan luu = thang
+    mission_event(st, match=1, win=int(won), goal=gf, rank=int(rank), rankwin=int(rank and won))
 
 
 # --------------------------------------------------------------------------- endpoints
@@ -409,10 +493,13 @@ def ep_quest_bank(query, body):
 
 def gp_shop_list():
     out = []
-    for itemid, gp in GP_SHOP:
+    for itemid, gp in gp_shop_prices().items():
         e = hc.shop_entry(itemid, "GPSHOP", GP_SHOPID + itemid)
         sd = e["product"]["staticdata"]
         sd["bunches"] = [{"bunch": 1, "price": gp}]
+        if not os.path.isfile(os.path.join(hc.ASSETS, "externalAssets", "shop", f"Q{itemid}.png")):
+            out.append(e)  # vat pham GM them chua co anh Q<id> rieng -> giu anh cua vat pham
+            continue
         # anh rieng cho cua so Quest (shop/Q<id>.png): hinh thu nho sat tren, chua cho ten vat pham game in de
         # len 1/4 duoi o anh
         sd["itemicon"] = sd["bundleicon"] = f"Q{itemid}"
@@ -593,7 +680,7 @@ def install(module):
         """Hop qua cua Quest (shopid >= GP_SHOPID): tra bang GP."""
         req = json.loads(body or b"{}")
         shopid = int(req.get("shopid") or 0)
-        gp = shopid >= GP_SHOPID and dict(GP_SHOP).get(shopid - GP_SHOPID)
+        gp = shopid >= GP_SHOPID and gp_shop_prices().get(shopid - GP_SHOPID)
         if not gp:
             return base_purchase(query, body)
         st = hc._state(); slot = hc._default_slot(st)

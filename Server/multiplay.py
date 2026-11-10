@@ -6,12 +6,12 @@ voi HLV ao offline - port tu fo3-server-indo (issue #36), chay tren duong phong 
   giai, CLB, do kho Nghiep du..Huyen thoai). Ket qua vao statistics.friendly, khong tinh Elo Rank.
 - King of the Hill (Giai khu vuc, room esports2, tran Regional_League): chon vung (bo vung Viet Nam
   mac dinh, doi o GM Tool), bang xep hang vung gom HLV ao + minh, gap HLV ao cung vung gan diem KOTH,
-  diem Elo rieng (K 32), mua = thang (gio VN). Khong co qua tuan / mua.
+  diem Elo rieng (K 32), mua = thang (gio VN). Thuong tuan / mua (GM Tool sua): xem koth_rewards.
 - Exhibition (Live Center): moi ben 1 CLB co ban quyen (doi hinh cua CLB), doi thu = ban moi tu danh
   sach (HLV ao chon CLB cua minh), toi da EXHIBITION_PLAYS tran / ngay; the cua minh khong nhan EXP.
 Client: data/ui/MenuScreen.big phai la ban KHONG chan friendly / exhibition / regionalleague (ban va cu
 hien OFFLINE_ONLINE_ONLY); dung lai bang tools/menu_patch/patch_menu.py (ONLINE = [], giu nut World Cup).
-Cai dat: gamedata/multiplay.json {friendly, exhibition, koth, regions}.
+Cai dat: gamedata/multiplay.json {friendly, exhibition, koth, regions}; thuong KOTH: gamedata/koth_rewards.json.
 """
 import collections
 import copy
@@ -52,8 +52,20 @@ KOTH_SETS = {  # ten = khoa cua o chon vung: khong trung; moi bo co id rieng
            ("6", "Maluku Papua", (("601", "Ambon"), ("602", "Jayapura")))),
 }
 KOTH_SET_NAMES = {"vn": "Việt Nam", "th": "Thái Lan", "id": "Indonesia"}
-KOTH_GOALS = {"weekly_winning_reward_condition": 10, "weekly_match_reward_condition": 20,
-              "weekly_grade_reward_condition": 20, "season_grade_reward_condition": 50}  # thanh tien do tab dau
+# Thuong KOTH (port fo3-server-indo e341d54): GM Tool ghi KOTH_REWARDS_FILE de len responses/koth_rewards.json
+# {week {type winning|match, win, match, items, grade, divs [{name, items}]}, season {grade, divs [{name, items}],
+# ranking [{from, to, items}]}} (divs: hang thap nhat truoc, client lay theo so hang - 1 - hang cua elo). Mua hien
+# chung (reward.week win / match / grade, reward.season grade / ranking; reward.config = thanh tien do tab dau).
+# Mua co 4 tuan (schedule.midreward = ngay ket thuc tuan: ngay 1-7 .. 22-28, gio VN): tuan da xong ma con
+# statistics.midrewarded[tuan] false -> client vao man thuong (RegionalLeagueController.routing "reward") va
+# POST /esports2/region/reward. Mua truoc: statistics.seasonid = mua do, rewarded false. Tra loi {reward {config,
+# week {type, target, grade, win, match}, season {target, grade, ranking}}} ({rewarded, items}; chua dat = mo,
+# kem muc tieu); vat pham dat duoc vao Tui.
+KOTH_REWARDS_FILE = None  # gamedata/koth_rewards.json (dat trong install)
+KOTH_REWARDS_EMPTY = {"week": {"type": "winning", "win": 10, "match": 20, "grade": 20, "items": [], "divs": []},
+                      "season": {"grade": 50, "divs": [], "ranking": []}}
+KOTH_MIDREWARD = [7, 14, 21, 28]
+KOTH_SCALES = ("normal", "medium", "large", "exlarge")
 
 EXHIBITION_PLAYS = 5  # tran Exhibition / ngay
 
@@ -103,19 +115,55 @@ def koth_sid():
     return hc.rank.ladder_season(time.time() + hc.WIB)[0]
 
 
+def koth_rewards():
+    """Thuong KOTH dang dung: gamedata/koth_rewards.json, khong co thi responses/koth_rewards.json."""
+    for f in (KOTH_REWARDS_FILE, os.path.join(hc.RESPONSES, "koth_rewards.json")):
+        try:
+            with open(f, encoding="utf-8") as fh:
+                d = json.load(fh)
+            if isinstance(d, dict) and isinstance(d.get("week"), dict) and isinstance(d.get("season"), dict):
+                return d
+        except (OSError, TypeError, ValueError):
+            continue
+    return copy.deepcopy(KOTH_REWARDS_EMPTY)
+
+
+def koth_goals(cfg):
+    return {"weekly_winning_reward_condition": cfg["week"]["win"], "weekly_match_reward_condition": cfg["week"]["match"],
+            "weekly_grade_reward_condition": cfg["week"]["grade"], "season_grade_reward_condition": cfg["season"]["grade"]}
+
+
+def koth_week(t=None):
+    """Tuan KOTH: 0 = ngay 1-7 cua thang (gio VN) .. 4 = ngay 29-31 (khong co thuong)."""
+    return (time.gmtime((time.time() if t is None else t) + hc.WIB).tm_mday - 1) // 7
+
+
+def koth_div_items(divs, elo):
+    name = "DIVISION_" + hc.rank.ladder_division(elo)
+    return next((d["items"] for d in divs if d["name"] == name), [])
+
+
+def koth_grades(divs):
+    """[items] moi hang, thap nhat truoc (nhu client doc), theo ten: thieu hang nao thi [] (khong lech chi so)."""
+    by = {d["name"]: d["items"] for d in divs}
+    return [by.get("DIVISION_" + d["name"], []) for d in reversed(hc.rank.ladder_divisions())]
+
+
 def koth_season(sid):
     y, m = divmod(sid, 100)
     ny, nm = (y + m // 12, m % 12 + 1)
-    divs = len(hc.rank.ladder_divisions())
+    cfg = koth_rewards()
+    ranks = [{"rank_from": r["from"], "rank_to": r["to"], "items": r["items"]} for r in cfg["season"]["ranking"]]
     return {"_id": str(sid), "title": f"King of the Hill {m:02d}/{y}",
-            "schedule": {"startdt": f"{y}{m:02d}01", "enddt": f"{ny}{nm:02d}01", "week": [True] * 7, "midreward": [],
+            "schedule": {"startdt": f"{y}{m:02d}01", "enddt": f"{ny}{nm:02d}01", "week": [True] * 7, "midreward": KOTH_MIDREWARD,
                          "weekdays": {"starttime": "0000", "endtime": "2400"}, "weekend": {"starttime": "0000", "endtime": "2400"}},
             "regiongroup": {"id": KOTH_GROUP}, "scale": {"medium": 30, "large": 60, "exlarge": 100},
             "condition": {"autoreg": False, "regonlyigr": False, "playonlyigr": False},
-            "reward": {"popup": False, "config": KOTH_GOALS,
-                       "week": {"type": "winning", "win": [], "match": [], "grade": [[] for _ in range(divs)]},
-                       "season": {"grade": {"1": [[] for _ in range(divs)]},
-                                  "ranking": {"1": {"normal": [], "medium": [], "large": [], "exlarge": []}}}}}
+            "reward": {"popup": False, "config": koth_goals(cfg),
+                       "week": {"type": cfg["week"]["type"], "win": cfg["week"]["items"], "match": cfg["week"]["items"],
+                                "grade": koth_grades(cfg["week"]["divs"])},
+                       "season": {"grade": {"1": koth_grades(cfg["season"]["divs"])},
+                                  "ranking": {"1": {k: ranks for k in KOTH_SCALES}}}}}
 
 
 def ep_koth_presently(query, body):
@@ -128,7 +176,9 @@ def ep_koth_presently(query, body):
 
 
 def my_koth(st, coach=None):
-    """Ban ghi KOTH mua nay {sid, regionid, introid, elo, wins, draws, losses, streak, week, weekwins, weekgames}."""
+    """Ban ghi KOTH mua nay {sid, regionid, introid, elo, wins, draws, losses, streak, weeks [{wins, games, elo}]
+    (koth_week), paid [tuan], prev}: thang moi bat dau lai tu diem goc, giu vung; mua da choi giu o prev {sid,
+    regionid, elo, wins, rank, rewarded} den khi da hien man thuong."""
     sid = koth_sid()
     if coach is None:
         try:
@@ -136,12 +186,67 @@ def my_koth(st, coach=None):
         except StopIteration:  # chua tao HLV (may moi / ban zip): man khoi dong van goi register -> ban ghi tam
             coach = {}
     r = coach.setdefault("es2", {})
+    start = hc.rank.LADDER_START
     if r.get("sid") != sid:
-        r.update(sid=sid, elo=hc.rank.LADDER_START, wins=0, draws=0, losses=0, streak=0, introid="")
-    week = time.strftime("%G%V", time.gmtime())
-    if r.get("week") != week:
-        r.update(week=week, weekwins=0, weekgames=0)
+        if r.get("sid") and r.get("regionid") and r.get("wins", 0) + r.get("draws", 0) + r.get("losses", 0):
+            key = koth_set()
+            above = sum(m["elo"][KOTH_LADDER] > r.get("elo", start) for m in hc.rank.virtual_managers()
+                        if vm_region(m["_id"], key) == r["regionid"])
+            r["prev"] = {"sid": r["sid"], "regionid": r["regionid"], "elo": r.get("elo", start), "wins": r.get("wins", 0),
+                         "rank": above + 1, "rewarded": False}
+        r.update(sid=sid, elo=start, wins=0, draws=0, losses=0, streak=0, introid="",
+                 weeks=[{"wins": 0, "games": 0, "elo": start} for _ in range(5)], paid=[])
+    for k in ("week", "weekwins", "weekgames"):  # bo dem tuan ISO cu
+        r.pop(k, None)
+    if not isinstance(r.get("weeks"), list) or len(r["weeks"]) != 5:
+        r["weeks"] = [{"wins": 0, "games": 0, "elo": r.get("elo", start)} for _ in range(5)]
+    r.setdefault("paid", [])
     return r
+
+
+def koth_week_due(r, t=None):
+    """Tuan da xong cua mua nay (co tran) chua hien thuong, hoac None."""
+    i = min(koth_week(t), len(KOTH_MIDREWARD)) - 1
+    return i if i >= 0 and r["weeks"][i]["games"] and i not in r["paid"] else None
+
+
+def ep_koth_reward(query, body):
+    """POST /esports2/region/reward: thuong mua truoc, neu khong thi thuong tuan vua xong (xem koth_rewards);
+    vat pham dat duoc vao Tui."""
+    st = hc._state()
+    r, cfg = my_koth(st), koth_rewards()
+    none = {"rewarded": False, "items": []}
+    out = {"config": koth_goals(cfg), "week": {"type": cfg["week"]["type"], "target": False, "grade": none, "win": none, "match": none},
+           "season": {"target": False, "grade": none, "ranking": none}}
+    prev, week = r.get("prev") or {}, koth_week_due(r)
+    div_vi = lambda elo: hc.rank.division_vi(hc.rank.ladder_division(elo))
+    if prev and not prev.get("rewarded"):
+        grade = koth_div_items(cfg["season"]["divs"], prev["elo"])
+        rank = next((x["items"] for x in cfg["season"]["ranking"] if x["from"] <= prev["rank"] <= x["to"]), [])
+        g_ok, r_ok = bool(grade) and prev["wins"] >= cfg["season"]["grade"], bool(rank)
+        out["season"] = {"target": True, "grade": {"rewarded": g_ok, "items": grade}, "ranking": {"rewarded": r_ok, "items": rank}}
+        got = grade * g_ok + rank * r_ok
+        prev["rewarded"] = True
+        y, m = divmod(int(prev["sid"]), 100)
+        title = f"Thưởng mùa King of the Hill {m:02d}/{y}"
+        msg = f"Thứ hạng {prev['rank']} trong khu vực, hạng {div_vi(prev['elo'])}, {prev['wins']} trận thắng."
+    elif week is not None:
+        w = r["weeks"][week]
+        grade = koth_div_items(cfg["week"]["divs"], w["elo"])
+        goal = w["wins"] >= cfg["week"]["win"] if cfg["week"]["type"] == "winning" else w["games"] >= cfg["week"]["match"]
+        g_ok = bool(grade) and w["wins"] >= cfg["week"]["grade"]
+        won = {"rewarded": goal and bool(cfg["week"]["items"]), "items": cfg["week"]["items"]}
+        out["week"] = {"type": cfg["week"]["type"], "target": True, "grade": {"rewarded": g_ok, "items": grade}, "win": won, "match": won}
+        got = cfg["week"]["items"] * won["rewarded"] + grade * g_ok
+        r["paid"] = sorted({*r["paid"], *range(week + 1)})
+        title = f"Thưởng tuần King of the Hill (tuần {week + 1})"
+        msg = f"Tuần {week + 1}: thắng {w['wins']} trong {w['games']} trận."
+    else:
+        return hc._json({"result": False})
+    if got:
+        hc.bag_add(st, title, got, msg=msg)
+    hc._save(st)
+    return hc._json({"result": True, "reward": out, "resources": hc.coach_me_resources(st, hc._default_slot(st))})
 
 
 def koth_board(st, region):
@@ -161,9 +266,18 @@ def koth_statistics(st, coach):
     """statistics.esports2: seasonid chi co khi da chon vung (chua co -> man chinh hien o chon vung)."""
     r = my_koth(st, coach)
     leaves = koth_leaves(koth_set())
+    prev, kw = r.get("prev") or {}, koth_week()
+    week = r["weeks"][kw] if kw < len(r["weeks"]) else {}
+    if prev and not prev.get("rewarded") and prev.get("regionid") in leaves:  # man thuong cua mua do truoc
+        name, _, parent = leaves[prev["regionid"]]
+        return {"seasonid": str(prev["sid"]), "introid": str(prev["sid"]), "elo": prev["elo"], "wins": prev["wins"],
+                "losses": 0, "forfeits": 0, "midwins": 0, "midmatches": 0, "rank": prev["rank"], "rewarded": False,
+                "midrewarded": [], "regionid": prev["regionid"], "regionname": {"name": name, "parent": parent}}
     out = {"seasonid": str(r["sid"]) if r.get("regionid") in leaves else "", "introid": r.get("introid", ""),
            "elo": r["elo"], "wins": r["wins"], "losses": r["losses"], "forfeits": 0,
-           "midwins": r["weekwins"], "midmatches": r["weekgames"], "rank": 0, "rewarded": True, "midrewarded": []}
+           "midwins": week.get("wins", 0), "midmatches": week.get("games", 0), "rank": 0, "rewarded": True,
+           # tuan co tran ma chua hien thuong = false -> client vao man thuong khi tuan do da xong
+           "midrewarded": [not (w["games"] and i not in r["paid"]) for i, w in enumerate(r["weeks"][:len(KOTH_MIDREWARD)])]}
     if r.get("regionid") in leaves:
         name, _, parent = leaves[r["regionid"]]
         out.update(regionid=r["regionid"], regionname={"name": name, "parent": parent})
@@ -222,8 +336,8 @@ def koth_record(st, vm, mine, theirs, sh, sa):
     r["elo"] = max(hc.rank.LADDER_START, round(old + hc.rank.LADDER_K * (score - expect)))
     r[{1: "wins", 0: "losses", 0.5: "draws"}[score]] += 1
     r["streak"] = max(r["streak"], 0) + 1 if score == 1 else min(r["streak"], 0) - 1 if score == 0 else 0
-    r["weekgames"] += 1
-    r["weekwins"] += score == 1
+    w = r["weeks"][min(koth_week(), len(r["weeks"]) - 1)]
+    w.update(games=w["games"] + 1, wins=w["wins"] + (score == 1), elo=r["elo"])
     multiplay_add(st, "Regional_League", vm, mine, theirs, sh, sa)
     return old, r["elo"], r["streak"]
 
@@ -356,10 +470,11 @@ def record_result(st, mid, p, vm, mine, theirs, sh, sa):
 
 # --------------------------------------------------------------------------- install
 def install(module):
-    global hc, SETTINGS_FILE
+    global hc, SETTINGS_FILE, KOTH_REWARDS_FILE
     hc = module
     hc.multiplay = sys.modules[__name__]
     SETTINGS_FILE = os.path.join(hc.HERE, "gamedata", "multiplay.json")
+    KOTH_REWARDS_FILE = os.path.join(hc.HERE, "gamedata", "koth_rewards.json")
     room_change = hc.rank.room_change
     hc.ROUTES[:0] = [
         (re.compile(r"/exhibition/room/\d+/team"), room_change(_room_team)),
@@ -381,6 +496,7 @@ def install(module):
         "/esports2/region/seasons/presently": ep_koth_presently,
         "/esports2/region/igrregion": lambda q, b: hc._json({"result": True}),
         "/esports2/region/register": ep_koth_register, "/esports2/region/intro": ep_koth_intro,
+        "/esports2/region/reward": ep_koth_reward,
     })
 
     base_account, base_coach_me, base_reward = hc.ENDPOINTS["/account"], hc.coach_me, hc.match_reward

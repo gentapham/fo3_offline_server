@@ -1511,6 +1511,9 @@ def ep_teamcolor(query, body):
     return _json({"teamColors": tc_colors(), "teamColorSpecials": specials})
 
 
+CLUB_HISTORY = os.path.join(HERE, "gamedata", "club_history.json")  # tools/clientbuild/club_history.py
+
+
 @functools.lru_cache(maxsize=None)
 def tc_static():
     """({spid: (playerid, teamid, nationality)}, {playerid: {former club ids}}) from fifadb."""
@@ -1519,6 +1522,14 @@ def tc_static():
         hist = {}
         for p, t in c.execute("SELECT playerid, teamid FROM playerhistory"):
             hist.setdefault(p, set()).add(t)
+    # su nghiep CLB toi mua hien tai (gamedata/club_history.json, Wikidata) thay cho playerhistory cu cua FO3
+    # (den ~2017) voi cau thu co trong do: giong bang playerhistory bo dung ghi vao client -> Team Color o man
+    # doi hinh, trong tran va cua HLV ao khop nhau (theo ban Indo 326ad2c; vd Ronaldo tinh cho Juventus)
+    try:
+        with open(CLUB_HISTORY, encoding="utf-8") as f:
+            hist.update({int(p): {r[0] for r in rs} for p, rs in (json.load(f).get("players") or {}).items()})
+    except (OSError, ValueError, AttributeError):
+        pass
     return cards, hist
 
 
@@ -1787,12 +1798,33 @@ def owned_team(raw):
     return team
 
 
+@functools.lru_cache(maxsize=None)
+def card_pos(spid):
+    with closing(_db()) as c:
+        r = c.execute("SELECT preferredposition1 FROM players WHERE spid = ?", (int(spid),)).fetchone()
+    return int(r[0]) if r else 0
+
+
+def growth_ovr(p):
+    """OVR the hien tang nho Phat trien cau thu (p.sp.stats, growth.py) o vi tri chinh: floor(sum(+n * trong so)/100)
+    nhu cach game tinh OVR. Trong tran client tu cong (checkGrowthBoostPlayer); day cho chi so doi FW/MF/DF
+    (theo ban Indo 77d4651: xi_ratings tinh ca phat trien)."""
+    grown = (p.get("sp") or {}).get("stats") or {}
+    if not grown:
+        return 0
+    try:
+        w = ROLE_WEIGHTS[POS_ROLE[card_pos(p["spid"])]]
+    except (IndexError, KeyError):
+        return 0
+    return sum(int(n) * w.get(k, 0) for k, n in grown.items()) // 100
+
+
 def team_summary(team, teamid):
     # MenuScreen TeamInfoNew.setData: TEAMNAME(summary.id) + loadTeamCrest(summary.id), setOVR(ovr);
     # TeamStaticInfo (Tim > Klub) also reads name, league.id, nation{id,name}, rival.name.
     # TeamInfoNew.setOVR reads ovr.FW/MF/DF (rating bars); Enums.PLAYERPOSITION index ranges.
     # chi so nhu trong game: the + cap the + (cap do - 1)
-    ovr = {iid(p): player_ovr(p) + player_levelinfo(p)["level"] - 1 for p in team["players"]}
+    ovr = {iid(p): player_ovr(p) + player_levelinfo(p)["level"] - 1 + growth_ovr(p) for p in team["players"]}
     lines = {"DF": range(1, 9), "MF": range(9, 20), "FW": range(20, 28)}
     tcb = tc_bonus(team)
     def line_ovr(r):
@@ -2170,6 +2202,8 @@ def l2_me(st):
     """GET /league2/me body; LeagueCupProxy.fetch* read each key as a path."""
     teamid = my_teamid(st)
     lg = st.get("league2") or {}
+    if lg.get("league") and teamid not in lg["league"].get("teams", []):  # giai cua CLB khac (issue #40): man tao giai
+        lg = {"difficultyselect": lg.get("difficultyselect", 10)}
     me = {"teamid": teamid, "leagueid": lg.get("leagueid") or roster_summary(teamid).get("league", {}).get("id", 0),
           # creation screen: selectable = difficultybest - 10 (24 unlocks all 10 normal + 5
           # ultimate levels), preselected = difficultyselect - 10
@@ -2316,8 +2350,55 @@ def club_summary_response(teamid):
     return {**summary, "summary": summary, "stadium": stadium, "kit": kit}
 
 
+_CLUBS_KIT = []
+
+
+@functools.lru_cache(maxsize=1)
+def kit_teams():
+    """teamid co ao 3D trong client (data/sceneassets/kit/kit_<id>_*.rx3 trong data_*.big hoac file roi
+    data/sceneassets/kit), None khi khong doc duoc client. Da voi CLB khong co ao -> game crash truoc khi vao
+    tran (6 CLB K League 2: Ansan Greeners, Asan, Bucheon, Anyang, Gyeongnam, Seoul E-Land; theo ban Indo
+    a135d79, 2026-11-10)."""
+    try:
+        import glob
+        cb = os.path.join(HERE, "tools", "clientbuild")
+        if cb not in sys.path:
+            sys.path.insert(0, cb)
+        import bigdir
+        kits = set()
+        for big in glob.glob(os.path.join(GAME, "data", "data_*.big")):
+            for n, *_ in bigdir.entries(big):
+                m = re.match(r"data/sceneassets/kit/kit_(\d+)_", n)
+                if m:
+                    kits.add(int(m.group(1)))
+        loose = os.path.join(GAME, "data", "sceneassets", "kit")
+        for f in (os.listdir(loose) if os.path.isdir(loose) else ()):
+            m = re.match(r"kit_(\d+)_", f)
+            if m:
+                kits.add(int(m.group(1)))
+    except Exception as e:
+        print(f"client kits: {e!r}", flush=True)
+        return None
+    return kits or None
+
+
+def has_kit(teamid):
+    kits = kit_teams()
+    return kits is None or int(teamid) in kits
+
+
 def club_index():
-    """Native country/league links; alphabetical clubs and top division first."""
+    """all_clubs() bo CLB khong co ao trong client (has_kit): chon CLB, giai dau, da voi may, cup.
+    Giai / quoc gia khong con CLB nao thi bo luon."""
+    if not _CLUBS_KIT:
+        _CLUBS_KIT[:] = [(n, ls) for n, ls in ((n, [(lid, ts) for lid, ts in ((lid, [t for t in ts if has_kit(t)])
+                                                                             for lid, ts in leagues) if ts])
+                                               for n, leagues in all_clubs()) if ls]
+    return _CLUBS_KIT
+
+
+def all_clubs():
+    """Native country/league links; alphabetical clubs and top division first (ca CLB khong co ao)."""
     if not _CLUBS:
         with closing(_db()) as c:
             rows = c.execute("""SELECT p.teamid, COUNT(DISTINCT p.playerid),
@@ -2944,15 +3025,20 @@ def match_cards_reward(st):
     return {"extra": {"selected": pick, "availables": [prize_item(p) for p in cards]}, "selected": pick}
 
 
+def match_outcome(stats):
+    """1 thang, 0 hoa, -1 thua cho ben minh trong matchStats; ti so hoa thi loat luan luu quyet dinh
+    (Rank / KOTH co hiep phu + luan luu tu 2026-11-10, theo ban Indo b2cd8e7)."""
+    k = lambda s: tuple(_num((stats.get(s) or {}).get(f)) for f in ("score", "shootout"))
+    me, opp = k(stats.get("myTeam", "home")), k(stats.get("opponentTeam", "away"))
+    return (me > opp) - (me < opp)
+
+
 def match_reward(st, stats):
     """match.reward for PostMatchRewardDefaultScene.onRewardReceived (paths it reads) and its
     player list (PlayerRewardListItemRenderer: id, spid, prev, current, reward.detail.extra).
     Credits EP, coach exp and exp for every player of mine in matchStats (in-match spid = the
     card's player id, i.e. spid % 1e6) theo gamedata/match_rewards.json, cong 1 the thuong."""
-    me, opp = stats.get("myTeam", "home"), stats.get("opponentTeam", "away")
-    g = lambda s: _num((stats.get(s) or {}).get("score"))
-    won, drew = g(me) > g(opp), g(me) == g(opp)
-    r = match_reward_cfg()["result"]["win" if won else "draw" if drew else "loss"]
+    r = match_reward_cfg()["result"][("loss", "draw", "win")[match_outcome(stats) + 1]]
     ep, cexp, pexp = int(r["ep"]), int(r["coach"]), int(r["player"])
     reward = lambda n: {"total": n, "detail": {"base": n, "extra": 0}}
     prev, cur = gain_exp(my_coach(st), cexp, coach_need, COACH_MAX_LEVEL)
@@ -3139,7 +3225,7 @@ def def_cup(metaid, name, trophy, quality, reward, fmt, pool, desc="PVECUP_INFO_
         meta["joinable"].update(allteams=False, leagueids=[78], teamids=list(authentic))
     else:  # cup CLB: chon CLB o man tao cup (quoc gia -> giai -> CLB); chon dung CLB chinh = doi hinh the cua minh
         meta.update(teamselect="authentic")
-        clubs = sorted(t for t, lg in _CLUB_LINKS.items() if lg != 78 and t not in _NATIONAL_TEAMS)
+        clubs = sorted(t for t, lg in _CLUB_LINKS.items() if lg != 78 and t not in _NATIONAL_TEAMS and has_kit(t))
         meta["joinable"].update(allteams=False, leagueids=sorted({_CLUB_LINKS[t] for t in clubs}), teamids=clubs)
     CUP_SPECS[metaid] = {"fmt": fmt, "pool": pool, "n": nteams, "authentic": list(authentic or [])}
     return meta
@@ -5231,6 +5317,7 @@ MP_SHOPID = 900_000_000  # MP Shop entries: shopid = MP_SHOPID + itemid (product
 # {shopcategory CHAINED, step, chained: [later steps]}; the client shows step 0 = the entry
 # itself, step k = chained[k-1]; remainedperaccount 0 marks a bought step ("complete").
 CHAINED = {70000001: (70000001, 70000002, 70000003)}  # first step's itemid: all steps
+CHAINED_NAMES = {70000001: "Gói nối tiếp Bạc - Vàng - Bạch kim"}
 # Special Bonus (ShopSpecialTabPage): GET /specifictarget {issell, targets:[{stid, endtime}]} and
 # GET /shop/list/STSHOP = [entries with those stids] (ShopController keeps the targeted ones).
 SPECIAL = (8335, 8194, 50841, 50881)
@@ -5298,7 +5385,9 @@ def chained_entry(st, first):
     steps, done = CHAINED[first], my_coach(st).get("chain", {}).get(str(first), 0)
     parts = [dict(shop_entry(i, "CHAINED"), remainedperaccount=0 if k < done else 1, buy=k < done)
              for k, i in enumerate(steps)]
-    return {**parts[0], "step": min(done, len(steps) - 1), "chained": parts[1:]}
+    # chainedproductname: tieu de dai goi (ShopChainedListItemRenderer: chainedproductname + " (" + so buoc +
+    # " mon)"); thieu -> "undefined (3 mon)" (2026-11-10)
+    return {**parts[0], "step": min(done, len(steps) - 1), "chained": parts[1:], "chainedproductname": CHAINED_NAMES.get(first, "Gói nối tiếp")}
 
 
 # Banner tab Nen mua: trang 1 = SOGE Store - muc rieng shopcategory "SOGELINK" (khong tab nao khac liet ke):
@@ -6166,6 +6255,9 @@ import manager  # Info Manager, xep hang HLV, nhiem vu / thanh tich / Quest (por
 manager.install(sys.modules[__name__])
 import levelreward, multiplay  # thuong len cap HLV; Giao huu / KOTH / Exhibition voi HLV ao (port indo #35 #36)
 for _feature in (levelreward, multiplay):
+    _feature.install(sys.modules[__name__])
+import events, liveboost, chat  # thuong thoi gian choi / thong bao qua, Live Boost (TOTW), chat kenh (port indo a0b49dd)
+for _feature in (events, liveboost, chat):
     _feature.install(sys.modules[__name__])
 
 

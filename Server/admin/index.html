@@ -1270,7 +1270,22 @@
           <button class="b primary" id="dailySave">Lưu bảng</button>
         </div>
       </div>
-    </section>
+      <div class="card" id="ptCard">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-cal"></use></svg></span><h2 class="display">Thưởng thời gian chơi</h2></div>
+        <p class="lead">Ô <b>Thưởng thời gian chơi</b> ở sảnh game: chơi đủ số phút của một mốc trong ngày (tính từ 00:00 giờ Việt Nam) thì nhận quà của mốc đó vào <b>Túi đồ</b>, mỗi mốc một lần mỗi ngày. Thời gian chơi do server đếm (nghỉ quá 20 phút giữa hai thao tác thì khoảng đó không tính). Khi nhận quà đăng nhập ngày mới, game cũng hiện thông báo <b>Quà đăng nhập hằng ngày</b>. Có hiệu lực ngay, không cần khởi động lại.</p>
+        <p class="muted" id="ptMe"></p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Mốc</th><th>Số phút</th><th>EP</th><th>Gói</th><th>Số lượng gói</th><th>Thao tác</th></tr></thead>
+          <tbody id="ptRows"><tr><td colspan="6" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+        <div class="row">
+          <button class="b" id="ptAdd" type="button">Thêm mốc</button>
+          <button class="b primary" id="ptSave" type="button">Lưu thưởng thời gian chơi</button>
+          <button class="b danger" id="ptReset" type="button">Về mặc định</button>
+          <span class="muted" id="ptFile"></span>
+        </div>
+      </div>
+    </section>    </section>
     <section id="giaep" hidden="">
       <div class="card">
         <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-coin"></use></svg></span><h2 class="display">Giá EP thẻ cầu thủ</h2></div>
@@ -1341,7 +1356,24 @@
         </div>
         <div class="row" style="margin-top:12px"><button class="b primary" id="mkSave">Lưu thị trường</button><span class="muted" id="mkInfo"></span></div>
       </div>
-    </section>
+      <div class="card" id="lbCard">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Live Boost – Đội hình tiêu biểu tuần</h2></div>
+        <p class="lead">Menu <b>Quản lý đội &gt; Live Boost</b> và tab <b>Cầu thủ xuất sắc tuần này</b> ở Thị trường: server lấy <b>Đội hình tiêu biểu tuần (Team of the Week)</b> mới nhất của EA FC từ fut.gg (mỗi tuần, thứ Tư), mọi thẻ của các cầu thủ trong danh sách được cộng điểm vào mọi chỉ số ngay trong game (danh sách đội, Thị trường, cả hai đội trong trận). Sở hữu đủ 11 cầu thủ trong danh sách (thẻ +1 trở lên) thì nhận <b>thưởng EP</b> vào Túi đồ, mỗi tuần một lần. Cầu thủ không có trong dữ liệu FO3 (hoặc cầu thủ nữ) bị bỏ qua. Máy không vào được fut.gg thì giữ tuần đã lưu. Bật/tắt và menu có hiệu lực khi vào lại game.</p>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="lbOn"> Bật Live Boost</label>
+          <label class="f"><span>Điểm cộng mỗi chỉ số (1-10)</span><input type="number" id="lbBoost" min="1" max="10" style="width:110px"></label>
+          <label class="f"><span>EP thưởng khi đủ 11 cầu thủ</span><input type="number" id="lbEp" min="0" step="1000000" style="width:160px"></label>
+          <button class="b primary" id="lbSave" type="button">Lưu Live Boost</button>
+          <button class="b" id="lbRefresh" type="button">Cập nhật từ fut.gg ngay</button>
+        </div>
+        <dl class="facts" id="lbFacts" style="margin-top:14px"></dl>
+        <p class="muted" id="lbInfo"></p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Cầu thủ</th><th>Vị trí</th><th>OVR (EA FC)</th><th>Đội hình chính</th></tr></thead>
+          <tbody id="lbRows"><tr><td colspan="5" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+      </div>
+    </section>    </section>
     <section id="trandau" hidden="">
       <div class="card">
         <div class="card-head"><span class="ico"><svg class="i"><use href="#i-sun"></use></svg></span><h2 class="display">Cài đặt trước trận</h2></div>
@@ -1407,7 +1439,40 @@
           <tbody id="misQuests"></tbody>
         </table></div>
       </div>
-    </section>
+      <div class="card" id="qeCard">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-cal"></use></svg></span><h2 class="display">Trình sửa nhiệm vụ tuần (Quest)</h2></div>
+        <p class="lead">Mỗi tuần (thứ Hai 00:00 giờ VN) server bốc ngẫu nhiên <b>số nhiệm vụ mỗi tuần</b> từ danh sách dưới đây (cửa sổ Quest hiện tối đa 6). Mỗi nhiệm vụ: loại (đếm trận, thắng, bàn thắng, Rank, thắng Rank, nâng cấp), mục tiêu, số <b>GP</b> thưởng và tên riêng (để trống = tên mặc định; viết <b>{0}</b> để chèn mục tiêu). Mục tiêu và GP còn nhân theo hệ số ở trên. Nhiệm vụ đã xong được ghi theo loại + mục tiêu, nên sửa danh sách giữa tuần không trả thưởng lần hai. <b>Hộp quà GP</b>: tối đa 5 vật phẩm đổi bằng GP trong cửa sổ Quest. Có hiệu lực ngay (mở lại cửa sổ Quest).</p>
+        <div class="row">
+          <label class="f"><span>Số nhiệm vụ mỗi tuần</span><input type="number" id="qeCount" min="1" max="6" style="width:110px"></label>
+          <span class="muted" id="qeFile"></span>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Loại</th><th>Mục tiêu</th><th>GP</th><th>Tên riêng (tùy chọn)</th><th></th></tr></thead>
+          <tbody id="qeRows"><tr><td colspan="5" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+        <div class="row"><button class="b" id="qeAdd" type="button">Thêm nhiệm vụ</button></div>
+        <h3>Hộp quà GP</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Vật phẩm</th><th>Giá (GP)</th><th></th></tr></thead>
+          <tbody id="qeShop"></tbody>
+        </table></div>
+        <div class="row">
+          <button class="b" id="qeShopAdd" type="button">Thêm hộp quà</button>
+          <button class="b primary" id="qeSave" type="button">Lưu nhiệm vụ tuần</button>
+          <button class="b danger" id="qeReset" type="button">Về mặc định</button>
+        </div>
+        <h3>Tuần này <span class="muted" id="qeWeekEnd"></span></h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nhiệm vụ</th><th>Mục tiêu</th><th>GP</th></tr></thead>
+          <tbody id="qeThis"></tbody>
+        </table></div>
+        <h3>Tuần sau</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nhiệm vụ</th><th>Mục tiêu</th><th>GP</th></tr></thead>
+          <tbody id="qeNext"></tbody>
+        </table></div>
+      </div>
+    </section>    </section>
     <section id="xephang" hidden="">
       <div class="card">
         <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Xếp hạng với HLV ảo</h2></div>
@@ -1438,7 +1503,73 @@
           <span class="muted" id="mpInfo"></span>
         </div>
       </div>
-    </section>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-gift"></use></svg></span><h2 class="display">Phần thưởng Xếp hạng (Rank)</h2></div>
+        <p class="lead"><b>Thưởng mùa</b> (mỗi tháng): thưởng chính theo hạng của chế độ có Elo cao nhất cuối mùa, thưởng phụ cho mỗi chế độ khác đã chơi; vào <b>Túi</b> khi mùa mới bắt đầu. <b>Thưởng tuần</b>: mỗi mốc số trận thắng Rank trong tuần (thứ Hai đến Chủ nhật) đạt được sẽ vào Túi kèm popup ở màn hình Rank. Màn hình Rank cũng hiện các phần thưởng này. Có hiệu lực ngay, không cần khởi động lại.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Hạng</th><th>Thưởng chính</th><th>Số lượng</th><th>Thưởng phụ</th><th>Số lượng</th></tr></thead>
+          <tbody id="lrDivs"><tr><td colspan="5" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+        <h3>Thưởng tuần</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Thắng trong tuần</th><th>Phần thưởng</th><th>Số lượng</th><th></th></tr></thead>
+          <tbody id="lrWins"></tbody>
+        </table></div>
+        <div class="row">
+          <button class="b" id="lrAdd" type="button">Thêm mốc</button>
+          <button class="b primary" id="lrSave" type="button">Lưu thưởng Rank</button>
+          <button class="b danger" id="lrReset" type="button">Về mặc định</button>
+          <span class="muted" id="lrFile"></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-gift"></use></svg></span><h2 class="display">Phần thưởng King of the Hill</h2></div>
+        <p class="lead"><b>Thưởng tuần</b> (tuần = ngày 1-7, 8-14, 15-21, 22-28, giờ VN) và <b>thưởng mùa</b> (mỗi tháng). Khi một tuần hoặc mùa bạn đã chơi kết thúc, màn hình phần thưởng hiện ra lúc mở King of the Hill và phần thưởng đạt được vào <b>Túi</b>. Tuần: mục tiêu số trận thắng hoặc số trận trong tuần, cộng thưởng hạng khi thắng ít nhất số trận đặt ra. Mùa: thưởng hạng cuối mùa khi thắng ít nhất số trận đặt ra, cộng thưởng theo thứ hạng trong khu vực. Màn hình King of the Hill cũng hiện các phần thưởng này. Có hiệu lực ngay.</p>
+        <div class="row">
+          <label class="f"><span>Mục tiêu tuần</span><select id="krType"><option value="winning">Số trận thắng</option><option value="match">Số trận</option></select></label>
+          <label class="f"><span>Thắng trong tuần</span><input type="number" id="krWin" min="1" max="100"></label>
+          <label class="f"><span>Số trận trong tuần</span><input type="number" id="krMatch" min="1" max="200"></label>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Thưởng mục tiêu tuần</th><th>Số lượng</th></tr></thead>
+          <tbody id="krWeekItem"></tbody>
+        </table></div>
+        <div class="row">
+          <label class="f"><span>Số trận thắng cho thưởng hạng tuần</span><input type="number" id="krWeekGrade" min="1" max="100"></label>
+          <label class="f"><span>Số trận thắng cho thưởng hạng mùa</span><input type="number" id="krSeasonGrade" min="1" max="500"></label>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Hạng</th><th>Thưởng hạng tuần</th><th>Số lượng</th><th>Thưởng hạng mùa</th><th>Số lượng</th></tr></thead>
+          <tbody id="krDivs"><tr><td colspan="5" class="muted">Đang tải…</td></tr></tbody>
+        </table></div>
+        <h3>Thưởng thứ hạng mùa (khu vực)</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Từ hạng</th><th>Đến hạng</th><th>Phần thưởng</th><th>Số lượng</th><th></th></tr></thead>
+          <tbody id="krRanks"></tbody>
+        </table></div>
+        <div class="row">
+          <button class="b" id="krAdd" type="button">Thêm thứ hạng</button>
+          <button class="b primary" id="krSave" type="button">Lưu thưởng King of the Hill</button>
+          <button class="b danger" id="krReset" type="button">Về mặc định</button>
+          <span class="muted" id="krFile"></span>
+        </div>
+      </div>
+      <div class="card" id="chCard">
+        <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-bolt"></use></svg></span><h2 class="display">Chat kênh &amp; tin bóng đá</h2></div>
+        <p class="lead">Nút <b>Chat</b> ở sảnh, tab <b>Kênh</b>: HLV ảo đang online trả lời khi bạn chat và thỉnh thoảng tự trò chuyện, phần lớn về <b>tin bóng đá trong ngày</b> (Google Trends + Google News: tin toàn cầu luôn có, cộng các nước được chọn dưới đây). Server lấy tin 1 lần mỗi ngày ở chế độ nền, bỏ tin tội phạm, tai nạn, qua đời. Mỗi HLV ảo thích CLB của mình, cầu thủ hay nhất đội mình hoặc một đội tuyển. Không gửi dữ liệu cá nhân nào. Cửa sổ Chat hiện sau khi vào lại game.</p>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="chVm"> HLV ảo chat trong kênh</label>
+          <label class="check"><input type="checkbox" id="chNews"> Bàn tin bóng đá trong ngày</label>
+        </div>
+        <div class="row" id="chRegions"></div>
+        <div class="row">
+          <button class="b primary" id="chSave" type="button">Lưu chat kênh</button>
+          <button class="b" id="chRefresh" type="button">Lấy tin ngay</button>
+          <span class="muted" id="chInfo"></span>
+        </div>
+        <div id="chTopics"></div>
+      </div>
+    </section>    </section>
     <section id="hlv" hidden="">
       <div class="card" id="hcCard">
         <div class="card-head"><span class="ico gold"><svg class="i"><use href="#i-plus"></use></svg></span><h2 class="display">Tạo HLV tùy chỉnh</h2></div>
@@ -1526,6 +1657,23 @@
           <details id="dbLookBox"><summary>Ngoại hình 3D</summary>
             <p class="muted">Mượn đầu (mặt, da, mắt) của một thẻ / cầu thủ khác: nhập SPID hoặc ID cầu thủ có mặt trong game. Các số bên dưới chỉnh tóc, râu, da, mắt, dáng người (mặt quét thật giữ tóc của nó). Có tác dụng sau khi <b>Áp dụng vào game</b>.</p>
             <div class="row" id="dbLook"></div></details>
+          <details id="phdBox"><summary>Mặt 3D từ ảnh</summary>
+            <p class="muted">Dành cho cầu thủ đang mang <b>mặt chung</b>: ảnh chụp cận mặt nhìn thẳng (hoặc ảnh cầu thủ có sẵn trong game) được dán làm da mặt lên đầu 3D đã quét của một cầu thủ khác (<b>đầu mẫu</b>: hình đầu và tóc đi theo, mắt vẫn là của đầu mẫu). Chọn ảnh (mặt nhìn thẳng, ánh sáng đều) rồi bấm đủ 11 điểm theo thứ tự, hoặc bấm <b>Lấy từ ảnh cầu thủ</b> để tự tìm điểm và gợi ý đầu mẫu. Bỏ trống ô Đầu mẫu thì tự chọn theo màu da, tóc. Áp dụng cho dòng 3D theo ID cầu thủ và các thẻ mặt chung của cầu thủ này; thấy trong game sau khi <b>Áp dụng vào game</b>.</p>
+            <p id="phdWhy" style="color:var(--danger)" hidden></p>
+            <div class="row">
+              <label class="f">Ảnh chụp cận mặt<input type="file" id="phdFile" accept="image/png,image/jpeg,image/webp"></label>
+              <label class="f">Đầu mẫu (dòng 3D)<input id="phdDonor" list="phdDonors" placeholder="gõ tên cầu thủ có mặt quét; trống = tự chọn"><datalist id="phdDonors"></datalist></label>
+              <button class="b" type="button" id="phdIcon">Lấy từ ảnh cầu thủ</button>
+            </div>
+            <div class="row"><strong id="phdStep" role="status"></strong>
+              <button class="b" type="button" id="phdUndo">Bỏ điểm cuối</button><button class="b" type="button" id="phdReset">Xoá mọi điểm</button></div>
+            <div class="row" style="align-items:flex-start">
+              <figure style="margin:0"><figcaption class="muted">Ảnh và các điểm</figcaption><canvas id="phdCanvas" width="360" height="360" style="max-width:100%;border:1px solid var(--line);background:var(--input);cursor:crosshair"></canvas></figure>
+              <figure style="margin:0"><figcaption class="muted">Texture mặt 3D đã tạo</figcaption><div id="phdNow"></div></figure>
+            </div>
+            <div class="row"><button class="b primary" type="button" id="phdMake">Tạo mặt 3D</button>
+              <button class="b danger" type="button" id="phdDelete" hidden>Xoá mặt 3D</button><span class="muted" id="phdMsg" role="status"></span></div>
+          </details>
           <div class="row"><button class="b primary" id="dbSave">Lưu thẻ</button><button class="b danger" id="dbRevert">Khôi phục gốc</button><span class="muted" id="dbCardInfo"></span></div>
         </div>
         <h3>Thẻ đã sửa</h3>
@@ -1559,6 +1707,14 @@
           <label class="f">Ảnh logo<input type="file" id="dbCrest" accept="image/png,image/*"></label>
           <canvas id="dbCrestPrev" width="128" height="128" style="width:64px;height:64px;border:1px solid var(--line)"></canvas>
           <button class="b primary" id="dbCrestSave">Thay logo</button><button class="b danger" id="dbCrestRevert">Khôi phục logo gốc</button></div>
+      </div>
+
+      <div class="card" id="phdCard">
+        <div class="card-head"><span class="ico"><svg class="i"><use href="#i-scout"></use></svg></span><h2 class="display">Mặt 3D từ ảnh</h2></div>
+        <p class="lead">Mặt 3D làm từ ảnh cầu thủ (tạo / sửa từng người ở <b>Sửa thẻ</b> → mở thẻ → <b>Mặt 3D từ ảnh</b>). Lưu ở <code>gamedata/photo_heads</code>; vào game sau khi <b>Áp dụng vào game</b> (thêm vào <code>data_7.big</code>, bạn bè nhận qua cập nhật). Nút bên dưới tự làm mặt từ ảnh cầu thủ cho mọi cầu thủ <b>mặt chung</b> trong CLB của bạn (lần đầu mất vài phút để đọc các đầu mẫu).</p>
+        <p id="phdWhyAll" style="color:var(--danger)" hidden></p>
+        <div class="row"><button class="b primary" id="phdClub">Tạo mặt cho cầu thủ mặt chung trong CLB</button><button class="b" id="phdRedo">Tạo lại mọi mặt từ ảnh cầu thủ</button><span class="muted" id="phdClubMsg" role="status"></span></div>
+        <div class="table-wrap"><table><thead><tr><th>Cầu thủ</th><th>Đầu mẫu</th><th>Ngày tạo</th><th></th></tr></thead><tbody id="phdRows"></tbody></table></div>
       </div>
     </section>
     <section id="log" hidden="">
@@ -3559,6 +3715,450 @@ loaders.xephang = async () => { await _xhLoader(); await mpLoad(); };
 [["#mpFriendly", "friendly"], ["#mpExhib", "exhibition"], ["#mpKoth", "koth"]].forEach(([id, k]) =>
   $(id).addEventListener("change", e => act(async () => { await api("multiplay_set", {[k]: e.target.checked}); }, "Đã lưu. Vào lại game để thấy menu.")));
 $("#mpRegions").addEventListener("change", e => act(async () => { await api("multiplay_set", {regions: e.target.value}); }, "Đã đổi bộ vùng KOTH. Vào game chọn lại vùng."));
+</script>
+<script>
+// ---------------------------------------------------------------- Phan thuong Rank / King of the Hill (tab Xep hang, admin_db.py)
+const RW = {choices: []};
+function rwOpts(val) {
+  const list = RW.choices.some(c => c.itemid == val) ? RW.choices : [...RW.choices, {itemid: val, name: "Vật phẩm " + val, kind: "?"}];
+  return list.map(c => `<option value="${c.itemid}"${c.itemid == val ? " selected" : ""}>${esc(c.name)}${c.kind === "EP" ? "" : " (" + esc(c.kind) + ")"}</option>`).join("");
+}
+function rwCells(it, k, label) {
+  it = it || {itemid: 1, count: 1000};
+  return `<td><select data-k="${k}i" aria-label="${esc(label)}">${rwOpts(it.itemid)}</select></td>
+    <td><input type="number" min="1" value="${Number(it.count) || 1}" data-k="${k}c" style="width:130px" aria-label="${esc(label)} - số lượng"></td>`;
+}
+const rwItem = (tr, k) => ({itemid: Number($(`[data-k="${k}i"]`, tr).value), count: Number($(`[data-k="${k}c"]`, tr).value)});
+const rwDiv = n => rkDiv(String(n || "").replace("DIVISION_", ""));
+const rwDrop = '<button class="b danger" type="button" data-drop>Xoá</button>';
+
+// ---- Rank
+function lrRender(d) {
+  RW.choices = d.choices || RW.choices;
+  $("#lrDivs").innerHTML = (d.divs || []).map(v => `<tr data-name="${esc(v.name)}"><td><b>${esc(rwDiv(v.name))}</b></td>
+    ${rwCells(v.items[0], "m", rwDiv(v.name) + " - thưởng chính")}${rwCells(v.items[1], "s", rwDiv(v.name) + " - thưởng phụ")}</tr>`).join("")
+    || '<tr><td colspan="5" class="muted">Không có hạng nào</td></tr>';
+  lrWins(d.wins || []);
+  $("#lrFile").textContent = d.file ? `lưu ở ${d.file}` : "";
+}
+function lrWins(wins) {
+  $("#lrWins").innerHTML = wins.map((w, i) => `<tr><td><input type="number" min="1" max="500" value="${Number(w.from) || 1}" data-k="from" style="width:90px" aria-label="Mốc ${i + 1}: số trận thắng"></td>
+    ${rwCells((w.items || [])[0], "w", "Mốc " + (i + 1) + " - phần thưởng")}<td>${rwDrop}</td></tr>`).join("")
+    || '<tr><td colspan="4" class="muted">Chưa có mốc nào (cần ít nhất 1)</td></tr>';
+}
+function lrRead() {
+  return {divs: [...$("#lrDivs").rows].filter(tr => tr.dataset.name).map(tr => ({name: tr.dataset.name, items: [rwItem(tr, "m"), rwItem(tr, "s")]})),
+          wins: [...$("#lrWins").rows].filter(tr => $('[data-k="from"]', tr)).map(tr => ({from: Number($('[data-k="from"]', tr).value), items: [rwItem(tr, "w")]}))};
+}
+$("#lrWins").addEventListener("click", e => {
+  const b = e.target.closest("[data-drop]"); if (!b) return;
+  const rows = [...$("#lrWins").rows], w = lrRead().wins;
+  w.splice(rows.indexOf(b.closest("tr")), 1); lrWins(w);
+});
+$("#lrAdd").addEventListener("click", () => {
+  const w = lrRead().wins;
+  w.push({from: (w.length ? w[w.length - 1].from : 0) + 5, items: [{itemid: 1, count: 50000}]}); lrWins(w);
+});
+$("#lrSave").addEventListener("click", () => act(async () => { lrRender(await api("ladder_rewards_set", lrRead())); },
+  "Đã lưu phần thưởng Rank. Có hiệu lực ngay."));
+$("#lrReset").addEventListener("click", async () => {
+  if (await uiConfirm("Khôi phục phần thưởng Rank mặc định?"))
+    act(async () => { lrRender(await api("ladder_rewards_set", {reset: true})); }, "Phần thưởng Rank đã về mặc định.");
+});
+
+// ---- King of the Hill
+function krRender(d) {
+  RW.choices = d.choices || RW.choices;
+  $("#krType").value = d.week.type; $("#krWin").value = d.week.win; $("#krMatch").value = d.week.match;
+  $("#krWeekGrade").value = d.week.grade; $("#krSeasonGrade").value = d.season.grade;
+  $("#krWeekItem").innerHTML = `<tr>${rwCells((d.week.items || [])[0], "w", "Thưởng mục tiêu tuần")}</tr>`;
+  $("#krDivs").innerHTML = d.week.divs.map((v, i) => `<tr data-name="${esc(v.name)}"><td><b>${esc(rwDiv(v.name))}</b></td>
+    ${rwCells(v.items[0], "a", rwDiv(v.name) + " - thưởng hạng tuần")}${rwCells(((d.season.divs[i] || {}).items || [])[0], "b", rwDiv(v.name) + " - thưởng hạng mùa")}</tr>`).join("");
+  krRanks(d.season.ranking || []);
+  $("#krFile").textContent = d.file ? `lưu ở ${d.file}` : "";
+}
+function krRanks(ranks) {
+  $("#krRanks").innerHTML = ranks.map((r, i) => `<tr>
+    <td><input type="number" min="1" max="1000" value="${Number(r.from) || 1}" data-k="from" style="width:90px" aria-label="Dòng ${i + 1}: từ hạng"></td>
+    <td><input type="number" min="1" max="1000" value="${Number(r.to) || 1}" data-k="to" style="width:90px" aria-label="Dòng ${i + 1}: đến hạng"></td>
+    ${rwCells((r.items || [])[0], "r", "Dòng " + (i + 1) + " - phần thưởng")}<td>${rwDrop}</td></tr>`).join("")
+    || '<tr><td colspan="5" class="muted">Chưa có dòng nào (cần ít nhất 1)</td></tr>';
+}
+function krRead() {
+  const num = id => Number($(id).value), divs = [...$("#krDivs").rows].filter(tr => tr.dataset.name);
+  return {week: {type: $("#krType").value, win: num("#krWin"), match: num("#krMatch"), grade: num("#krWeekGrade"),
+                 items: [rwItem($("#krWeekItem").rows[0], "w")], divs: divs.map(tr => ({name: tr.dataset.name, items: [rwItem(tr, "a")]}))},
+          season: {grade: num("#krSeasonGrade"), divs: divs.map(tr => ({name: tr.dataset.name, items: [rwItem(tr, "b")]})),
+                   ranking: [...$("#krRanks").rows].filter(tr => $('[data-k="from"]', tr)).map(tr => ({
+                     from: Number($('[data-k="from"]', tr).value), to: Number($('[data-k="to"]', tr).value), items: [rwItem(tr, "r")]}))}};
+}
+$("#krRanks").addEventListener("click", e => {
+  const b = e.target.closest("[data-drop]"); if (!b) return;
+  const rows = [...$("#krRanks").rows], r = krRead().season.ranking;
+  r.splice(rows.indexOf(b.closest("tr")), 1); krRanks(r);
+});
+$("#krAdd").addEventListener("click", () => {
+  const r = krRead().season.ranking, from = (r.length ? r[r.length - 1].to : 0) + 1;
+  r.push({from, to: from + 9, items: [{itemid: 1, count: 100000}]}); krRanks(r);
+});
+$("#krSave").addEventListener("click", () => act(async () => { krRender(await api("koth_rewards_set", krRead())); },
+  "Đã lưu phần thưởng King of the Hill. Có hiệu lực ngay."));
+$("#krReset").addEventListener("click", async () => {
+  if (await uiConfirm("Khôi phục phần thưởng King of the Hill mặc định?"))
+    act(async () => { krRender(await api("koth_rewards_set", {reset: true})); }, "Phần thưởng King of the Hill đã về mặc định.");
+});
+
+async function rwLoad() {
+  const fail = (id, n, e) => { $(id).innerHTML = `<tr><td colspan="${n}" class="muted">${esc("Không tải được: " + e.message)}</td></tr>`; };
+  try { lrRender(await apiFetch("ladder_rewards")); } catch (e) { fail("#lrDivs", 5, e); }
+  try { krRender(await apiFetch("koth_rewards")); } catch (e) { fail("#krDivs", 5, e); }
+}
+const _xhLoaderRw = loaders.xephang;
+loaders.xephang = async () => { await _xhLoaderRw(); await rwLoad(); };
+if (!$("#xephang").hidden) rwLoad();  // trang mo thang o tab nay (#xephang): lan tai dau chay truoc khi gan o tren
+</script>
+<script>
+// ---------------------------------------------------------------- Port indo a0b49dd (admin_live.py): thuong thoi gian choi
+// (tab Qua hang ngay), trinh sua nhiem vu tuan (tab Nhiem vu), Live Boost (tab Thi truong), chat kenh (tab Xep hang)
+const LV = {packs: [], stats: {}, items: [], questmax: 6, gpshopmax: 5};
+const lvDrop = '<button class="b danger" type="button" data-drop>Xoá</button>';
+const lvTime = t => t ? new Date(t * 1000).toLocaleString("vi-VN") : "chưa có";
+function lvOpts(list, val, empty) {
+  const has = list.some(([id]) => id == val);
+  return (empty ? `<option value="">${esc(empty)}</option>` : "")
+    + (has || !val ? "" : `<option value="${esc(val)}" selected>Vật phẩm ${esc(val)}</option>`)
+    + list.map(([id, n]) => `<option value="${id}"${id == val ? " selected" : ""}>${esc(n)} (${id})</option>`).join("");
+}
+function lvDropRow(tbody, read, render) {
+  $(tbody).addEventListener("click", e => {
+    const b = e.target.closest("[data-drop]"); if (!b) return;
+    const rows = [...$(tbody).rows], list = read();
+    list.splice(rows.indexOf(b.closest("tr")), 1); render(list);
+  });
+}
+
+// ---- Thuong thoi gian choi
+function ptRows(table) {
+  $("#ptRows").innerHTML = table.map((r, i) => `<tr>
+    <td>${i + 1}</td>
+    <td><input type="number" min="1" max="1440" value="${Number(r.minutes) || 10}" data-k="m" style="width:90px" aria-label="Mốc ${i + 1}: số phút"></td>
+    <td><input type="number" min="0" value="${Number(r.ep) || 0}" data-k="ep" style="width:150px" aria-label="Mốc ${i + 1}: EP"></td>
+    <td><select data-k="pack" aria-label="Mốc ${i + 1}: gói">${lvOpts(LV.packs, r.pack || "", "Không có gói")}</select></td>
+    <td><input type="number" min="1" max="99" value="${Number(r.count) || 1}" data-k="c" style="width:80px" aria-label="Mốc ${i + 1}: số lượng gói"></td>
+    <td>${lvDrop}</td></tr>`).join("") || '<tr><td colspan="6" class="muted">Chưa có mốc nào (cần ít nhất 1)</td></tr>';
+}
+function ptRead() {
+  return [...$("#ptRows").rows].filter(tr => $('[data-k="m"]', tr)).map(tr => {
+    const pack = $('[data-k="pack"]', tr).value;
+    return {minutes: Number($('[data-k="m"]', tr).value), ep: Number($('[data-k="ep"]', tr).value) || 0,
+            ...(pack ? {pack: Number(pack), count: Number($('[data-k="c"]', tr).value) || 1} : {})};
+  });
+}
+function ptRender(d) {
+  LV.packs = d.packs || LV.packs;
+  ptRows(d.table || []);
+  $("#ptMe").textContent = `Hôm nay HLV đang chọn đã chơi ${fmt(d.minutes)} phút, đã nhận ${d.rewarded}/${(d.table || []).length} mốc.`;
+  $("#ptFile").textContent = d.file ? `lưu ở ${d.file}` : "";
+}
+async function ptLoad() {
+  try { ptRender(await apiFetch("playtime")); }
+  catch (e) { $("#ptRows").innerHTML = `<tr><td colspan="6" class="muted">${esc("Không tải được: " + e.message)}</td></tr>`; }
+}
+lvDropRow("#ptRows", ptRead, ptRows);
+$("#ptAdd").addEventListener("click", () => {
+  const t = ptRead(); t.push({minutes: (t.length ? t[t.length - 1].minutes : 0) + 30, ep: 1000000}); ptRows(t);
+});
+$("#ptSave").addEventListener("click", () => act(async () => { ptRender(await api("playtime_set", {table: ptRead()})); },
+  "Đã lưu thưởng thời gian chơi. Có hiệu lực ngay."));
+$("#ptReset").addEventListener("click", async () => {
+  if (await uiConfirm("Khôi phục bảng thưởng thời gian chơi mặc định (10 / 30 / 60 phút)?"))
+    act(async () => { ptRender(await api("playtime_set", {reset: true})); }, "Thưởng thời gian chơi đã về mặc định.");
+});
+const _lvHarian = loaders.harian;
+loaders.harian = async () => { await _lvHarian(); await ptLoad(); };
+
+// ---- Trinh sua nhiem vu tuan
+function qeRows(list) {
+  const statOpts = v => Object.entries(LV.stats).map(([k, n]) => `<option value="${k}"${k === v ? " selected" : ""}>${esc(n.replace("{0}", "…"))}</option>`).join("");
+  $("#qeRows").innerHTML = list.map((q, i) => `<tr>
+    <td><select data-k="stat" aria-label="Nhiệm vụ ${i + 1}: loại">${statOpts(q.stat)}</select></td>
+    <td><input type="number" min="1" max="10000" value="${Number(q.todo) || 1}" data-k="todo" style="width:100px" aria-label="Nhiệm vụ ${i + 1}: mục tiêu"></td>
+    <td><input type="number" min="1" max="10000" value="${Number(q.gp) || 1}" data-k="gp" style="width:90px" aria-label="Nhiệm vụ ${i + 1}: GP"></td>
+    <td><input type="text" maxlength="60" value="${esc(q.name || "")}" data-k="name" placeholder="Mặc định" style="width:240px" aria-label="Nhiệm vụ ${i + 1}: tên riêng"></td>
+    <td>${lvDrop}</td></tr>`).join("") || '<tr><td colspan="5" class="muted">Chưa có nhiệm vụ nào (cần ít nhất 1)</td></tr>';
+}
+function qeShop(list) {
+  $("#qeShop").innerHTML = list.map((b, i) => `<tr>
+    <td><select data-k="item" aria-label="Hộp quà ${i + 1}: vật phẩm">${lvOpts(LV.items, b.itemid)}</select></td>
+    <td><input type="number" min="1" max="100000" value="${Number(b.gp) || 1}" data-k="gp" style="width:100px" aria-label="Hộp quà ${i + 1}: giá GP"></td>
+    <td>${lvDrop}</td></tr>`).join("") || '<tr><td colspan="3" class="muted">Chưa có hộp quà nào (cần ít nhất 1)</td></tr>';
+}
+const qeRead = () => [...$("#qeRows").rows].filter(tr => $('[data-k="stat"]', tr)).map(tr => ({
+  stat: $('[data-k="stat"]', tr).value, todo: Number($('[data-k="todo"]', tr).value), gp: Number($('[data-k="gp"]', tr).value),
+  name: $('[data-k="name"]', tr).value.trim()}));
+const qeShopRead = () => [...$("#qeShop").rows].filter(tr => $('[data-k="item"]', tr)).map(tr => ({
+  itemid: Number($('[data-k="item"]', tr).value), gp: Number($('[data-k="gp"]', tr).value)}));
+const qeWeek = list => list.map(q => `<tr><td>${esc(q.name)}</td><td>${fmt(q.todo)}</td><td>${fmt(q.gp)}</td></tr>`).join("")
+  || '<tr><td colspan="3" class="muted">Không có</td></tr>';
+function qeRender(d) {
+  Object.assign(LV, {stats: d.stats, items: d.items, questmax: d.questmax, gpshopmax: d.gpshopmax});
+  $("#qeCount").max = d.questmax; $("#qeCount").value = d.questcount;
+  qeRows(d.quests); qeShop(d.gpshop);
+  $("#qeThis").innerHTML = qeWeek(d.thisweek); $("#qeNext").innerHTML = qeWeek(d.nextweek);
+  $("#qeWeekEnd").textContent = d.weekend ? `(làm mới lúc ${new Date(d.weekend).toLocaleString("vi-VN")})` : "";
+  $("#qeFile").textContent = (d.enabled ? "" : "Nhiệm vụ đang tắt. ") + (d.file ? `lưu ở ${d.file}` : "");
+}
+async function qeLoad() {
+  try { qeRender(await apiFetch("quests")); }
+  catch (e) { $("#qeRows").innerHTML = `<tr><td colspan="5" class="muted">${esc("Không tải được: " + e.message)}</td></tr>`; }
+}
+lvDropRow("#qeRows", qeRead, qeRows);
+lvDropRow("#qeShop", qeShopRead, qeShop);
+$("#qeAdd").addEventListener("click", () => { const l = qeRead(); l.push({stat: "match", todo: 10, gp: 30, name: ""}); qeRows(l); });
+$("#qeShopAdd").addEventListener("click", () => {
+  const l = qeShopRead();
+  if (l.length >= LV.gpshopmax) return say(`Cửa sổ Quest chỉ có ${LV.gpshopmax} hộp quà.`, "err");
+  l.push({itemid: (LV.items[0] || [1])[0], gp: 30}); qeShop(l);
+});
+$("#qeSave").addEventListener("click", () => act(async () => {
+  qeRender(await api("quests_set", {quests: qeRead(), questcount: Number($("#qeCount").value), gpshop: qeShopRead()}));
+  await loaders.nhiemvu_base();
+}, "Đã lưu nhiệm vụ tuần. Mở lại cửa sổ Quest trong game để thấy."));
+$("#qeReset").addEventListener("click", async () => {
+  if (await uiConfirm("Khôi phục danh sách nhiệm vụ tuần và hộp quà GP mặc định?"))
+    act(async () => { qeRender(await api("quests_set", {reset: true})); await loaders.nhiemvu_base(); }, "Nhiệm vụ tuần đã về mặc định.");
+});
+loaders.nhiemvu_base = loaders.nhiemvu;
+loaders.nhiemvu = async () => { await loaders.nhiemvu_base(); await qeLoad(); };
+
+// ---- Live Boost
+function lbRender(d) {
+  $("#lbOn").checked = d.enabled; $("#lbBoost").value = d.boost; $("#lbEp").value = d.reward_ep;
+  const x = d.data, st = d.status || {};
+  $("#lbFacts").innerHTML = x ? facts([
+    ["Tuần", `FC ${x.game} · tuần ${x.week}`], ["Mã tuần (weekid)", String(x.weekid)],
+    ["Ra mắt", lvTime(x.released)], ["Hết hạn", lvTime(x.expires)],
+    ["Bạn sở hữu", `${x.owned} / ${d.own} cầu thủ`], ["Thưởng EP", fmt(d.rewardep)],
+  ]) : "";
+  $("#lbInfo").textContent = (st.fetching ? "Đang tải từ fut.gg… " : "")
+    + (x ? `Đã lấy lúc ${lvTime(x.fetched)}. ` : "Chưa có dữ liệu Team of the Week (chưa tải được từ fut.gg). ")
+    + (st.error ? `Lần tải gần nhất lỗi: ${st.error}. ` : st.at ? `Lần tải gần nhất: ${lvTime(st.at)}. ` : "")
+    + (x && x.missing.length ? `Không có trong FO3: ${x.missing.join(", ")}. ` : "")
+    + (d.file ? `Lưu ở ${d.file}.` : "");
+  $("#lbRows").innerHTML = x ? x.players.map((p, i) => `<tr><td>${i + 1}</td><td>${esc(p.name)} <span class="muted">#${p.pid}</span></td>
+    <td>${esc(p.position)}</td><td>${p.overall || ""}</td><td>${p.best11 ? "Chính" : "Dự bị"}</td></tr>`).join("")
+    : '<tr><td colspan="5" class="muted">Chưa có dữ liệu</td></tr>';
+}
+async function lbLoad() {
+  try { lbRender(await apiFetch("liveboost")); }
+  catch (e) { $("#lbRows").innerHTML = `<tr><td colspan="5" class="muted">${esc("Không tải được: " + e.message)}</td></tr>`; }
+}
+$("#lbSave").addEventListener("click", () => act(async () => {
+  lbRender(await api("liveboost_set", {enabled: $("#lbOn").checked, boost: Number($("#lbBoost").value), reward_ep: Number($("#lbEp").value)}));
+}, "Đã lưu Live Boost. Vào lại game để thấy menu / điểm cộng mới."));
+$("#lbRefresh").addEventListener("click", () => act(async () => {
+  await api("liveboost_refresh", {});
+  for (let i = 0; i < 20; i++) {  // cho toi da ~30 giay
+    await new Promise(r => setTimeout(r, 1500));
+    const d = await apiFetch("liveboost"); lbRender(d);
+    if (!d.status.fetching) break;
+  }
+}, "Đã cập nhật Live Boost (xem trạng thái bên dưới)."));
+const _lvThitruong = loaders.thitruong;
+loaders.thitruong = async () => { await _lvThitruong(); await lbLoad(); };
+
+// ---- Chat kenh + tin bong da
+function chRender(d) {
+  $("#chVm").checked = d.vmchat; $("#chNews").checked = d.news;
+  $("#chRegions").innerHTML = `<span class="muted">Tin của các nước (${esc(d.globalname)} luôn bật):</span> `
+    + Object.entries(d.regions).map(([k, n]) => `<label class="check"><input type="checkbox" data-region="${k}"${d.newsregions.includes(k) ? " checked" : ""}> ${esc(n)}</label>`).join(" ");
+  $("#chInfo").textContent = (d.count ? `${d.count} tin, lấy lúc ${lvTime(d.topicsat)}. ` : "Chưa có tin nào. ")
+    + (d.error ? `Lỗi nguồn: ${d.error}. ` : "") + (d.file ? `Cài đặt lưu ở ${d.file}.` : "");
+  $("#chTopics").innerHTML = (d.topics || []).map(([n, list]) => `<h3>${esc(n)}</h3><ul>${list.map(t => `<li>${esc(t)}</li>`).join("")}</ul>`).join("");
+}
+async function chLoad() {
+  try { chRender(await apiFetch("chat_settings")); } catch (e) { $("#chInfo").textContent = "Không tải được: " + e.message; }
+}
+$("#chSave").addEventListener("click", () => act(async () => {
+  chRender(await api("chat_settings_set", {vmchat: $("#chVm").checked, news: $("#chNews").checked,
+    newsregions: [...document.querySelectorAll("#chRegions [data-region]")].filter(x => x.checked).map(x => x.dataset.region)}));
+}, "Đã lưu chat kênh. Tin của nước vừa chọn sẽ được lấy trong nền."));
+$("#chRefresh").addEventListener("click", () => act(async () => {
+  const before = (await apiFetch("chat_settings")).topicsat;
+  await api("news_refresh", {});
+  for (let i = 0; i < 30; i++) {  // cho toi da ~45 giay
+    await new Promise(r => setTimeout(r, 1500));
+    const d = await apiFetch("chat_settings"); chRender(d);
+    if (d.topicsat !== before) break;
+  }
+}, "Đã lấy tin bóng đá (xem danh sách bên dưới)."));
+const _lvXephang = loaders.xephang;
+loaders.xephang = async () => { await _lvXephang(); await chLoad(); };
+{  // trang mo thang o 1 trong cac tab nay: lan tai dau chay truoc khi gan o tren
+  const open = id => $("#" + id) && !$("#" + id).hidden;
+  if (open("harian")) ptLoad();
+  if (open("nhiemvu")) qeLoad();
+  if (open("thitruong")) lbLoad();
+  if (open("xephang")) chLoad();
+}
+</script>
+<script>
+// ---------------------------------------------------------------- Mat 3D tu anh (admin_db.py photo_head*, port indo b7f6983 + 334b131)
+// Anh (thu ve <= PHD.max px) + 11 diem bam theo thu tu + dau mau (dong 3D dau quet) -> server tao texture mat,
+// luu theo ID cau thu; "Ap dung vao game" dua vao data_7.big + dong 3D. O Sua the: <details id="phdBox">.
+const PHD = {img: null, pts: [], names: [], timer: 0, pid: null, max: 1024, busy: false};
+const PHD_PT = {eye_r: "giữa mắt phải của cầu thủ (bên trái ảnh)", eye_l: "giữa mắt trái của cầu thủ (bên phải ảnh)",
+  nose: "chóp mũi", mouth_r: "khóe miệng phải (bên trái ảnh)", mouth_l: "khóe miệng trái (bên phải ảnh)", chin: "đáy cằm",
+  forehead: "giữa trán", temple_r: "thái dương phải: mép mặt ngang lông mày (bên trái ảnh)",
+  temple_l: "thái dương trái: mép mặt ngang lông mày (bên phải ảnh)", jaw_r: "hàm phải: mép mặt ngay dưới miệng (bên trái ảnh)",
+  jaw_l: "hàm trái: mép mặt ngay dưới miệng (bên phải ảnh)"};
+function phdShow(h) {
+  $("#phdNow").innerHTML = h.id && h.png
+    ? `<img src="data:image/png;base64,${h.png}" alt="Texture mặt 3D" width="256" height="256" style="display:block;border:1px solid var(--line)">
+       <div class="muted">Mã đầu ${h.id} · đầu mẫu ${esc(h.donor || h.row || "")} · ${esc(h.made || "")}</div>`
+    : '<p class="muted">Chưa có mặt 3D từ ảnh.</p>';
+  $("#phdDelete").hidden = !h.id;
+  $("#phdWhy").hidden = !!h.can_make; $("#phdWhy").textContent = h.why || "";
+  ["#phdMake", "#phdIcon"].forEach(s => { $(s).disabled = !h.can_make; });
+  $("#phdIcon").title = h.picture ? "" : "Chưa có ảnh cầu thủ này trong kho ảnh của game";
+}
+function phdDraw() {
+  const c = $("#phdCanvas"), g = c.getContext("2d"), n = PHD.pts.length;
+  g.clearRect(0, 0, c.width, c.height);
+  $("#phdStep").textContent = !PHD.img ? "Chọn ảnh hoặc bấm Lấy từ ảnh cầu thủ." : n < PHD.names.length
+    ? `Bấm điểm ${n + 1}/${PHD.names.length}: ${PHD_PT[PHD.names[n]] || PHD.names[n]}`
+    : `Đã đánh dấu đủ ${PHD.names.length} điểm; bấm gần một điểm để dời nó.`;
+  if (!PHD.img) return;
+  const k = c.width / Math.max(PHD.img.width, PHD.img.height);
+  g.imageSmoothingQuality = "high";
+  g.drawImage(PHD.img, 0, 0, PHD.img.width * k, PHD.img.height * k);
+  g.font = "bold 12px sans-serif"; g.lineWidth = 3;
+  PHD.pts.forEach(([x, y], i) => {
+    g.fillStyle = "#3f3"; g.beginPath(); g.arc(x * k, y * k, 3.5, 0, 7); g.fill();
+    g.strokeStyle = "#000"; g.strokeText(i + 1, x * k + 5, y * k - 4); g.fillStyle = "#fff"; g.fillText(i + 1, x * k + 5, y * k - 4);
+  });
+}
+async function phdDo(fn, okMsg, busyMsg) {
+  if (PHD.busy) return;
+  PHD.busy = true; $("#phdMsg").textContent = busyMsg || "Đang xử lý…";
+  try { await fn(); $("#phdMsg").textContent = okMsg; say(okMsg, "ok"); }
+  catch (e) { $("#phdMsg").textContent = ""; say("Lỗi: " + e.message, "err"); }
+  finally { PHD.busy = false; }
+}
+async function phdOpen(c) {
+  if (!c || !c.playerid) return;
+  const h = await apiFetch("photo_head?pid=" + c.playerid);
+  PHD.pid = c.playerid; PHD.names = h.points; PHD.img = null; PHD.pts = [];
+  $("#phdFile").value = ""; $("#phdMsg").textContent = ""; $("#phdDonor").value = h.row ?? "";
+  $("#phdDonors").innerHTML = h.row ? `<option value="${h.row}">${esc(h.donor || "")}</option>` : "";
+  phdShow(h); phdDraw();
+}
+const _phdDbOpen = dbOpen;
+dbOpen = async spid => {  // mo the o Sua the -> nap luon mat 3D tu anh cua cau thu do
+  await _phdDbOpen(spid);
+  try { await phdOpen(DB.card); } catch (e) { $("#phdNow").innerHTML = `<p class="muted">Không tải được: ${esc(e.message)}</p>`; }
+};
+function phdPickCanvas(img) {
+  const k = Math.min(1, PHD.max / Math.max(img.width, img.height)), c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  return c;
+}
+$("#phdFile").addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const img = new Image();
+  img.onload = () => { PHD.img = phdPickCanvas(img); PHD.pts = []; phdDraw(); URL.revokeObjectURL(img.src); };
+  img.onerror = () => say("Lỗi: không đọc được ảnh này (chọn PNG / JPG)", "err");
+  img.src = URL.createObjectURL(f);
+});
+$("#phdCanvas").addEventListener("click", e => {  // diem tiep theo; du diem roi -> doi diem gan nhat
+  if (!PHD.img) return;
+  const c = e.currentTarget, r = c.getBoundingClientRect(), k = c.width / Math.max(PHD.img.width, PHD.img.height);
+  const x = (e.clientX - r.left - c.clientLeft) * c.width / c.clientWidth / k, y = (e.clientY - r.top - c.clientTop) * c.height / c.clientHeight / k;
+  if (x > PHD.img.width + 1 || y > PHD.img.height + 1) return;
+  const at = (v, hi) => Math.round(Math.min(Math.max(v, 0), hi) * 10) / 10, p = [at(x, PHD.img.width), at(y, PHD.img.height)];
+  if (PHD.pts.length < PHD.names.length) PHD.pts.push(p);
+  else PHD.pts[PHD.pts.reduce((b, q, i) => Math.hypot(q[0] - x, q[1] - y) < Math.hypot(PHD.pts[b][0] - x, PHD.pts[b][1] - y) ? i : b, 0)] = p;
+  phdDraw();
+});
+$("#phdUndo").addEventListener("click", () => { PHD.pts.pop(); phdDraw(); });
+$("#phdReset").addEventListener("click", () => { PHD.pts = []; phdDraw(); });
+$("#phdIcon").addEventListener("click", () => phdDo(async () => {
+  const r = await api("photo_head_icon", {pid: PHD.pid});
+  const img = new Image();
+  await new Promise((ok, bad) => { img.onload = ok; img.onerror = bad; img.src = "data:image/png;base64," + r.png; });
+  PHD.img = phdPickCanvas(img); PHD.pts = r.points || [];
+  if (r.row) { $("#phdDonor").value = r.row; $("#phdDonors").innerHTML = `<option value="${r.row}">${esc(r.donor || "")}</option>`; }
+  $("#phdFile").value = ""; phdDraw();
+  if (!r.points) throw new Error("không thấy khuôn mặt trong ảnh: tự bấm 11 điểm");
+}, "Đã lấy ảnh cầu thủ, điểm và đầu mẫu gợi ý: kiểm tra rồi bấm Tạo mặt 3D.", "Đang tìm khuôn mặt (lần đầu đọc các đầu mẫu mất vài phút)…"));
+$("#phdDonor").addEventListener("input", e => {  // dau quet theo ten cau thu
+  const q = e.target.value.trim();
+  if (q.length < 2 || /^\d+$/.test(q)) return;
+  clearTimeout(PHD.timer);
+  PHD.timer = setTimeout(async () => {
+    const rows = (await apiFetch("photo_head_donors?q=" + encodeURIComponent(q)).catch(() => ({rows: []}))).rows;
+    $("#phdDonors").innerHTML = rows.map(([k, name, season]) => `<option value="${k}">${esc(`${name}, mùa ${season}`)}</option>`).join("");
+  }, 300);
+});
+$("#phdMake").addEventListener("click", () => {
+  if (!PHD.img) return say("Lỗi: hãy chọn ảnh trước.", "err");
+  if (PHD.pts.length < PHD.names.length) return say(`Lỗi: hãy đánh dấu đủ ${PHD.names.length} điểm trên ảnh trước.`, "err");
+  const dv = $("#phdDonor").value.trim();
+  if (dv && !/^\d+$/.test(dv)) return say("Lỗi: chọn đầu mẫu trong danh sách gợi ý (hoặc để trống để tự chọn).", "err");
+  phdDo(async () => {
+    phdShow(await api("photo_head_make", {pid: PHD.pid, png: PHD.img.toDataURL("image/png").split(",")[1], points: PHD.pts, row: dv ? Number(dv) : ""}));
+    await phdList();
+  }, "Đã tạo mặt 3D. Bấm Áp dụng vào game (đã thoát game) rồi mở game để xem.", "Đang tạo mặt 3D…");
+});
+$("#phdDelete").addEventListener("click", async () => {
+  if (!await uiConfirm("Xoá mặt 3D từ ảnh của cầu thủ này?")) return;
+  phdDo(async () => { phdShow(await api("photo_head_delete", {pid: PHD.pid})); await phdList(); },
+    "Đã xoá mặt 3D. Bấm Áp dụng vào game để gỡ khỏi client.");
+});
+
+// ---- the "Mat 3D tu anh" o tab Database: danh sach + tao hang loat cho cau thu mat chung trong CLB
+async function phdList() {
+  try {
+    const r = await apiFetch("photo_heads");
+    $("#phdWhyAll").hidden = r.can_make; $("#phdWhyAll").textContent = r.why || "";
+    ["#phdClub", "#phdRedo"].forEach(s => { $(s).disabled = !r.can_make; });
+    $("#phdRedo").hidden = !r.rows.length;
+    $("#phdRows").innerHTML = r.rows.map(x => `<tr><td><b>${esc(x.name)}</b><div class="muted">ID ${x.pid} · mã đầu ${x.id}</div></td>
+      <td>${esc(x.donor)}<div class="muted">${x.row ?? ""}</div></td><td>${esc(x.made)}</td>
+      <td>${x.spid ? `<button class="b" data-dbopen="${x.spid}">Mở</button> ` : ""}<button class="b danger" data-phddel="${x.pid}">Xoá</button></td></tr>`).join("")
+      || '<tr><td colspan="4" class="muted">Chưa có mặt 3D từ ảnh</td></tr>';
+  } catch (e) { $("#phdRows").innerHTML = `<tr><td colspan="4" class="muted">Không tải được: ${esc(e.message)}</td></tr>`; }
+}
+document.addEventListener("click", async e => {
+  const d = e.target.closest("[data-phddel]");
+  if (!d) return;
+  if (!await uiConfirm("Xoá mặt 3D từ ảnh của cầu thủ này?")) return;
+  act(async () => {
+    const h = await api("photo_head_delete", {pid: +d.dataset.phddel});
+    if (PHD.pid === h.pid) phdShow(h);
+    await phdList();
+  }, "Đã xoá mặt 3D. Bấm Áp dụng vào game để gỡ khỏi client.");
+});
+["#phdClub", "#phdRedo"].forEach(id => $(id).addEventListener("click", async () => {
+  const redo = id === "#phdRedo";
+  if (redo && !await uiConfirm("Tạo lại mọi mặt 3D đã có từ ảnh cầu thủ? Đầu mẫu được chọn lại; mặt làm từ ảnh tải lên cũng bị thay bằng ảnh cầu thủ.")) return;
+  if (PHD.busy) return;
+  PHD.busy = true; $("#phdClub").disabled = $("#phdRedo").disabled = true;
+  $("#phdClubMsg").textContent = "Đang tạo mặt (lần đầu đọc các đầu mẫu mất vài phút)…";
+  try {
+    const r = await api("photo_head_club", {redo});
+    $("#phdClubMsg").textContent = `Đã tạo ${r.made.length} mặt, bỏ qua ${r.skipped.length}.`
+      + (r.skipped.length ? " " + r.skipped.map(([, n, why]) => `${n} (${why})`).join("; ") : "")
+      + (r.made.length ? " Bấm Áp dụng vào game để thấy trong game." : "");
+    await phdList();
+  } catch (e) { $("#phdClubMsg").textContent = "Lỗi: " + e.message; }
+  finally { PHD.busy = false; await phdList(); $("#phdClub").disabled = $("#phdRedo").disabled = !!$("#phdWhyAll").textContent; }
+}));
+const _phdDbLoader = loaders.database;
+loaders.database = async () => { await _phdDbLoader(); await phdList(); };
+if (!$("#database").hidden) phdList();  // trang mo thang o tab Database: lan tai dau chay truoc khi gan o tren
 </script>
 </body>
 </html>

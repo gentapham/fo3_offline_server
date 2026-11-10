@@ -661,3 +661,420 @@ def multiplay_set(p):
 
 
 admin.READ_ONLY.add("multiplay_info")
+
+
+# ---------------------------------------------------------------- Thuong Rank / King of the Hill (tab Xep hang)
+# port fo3-server-indo e341d54: gamedata/ladder_rewards.json va gamedata/koth_rewards.json de len ban mac dinh
+# trong responses/ (rank.ladder_rewards, multiplay.koth_rewards); reset = xoa file, ve mac dinh.
+def _reward_choices():
+    h = _hc()
+    return ([{"itemid": h.EP_ITEM, "name": "EP", "kind": "EP"}]
+            + [{"itemid": i, "name": h.item_def(i).get("name", str(i)), "kind": "Gói cầu thủ"} for i in h.PACKS]
+            + [{"itemid": i, "name": h.item_def(i).get("name", str(i)), "kind": "Vật phẩm"} for i in h.ITEMS])
+
+
+def _reward_item(it, err):
+    """{itemid, count}: EP 1..10^10, goi / vat pham 1..99; khac -> AdminError(err)."""
+    h = _hc()
+    try:
+        itemid, count = int(it["itemid"]), int(it["count"])
+    except (KeyError, TypeError, ValueError):
+        raise AdminError(err)
+    top = 10 ** 10 if itemid == h.EP_ITEM else 99 if itemid in h.PACKS or itemid in h.ITEMS else 0
+    if not 1 <= count <= top:
+        raise AdminError(err)
+    return {"itemid": itemid, "count": count}
+
+
+def _write_json(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, path)
+
+
+E_LR = "Phần thưởng Rank không hợp lệ (EP 1-10.000.000.000, gói/vật phẩm 1-99; mốc tuần 1-500 trận thắng, tăng dần, 1-20 mốc)"
+E_KR = ("Phần thưởng King of the Hill không hợp lệ (EP 1-10.000.000.000, gói/vật phẩm 1-99; mục tiêu 1-100 trận thắng "
+        "hoặc 1-200 trận, số trận thắng cho thưởng hạng 1-100 mỗi tuần và 1-500 mỗi mùa; 1-20 dòng thứ hạng trong "
+        "khoảng 1-1000, tăng dần và không chồng nhau)")
+
+
+@api("ladder_rewards")
+def ladder_rewards(p):
+    """Thuong Rank: thuong chinh / phu cuoi mua moi hang, cac moc thang trong tuan."""
+    rk = _hc().rank
+    return {**rk.ladder_rewards(), "file": rel(rk.LADDER_REWARDS_FILE), "choices": _reward_choices()}
+
+
+@api("ladder_rewards_set")
+def ladder_rewards_set(p):
+    """gamedata/ladder_rewards.json: dung cac hang cua ban mac dinh, [chinh, phu] moi hang; 1-20 moc tuan 1-500
+    tran thang, tang dan; reset = ve mac dinh."""
+    rk = _hc().rank
+    if p.get("reset"):
+        if os.path.isfile(rk.LADDER_REWARDS_FILE):
+            os.remove(rk.LADDER_REWARDS_FILE)
+        return ladder_rewards(p)
+    names = ["DIVISION_" + d["name"] for d in rk.ladder_divisions()]
+    try:
+        divs = [{"name": d["name"], "items": [_reward_item(d["items"][0], E_LR), _reward_item(d["items"][1], E_LR)]}
+                for d in p["divs"]]
+        wins = [{"from": int(w["from"]), "items": [_reward_item(i, E_LR) for i in w["items"]]} for w in p["wins"]]
+    except (KeyError, IndexError, TypeError, ValueError):
+        raise AdminError(E_LR)
+    steps = [w["from"] for w in wins]
+    if sorted(d["name"] for d in divs) != sorted(names) or len(divs) != len(names) or steps != sorted(set(steps)) \
+            or not 1 <= len(wins) <= 20 or not all(1 <= f <= 500 for f in steps) or not all(w["items"] for w in wins):
+        raise AdminError(E_LR)
+    _write_json(rk.LADDER_REWARDS_FILE, {"divs": divs, "wins": wins})
+    return ladder_rewards(p)
+
+
+@api("koth_rewards")
+def koth_rewards(p):
+    """Thuong King of the Hill: muc tieu tuan + thuong hang tuan, thuong hang mua + thu hang khu vuc."""
+    mp = _hc().multiplay
+    cfg = mp.koth_rewards()
+    # du moi hang (thap nhat truoc) de trang luon co du dong, ke ca khi file thieu hang
+    names = ["DIVISION_" + d["name"] for d in reversed(_hc().rank.ladder_divisions())]
+    for part in (cfg["week"], cfg["season"]):
+        by = {d.get("name"): d.get("items") or [] for d in part.get("divs") or []}
+        part["divs"] = [{"name": n, "items": by.get(n) or [{"itemid": _hc().EP_ITEM, "count": 1000}]} for n in names]
+    if not cfg["week"].get("items"):
+        cfg["week"]["items"] = [{"itemid": _hc().EP_ITEM, "count": 100000}]
+    return {**cfg, "file": rel(mp.KOTH_REWARDS_FILE), "choices": _reward_choices()}
+
+
+@api("koth_rewards_set")
+def koth_rewards_set(p):
+    """gamedata/koth_rewards.json: 1 vat pham moi thuong; dung cac hang (thap nhat truoc); muc tieu tuan 1-100
+    tran thang hoac 1-200 tran, so tran thang cho thuong hang 1-100 / tuan, 1-500 / mua; 1-20 dong thu hang
+    1-1000, tang dan, khong chong nhau; reset = ve mac dinh."""
+    mp = _hc().multiplay
+    if p.get("reset"):
+        if os.path.isfile(mp.KOTH_REWARDS_FILE):
+            os.remove(mp.KOTH_REWARDS_FILE)
+        return koth_rewards(p)
+    names = ["DIVISION_" + d["name"] for d in reversed(_hc().rank.ladder_divisions())]
+    one = lambda x: [_reward_item(x["items"][0], E_KR)]
+    try:
+        w, s = p["week"], p["season"]
+        week = {"type": w["type"], "win": int(w["win"]), "match": int(w["match"]), "grade": int(w["grade"]), "items": one(w),
+                "divs": [{"name": d["name"], "items": one(d)} for d in w["divs"]]}
+        season = {"grade": int(s["grade"]), "divs": [{"name": d["name"], "items": one(d)} for d in s["divs"]],
+                  "ranking": [{"from": int(r["from"]), "to": int(r["to"]), "items": one(r)} for r in s["ranking"]]}
+    except (KeyError, IndexError, TypeError, ValueError):
+        raise AdminError(E_KR)
+    last = 0
+    for r in season["ranking"]:
+        if not last < r["from"] <= r["to"] <= 1000:
+            raise AdminError(E_KR)
+        last = r["to"]
+    if week["type"] not in ("winning", "match") or not 1 <= week["win"] <= 100 or not 1 <= week["match"] <= 200 \
+            or not 1 <= week["grade"] <= 100 or not 1 <= season["grade"] <= 500 or not 1 <= len(season["ranking"]) <= 20 \
+            or [d["name"] for d in week["divs"]] != names or [d["name"] for d in season["divs"]] != names:
+        raise AdminError(E_KR)
+    _write_json(mp.KOTH_REWARDS_FILE, {"week": week, "season": season})
+    return koth_rewards(p)
+
+
+admin.READ_ONLY.update({"ladder_rewards", "koth_rewards"})
+
+
+
+# ---------------------------------------------------------------- mat 3D tu anh (port fo3-server-indo b7f6983 + 334b131)
+# tools/clientbuild/photo_head.py: anh chup can mat (hoac anh cau thu, diem tu YuNet) dan len dau 3D da quet cua
+# mot cau thu "donor" (luoi + toc cua donor, mat moi), luu theo player id o gamedata/photo_heads (anh .png + mat
+# .rx3 da ma hoa); "Ap dung vao game" dung data_7.big + dong engine (season.py photo_heads). Tao mat can numpy +
+# cv2 trong tools/clientbuild/pylib (chi may lam ban va); viec nang chay ngoai khoa state (NO_LOCK), PH_LOCK giu
+# heads.json khong bi 2 yeu cau ghi cung luc.
+PHOTO_MAX = 1024
+PH_LOCK = threading.Lock()
+PH_MISSING = ("Máy này thiếu thư viện tạo mặt 3D ({0}: numpy / OpenCV trong tools/clientbuild/pylib), chỉ máy làm "
+              "bản vá tạo được mặt 3D từ ảnh. Mặt đã tạo vẫn được cài bình thường khi Áp dụng vào game.")
+_PH = {}
+
+
+def photo_mod():
+    """Module photo_head (tools/clientbuild), nap 1 lan."""
+    if "mod" not in _PH:
+        _cb()
+        import photo_head  # noqa: E402 (ban trong tools/clientbuild)
+        _PH["mod"] = photo_head
+    return _PH["mod"]
+
+
+def ph_ready():
+    """AdminError tieng Viet neu may nay khong tao duoc mat (thieu numpy / cv2)."""
+    miss = photo_mod().missing()
+    if miss:
+        raise AdminError(PH_MISSING.format(miss))
+
+
+def ph_pid(p):
+    pid = as_int(p.get("pid"), 1, 999999, "ID cầu thủ")
+    with closing(_hc()._db()) as c:
+        if not c.execute("SELECT 1 FROM players WHERE playerid = ? LIMIT 1", (pid,)).fetchone():
+            raise AdminError(f"Không có cầu thủ {pid} trong dữ liệu")
+    return pid
+
+
+def ph_name(pid):
+    """Ten cau thu theo player id (hoac dong engine / spid)."""
+    with closing(_hc()._db()) as c:
+        r = c.execute("SELECT COALESCE(full_eng, full, short) FROM nameseng WHERE playerid = ?", (int(pid) % 1000000,)).fetchone()
+    return r[0] if r else str(pid)
+
+
+def ph_picture(pid):
+    """File anh cau thu cua game cho pid: p<pid>.png, else anh the moi nhat p<spid>.png; None neu khong co."""
+    base = os.path.join(_hc().ASSETS, "externalAssets", "players")
+    f = os.path.join(base, f"p{pid}.png")
+    if os.path.isfile(f):
+        return f
+    with closing(_hc()._db()) as c:
+        for (spid,) in c.execute("SELECT spid FROM players WHERE playerid = ? ORDER BY spid DESC", (pid,)):
+            f = os.path.join(base, f"p{spid}.png")
+            if os.path.isfile(f):
+                return f
+    return None
+
+
+def ph_nation(pid):
+    with closing(_hc()._db()) as c:
+        r = c.execute("SELECT nationality FROM players WHERE playerid = ? ORDER BY spid DESC LIMIT 1", (pid,)).fetchone()
+    return r[0] if r else None
+
+
+def ph_donors():
+    """{headassetid: [dong engine, *look, quoc tich]} cac dau quet lam donor duoc (lan dau doc ~2.000 texture + anh,
+    vai phut; sau do gamedata/photo_heads/donors.json). Cache theo data_0.big cua game."""
+    e = engine_rows()
+    if e is None:
+        raise AdminError("Không đọc được dữ liệu 3D của game (data_0.big)")
+    t, fld, by, _ = e
+    if "donors" in _PH and _PH.get("donors_sig") == _ENGINE.get("sig"):
+        return _PH["donors"]
+    ph = photo_mod()
+    rows = {}
+    for k in sorted(by, key=lambda k: (k >= 1000000, k)):  # dong player id truoc
+        h = t.get(by[k], fld["headassetid"][0]) + fld["headassetid"][1]
+        if t.get(by[k], fld["headclasscode"][0]) + fld["headclasscode"][1] == 0 and h < ph.ID_BASE:
+            rows.setdefault(h, k)
+    looks = ph.donor_looks(_hc().GAME, rows, ph_picture)
+    nation = lambda row: t.get(by[row], fld["nationality"][0]) + fld["nationality"][1] if row in by else None
+    out = {k: v[:7] + [nation(v[0])] for k, v in looks.items()}
+    _PH.update(donors=out, donors_sig=_ENGINE.get("sig"))
+    return out
+
+
+def ph_icon(pid):
+    """(anh cau thu RGB, 11 diem hoac None, dong donor goi y hoac None); AdminError khi khong co / hong anh."""
+    ph = photo_mod()
+    f = ph_picture(pid)
+    if not f:
+        raise AdminError(f"Chưa có ảnh cầu thủ {pid} trong kho ảnh của game (externalAssets/players)")
+    try:
+        photo = ph.picture(f)
+    except Exception:
+        raise AdminError(f"Ảnh cầu thủ {pid} bị hỏng / không phải PNG")
+    pts = ph.landmarks(photo)
+    if not pts:
+        return photo, None, None
+    donors = ph_donors()
+    head = ph.suggest(ph.look(photo, pts), donors, ph_nation(pid)) if donors else None
+    return photo, pts, donors[head][0] if head is not None else None
+
+
+def ph_save(pid, photo, pts, row):
+    """Tao mat cho pid tu anh (RGB) + diem tren dau quet cua dong engine row; thay mat cu cua anh ay. Tra ve id."""
+    ph = photo_mod()
+    e = engine_rows()
+    if e is None:
+        raise AdminError("Không đọc được dữ liệu 3D của game (data_0.big)")
+    t, fld, by, _ = e
+    if row not in by or t.get(by[row], fld["headclasscode"][0]) + fld["headclasscode"][1] != 0:
+        raise AdminError(f"Dòng 3D {row} không phải đầu quét thật: chọn cầu thủ có mặt quét làm đầu mẫu")
+    donor = t.get(by[row], fld["headassetid"][0]) + fld["headassetid"][1]
+    if donor >= ph.ID_BASE:
+        raise AdminError(f"Dòng 3D {row} đang mang mặt 3D từ ảnh: chọn cầu thủ có mặt quét gốc làm đầu mẫu")
+    try:
+        face = ph.donor_files(_hc().GAME, donor)[ph.FACE_FILE]
+    except (KeyError, OSError):
+        raise AdminError(f"Game thiếu file đầu {donor} (data_3/4/6.big): chọn đầu mẫu khác")
+    img = ph.make(photo, pts, face)
+    rx3 = ph.with_texture(ph.unchunk(face), img)
+    with PH_LOCK:
+        heads = ph.load()
+        hid = next((k for k, v in heads.items() if v.get("pid") == pid), None) or ph.new_id(heads)
+        ph.store(hid, img, rx3)
+        heads[hid] = {"pid": pid, "row": row, "donor": donor, "made": time.strftime("%Y-%m-%d")}
+        ph.save(heads)
+    return hid
+
+
+def _ph_png(path):
+    try:
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except OSError:
+        return None
+
+
+@api("photo_head")
+def photo_head(p):
+    """Mat 3D tu anh cua cau thu pid (neu co): id, donor, ngay tao, texture (PNG base64); co tao duoc tren may nay."""
+    pid, ph = ph_pid(p), photo_mod()
+    hid, h = next(((k, v) for k, v in ph.load().items() if v.get("pid") == pid), (None, {}))
+    miss = ph.missing()
+    return {"pid": pid, "name": ph_name(pid), "id": hid, "row": h.get("row"), "donor": ph_name(h["row"]) if h.get("row") else None,
+            "made": h.get("made"), "png": _ph_png(os.path.join(ph.DIR, f"{hid}.png")) if hid else None,
+            "points": list(ph.POINTS), "picture": bool(ph_picture(pid)),
+            "can_make": not miss, "why": PH_MISSING.format(miss) if miss else ""}
+
+
+@api("photo_heads")
+def photo_heads(p):
+    """Moi mat 3D tu anh: [{id, pid, name, donor, made}] + may nay co tao duoc khong."""
+    ph = photo_mod()
+    miss = ph.missing()
+    with closing(_hc()._db()) as c:  # the moi nhat cua cau thu: nut Mo (Sua the)
+        spid = lambda pid: (c.execute("SELECT MAX(spid) FROM players WHERE playerid = ?", (pid,)).fetchone() or [None])[0]
+        rows = [{"id": k, "pid": v.get("pid"), "spid": spid(v.get("pid")), "name": ph_name(v.get("pid", 0)), "row": v.get("row"),
+                 "donor": ph_name(v["row"]) if v.get("row") else "", "made": v.get("made", "")}
+                for k, v in sorted(ph.load().items())]
+    return {"rows": rows, "can_make": not miss, "why": PH_MISSING.format(miss) if miss else "", "file": rel(ph.DIR)}
+
+
+@api("photo_head_donors")
+def photo_head_donors(p):
+    """[[dong engine, ten, mua]] cac dau quet (headclasscode 0) cua cau thu tim theo ten: o Dau mau."""
+    e = engine_rows()
+    q = str(p.get("q") or "").strip()
+    if e is None or len(q) < 2:
+        return {"rows": []}
+    t, fld, by, mine = e
+    top = photo_mod().ID_BASE
+    out = {}
+    for r in admin.search({"q": q, "size": 40})["rows"]:
+        for k in mine.get(r["spid"] % 1000000, ()):
+            if t.get(by[k], fld["headclasscode"][0]) + fld["headclasscode"][1] == 0 \
+                    and t.get(by[k], fld["headassetid"][0]) + fld["headassetid"][1] < top:
+                out.setdefault(k, [k, r["name"], k // 1000000])
+        if len(out) >= 30:
+            break
+    return {"rows": list(out.values())}
+
+
+@api("photo_head_make")
+def photo_head_make(p):
+    """Tao mat tu anh tai len (PNG <= PHOTO_MAX px) + 11 diem; row = dong engine donor (bo trong: tu goi y)."""
+    pid = ph_pid(p)
+    ph_ready()
+    ph = photo_mod()
+    import io
+    import numpy as np
+    from PIL import Image
+    try:
+        raw = base64.b64decode(str(p.get("png") or ""), validate=True)
+        img = Image.open(io.BytesIO(raw))
+        if img.format != "PNG" or max(img.size) > PHOTO_MAX or min(img.size) < 32 or len(raw) > 8 << 20:
+            raise ValueError
+        photo = np.asarray(img.convert("RGB"))
+    except Exception:
+        raise AdminError(f"Ảnh phải là PNG, cạnh dài tối đa {PHOTO_MAX} px (chọn lại ảnh trên trang này)")
+    pts = p.get("points")
+    n = len(ph.POINTS)
+    if (not isinstance(pts, list) or len(pts) != n
+            or not all(isinstance(q, list) and len(q) == 2 and all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in q)
+                       and 0 <= q[0] <= photo.shape[1] and 0 <= q[1] <= photo.shape[0] for q in pts)):
+        raise AdminError(f"Hãy đánh dấu đủ {n} điểm trên ảnh trước")
+    if len({(round(q[0]), round(q[1])) for q in pts}) != n or abs(pts[1][0] - pts[0][0]) + abs(pts[1][1] - pts[0][1]) < 4:
+        raise AdminError("Các điểm trùng nhau hoặc hai mắt quá sát: đánh dấu lại")
+    row = p.get("row")
+    if row in (None, "", 0, "0"):
+        donors = ph_donors()
+        head = ph.suggest(ph.look(photo, pts), donors, ph_nation(pid)) if donors else None
+        if head is None:
+            raise AdminError("Không tìm được đầu mẫu: nhập tên cầu thủ có mặt quét ở ô Đầu mẫu")
+        row = donors[head][0]
+    ph_save(pid, photo, pts, as_int(row, 1, 10 ** 9, "Đầu mẫu (dòng 3D)"))
+    return photo_head({"pid": pid})
+
+
+@api("photo_head_icon")
+def photo_head_icon(p):
+    """Anh cau thu cua game cho trang: anh (PNG base64), 11 diem YuNet tim (None neu khong thay mat), donor goi y."""
+    pid = ph_pid(p)
+    ph_ready()
+    import io
+    from PIL import Image
+    photo, pts, row = ph_icon(pid)
+    b = io.BytesIO()
+    Image.fromarray(photo).save(b, "PNG")
+    return {"png": base64.b64encode(b.getvalue()).decode(), "points": pts, "row": row,
+            "donor": ph_name(row) if row else None}
+
+
+@api("photo_head_club")
+def photo_head_club(p):
+    """Mat tu anh cau thu cho moi cau thu trong CLB (cac doi cua HLV) dang mang dau chung va chua co mat;
+    redo: tao lai ca moi mat da co tu anh cau thu (donor chon lai; mat tu anh tai len cung bi thay)."""
+    ph_ready()
+    ph = photo_mod()
+    redo = bool(p.get("redo"))
+    with _hc().STATE_LOCK:  # chi doc danh sach the roi tha khoa ngay (viec nang o ngoai)
+        st = _hc()._state()
+        cards = {}
+        for club in (st.get("teams") or {}).values():
+            for c in club.get("players", []):
+                spid = int(c.get("spid") or 0)
+                if spid:
+                    cards.setdefault(spid % 1000000, spid)
+    have = {v.get("pid") for v in ph.load().values()}
+    for pid in (have if redo else ()):
+        cards.setdefault(pid, pid)
+    made, skipped = [], []
+    for pid, spid in sorted(cards.items()):
+        if pid in have and not redo:
+            continue
+        if pid not in have:
+            look, e = card_look(spid, pid), engine_rows()
+            if not look or look["row"] is None or e is None:
+                continue
+            t, fld, by, _ = e
+            if t.get(by[look["row"]], fld["headclasscode"][0]) + fld["headclasscode"][1] != 1:
+                continue
+        name = ph_name(pid)
+        try:
+            photo, pts, row = ph_icon(pid)
+            if pts is None or row is None:
+                skipped.append([pid, name, "không thấy khuôn mặt trong ảnh"])
+                continue
+            ph_save(pid, photo, pts, row)
+        except AdminError as err:
+            skipped.append([pid, name, str(err)])
+            continue
+        made.append([pid, name, ph_name(row)])
+    return {"made": made, "skipped": skipped}
+
+
+@api("photo_head_delete")
+def photo_head_delete(p):
+    pid, ph = ph_pid(p), photo_mod()
+    with PH_LOCK:
+        heads = ph.load()
+        gone = [k for k, v in heads.items() if v.get("pid") == pid]
+        if not gone:
+            raise AdminError("Cầu thủ này chưa có mặt 3D từ ảnh")
+        for hid in gone:
+            del heads[hid]
+            ph.remove(hid)
+        ph.save(heads)
+    return photo_head({"pid": pid})
+
+
+admin.READ_ONLY.update({"photo_head", "photo_heads", "photo_head_donors"})
+admin.NO_LOCK.update({"photo_head", "photo_heads", "photo_head_donors", "photo_head_make", "photo_head_icon",
+                      "photo_head_club", "photo_head_delete"})

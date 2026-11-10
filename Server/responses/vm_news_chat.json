@@ -1,0 +1,67 @@
+{
+ "vi": {
+  "general": [
+   "Đang hot nè: \"{title}\". Mọi người nghĩ sao?",
+   "Đọc tin này chưa? \"{title}\"",
+   "Tin bóng đá hôm nay: \"{title}\". Đồng ý không?",
+   "Đang trending đó: \"{title}\"",
+   "Có ai theo dõi vụ này không? \"{title}\"",
+   "Vừa thấy trên mạng xã hội: \"{title}\""
+  ],
+  "club": [
+   "CLB yêu thích của mình {name} lại lên báo: \"{title}\"",
+   "Fan {name} đâu rồi? \"{title}\"",
+   "Về {name} nè: \"{title}\". Mong đội mạnh hơn!",
+   "{name} đang được bàn tán: \"{title}\""
+  ],
+  "player": [
+   "Thần tượng {name} đang hot: \"{title}\"",
+   "{name} đúng là đẳng cấp. \"{title}\"",
+   "Tin {name} hôm nay: \"{title}\"",
+   "Có ai xem tin về {name} chưa? \"{title}\""
+  ],
+  "country": [
+   "Cố lên {name}! \"{title}\"",
+   "Tin {name} hôm nay: \"{title}\"",
+   "Tự hào về {name}. \"{title}\"",
+   "{name} đang là chủ đề nóng: \"{title}\""
+  ],
+  "react": [
+   "Ừ, mình cũng đọc rồi",
+   "Hmm, mình thấy còn sớm để nói",
+   "Với {club} thì chuyện sẽ khác",
+   "Đồng ý! Tin lớn đó",
+   "Thật hả? Không ngờ luôn",
+   "Hay đó, mong là thành sự thật",
+   "Mình vẫn chưa tin lắm",
+   "Đọc xong muốn vào đánh Rank liền"
+  ],
+  "mood": {
+   "friendly": [
+    " :)",
+    " ^^",
+    ""
+   ],
+   "competitive": [
+    "",
+    ".",
+    " Tập trung thắng thôi."
+   ],
+   "funny": [
+    " haha",
+    " xD",
+    " kkk"
+   ],
+   "confident": [
+    " B)",
+    " :P",
+    ""
+   ],
+   "playful": [
+    " :P",
+    " hihi",
+    " :D"
+   ]
+  }
+ }
+}

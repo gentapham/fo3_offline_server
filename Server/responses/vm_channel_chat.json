@@ -1,0 +1,231 @@
+{
+ "vi": {
+  "hello": {
+   "friendly": [
+    "Chào bạn! Hôm nay thế nào rồi? :)",
+    "Hi bạn, mới online à? ^^",
+    "Chào nha! Vui vì thấy bạn online :)",
+    "Chào chào! Ăn cơm chưa đó? ^^",
+    "Hi! Mình cũng vừa vào game xong ^^",
+    "Chào bạn, mọi chuyện ổn cả chứ? :)",
+    "Ơ, cuối cùng cũng thấy bạn rồi, nhớ ghê ^^",
+    "Chào bạn, chúc một ngày vui vẻ nha :)",
+    "Chào đại ca, khỏe không? Ngồi tám tí đi ^^"
+   ],
+   "competitive": [
+    "Chào. Tối nay đá không?",
+    "Ừ, chào. Rank của bạn lên chưa?",
+    "Chào. Vào việc luôn, tập cùng không?",
+    "Chào bạn. Đội hình sẵn sàng chiến chưa?",
+    "Có mặt. Tôi chờ bạn trên sân.",
+    "Chào. Đừng nghỉ nhiều, vào đá đi."
+   ],
+   "funny": [
+    "Chào! Tưởng bạn giải nghệ rồi chứ haha",
+    "Hi! Tui vừa thua con bot tập luyện xD",
+    "Chào! Thủ môn tui gửi lời chào, nó đang ngủ haha",
+    "Hi! Tui online rồi nhưng não vẫn offline xD",
+    "Chào! Có mang đồ ăn vặt không? Đói quá haha",
+    "Hi! Tui mới ngủ dậy, giờ là sáng hay tối vậy? xD",
+    "Hi! Tiền đạo tui vẫn đang đi tìm khung thành xD",
+    "Chào! Điểm danh: có mặt, nhưng nửa tỉnh nửa mê kkk",
+    "Hi! Đừng hỏi rank tui, nó đang để tang xD"
+   ],
+   "confident": [
+    "Chào! Sẵn sàng xem tôi thắng tiếp chưa? B)",
+    "Chào. Các bạn may mắn lắm mới có tôi :P",
+    "Hi. Tối qua rank tôi lại lên rồi, báo cho biết B)",
+    "Chào. Cần thầy dạy thì có tôi đây B)",
+    "Hi. Đội hình tôi hôm nay còn xịn hơn nữa :P",
+    "Chào! Ngôi sao đã đến, vỗ tay đi nào B)",
+    "Chào. Hôm nay tôi đặt mục tiêu 5 trận thắng :P"
+   ],
+   "playful": [
+    "Hế lô~ Nhớ tui hông? :P",
+    "Hi hi! Đoán xem tui đang làm gì nè? :D",
+    "Chào! Người được chờ đợi cuối cùng cũng tới hehe",
+    "Ui, chào tui trước luôn kìa :P",
+    "Hi! Chơi trốn tìm trên sân không? :D",
+    "Chào! Hôm nay tui có chiêu mới, bí mật nha hehe",
+    "Hi~ Cười cái trước khi đá nào ^^",
+    "Chào! Tui đợi bạn nãy giờ đó :D",
+    "Hi! Cho tui mượn thẻ +8 xíu được hông? hehe"
+   ]
+  },
+  "thanks": {
+   "friendly": [
+    "Không có gì đâu bạn ^^",
+    "Có gì đâu, giúp được là vui rồi :)",
+    "Người một nhà mà, khách sáo chi ^^",
+    "Không có chi, lần sau tới lượt bạn nha :)",
+    "Đừng ngại nha bạn ^^",
+    "Không có gì, cần thì cứ gọi mình :)",
+    "Ok bạn, cố lên nha :)",
+    "Hehe, cảm ơn bạn luôn ^^",
+    "Lúc nào cũng được, mình luôn sẵn sàng :)"
+   ],
+   "competitive": [
+    "Không có gì. Trả ơn bằng chiến thắng.",
+    "Được. Trả bằng ba điểm là ổn.",
+    "Không cần cảm ơn. Thắng là được.",
+    "Không có gì. Đừng lãng phí.",
+    "Ok. Giờ quay lại mục tiêu.",
+    "Không có gì. Mai tập tiếp.",
+    "Chuyện nhỏ. Đá tiếp đi.",
+    "Ừ. Cho tôi xem kết quả."
+   ],
+   "funny": [
+    "Không có gì! Hóa đơn gửi sau nhé haha",
+    "Trả công bằng đồ ăn vặt là được xD",
+    "Ôi, tui cảm động muốn khóc luôn haha",
+    "Không có chi, nhớ chuyển khoản... đùa thôi xD",
+    "Giữ lời cảm ơn, gửi bánh tráng trộn qua đây haha",
+    "Không có gì, nhưng đừng kể với thủ môn tui haha",
+    "Đã nhận lời cảm ơn, tiền công thì chưa xD",
+    "Haha tui có làm gì đâu, nhưng ok luôn",
+    "Không có gì! Nhớ đánh giá 5 sao nha xD"
+   ],
+   "confident": [
+    "Đương nhiên. Tôi đáng tin cậy mà B)",
+    "Giúp người là sở thích của tôi :P",
+    "Yên tâm, mẹo của tôi còn nhiều lắm B)",
+    "Khỏi cảm ơn, gửi fan qua đây là được :P",
+    "Chuyện nhỏ, còn nhiều chiêu hay hơn nữa B)",
+    "Không có gì. Nhớ kể mọi người tôi giỏi cỡ nào :P",
+    "Tất nhiên rồi, tôi là đàn anh mà B)",
+    "Cần nữa thì biết tìm ai rồi đó :P",
+    "Không có gì. Hôm nay ký tặng miễn phí B)",
+    "Rất vui được giúp. Tôi là huyền thoại tốt bụng :P"
+   ],
+   "playful": [
+    "Hehe không có gì~ :P",
+    "Nói to lên coi, tui chưa nghe rõ :P",
+    "Không có gì! Ôm một cái nè :D",
+    "Hihi, bạn nợ tui một lần nha ^^",
+    "Không có gì, nhưng tui muốn ăn kem :P",
+    "Ui, được cảm ơn luôn, hiếm ghê :D",
+    "Rồi rồi, không có gì. Cười cái coi ^^",
+    "Hehe, tui ghi sổ ân tình rồi nha :P",
+    "Không có gì! Tặng thêm một cái đập tay :D",
+    "Hihi, cảm ơn lại bạn nè hehe"
+   ]
+  },
+  "reply": {
+   "friendly": [
+    "Ừ, mình đồng ý ^^",
+    "À vậy hả, ok luôn :)",
+    "Hehe đúng ha, chuẩn luôn",
+    "Hay đó, mình ủng hộ ^^",
+    "Thật hả? Rồi sao nữa? :)",
+    "Ok bạn! Cần gì cứ nói mình nha ^^",
+    "Ok, mình ghi nhận nha ^^",
+    "Hmm, nghe thú vị ghê :)",
+    "Chuẩn luôn, triển thôi ^^"
+   ],
+   "competitive": [
+    "Được. Miễn là thắng.",
+    "Ghi nhận. Quay lại tập.",
+    "Ok. Xong cái này thì đá.",
+    "Được. Nhưng rank là ưu tiên.",
+    "Hừm. Đừng chủ quan.",
+    "Chứng minh trên sân đi.",
+    "Hiểu rồi. Giờ thì làm việc.",
+    "Được. Chuẩn bị đội hình trước đã.",
+    "Bớt chat. Đá nhiều hơn."
+   ],
+   "funny": [
+    "haha ok luôn",
+    "Đợi tui cười xong đã xD",
+    "Hả? Tui mới đọc được nửa câu haha",
+    "Đồng ý, dù tui chả hiểu gì xD",
+    "Haha bạn đúng là hết nói nổi",
+    "Đợi xíu, não tui đang tải... kkk",
+    "Thủ môn tui đọc xong cười khúc khích xD",
+    "Ừ ừ, miễn là tui không phải khao haha",
+    "Đã nhận tin, trả lời sau quảng cáo xD",
+    "Tin nhắn của bạn còn hài hơn chiến thuật tui haha"
+   ],
+   "confident": [
+    "Tất nhiên, tôi luôn đúng mà B)",
+    "Yên tâm, để đó tôi lo :P",
+    "Tôi mà ra tay thì xong liền B)",
+    "Ừ ừ, tôi biết từ lâu rồi :P",
+    "Ý hay đấy. Gần bằng ý của tôi B)",
+    "Hừm, cũng được. Nhưng tôi vẫn số một :P",
+    "Chuyện đó tôi tính trước rồi B)",
+    "Đương nhiên. Tôi sai bao giờ chưa? :P",
+    "Nghe kỹ nhé, nhà vô địch đang nói đây B)",
+    "Được thôi, nhưng tôi đeo băng đội trưởng :P"
+   ],
+   "playful": [
+    "Hehe, thiệt hả? :P",
+    "Hừm, nghe có mùi mờ ám nha :D",
+    "Ui, nghiêm túc dữ vậy hehe",
+    "Lêu lêu, ok tui đồng ý :P",
+    "E hèm, tui có đọc nha ^^",
+    "Rồi rồi, bạn nói gì cũng đúng :P",
+    "Hihi, để tui vừa đá vừa nghĩ :D",
+    "Úi, bị phát hiện không đọc tin rồi hehe",
+    "Được, nhưng bao tui ly trà sữa trước :P",
+    "Thôi mà, nói vậy tui ngại á ^^"
+   ]
+  },
+  "idle": {
+   "friendly": [
+    "Có ai leo rank chung không? Mình đang online :)",
+    "Nhớ điểm danh nhận quà hằng ngày nha ^^",
+    "Vừa thắng một trận Liga, EP cũng ổn :)",
+    "Đang tìm trung vệ trên chợ, có ai gợi ý không? :)",
+    "Chào buổi tối cả nhà, đá vui nha ^^",
+    "Định ép thẻ, ai rảnh giúp mình chọn với :)",
+    "Hôm nay thử sơ đồ 4-1-2-1-2, thấy cũng hợp ^^",
+    "Ai đang leo rank thì cố lên nha! :)",
+    "Hôm nay mở gói ra được thủ môn khá ổn ^^"
+   ],
+   "competitive": [
+    "Mục tiêu tối nay: 10 trận thắng rank.",
+    "Cup tuần này phải lấy bằng được.",
+    "Tiền đạo lên +5 rồi. Sẵn sàng.",
+    "Đang thử 4-3-3 tấn công.",
+    "Liga còn ba trận. Không được lơi lỏng.",
+    "Ai chưa đá hôm nay? Vào sân luôn.",
+    "Đang săn tiền vệ phòng ngự trên chợ.",
+    "Tuần này rank tôi lên hai bậc.",
+    "Tập sút phạt trước. Sau đó leo rank."
+   ],
+   "funny": [
+    "Ép +5 xịt nữa rồi. Ai ôm tui cái haha",
+    "Mở gói xong lại ra thủ môn dự bị xD",
+    "Tiền đạo tui sút trúng cột nhiều hơn trúng lưới haha",
+    "Sơ đồ 4-4-2, nhưng thực tế là 0-0-10 haha",
+    "Quà hằng ngày nhận rồi, động lực thì chưa thấy xD",
+    "Hậu vệ tui vừa chạy ngược hướng. Lần nữa haha",
+    "Bán thẻ trên chợ rẻ quá, tiếc đứt ruột xD",
+    "Thủ môn tui đang mơ màng thì bóng bay vào haha",
+    "Rank tui tụt, nhưng nhan sắc tui tăng xD"
+   ],
+   "confident": [
+    "Năm trận thắng rank liên tiếp. Bình thường B)",
+    "Vừa có thẻ +8 mới. Ai muốn ngắm không? :P",
+    "Chợ hôm nay rẻ, tôi gom hết rồi :P",
+    "Sơ đồ của tôi hoàn hảo rồi, giờ chỉ việc thắng B)",
+    "Liga? Xong. Cup? Chỉ còn nâng cúp :P",
+    "Ép thẻ một phát ăn luôn, dĩ nhiên B)",
+    "Tuần này lại đứng top bảng xếp hạng :P",
+    "Đội hình tôi đắt lắm, thắng hoài là phải B)",
+    "Lớp dạy kỹ thuật mở rồi, ai đăng ký nào? :P"
+   ],
+   "playful": [
+    "Ai online đó? Vào chọc tui đi hehe",
+    "Đoán xem tui mở gói ra gì? Bí mật :P",
+    "Hihi, tui vừa thử chiêu mới ở rank ^^",
+    "Hôm nay tui làm HLV, mọi người tập đi :P",
+    "Chán quá, có ai đá Cup không? :D",
+    "Ép +5 thành công! Nhảy một điệu cái hehe",
+    "Tuần này ai thua nhiều nhất? Khai mau :P",
+    "Chợ giảm giá hả? Mắt tui sáng rỡ luôn ^^",
+    "Alo alo, còn ai thức không? Nói chuyện với tui đi :D"
+   ]
+  }
+ }
+}

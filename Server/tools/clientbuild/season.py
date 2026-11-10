@@ -344,12 +344,55 @@ def _seal(plain_db, shipped):
     return refpack_blocks(bytes(enc)), len(enc)
 
 
+CLIENT_REGION_PERM = "permid"  # client chay voi region ID (launch args): chi doc perm<REGION> nay
+
+
 def client_db(trim):
     def edit(c):
         if trim:
             for t in NAME_TABLES:
                 c.execute(f"DELETE FROM {t} WHERE playerid NOT IN (SELECT playerid FROM players)")
+        # Su nghiep CLB toi mua hien tai (gamedata/club_history.json tu Wikidata, tools/clientbuild/club_history.py;
+        # theo ban Indo 836c8ce / 80ff39b): tab Dac diem cua the liet ke "Su nghiep CLB" tu playerhistory, chi
+        # voi the historyopen = 1 -> mo cho moi the co dong lich su. Bang perm cua 5 vung khac client khong
+        # doc: xoa de fifadb van vua cho cua no trong data_0.big.
+        import club_history
+        if club_history.load():
+            club_history.apply(c)
+            c.execute("UPDATE players SET historyopen = 1 WHERE playerid IN (SELECT DISTINCT playerid FROM playerhistory)")
+            for t in PERM_TABLES:
+                if t != CLIENT_REGION_PERM:
+                    c.execute(f"DELETE FROM {t}")
     return _sqlite(open(FIFADB, "rb").read(), edit)
+
+
+TEAMNAMES_ENTRY = "data/ui/localization/TEAMNAMES_ENG.json"
+
+
+def build_teamnames():
+    """build/eng.big = eng.big cua game + ten cac CLB moi cua club_history.json (id 200000000 + so Q):
+    client goi ten CLB bang Localization.TEAMNAME (TEAMNAMES_ENG.json trong eng.big); id la -> "teamname(<id>)".
+    Chi them / sua cac id >= club_history.NEW_TEAM nen chay lai nhieu lan van giu nguyen ten khac (vd Viet Nam)."""
+    import bigdir, club_history
+    from refpack import refpack
+    teams = (club_history.load() or {}).get("teams") or {}
+    src = os.path.join(GAME_DATA, "ui", "localization", "eng.big")
+    out = os.path.join(BUILD, "eng.big")
+    if not teams or not os.path.isfile(src):
+        if os.path.exists(out):
+            os.remove(out)
+        return None
+    raw = bigdir.read(src, TEAMNAMES_ENTRY)
+    names = json.loads(raw.decode("utf-8-sig"))
+    if all(names.get(t) == n["eng"] for t, n in teams.items()):
+        new = raw
+    else:
+        new = club_history.teamnames({k: v for k, v in names.items() if int(k) < club_history.NEW_TEAM}, "eng", teams)
+    shutil.copyfile(src, out)
+    if new != raw:
+        bigdir.patch(out, {TEAMNAMES_ENTRY: (refpack(new), len(new))})
+        assert json.loads(bigdir.read(out, TEAMNAMES_ENTRY).decode("utf-8-sig")) == json.loads(new.decode("utf-8-sig"))
+    return len(teams)
 
 
 def locale_additions():
@@ -434,7 +477,68 @@ def card_looks(t, fld, by, pk):
     return n
 
 
-def engine_db(db, meta):
+PHOTO_ORIG = os.path.join(ORIG, "data_7.big")  # data_7.big goc cua game (5 KB, file locale ini)
+
+
+def build_photo_heads(log):
+    """Mat 3D tu anh (GM Tool > Database, photo_head.py): build/data_7.big = orig/data_7.big + file
+    cua tung mat (dau + toc cua donor doc tu data_3/4/6.big cua game, mat <id>.rx3 da ma hoa san ->
+    khong can numpy). Khong co mat nao -> xoa build/data_7.big (apply.py tra lai ban goc cho game).
+    Tra ve {player id: (id dau moi, dong engine donor, headassetid donor)} cua cac mat da vao data_7."""
+    import photo_head
+    out = os.path.join(BUILD, "data_7.big")
+    heads = photo_head.load()
+    if heads and not os.path.isfile(PHOTO_ORIG):
+        log.append(f"photo heads: {len(heads)} bo qua (thieu {os.path.relpath(PHOTO_ORIG, W)})")
+        heads = {}
+    data, ids = photo_head.archive(os.path.dirname(GAME_DATA), PHOTO_ORIG, heads) if heads else (None, [])
+    if not ids:
+        if os.path.exists(out):
+            os.remove(out)
+        if heads:
+            log.append(f"photo heads: 0/{len(heads)} vao data_7.big (thieu file donor / mat)")
+        return {}
+    with open(out + ".tmp", "wb") as f:
+        f.write(data)
+    os.replace(out + ".tmp", out)
+    got = {int(heads[i]["pid"]): (i, int(heads[i]["row"]), int(heads[i]["donor"])) for i in ids}
+    log.append(f"data_7.big: {len(ids)}/{len(heads)} photo heads, {os.path.getsize(PHOTO_ORIG)} -> {len(data)} B")
+    return got
+
+
+def photo_heads(t, fld, by, heads):
+    """Dong engine cua mat 3D tu anh (nhu photo_heads cua fo4_season): dong player id cua cau thu va
+    cac dong khac cua anh ay dang mang dau chung (headclasscode 1) mac dau cua donor (truong FACE)
+    voi headassetid moi. Khong them dong (ENGINE_MAX_ROWS). heads = build_photo_heads(). Tra ve so dong."""
+    if not heads:
+        return 0
+    ha, hc = fld["headassetid"], fld["headclasscode"]
+    real = {}  # headassetid -> mot dong dau scan (donor chon o dong khong con / chua co)
+    for k in sorted(by, key=lambda k: (k >= 1000000, k)):
+        if t.get(by[k], hc[0]) + hc[1] == 0:
+            real.setdefault(t.get(by[k], ha[0]) + ha[1], by[k])
+    faces = {}
+    for pid, (hid, row, donor) in heads.items():
+        face = by.get(row)
+        if face is None or t.get(face, ha[0]) + ha[1] != donor or t.get(face, hc[0]) + hc[1] != 0:
+            face = real.get(donor)
+        if face is not None:
+            faces[pid] = (hid, face)
+    n = 0
+    for k in [k for k in by if k % 1000000 in faces]:
+        hid, face = faces[k % 1000000]
+        if k < 1000000 or t.get(by[k], hc[0]) + hc[1] == 1:
+            row = by[k]
+            for name in FACE:
+                sn = fld[name][0]
+                ty, bo, dep = t.fields[sn]
+                row = t.set(row, sn, int.from_bytes(face, "little") >> bo & (1 << dep) - 1)  # bit tho (ca so thuc)
+            by[k] = t.set(row, ha[0], hid - ha[1])
+            n += 1
+    return n
+
+
+def engine_db(db, meta, photo=None):
     import eadb
     heads = {int(k): v for k, v in json.load(open(HEADS)).items()}
     m = re.search(r'<table name="players" shortname="(\w+)".*?</table>', meta, re.S)
@@ -521,6 +625,8 @@ def engine_db(db, meta):
     # 65.234 dong (them ca 11 mua) lam game sap luc tai (2026-11-08). Chot ENGINE_MAX_ROWS, uu tien mua quan trong.
     SEASON_ROWS = (18, 19, 94, 76, 30, 93, 28, 27)  # 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME, UL, WL, UB, EL
     sp = fld["spid"]
+    n_photo = photo_heads(t, fld, by, photo)  # GM Tool: mat 3D tu anh (truoc card_looks: mat muon cua the van thang)
+    print(f"engine: {n_photo} rows wear a photo head ({len(photo or {})} heads)", flush=True)
     n_look = card_looks(t, fld, by, pk)  # GM Tool: mua rieng + mat muon (truoc mua huyen thoai: co dong truoc)
     print(f"engine: +{n_look} rows from the GM Tool (own seasons, borrowed faces)", flush=True)
     per_season = 0
@@ -580,7 +686,10 @@ def cmd_client(a):
         files[entry], want[entry] = (packed, usize), plain_db
         log.append(f"{entry}: {usize} B -> {len(packed)} B packed, slot {room[entry]}")
         print(log[-1], flush=True)
-    ng, n_new, miss = engine_db(bigdir.read(data0, NG_ENTRY), bigdir.read(data0, NG_META).decode("utf-8", "replace"))
+    photo = build_photo_heads(log)  # build/data_7.big (mat 3D tu anh) truoc: dong engine chi tro vao mat co file
+    if log and log[-1].startswith(("data_7.big", "photo heads")):
+        print(log[-1], flush=True)
+    ng, n_new, miss = engine_db(bigdir.read(data0, NG_ENTRY), bigdir.read(data0, NG_META).decode("utf-8", "replace"), photo)
     packed = refpack(ng)
     assert len(packed) < len(ng)
     files[NG_ENTRY] = (packed, len(ng))
@@ -662,6 +771,10 @@ def cmd_client(a):
     assert bigdir.read(label, LABEL_GFX) == gfx and bigdir.read(label, LABEL_DDS) == dds
     log.append(f"Label.big: {os.path.getsize(os.path.join(ORIG, 'Label.big'))} -> {os.path.getsize(label)} B")
     print(log[-1])
+    n_teams = build_teamnames()
+    if n_teams:
+        log.append(f"eng.big: TEAMNAMES + {n_teams} CLB moi (su nghiep CLB)")
+        print(log[-1], flush=True)
     open(os.path.join(BUILD, "client_log.txt"), "w").write("\n".join(log) + "\n")
 
 

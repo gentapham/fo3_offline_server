@@ -173,32 +173,36 @@
    "size": 348790
   },
   "HuongDan/index.html": {
-   "sha256": "8b74eda431388373c5bfe818d126a6f318fff9a3cea0e2140e9343fbced26684",
-   "size": 65393
+   "sha256": "b4ba1f436e5452fdf92091725c63562c5de3316252f2af40a8b93293bf8ae919",
+   "size": 68052
   },
   "Server/account_backup.py": {
    "sha256": "79b013d593b0ae933796475e1995fee2f008072d16ce8b5c7d96a7fdff478e28",
    "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "66e8c39b5759c3b3a8d6877968245f24000cf63c5aa2e29a9adcd5a9e7e4dc75",
-   "size": 79472
+   "sha256": "72a62a2e8ab965f7ad9827d540b19c58e118c050669cc3008657cb728c1f102a",
+   "size": 79591
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "e9f6e45bde5e5f0ea98aa2d186c556c6ef8c3fb2e073b64b0365e66dc009abca",
-   "size": 290893
+   "sha256": "6b0ae22b5fb0f15be616bf41c4ac753a9a278b117f6991bd9a447423fb210e5c",
+   "size": 337248
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
    "size": 3037
   },
   "Server/admin_db.py": {
-   "sha256": "f38cb58acd4326bd17987d7febe142eaf133ae2ecfc7e4355e931a877192d7df",
-   "size": 29596
+   "sha256": "035b24a546ef78d9a2c7d0d50f5240b68f4e08b8778462b0ccc78290765c68b9",
+   "size": 49302
+  },
+  "Server/admin_live.py": {
+   "sha256": "6765c43447f091beeb22942298262934f215ec87b68ef36f4fb68c1954c02a59",
+   "size": 7040
   },
   "Server/bot_settings.py": {
    "sha256": "32fe56db6df344cd122a23b1a2fd12b56e3ccd6687ac2cf7608ddb94c6a20a81",
@@ -207,6 +211,10 @@
   "Server/browser_links.py": {
    "sha256": "82208f6fd44c024e5925f071834667ed7cc7613a9390daf969852fde8c056842",
    "size": 735
+  },
+  "Server/chat.py": {
+   "sha256": "3db1699eec48f0f4881d3442afbd423502c2f2f15fa4e559b2c77960d3e57326",
+   "size": 20048
   },
   "Server/craft.py": {
    "sha256": "e8763e5933abe597d2dbf7ce9dd4ae3ff5ebb670c2d0b2651bc52e98417bb003",
@@ -220,6 +228,10 @@
    "sha256": "61d1468e8e1446a218776782d7c2a6538c2ddf1c0cace4d8b8c5b8ec6e5376eb",
    "size": 3074
   },
+  "Server/events.py": {
+   "sha256": "e3627db3411e36becb640e14b1ae6b2a8c5833fc47e734baf887c750354a42ad",
+   "size": 7757
+  },
   "Server/gamedata/card_index.json": {
    "sha256": "37153997bad6a58c875482fa2875c366ea68553c891c5dcea4f2deeecc99927b",
    "size": 6527311
@@ -227,6 +239,10 @@
   "Server/gamedata/club_catalog.json": {
    "sha256": "834c86b2e877c7093f0e4b22e62fb0cf06ff7a7274dacddb4d2621898fb80f8b",
    "size": 772111
+  },
+  "Server/gamedata/club_history.json": {
+   "sha256": "c2b64a81e24af8b65d33bd2aeb96294d1a62ce8905f43ad77ad7717a9e5e9255",
+   "size": 3623678
   },
   "Server/gamedata/fifadb.sqlite": {
    "sha256": "276557cd2cc0624ee508c7550978c5070daa3ced33a7a9a92d6df9edabd22a46",
@@ -257,8 +273,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "8d0a8ee5e0b519950d4fb88d52d0af32ff6f06b27ba9ad8af078a2ef13cabe7a",
-   "size": 346281
+   "sha256": "9c060dfb695584c905683e2edb99b06604e0cad747047b46c3215a1a5bc0bc60",
+   "size": 350694
   },
   "Server/item_ext.py": {
    "sha256": "a252d0a44932577769ee2c88db0d19aacaaf9e9bc69aeeea31ad5a83218f4d85",
@@ -268,9 +284,13 @@
    "sha256": "68dbb09cba12fd014466d0661ef862f8e3d6454b1e0307626a71eae9333fc64a",
    "size": 7427
   },
+  "Server/liveboost.py": {
+   "sha256": "0d30e9ee632039b2a3208b2bb7470a87ce22ff0bbaa3a8fc062ce4e24ad59280",
+   "size": 15072
+  },
   "Server/manager.py": {
-   "sha256": "20acc6e80d0870b3359b91ef5701c07f464540018e711d1c750d4e4f664e7bc9",
-   "size": 31424
+   "sha256": "7e966d275ee30a4a7c44560dbe9e2f6f0f377787e5f50c4d1bfb065cafc87f3d",
+   "size": 36652
   },
   "Server/market.py": {
    "sha256": "a7f92fede80f6e4c8509c20329e6ad4bb87f0960861c4107286730fb3a3925c6",
@@ -281,16 +301,16 @@
    "size": 6747
   },
   "Server/multiplay.py": {
-   "sha256": "77f74d09258b812405a3dfdefba7ae43baa4fb0df78cd4b9065569a73690992f",
-   "size": 22492
+   "sha256": "84cd66f6a992ffd8eca122e27d92294fb0acc97e040a28ee5d6c612f1d338dfa",
+   "size": 29960
   },
   "Server/price_settings.py": {
    "sha256": "fcf7cdcb737d14a25bf7deecc385b00f3ee893731ebb0ee9f0ac5879e024d806",
    "size": 3137
   },
   "Server/rank.py": {
-   "sha256": "f7e49ba1a5b38ed3ddde00146edde879b5f72dca955974bcaf43f785766e307a",
-   "size": 67579
+   "sha256": "08547d2a58d71ff328e3c26a07392687b28a1bdb9c99447537d861a0b67b2967",
+   "size": 72847
   },
   "Server/responses/account_base.json": {
    "sha256": "ac0939ac4d5aa1387d56fb57c4df91267ccc5af14892d9c7e956959dd70a81ab",
@@ -331,6 +351,10 @@
   "Server/responses/info_my_services_messenger_2.json": {
    "sha256": "c1c49bcb596762a48af1f3f8a4ad2da65c7fcbf42fe2d4f52ca3d1430c19a77c",
    "size": 56
+  },
+  "Server/responses/koth_rewards.json": {
+   "sha256": "2c48424e7dc75056b586641c56bf6f1178b207c9a9e5159299cd93cbb2ab0d20",
+   "size": 2473
   },
   "Server/responses/ladder_division_info.json": {
    "sha256": "6be535c391b6bd58a29b9979437d1d03be4fac618542aeb5f8cf8ebbc9e69383",
@@ -456,9 +480,17 @@
    "sha256": "c1529bd25ad4cf690cf630d9bc95cf0ec89ac7de21445ab22a4b55d535676076",
    "size": 10642
   },
+  "Server/responses/vm_channel_chat.json": {
+   "sha256": "18167cc9ce21d7e6cbd2999cc8afa6a12912627fb6068d2f3f4acc1728cb93b1",
+   "size": 10190
+  },
   "Server/responses/vm_chat.json": {
    "sha256": "fd015dd504b4a5c2c22c1f0ad89d9bdfda50ebc79dd38087e24cf54cd911b5d5",
    "size": 54762
+  },
+  "Server/responses/vm_news_chat.json": {
+   "sha256": "4dde4b78cac66bf3af3ab2215f61b297fb64050d8689d2e31af351fa6085149e",
+   "size": 1701
   },
   "Server/seasoncare.py": {
    "sha256": "cb0db5123dd2df9ae8be05080634ba3fc79c8eb8cf39696642042c5c43d68ec4",
@@ -469,16 +501,16 @@
    "size": 32390
   },
   "Server/tools/clientbuild/apply.py": {
-   "sha256": "2c12abc34576efbe8d634e74f26a95bf9ce39652e20ad28cbc681280067e4d93",
-   "size": 4004
+   "sha256": "c614b8829b4a1c750828b7da0a73f053e30c6194e407589380421165f70ecdea",
+   "size": 5936
   },
   "Server/tools/clientbuild/bc3best.py": {
    "sha256": "6c17fa7b596e909bf9a7856c78cb303d845b6d34d194ff883b6e9708680715ae",
    "size": 1966
   },
   "Server/tools/clientbuild/bigdir.py": {
-   "sha256": "44d9ae7ef38bea33b7ea9fbc2c6e00ef335eb5db34adc3d123997c8d17df5859",
-   "size": 4959
+   "sha256": "59480d5dcf023d32dfc7993b79469dc79fbfaf77018e7175d471b768b5a305f2",
+   "size": 6320
   },
   "Server/tools/clientbuild/build/fo4_heads.json": {
    "sha256": "8778bd39318d31a6163bb118002fa01b4b2337c54c332b102a74df350081ac86",
@@ -491,6 +523,10 @@
   "Server/tools/clientbuild/chunkzip.py": {
    "sha256": "716baeb3d0a50bb22b52aeb4a33ad4c24e888e0b9e1bba6f4005c7f117ec1363",
    "size": 1310
+  },
+  "Server/tools/clientbuild/club_history.py": {
+   "sha256": "945b4f4e36df273475e5e0b60a468eb7038c852eedd51c7d0336c9fde49e1c56",
+   "size": 23096
   },
   "Server/tools/clientbuild/eadb.py": {
    "sha256": "aeb3ca4513306e6aacf0d9c99e46e1169dcdfbaadf2e7127e10c50b1f4474423",
@@ -532,9 +568,17 @@
    "sha256": "5a796433ede01944877d735878a4468a71fa97a605a799d5318471544310f64b",
    "size": 1767
   },
+  "Server/tools/clientbuild/icons/76_hi.png": {
+   "sha256": "6b0ac2006d4f9920cbfdc9f8ba708d7258f40779110cdf1999b703fb4978a856",
+   "size": 8562
+  },
   "Server/tools/clientbuild/icons/94.png": {
    "sha256": "ee5716a4c3dec52f7d0d8db1e9bf450c509f0b52d693db2dc7fa294bb101a428",
    "size": 1947
+  },
+  "Server/tools/clientbuild/icons/94_hi.png": {
+   "sha256": "fe73c99dd3c203f0a762f9db4adce42bd0067d76a8601db47050a49ffb9bff19",
+   "size": 11157
   },
   "Server/tools/clientbuild/labelicons.py": {
    "sha256": "94f3b0559485a72cc5ae80c02cd481168962a264feb1849718e6329b77a129d8",
@@ -547,6 +591,14 @@
   "Server/tools/clientbuild/orig/data_0.big": {
    "sha256": "41fb18c33f4f9d84ec4f3a187c154d5489930044110ca11ffd1fbd7c3f41a9fa",
    "size": 74560206
+  },
+  "Server/tools/clientbuild/orig/data_7.big": {
+   "sha256": "e1746053ac97f0c799e019c0f192842ffed1492d9003f8be692ba3b83f11aae3",
+   "size": 5491
+  },
+  "Server/tools/clientbuild/photo_head.py": {
+   "sha256": "24777250e058355af59402493ac12342ba163dd32cf1f66231015d64da1ddd33",
+   "size": 35480
   },
   "Server/tools/clientbuild/pylib/PIL/AvifImagePlugin.py": {
    "sha256": "d64fe66e4ff27d628780faadd129f664d0e713d65a6bdcf4f946bd422d87d6ad",
@@ -1009,8 +1061,8 @@
    "size": 6181
   },
   "Server/tools/clientbuild/season.py": {
-   "sha256": "bc59f7ede815403223e98f7d77948d4c146c53a0cca976630f53db5fec8d5c86",
-   "size": 38943
+   "sha256": "91dc408b8732fe2474b976af91823c3809a81ffe3713b760df9eedf8667bbbbe",
+   "size": 44758
   },
   "Server/trade2.py": {
    "sha256": "03748dcaae7c8d9a3c06513b2669bc35799808ec161795c2f0041778cf272108",
@@ -185945,52 +185997,52 @@
    "size": 21005
   },
   "_cache/games/fo3sg/externalAssets/shop/93007601.png": {
-   "sha256": "6611f57b56791690d81e8f197f434913ef281d1443643b42afe1db8267e6fbdf",
-   "size": 20213
+   "sha256": "511628b9a255c563b32a756f7b91ae27ed3e6bd1f507052f481b2ed4a6536cfa",
+   "size": 20196
   },
   "_cache/games/fo3sg/externalAssets/shop/93007602.png": {
-   "sha256": "dd7dec0a96cf222c59b7933ad61bfccd482ce2e6f4bd08cdd9e0c61bc13fb228",
-   "size": 21464
+   "sha256": "20bdf3cd76f7a799a4ad8275c48dbf2351e0bd4a7d118d624a9373dd3dbc0adb",
+   "size": 21468
   },
   "_cache/games/fo3sg/externalAssets/shop/93007603.png": {
-   "sha256": "9df2a7fe7687601ebcc4c7200f3bda336da8bb39df46908baef860c9f38057ae",
-   "size": 21458
+   "sha256": "2126220c9876e351679755f86a1505311bb3080f9cecbac8d2bef0eac45ef53f",
+   "size": 21445
   },
   "_cache/games/fo3sg/externalAssets/shop/93007604.png": {
-   "sha256": "c0c061a70e153d9f23fc20e35902325b9e2e3a3dafdd58f846a8ce6a2ab90283",
-   "size": 21599
+   "sha256": "c7681596c658455cdc236ab38022b594168c9100bd232434def03acad5f727bb",
+   "size": 21587
   },
   "_cache/games/fo3sg/externalAssets/shop/93007605.png": {
-   "sha256": "909a2401f9795ee57496e5ab0bc1470a7963c780f18419fac0e2e7bef68037f8",
-   "size": 21429
+   "sha256": "eb225bf99514f24beb0dc477f061cef73d143cc6ba97b471c79b9e8860d17280",
+   "size": 21412
   },
   "_cache/games/fo3sg/externalAssets/shop/93007606.png": {
-   "sha256": "09c96404019211aedc696d149b34851e3cba127f6f741dcb7b0d7aeae9200650",
-   "size": 21403
+   "sha256": "de7db9e211dd2d50df3db47ba4cb7e8a5b117d0ec4029b2c07b1348dea07d077",
+   "size": 21379
   },
   "_cache/games/fo3sg/externalAssets/shop/93009401.png": {
-   "sha256": "7e86b9c6b693d8ccd4f183908f21c20c752789fc0f1312412f0fe37b79ae8f84",
-   "size": 20141
+   "sha256": "0d994e5521cb11c96cf727079e195a98549eb3cb7fc44e12b2f35e44f4c7dc1f",
+   "size": 18138
   },
   "_cache/games/fo3sg/externalAssets/shop/93009402.png": {
-   "sha256": "011e5a4b8321dfbeeef79f0b2846572a8881cb3b1c2ed6ab370a0f7f3e44f642",
-   "size": 21421
+   "sha256": "263fa472b1032b8588f49f8245deaf38fbb2c9cd681c2eac6572b35303da7847",
+   "size": 19412
   },
   "_cache/games/fo3sg/externalAssets/shop/93009403.png": {
-   "sha256": "c910f7a3978b0544db8327b1673fd81736f5a0e1efcb9719ac6958bc16e572fd",
-   "size": 21408
+   "sha256": "6768681c8685a3f72fdada8adbb2c99b848279969c258062d74d2c5653a8c7a4",
+   "size": 19382
   },
   "_cache/games/fo3sg/externalAssets/shop/93009404.png": {
-   "sha256": "5f590db451d0c3b7a7e9e1618cfa830aebbe88858184102857c61746e5612514",
-   "size": 21550
+   "sha256": "09c0ff623e71dd98d90dd97a00c76c232b1b778aa85fc212dd1222275783aead",
+   "size": 19527
   },
   "_cache/games/fo3sg/externalAssets/shop/93009405.png": {
-   "sha256": "16d61b41db60b68f78e19da4efad27a6f8f42a0d4ab84a5bf57fdf84a1b80bb4",
-   "size": 21367
+   "sha256": "f6efc867cba332a795f950bc06481dfb86b43bac2aa702e2c22a0d8caf363c75",
+   "size": 19359
   },
   "_cache/games/fo3sg/externalAssets/shop/93009406.png": {
-   "sha256": "ac5a061c284f55c0b1819ba985d2ab77c959396a597edd278e5fbb09691c6771",
-   "size": 21350
+   "sha256": "44383765ffef19088cd063d626887f64659d3e353e2f9f2a4f1ffa718c745d6b",
+   "size": 19319
   },
   "_cache/games/fo3sg/externalAssets/shop/95990001.png": {
    "sha256": "57cb4e4d77a170a88253bc69fa036d833007e66e985120240826ac38da5fbf16",
@@ -193261,7 +193313,7 @@
    "size": 167
   },
   "data/data_0.big": {
-   "sha256": "c0c6d2cc8c7c93f36866ef41fa14ef55ac031df46877e349d48c76aef4d05439",
+   "sha256": "7caad2932e4293a25869800646de3b53267449d1c1685ca081b789041c981e58",
    "size": 74560206
   },
   "data/loc/locale_eng.big.dl": {
@@ -193369,7 +193421,7 @@
    "size": 698064
   },
   "data/ui/MenuScreen.big": {
-   "sha256": "3a2cb59536023f621592fa7ac59674b6c599071eddc0f1668c64bb917e496a1e",
+   "sha256": "d3246e95426dee91e92513902f505d48b5086911e4a1cb5b803c0ad9d55b3f6a",
    "size": 482986
   },
   "data/ui/MultiplayGameSettingScreen.big": {
@@ -193561,20 +193613,20 @@
    "size": 1079740
   },
   "data/ui/libs/Module.big": {
-   "sha256": "ff10fa248ffd9d0d95d3baeb6b61a89f4a8b79a96eba0b0e89a0f1086bba0e8e",
+   "sha256": "c6fff7bcfd2c8d62b9e47e0e9491e1bf0cdb06534607ff8e02c55e674673859f",
    "size": 711936
   },
   "data/ui/localization/LANGUAGESTRING_ENG.json": {
-   "sha256": "02b44c9da3150ae28b3a2b75363bd35794ba3726c51d236b03b19d4c097b4d97",
-   "size": 839232
+   "sha256": "1e0b2732b22d4144a6bbb8b558efcd2bb669b3f787069c2f638b984caffbc2da",
+   "size": 839237
   },
   "data/ui/localization/TEAMNAMES_ENG.json": {
    "sha256": "b37fe770c8f0b236134fc3c7f6ab15cea5cc07d584e06ed150000b7ef975dee8",
    "size": 50338
   },
   "data/ui/localization/eng.big": {
-   "sha256": "3cdf35d0b446d94cfa508e5689bbeaf121f976fed35f2319a25ca33197fdac49",
-   "size": 98208
+   "sha256": "229929632eff628ceaf70dc969b69d18b09490ca0df05de35bb098c57e995ef8",
+   "size": 234590
   },
   "data/ui/localization/tha.big": {
    "sha256": "28c7c87b7b9f0958a1cc96575139442f96025dd4287286acd983d2639747777f",
@@ -193589,6 +193641,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1045",
- "notes": "GM Tool > Database: bạn bè cũng dùng được 'Áp dụng vào game' (gửi kèm bộ dựng client); sửa bộ dựng chạy bằng Python của launcher"
+ "version": "2026.11.10-1251",
+ "notes": "Port từ bản Indo: hiệp phụ + luân lưu ở Xếp hạng/KOTH; thưởng Rank/KOTH sửa trong GM Tool; sự nghiệp CLB tới mùa hiện tại (Team Color, lọc CLB ở Thị trường); Live Boost đội hình tiêu biểu tuần; quà thời gian chơi + popup quà đăng nhập; trình sửa nhiệm vụ tuần; chat kênh với HLV ảo; mặt 3D từ ảnh (GM Tool); bỏ 6 CLB không có áo (tránh crash); sửa 'undefined (3 món)'; logo gói PRIME/INFINITY mới; bỏ popup Cửa hàng đặc biệt"
 }

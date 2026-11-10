@@ -87,11 +87,7 @@ def patch(path, files, align=0x800, in_place=False, at=None):
                 continue
             off, size, usize = todo.pop(name)
             struct.pack_into(">III", t, p, enc(off), enc(size), enc(usize))
-            k = size & 0xFF  # name bytes are keyed by the size's low byte
-            for i, ch in enumerate(name.encode("latin1")):
-                d = ch ^ k
-                t[p + 16 + i] = ((d << 4) | (d >> 4)) & 0xFF
-                k = ((d or size & 0xFF) - 0x66) & 0xFF
+            t[p + 16:p + 16 + len(name)] = _name(name, size)
         assert not todo, f"not in {path}: {list(todo)}"
         if not in_place:
             struct.pack_into("<I", t, 4, end)  # archive size
@@ -100,17 +96,58 @@ def patch(path, files, align=0x800, in_place=False, at=None):
     return placed
 
 
-def read(path, name):
+def _name(name, size):
+    """A table entry's name bytes (keyed by the size's low byte)."""
+    out, k = bytearray(), size & 0xFF
+    for ch in name.encode("latin1"):
+        d = ch ^ k
+        out.append(((d << 4) | (d >> 4)) & 0xFF)
+        k = ((d or size & 0xFF) - 0x66) & 0xFF
+    return bytes(out)
+
+
+def raw(path, name):
+    """(an entry's bytes as stored, its usize)."""
     for n, off, size, usize in entries(path):
         if n == name:
             with open(path, "rb") as f:
                 f.seek(off)
-                data = f.read(size)
-            if usize and usize != size:
-                from refpack import unrefpack
-                data = unrefpack(data)
-            return data
+                return f.read(size), usize
     raise KeyError(name)
+
+
+def read(path, name):
+    data, usize = raw(path, name)
+    if usize and usize != len(data):
+        from refpack import unrefpack
+        data = unrefpack(data)
+    return data
+
+
+def tail(path):
+    """The table's bytes after its last entry (zeros and the packer's tag, e.g. "L286")."""
+    t = table(path)
+    p, name, *_ = list(_walk(t))[-1]
+    return t[p + 0x11 + len(name.encode("latin1")):]
+
+
+def build(files, tail=b"", align=0x40):
+    """A whole archive of [(name, bytes | (bytes as stored, usize))], data `align`-aligned."""
+    files = [(n, d if isinstance(d, tuple) else (d, 0)) for n, d in files]
+    head = 0x11 + sum(0x11 + len(n.encode("latin1")) for n, _ in files) + len(tail)
+    pos, at = -(-head // align) * align, []
+    for _, (data, _) in files:
+        at.append(pos)
+        pos = -(-(pos + len(data)) // align) * align
+    out = bytearray(b"BIg4" + struct.pack("<I", 0) + struct.pack(">II", enc(len(files)), enc(head)) + b"\0")
+    for (n, (data, usize)), off in zip(files, at):
+        out += struct.pack(">4I", enc(off), enc(len(data)), enc(usize), enc(len(n.encode("latin1"))))
+        out += _name(n, len(data)) + b"\0"
+    out += tail
+    for (_, (data, _)), off in zip(files, at):
+        out += bytes(off - len(out)) + data
+    struct.pack_into("<I", out, 4, len(out))
+    return bytes(out)
 
 
 if __name__ == "__main__":

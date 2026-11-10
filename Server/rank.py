@@ -12,7 +12,7 @@
   Ladder_MGR_PvP_1v1 (man doi hinh -> man cai dat MultiplayGameSettingScreen -> da).
 - Phong cung dung cho Giao huu / dau voi may / KOTH / Exhibition (room_kind; xem multiplay.py). Feature flags them o GET /account (tat duoc o
   GM Tool > Tran dau > Xep hang).
-Cai dat: gamedata/rank_settings.json {enabled, chat}.
+Cai dat: gamedata/rank_settings.json {enabled, chat}; thuong mua / tuan: gamedata/ladder_rewards.json (ladder_rewards).
 """
 import calendar
 import copy
@@ -179,7 +179,8 @@ def vm_crowd(sid, day, hour):
 def vm_thirds():
     """CLB theo suc manh moi giai (club_rating): moi choi = 1/3 yeu, trung binh = giua, cao thu = manh."""
     thirds = ([], [], [])
-    for _, leagues in hc.club_index():
+    # all_clubs (ca CLB khong co ao): giu nguyen CLB cua cac HLV ao khac; vm_make doi rieng CLB khong co ao
+    for _, leagues in hc.all_clubs():
         for lid, teams in leagues:
             if lid == 78:  # doi tuyen quoc gia
                 continue
@@ -198,8 +199,10 @@ def vm_make(rnd, n, name, tier, played=True):
     wins = [round(g * min(0.8, 0.35 + (e - 1000) / 2000)) for g, e in zip(games, elo)]
     forfeits = [rnd.randint(0, g // 25) for g in games]
     pool = thirds[tier] or thirds[0] or [hc.gen_teams.DEFAULT_TEAMS[0]]
+    # CLB khong co ao (da voi -> game crash): CLB ke tiep cung nhom co ao, khong boc them (cac HLV khac giu CLB)
+    kit = lambda t: next((c for c in pool[pool.index(t):] + pool if hc.has_kit(c)), t)
     return {"_id": f"vm{n:04d}", "name": name, "level": rnd.randint(*levels),
-            "teamid": rnd.choice(pool), "grade": rnd.randint(*grades),
+            "teamid": kit(rnd.choice(pool)), "grade": rnd.randint(*grades),
             "elo": elo, "wins": wins, "forfeits": forfeits,
             "losses": [g - w - f for g, w, f in zip(games, wins, forfeits)]}
 
@@ -442,6 +445,70 @@ def ladder_division(elo):
     return next((d["name"] for d in ladder_divisions() if elo >= d["rating"]), ladder_divisions()[-1]["name"])
 
 
+# --------------------------------------------------------------------------- thuong Rank
+# Port fo3-server-indo e341d54: /ladder/reward/info {divs [{name DIVISION_<hang>, items [chinh, phu]}],
+# wins [{from, items}]} (khung giua man Rank). GM Tool > Xep hang HLV ao ghi gamedata/ladder_rewards.json
+# de len responses/ladder_reward_info.json (mac dinh). Truoc chi de xem; nay tra vao Tui:
+# - moc so tran thang trong tuan ISO: ladder_total.midrewardable -> client POST /ladder/reward ->
+#   {result, rewards {wins [[o vat pham]]}} (LadderWeeklyRewardPopup hien wins[0]);
+# - het mua: luc mua moi bat dau, thuong chinh theo hang cua che do diem cao nhat cuoi mua, thuong phu
+#   cua moi che do khac da choi. Mua truoc van "rewarded" (popup thuong mua can ban ghi server khong giu).
+LADDER_REWARDS_FILE = None  # gamedata/ladder_rewards.json (dat trong install)
+DIVISION_VI = {"AMATEUR": "Nghiệp dư", "SEMIPRO": "Bán chuyên", "PROFESSIONAL": "Chuyên nghiệp",
+               "WORLDCLASS": "Cấp thế giới", "LEGENDARY": "Huyền thoại"}
+
+
+def division_vi(name):
+    """"LEGENDARY_A" / "DIVISION_LEGENDARY_A" -> "Huyền thoại A"."""
+    head, _, tail = str(name).replace("DIVISION_", "").partition("_")
+    return (DIVISION_VI.get(head, head.title()) + (" " + tail if tail else "")).strip()
+
+
+def ladder_rewards():
+    for f in (LADDER_REWARDS_FILE, os.path.join(hc.RESPONSES, "ladder_reward_info.json")):
+        try:
+            with open(f, encoding="utf-8") as fh:
+                d = json.load(fh)
+            if isinstance(d, dict) and isinstance(d.get("divs"), list) and isinstance(d.get("wins"), list):
+                return d
+        except (OSError, TypeError, ValueError):
+            continue
+    return {"divs": [], "wins": []}
+
+
+def ladder_week(st):
+    """Tuan ISO nay: {week, wins, paid [from]} cua cac tran Rank cua toi (tren HLV: mua co the bat dau giua tuan)."""
+    week, wk = time.strftime("%G%V", time.gmtime()), hc.my_coach(st).setdefault("ladderweek", {})
+    if wk.get("week") != week:
+        wk.clear()
+        wk.update(week=week, wins=0)
+    wk.setdefault("wins", 0)
+    wk.setdefault("paid", [])
+    return wk
+
+
+def ladder_week_due(st):
+    """Cac moc thang tuan da dat ma chua tra: [{from, items}]."""
+    wk = ladder_week(st)
+    return [w for w in ladder_rewards()["wins"] if w["from"] <= wk["wins"] and w["from"] not in wk["paid"]]
+
+
+def ladder_season_pay(st, prev):
+    """Thuong mua prev vua xong vao Tui (xem ladder_rewards); None neu khong co gi."""
+    games, elo = prev.get("games") or [], prev.get("elo") or []
+    played = [i for i, g in enumerate(games) if g and i < len(elo)]
+    if not played:
+        return None
+    divs = {d["name"]: d["items"] for d in ladder_rewards()["divs"]}
+    best = max(played, key=lambda i: elo[i])
+    items = [it for i in played for it in divs.get(f"DIVISION_{ladder_division(elo[i])}", [])[0 if i == best else 1:][:1]]
+    if not items:
+        return None
+    y, mo = divmod(int(prev.get("sid") or 0), 100)
+    return hc.bag_add(st, f"Thưởng mùa Rank {mo}/{y}", items,
+                      msg=f"Hạng cao nhất cuối mùa: {division_vi(ladder_division(elo[best]))}.")
+
+
 def my_ladder(st):
     """Ban ghi mua nay cua HLV dang choi: {sid, elo [i], high [i], wins, losses, draws, games, elos [i] [[elo, ymd]]}."""
     sid = ladder_season()[0]
@@ -452,6 +519,8 @@ def my_ladder(st):
     if lad.get("sid") != sid or len(lad.get("elo") or ()) != LADDER_COUNT:
         if any(lad.get("games") or ()):  # mua cu: man thanh tich mua truoc, diem cao nhat
             coach["ladderprev"] = copy.deepcopy(lad)
+            if lad.get("sid") != sid:  # het mua (khong phai doi so che do cung mua): thuong vao Tui
+                ladder_season_pay(st, lad)
             coach["ladderbest"] = [max(b, h) for b, h in zip(coach.get("ladderbest") or lad["high"], lad["high"])]
         lad.clear()
         lad.update(sid=sid, elo=[LADDER_START] * LADDER_COUNT, high=[LADDER_START] * LADDER_COUNT,
@@ -492,7 +561,7 @@ def ladder_statistics(st):
     seasons = [ladder_season_record(lad, rank)]
     prev = coach.get("ladderprev")
     if prev and len(prev.get("elo") or ()) == LADDER_COUNT:
-        # rewarded: chua co thuong cuoi mua; thieu thi LadderMatchFrontScreen.checkSeasonReward POST
+        # rewarded: thuong mua da vao Tui luc mua moi bat dau (ladder_season_pay); thieu thi LadderMatchFrontScreen.checkSeasonReward POST
         # /ladder/reward moi lan vao va mo popup thuong mua (TypeError)
         # mua truoc dat dau: Info Manager / popup ho so lay mua CUOI lam mua hien tai (man Rank tim theo sid)
         seasons.insert(0, {**ladder_season_record(prev, [1 + sum(m["elo"][i] > e for m in virtual_managers()) if g else 0
@@ -529,7 +598,8 @@ def ladder_my_info(st):
         week = hc.my_coach(st).get("ladderweek") or {}
         wins = week.get("wins", 0) if week.get("week") == time.strftime("%G%V", time.gmtime()) else 0
         out["ladder_total"] = {"highelo": lad["high"][best], "hightype": LADDER_TYPES[best],
-                               "playedgames": sum(lad["games"]), "totalwins": wins, "midrewardable": False}
+                               "playedgames": sum(lad["games"]), "totalwins": wins,
+                               "midrewardable": bool(ladder_week_due(st))}  # checkMidReward: POST /ladder/reward
     else:
         # chua choi tran nao: ban ghi "chua co du lieu" (LadderMatchFrontRecordWindow doc
         # _rankedInfo.ladder_total; thieu -> TypeError #1009 - da gap truoc day)
@@ -585,10 +655,7 @@ def ladder_record(st, i, vm, mine, theirs, sh=0, sa=0):
             top[i] = min(top[i] or pos, pos)
     except Exception as e:
         print(f"ladder record: {e!r}", flush=True)
-    week, wk = time.strftime("%G%V", time.gmtime()), me.setdefault("ladderweek", {})
-    if wk.get("week") != week:
-        wk.update(week=week, wins=0)
-    wk["wins"] += score == 1
+    ladder_week(st)["wins"] += score == 1  # so tran thang tuan nay (ladder_total, moc thuong tuan)
     return score
 
 
@@ -615,8 +682,25 @@ def ep_ladder_season_info(query, body):
 
 
 def ep_ladder_reward(query, body):
-    """POST /ladder/reward (thuong cuoi mua): chua co thuong; mua truoc danh dau rewarded nen client khong goi."""
-    return hc._json({"result": False, "reason": "LADDER_ALREADY_REWARDED"})
+    """POST /ladder/reward (LadderMatchFrontScreen.checkMidReward): cac moc thang tuan da dat -> Tui.
+    Thuong mua tra luc mua moi bat dau (ladder_season_pay); mua truoc danh dau rewarded nen client khong
+    goi de nhan thuong mua."""
+    st = hc._state()
+    due = ladder_week_due(st)
+    if not due:
+        return hc._json({"result": False, "reason": "LADDER_ALREADY_REWARDED"})
+    items = [it for w in due for it in w["items"]]
+    for w in due:
+        hc.bag_add(st, f"Thưởng Rank tuần: {w['from']} trận thắng", w["items"],
+                   msg=f"Đã thắng {w['from']} trận Rank trong tuần này.")
+        ladder_week(st)["paid"].append(w["from"])
+    hc._save(st)
+    return hc._json({"result": True, "rewards": {"wins": [[{**it, "staticdata": hc.item_def(it["itemid"])} for it in items]]}})
+
+
+def ep_ladder_reward_info(query, body):
+    """GET /ladder/reward/info: thuong Rank dang dung (GM Tool sua duoc, xem ladder_rewards)."""
+    return hc._json(ladder_rewards())
 
 
 def ep_contact_list(query, body):
@@ -1016,6 +1100,10 @@ def ladder_match(st, room):
                              vm_side(vm, i if kind == "ladder" else None))
         away = vm["teamid"]
     hc.apply_prematch(st, match)
+    if kind in ("ladder", "koth"):
+        # hoa sau 90 phut -> 2 hiep phu roi luan luu (Enums.DRAWMODE_EXTRATIME = 1, native end rule 9; ban Indo
+        # b2cd8e7). Ket qua luan luu ve matchStats home/away.shootout (ladder_result / koth da tinh)
+        match["gamesettings"]["drawMode"] = 1
     # muc Giai dau 10..24 theo Elo doi thu; dau voi may: do kho o chon may 0..4 (Nghiep du..Huyen thoai)
     match["gamesettings"]["difficulty"] = (max(0, min(4, int(room.get("AI", {}).get("index", {}).get("difficulty") or 0)))
                                            if kind == "vscom" else 10 + min(14, (vm["elo"][i] - LADDER_START) // 55))
@@ -1227,9 +1315,10 @@ RANK_MENU = {"ladder1on1": {}, "manager": {}, "ladder": {}}
 
 
 def install(module):
-    global hc, SETTINGS_FILE
+    global hc, SETTINGS_FILE, LADDER_REWARDS_FILE
     hc = module
     SETTINGS_FILE = os.path.join(hc.HERE, "gamedata", "rank_settings.json")
+    LADDER_REWARDS_FILE = os.path.join(hc.HERE, "gamedata", "ladder_rewards.json")
     hc.rank = sys.modules[__name__]
     vid = r"(vm\d{4})"
     hc.ROUTES[:0] = [
@@ -1264,6 +1353,9 @@ def install(module):
     })
     # responses/contact_list.json (danh sach rong cu) khong duoc che ham nay
     hc.DYNAMIC_PATHS.add("/contact/list")
+    # thuong Rank: responses/ladder_reward_info.json chi la mac dinh, GM Tool ghi de bang gamedata/ladder_rewards.json
+    hc.ENDPOINTS["/ladder/reward/info"] = ep_ladder_reward_info
+    hc.DYNAMIC_PATHS.add("/ladder/reward/info")
     hc.BACKGROUND.append(presence_loop)
     hc.BACKGROUND.append(warm)
     # PresenceProxy (moi game) doc /presence/me {status}: "online" = nhan loi moi
