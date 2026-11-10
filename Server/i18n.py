@@ -250,7 +250,22 @@ def apply_game(lang=None):
         if os.path.isdir(os.path.dirname(dst)) and _write(dst, data):
             changed.append(os.path.relpath(dst, GAME))
     _music_pending()
+    _gamepad_aliases()
     return changed
+
+
+def _gamepad_aliases():
+    """Them ten tay cam X-input cua may vao buttonDataXenon.ini (gamepad.py) truoc khi mo game."""
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("fo3_gamepad", os.path.join(HERE, "gamepad.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        added = mod.ensure_aliases()
+        if added:
+            print("Tay cầm: đã thêm", ", ".join(added), flush=True)
+    except Exception as e:
+        print("Tay cầm:", e, flush=True)
 
 
 def _music_pending():
