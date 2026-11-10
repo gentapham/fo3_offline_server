@@ -22,7 +22,7 @@ Queries are cached in %TEMP%/club_history_cache (a rerun resumes; --fresh asks W
 Then tools/clientbuild/apply.py (GM Tool > Database > Ap dung vao game) puts the rows in
 the client's fifadb and the new clubs' names in its TEAMNAMES files.
 """
-import argparse, collections, difflib, hashlib, json, os, re, sqlite3, sys, tempfile, time, urllib.parse, urllib.request
+import argparse, collections, hashlib, json, os, re, sqlite3, sys, tempfile, time, urllib.parse, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))  # Server/tools/clientbuild
 ROOT = os.path.dirname(os.path.dirname(HERE))       # Server
@@ -189,6 +189,7 @@ def club_ids(clubs, careers, matched, old, ea):
         names = [info["en"], info["short"], *info["aliases"]]
         if votes[club]:
             team, n = votes[club].most_common(1)[0]
+            import difflib  # chi luc tai tu Wikidata; Python cua launcher khong co difflib (Ap dung vao game)
             like = max(difflib.SequenceMatcher(None, norm(ea.get(str(team), "")), norm(x)).ratio() for x in names if x)
             if (n >= 2 and n >= 0.6 * sum(votes[club].values())) or like >= 0.6:
                 out[club] = team

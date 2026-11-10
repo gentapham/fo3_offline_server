@@ -1561,8 +1561,8 @@
    "size": 1310
   },
   "Server/tools/clientbuild/club_history.py": {
-   "sha256": "945b4f4e36df273475e5e0b60a468eb7038c852eedd51c7d0336c9fde49e1c56",
-   "size": 23096
+   "sha256": "ca7651762cf1f71b8cb8be7067c076014e45a6ac0847a252b5608b50cb20c0aa",
+   "size": 23199
   },
   "Server/tools/clientbuild/eadb.py": {
    "sha256": "aeb3ca4513306e6aacf0d9c99e46e1169dcdfbaadf2e7127e10c50b1f4474423",
@@ -194673,6 +194673,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1946",
- "notes": "GM Tool: báo rõ 'HLV chưa có đội' thay cho lỗi KeyError '0' khi vừa tạo HLV mà chưa chọn CLB"
+ "version": "2026.11.10-1951",
+ "notes": "Sửa lỗi 'No module named difflib' khi bấm Áp dụng vào game ở GM Tool > Database (máy bạn bè)"
 }
