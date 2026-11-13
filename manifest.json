@@ -194513,7 +194513,7 @@
    "size": 249504
   },
   "data/ui/SquadAssets.big": {
-   "sha256": "694cbe5a8797a3c74609d02fb294886c7d0317b5ca395d273cab13f1c538d6db",
+   "sha256": "ecfc05a9a80b4d2088b3be7f240105cb5a2e73db0fafcc3416133b10bf0df16e",
    "size": 260032
   },
   "data/ui/StartScreen.big": {
@@ -194673,6 +194673,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.10-1951",
- "notes": "Sửa lỗi 'No module named difflib' khi bấm Áp dụng vào game ở GM Tool > Database (máy bạn bè)"
+ "version": "2026.11.13-2105",
+ "notes": "Sửa lỗi thay người trong trận: lượt thay 4-5 ở màn thay người thứ hai làm mất cầu thủ (11 còn 8) và bắt thay đủ 5 mới đá tiếp"
 }
