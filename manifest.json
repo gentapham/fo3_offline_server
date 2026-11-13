@@ -189,8 +189,8 @@
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "4c07f65fa26405033b835c3fd4dc78f1a406453ca18c7fbada30a31c53425b42",
-   "size": 371629
+   "sha256": "6053f891c2f57fa974be6102880b310891b75a2f744390d938787a2a8d2f18a1",
+   "size": 366974
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -194677,6 +194677,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.13-2143",
- "notes": "Port từ bản Indo (issue #44): giải phóng cầu thủ hoạt động thật; cầu thủ vào thay được kinh nghiệm; ảnh quà cửa sổ Nhiệm vụ/Shop GP không bị kéo dãn; mũi tên phong độ cạnh tên cầu thủ; GM Tool > Gói thẻ & Túi đồ: sửa danh sách Hợp đồng cầu thủ (ghép mảnh)"
+ "version": "2026.11.13-2249",
+ "notes": "GM Tool > Giá EP thẻ: sửa lỗi hệ số giá theo mùa không hiện danh sách / không xoá được (trùng bảng với tab Thêm hàng loạt)"
 }
