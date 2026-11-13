@@ -42,14 +42,43 @@ FEE = 0  # mien phi (SHOP_FREE / ban offline)
 NAME_FIX = {20801: "C. Ronaldo"}
 NOUSE = "Vật phẩm này dùng trong Quản lý cầu thủ > Mảnh ghép cầu thủ."
 RECIPES = {}  # recipeid: {"spid", "piece"}
+# GM Tool > Goi the & Tui do > Hop dong cau thu (ban Indo e19f77e, issue #44): gamedata/craft.json
+#   {"cards": [spid...] (danh sach ghep, theo thu tu; null = mac dinh BASE + EXTRA), "pieces", "fee", "grade",
+#    "super_max", "ids": {spid: stt manh}}. Stt manh cua moi the co dinh mai mai (manh trong kho giu dung cau thu):
+#   the mac dinh giu stt cu, the GM them nhan stt trong tiep theo (< 100). Bo the khoi danh sach: manh van con.
+CONF = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gamedata", "craft.json")
+PIECE_IDS = {}  # spid: stt manh (moi the tung co cong thuc)
+
+
+def load_conf():
+    try:
+        c = hc.json.load(open(CONF, encoding="utf-8"))
+    except (OSError, ValueError, AttributeError):
+        c = {}
+    return c if isinstance(c, dict) else {}
+
+
+def settings():
+    c = load_conf()
+    num = lambda k, d, lo, hi: max(lo, min(hi, int(c.get(k, d)))) if str(c.get(k, d)).lstrip("-").isdigit() else d
+    return {"pieces": num("pieces", PIECES_NEEDED, 1, 999), "fee": num("fee", FEE, 0, 10 ** 12),
+            "grade": num("grade", RESULT_GRADE, 1, 20), "super_max": num("super_max", SUPER_MAX, 0, 999),
+            "cards": c.get("cards") if isinstance(c.get("cards"), list) else None}
+
+
+def result_grade():
+    cap = getattr(hc, "card_cap", None)
+    return min(settings()["grade"], cap() if cap else 20)
 
 
 def build():
+    st = settings()
+    pieces_needed = st["pieces"]
     items = {
         CONTRACT: ("Hợp đồng ghép cầu thủ", CONTRACT_ICON, "CRAFT_CONTRACT", {"nouse": NOUSE},
                    f"Cần {CONTRACTS_NEEDED} hợp đồng cho mỗi lần ghép thẻ ở tab Mảnh ghép cầu thủ."),
         SUPER: ("Siêu nguyên liệu WORLD BEST", SUPER_ICON, "CRAFT_MATERIAL", {"nouse": NOUSE},
-                f"Thay thế mảnh ghép còn thiếu khi ghép thẻ (tối đa {SUPER_MAX} mảnh mỗi lần)."),
+                f"Thay thế mảnh ghép còn thiếu khi ghép thẻ (tối đa {st['super_max']} mảnh mỗi lần)."),
     }
     labels = {code: lab for lab, codes, _ in getattr(hc, "FA_SEASONS", ()) for code in codes}
     shop = os.path.join(hc.ASSETS, "externalAssets", "shop")
@@ -65,27 +94,62 @@ def build():
             if spid not in have and c.execute("SELECT 1 FROM players WHERE spid = ?", (spid,)).fetchone():
                 have.add(spid)
                 cards.append((spid, spid % 1000000, labels.get(spid // 1000000, f"S{spid // 1000000}")))
-        for n, (spid, playerid, label) in enumerate(cards, 1):
-            assert n < 100, "PIECE_BASE + n trung CONTRACT"
+        ids = {int(spid): n for n, (spid, _, _) in enumerate(cards, 1)}  # stt cu (giu nguyen thu tu xua)
+        for k, v in (load_conf().get("ids") or {}).items():  # the GM Tool da them (stt luu trong craft.json)
+            if str(k).isdigit() and isinstance(v, int) and 0 < v < 100 and v not in ids.values():
+                ids.setdefault(int(k), v)
+        PIECE_IDS.clear(); PIECE_IDS.update(ids)
+        enabled = [int(x) for x in st["cards"] if str(x).isdigit()] if st["cards"] is not None else [s for s, _, _ in cards]
+        RECIPES.clear()
+        grade = result_grade()
+        for spid, n in sorted(ids.items(), key=lambda kv: kv[1]):
+            row = c.execute("SELECT playerid FROM players WHERE spid = ?", (spid,)).fetchone()
+            if row is None:
+                continue
+            playerid = row[0]
+            label = next((lab for s_, _, lab in cards if s_ == spid), None) or labels.get(spid // 1000000, f"S{spid // 1000000}")
             name = NAME_FIX.get(playerid) or (gen_teams.jersey_name(c, playerid) or str(spid)).title()
             piece = PIECE_BASE + n
             icon = piece if os.path.isfile(os.path.join(shop, f"{piece}.png")) else PIECE_ICON
             items[piece] = (f"Mảnh ghép {name} ({label})", icon, "PLAYER_PIECE", {"nouse": NOUSE},
-                            f"Gom {PIECES_NEEDED} mảnh + {CONTRACTS_NEEDED} hợp đồng để ghép thẻ "
-                            f"{name} {label} +{RESULT_GRADE} (Quản lý cầu thủ > Mảnh ghép cầu thủ).")
-            RECIPES[1000 + n] = {"spid": int(spid), "piece": piece}
+                            f"Gom {pieces_needed} mảnh + {CONTRACTS_NEEDED} hợp đồng để ghép thẻ "
+                            f"{name} {label} +{grade} (Quản lý cầu thủ > Mảnh ghép cầu thủ).")
+        for spid in enabled:
+            if spid in ids and (PIECE_BASE + ids[spid]) in items:
+                RECIPES[1000 + ids[spid]] = {"spid": spid, "piece": PIECE_BASE + ids[spid]}
     return items
 
 
+def assign_id(spid):
+    """Stt manh cho the moi them (trong tiep theo, < 100); None khi da het cho."""
+    if spid in PIECE_IDS:
+        return PIECE_IDS[spid]
+    used = set(PIECE_IDS.values())
+    n = next((i for i in range(1, 100) if i not in used), None)
+    if n is not None:
+        PIECE_IDS[spid] = n
+    return n
+
+
+def reload():
+    """Ap craft.json ngay (GM Tool luu): dung lai vat pham manh + cong thuc."""
+    old = [i for i in hc.ITEMS if PIECE_BASE < i < PIECE_BASE + 100 or i in (CONTRACT, SUPER)]
+    new = build()
+    for i in old:
+        if i not in new:
+            hc.ITEMS.pop(i, None)
+    hc.ITEMS.update(new)
+
+
 def recipe_json(rid):
-    r = RECIPES[rid]
+    r, st, grade = RECIPES[rid], settings(), result_grade()
     return {"recipeid": rid, "category": "player",
-            "result": {"normal": {"id": r["spid"], "grade": RESULT_GRADE,
-                                  "price": hc.card_price(r["spid"], RESULT_GRADE)}},
-            "materials": [{"itemid": r["piece"], "count": PIECES_NEEDED,
-                           "replace": {"itemid": SUPER, "max": SUPER_MAX}},
+            "result": {"normal": {"id": r["spid"], "grade": grade,
+                                  "price": hc.card_price(r["spid"], grade)}},
+            "materials": [{"itemid": r["piece"], "count": st["pieces"],
+                           "replace": {"itemid": SUPER, "max": st["super_max"]}},
                           {"itemid": CONTRACT, "count": CONTRACTS_NEEDED}],
-            "money": {"ep": FEE}}
+            "money": {"ep": st["fee"]}}
 
 
 def ep_recipes(query, body):
@@ -100,7 +164,8 @@ def ep_mixin(rid, query, body):
     rid = int(rid)
     if rid not in RECIPES:
         return fail("Công thức không tồn tại.")
-    r = RECIPES[rid]
+    r, cfg = RECIPES[rid], settings()
+    PIECES_NEEDED, SUPER_MAX, FEE, RESULT_GRADE = cfg["pieces"], cfg["super_max"], cfg["fee"], result_grade()
     req = hc.json.loads(body or b"{}")
     st = hc._state(); slot = hc._default_slot(st); team = st["teams"][str(slot)]; coach = hc.my_coach(st)
     inv = {i["itemid"]: i for i in coach.get("items", []) if i.get("remains", 0) > 0}

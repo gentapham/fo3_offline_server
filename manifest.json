@@ -181,20 +181,24 @@
    "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "25d75c305468dbdbc0e80c9f177da02ca4d0cff5c776569e73f0721f23af1dbd",
-   "size": 81591
+   "sha256": "2e16baefaff779c0692caad9ea84b7cab63e3c524c40f21e14392587d79b7e4b",
+   "size": 79898
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "c751369d06e6b72f87939abb604c7b58e0d27aaffcedd4c63b83c3edcb58a8ff",
-   "size": 365713
+   "sha256": "4c07f65fa26405033b835c3fd4dc78f1a406453ca18c7fbada30a31c53425b42",
+   "size": 371629
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
    "size": 3037
+  },
+  "Server/admin_craft.py": {
+   "sha256": "4ac554845636e0fff09ebb49b8d27c94d6fec5bfdb5cd3001d35fc466806f7a6",
+   "size": 3095
   },
   "Server/admin_db.py": {
    "sha256": "035b24a546ef78d9a2c7d0d50f5240b68f4e08b8778462b0ccc78290765c68b9",
@@ -221,8 +225,8 @@
    "size": 20048
   },
   "Server/craft.py": {
-   "sha256": "e8763e5933abe597d2dbf7ce9dd4ae3ff5ebb670c2d0b2651bc52e98417bb003",
-   "size": 8026
+   "sha256": "05a9de4bd623359bd050499adb8fbb023dd8e533f85a140884e5addbf0d58462",
+   "size": 11237
   },
   "Server/draftpack.py": {
    "sha256": "af65253d3a78e92aab1f33d44c8efc9721956252e4117c31db5b294f53ffa753",
@@ -1277,8 +1281,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "4fc693267998b6ef311df84523c12cc82b9ffddd083cfe66bf1c8ab47e4339b1",
-   "size": 347844
+   "sha256": "8f4e006c60b3aecf850f8a166550c9c3d6aa77bea92e6da8c917fe875e50b9e5",
+   "size": 358726
   },
   "Server/i18n.py": {
    "sha256": "bdc9615cde35a8a59b657e43f025c93b2d063488b2a3b60e9dd71890f9eb0379",
@@ -1289,8 +1293,8 @@
    "size": 1537
   },
   "Server/lang/en.json": {
-   "sha256": "1883ef6fc664aab94b7d94aba10823a94d751e72cad1bff606064bd1d229c116",
-   "size": 317785
+   "sha256": "3f2b473b8e1bd2232ba201387d0736446812d10c0ecaa7072f81de487a611c31",
+   "size": 320212
   },
   "Server/lang/game/LANGUAGESTRING_EN.json": {
    "sha256": "42b811bbe396a85e2c9739b35bbe81f4eea5835c722af45c4191a793cfbfffaf",
@@ -1309,8 +1313,8 @@
    "size": 2980
   },
   "Server/lang/th.json": {
-   "sha256": "c1efaf427d23498645255070fa23e84b8c656e270aa827601ac3d757cda4d375",
-   "size": 468465
+   "sha256": "6a75292e243b5ac600c6ab17463b0225bb30f3434b89d88d351af9ecda6ed284",
+   "size": 472402
   },
   "Server/levelreward.py": {
    "sha256": "68dbb09cba12fd014466d0661ef862f8e3d6454b1e0307626a71eae9333fc64a",
@@ -1321,8 +1325,8 @@
    "size": 15072
   },
   "Server/manager.py": {
-   "sha256": "7e966d275ee30a4a7c44560dbe9e2f6f0f377787e5f50c4d1bfb065cafc87f3d",
-   "size": 36652
+   "sha256": "829ed918439c2a0911a8754b6a3905413c837c912ce775c9ea423109915d3f6b",
+   "size": 36891
   },
   "Server/market.py": {
    "sha256": "837b8b6c874f446747e2492df4dbc574089741dd9ea825f71d7b9a8b64b24c50",
@@ -194673,6 +194677,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.13-2105",
- "notes": "Sửa lỗi thay người trong trận: lượt thay 4-5 ở màn thay người thứ hai làm mất cầu thủ (11 còn 8) và bắt thay đủ 5 mới đá tiếp"
+ "version": "2026.11.13-2143",
+ "notes": "Port từ bản Indo (issue #44): giải phóng cầu thủ hoạt động thật; cầu thủ vào thay được kinh nghiệm; ảnh quà cửa sổ Nhiệm vụ/Shop GP không bị kéo dãn; mũi tên phong độ cạnh tên cầu thủ; GM Tool > Gói thẻ & Túi đồ: sửa danh sách Hợp đồng cầu thủ (ghép mảnh)"
 }

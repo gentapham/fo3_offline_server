@@ -1781,3 +1781,4 @@ def _safe(fn):
 import admin_db  # noqa: E402,F401  GM Tool > Database (dang ky API khi nap admin)
 import admin_live  # noqa: E402,F401  thuong thoi gian choi, nhiem vu tuan, Live Boost, chat kenh (port indo a0b49dd)
 import admin_music  # noqa: E402,F401  GM Tool > Nhac nen (mp3 -> EA Trax)
+import admin_craft  # noqa: E402,F401  GM Tool > Hop dong cau thu (ghep manh, craft.json)

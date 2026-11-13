@@ -20,7 +20,7 @@ https://APSEODESK172 (port 443) for /info/server/locale etc. — no launch arg
 overrides it — so run `http_config.py 443 --tls` and map APSEODESK172 to
 127.0.0.1 in the hosts file.
 """
-import bisect, collections, functools, gzip, http.server, math, os, random, re, sqlite3, ssl, statistics, sys, threading, time
+import bisect, collections, functools, gzip, hashlib, http.server, math, os, random, re, sqlite3, ssl, statistics, struct, sys, threading, time, zlib
 
 try:  # in tieng Viet co dau an toan ca khi output bi chuyen huong
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -157,8 +157,40 @@ def fetch_face(path):
     return None
 
 
+# Cua so Nhiem vu (AchievementQuestRewardBox) keo anh qua vao khung 174 x 140 (thu 0.977 -> 170 x 140); anh Cua hang
+# 170 x 120 bi keo cao 17% (ban Indo 6c8323d, issue #44). Shop GP goi anh QUEST_ICON + icon -> phuc vu anh do dem them
+# hang trong suot tren / duoi cho dung 170:140 (vat pham chua co anh Q<id> rieng, manager.gp_shop_list).
+QUEST_ICON, QUEST_BOX = "quest_", 170 / 140
+
+
+def pad_png(data, aspect):
+    """PNG data them hang trong suot tren / duoi toi rong / cao = aspect. Chi RGBA / xam+alpha 8 bit, khong
+    interlace (moi anh Cua hang); kieu khac tra nguyen. Hang 0 = trong suot, du lieu anh giu tung byte."""
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        return data
+    chunks, p = [], 8
+    while p + 8 <= len(data):
+        n, kind = struct.unpack(">I4s", data[p:p + 8])
+        chunks.append((kind, data[p + 8:p + 8 + n])); p += 12 + n
+    w, h, depth, ctype, _, _, inter = struct.unpack(">IIBBBBB", chunks[0][1])
+    total = round(w / aspect)
+    if depth != 8 or ctype not in (4, 6) or inter or total <= h:
+        return data
+    row = b"\0" * (1 + w * (4 if ctype == 6 else 2))  # byte loc 0 + diem anh trong suot
+    top = (total - h) // 2
+    raw = row * top + zlib.decompress(b"".join(c for k, c in chunks if k == b"IDAT")) + row * (total - h - top)
+    chunk = lambda k, c: struct.pack(">I", len(c)) + k + c + struct.pack(">I", zlib.crc32(k + c))
+    return (data[:8] + chunk(b"IHDR", struct.pack(">IIBBBBB", w, total, depth, ctype, 0, 0, 0))
+            + b"".join(chunk(k, c) for k, c in chunks[1:] if k not in (b"IDAT", b"IEND"))
+            + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+
+
 def cdn_file(rel):
     """(content-type, bytes) of ASSETS/rel, or None (-> 404, client shows its default)."""
+    m = re.fullmatch(r"externalAssets/shop/" + QUEST_ICON + r"(\w+)\.png", rel.replace("\\", "/"))
+    if m:
+        hit = cdn_file(f"externalAssets/shop/{m[1]}.png")
+        return hit and (hit[0], pad_png(hit[1], QUEST_BOX))
     f = os.path.normpath(os.path.join(ASSETS, rel))
     if not f.startswith(os.path.normpath(ASSETS) + os.sep):
         return None
@@ -1749,6 +1781,23 @@ def fix_starting(positions, formationid):
     return positions
 
 
+# Phong do (ban Indo 6c8323d, issue #44): mui ten truoc ten cau thu trong danh sach doi hinh
+# (PlayerListItemTeamColorRenderer.getConditionName: <= -5 rat te, <= -2 te, 0 binh thuong, <= 2 tot, hon nua rat tot;
+# khong co condition -> khong co mui ten). Moi the doi phong do moi ngay luc 0 gio (gio WIB nhu today_wib), phan lon
+# binh thuong. Chua kiem chung: native dung condition the nao trong tran.
+FORMS = ((-5, 1), (-2, 3), (0, 8), (2, 3), (5, 1))  # (condition, trong so)
+
+
+def player_form(card_id, day=None):
+    roll = int.from_bytes(hashlib.sha1(f"{day or today_wib()}:{card_id}".encode()).digest()[:4], "big")
+    roll %= sum(w for _, w in FORMS)
+    for form, w in FORMS:
+        if roll < w:
+            return form
+        roll -= w
+    return 0
+
+
 def owned_team(raw):
     """A stored team ({players:[{spid,...}], squad:{positions,captain,kickers,...}}) in the
     shape the client expects for a club it can show and play with (coach.team, match side.team)."""
@@ -1768,7 +1817,8 @@ def owned_team(raw):
     # lists Tim Cadangan cards.
     team["players"] = [{**({} if p.get("team2") else {"state": "first"}), "grade": 0, "life": 100,
                         **{k: v for k, v in p.items() if k != "team2"}, "levelinfo": player_levelinfo(p),
-                        "_id": iid(p), "id": iid(p), "price": card_price(p["spid"], grade_of(p))}
+                        "_id": iid(p), "id": iid(p), "price": card_price(p["spid"], grade_of(p)),
+                        "condition": player_form(iid(p))}
                        for p in team["players"]]
     sq = dict(team["squad"])
     sq["positions"] = [dict(p, id=str(p.get("id") or p["spid"])) for p in sq["positions"]]
@@ -2961,7 +3011,10 @@ def match_cards(st, stats):
     """[(the cua toi, dong matchStats cua no)] cho cac cau thu ben toi. spid trong tran = id cau thu
     (spid % 1e6); the dang trong doi hinh duoc uu tien hon the khac cua cung cau thu."""
     team, done, out = st["teams"].get(str(_default_slot(st))) or {"players": []}, set(), []
-    for s in (stats.get(stats.get("myTeam", "home")) or {}).get("players") or []:
+    # ca cau thu vao san thay nguoi (substitutes, role 28) cung duoc kinh nghiem, ghe du bi khong vao (reserved) thi
+    # khong (ban Indo 6c8323d, issue #44)
+    side = stats.get(stats.get("myTeam", "home")) or {}
+    for s in (side.get("players") or []) + (side.get("substitutes") or []):
         pid = _num(s.get("spid")) % 1000000
         mine = [p for p in team["players"] if int(p["spid"]) % 1000000 == pid and iid(p) not in done]
         p = next((p for p in mine if in_squad(team, p)), mine[0] if mine else None)
@@ -4019,6 +4072,30 @@ def remove_player(team, p):
     repair_squad(team)
     if str(sq.get("captain")) == pid:
         sq["captain"] = next((str(s.get("id") or s["spid"]) for s in sq["positions"] if s["pos"]), "")
+
+
+REQ = threading.local()  # REQ.method: GET / POST / PUT / DELETE cua request dang xu ly (_respond dat)
+
+
+def ep_player_release(pid, query, body):
+    """DELETE /player/<_id> (Doi hinh > Giai phong, PlayerPoolItemListRenderer.onOkDeletePlayer; ban Indo 6c8323d,
+    issue #44: game bao da giai phong nhung cau thu van con): xoa han the, khong hoan EP. Cau thu dang da chinh, hoac
+    CLB chi con 18 nguoi (11 + 7 du bi) -> giu lai (COMMON_PLAYER_INFO_REMOVE_NOTALLOWED)."""
+    try:
+        method = (json.loads(body or b"{}").get("_method") or getattr(REQ, "method", "GET")).upper()
+    except (ValueError, AttributeError):
+        method = getattr(REQ, "method", "GET")
+    if method != "DELETE":  # duong dan nay truoc day roi vao mac dinh
+        return (ep_empty if method == "GET" else ep_telemetry)(query, body)
+    st = _state(); slot = _default_slot(st); team = st["teams"].get(str(slot))
+    p = next((x for x in (team or {}).get("players", []) if iid(x) == pid), None)
+    if p is None:
+        return _json({"result": False, "reason": "not exists player"})
+    if is_starter(team, p) or len(team["players"]) <= 18:
+        return _json({"result": False, "reason": "COMMON_PLAYER_INFO_REMOVE_NOTALLOWED"})
+    remove_player(team, p)
+    _save(st)
+    return _json({"result": True, "resources": coach_me_resources(st, slot)})
 
 
 def is_starter(team, p):
@@ -5989,6 +6066,7 @@ ROUTES = [
     # Ganti tim screen: a club's summary for its TeamInfoNew (name/crest id, ovr, teamgrade)
     (re.compile(r"/static/info/team/summary/(\d+)"), lambda t, q, b: _json(club_summary_response(int(t)))),
     (re.compile(r"/player/(\w+)/move/(firstteam|secondteam)"), ep_player_move),
+    (re.compile(r"/player/([0-9a-f]{24}|\d+)"), ep_player_release),  # DELETE: giai phong (route khop ca chuoi)
     (re.compile(r"/player/(\w+)/enhance2\.5/(\w+)/preview/([01])/(-?\w+)/(-?\w+)/?"), ep_enh25_preview),
     (re.compile(r"/player/(\w+)/enhance2\.5/(\w+)/([01])/(-?\w+)/(-?\w+)/?"), ep_enh25),
     (re.compile(r"/player/(\w+)/enhance/(\w+)/preview"), ep_enhance_preview),
@@ -6227,6 +6305,7 @@ class H(http.server.BaseHTTPRequestHandler):
         # /static/db/PLAYER_EXTRA_GROWTH), and tables are id->row maps whose values get
         # iterated, so a stray "result": true becomes a bogus row. List endpoints get a
         # responses/ file with []. Unknown POSTs get {"result": true}.
+        REQ.method = self.command  # ep_player_release (DELETE /player/<_id>)
         fallback = ep_telemetry if self.command == "POST" else ep_empty
         if self.command != "GET" and path.startswith(ONLINE_ONLY_PREFIXES):
             fallback = ep_online_only

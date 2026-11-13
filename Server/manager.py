@@ -498,7 +498,11 @@ def gp_shop_list():
         sd = e["product"]["staticdata"]
         sd["bunches"] = [{"bunch": 1, "price": gp}]
         if not os.path.isfile(os.path.join(hc.ASSETS, "externalAssets", "shop", f"Q{itemid}.png")):
-            out.append(e)  # vat pham GM them chua co anh Q<id> rieng -> giu anh cua vat pham
+            # vat pham GM them chua co anh Q<id> rieng: anh cua vat pham, dem vien cho dung khung cua so Nhiem vu
+            # (hc.QUEST_ICON, ban Indo 6c8323d)
+            icon = sd.get("bundleicon", sd.get("itemicon", itemid))
+            sd["itemicon"] = sd["bundleicon"] = f"{hc.QUEST_ICON}{icon}"
+            out.append(e)
             continue
         # anh rieng cho cua so Quest (shop/Q<id>.png): hinh thu nho sat tren, chua cho ten vat pham game in de
         # len 1/4 duoi o anh
