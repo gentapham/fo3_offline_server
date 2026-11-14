@@ -107,7 +107,9 @@ def daily_note(st, now=None):
     table, n = hc.daily_table(), max(1, int(d.get("streak") or 1))
     items = _items(table[(n - 1) % len(table)])
     return {**hc.note("event", "reward", {
-        "type": "daily", "opts": {"dailytype": "continuous"}, "rewardindex": n - 1, "assets": {}, "items": items,
+        "type": "daily", "opts": {"dailytype": "continuous"}, "rewardindex": n - 1,
+        # anh cua so: externalAssets/events/popup/daily_login.png (tools/event_banners.py; thieu -> "NOT FOUND EVENT")
+        "assets": {"popup": "daily_login"}, "items": items,
         "title": "Quà đăng nhập hằng ngày", "messages": {"popup": {"name": "Quà đăng nhập hằng ngày", "description":
             f"Đăng nhập {n} ngày liên tiếp. Quà đã vào Túi đồ."}}}, now), "stackable": True}
 
@@ -142,7 +144,7 @@ def ep_event_dt(query, body):
         items = hc.reward_items(table[i])
         hc.bag_add(st, f"Quà chơi {m} phút", items, msg=f"Bạn đã chơi {m} phút trong hôm nay.")
         n = {**hc.note("event", "reward", {
-            "type": "dt", "opts": {}, "rewardindex": i, "assets": {}, "title": "Thưởng thời gian chơi",
+            "type": "dt", "opts": {}, "rewardindex": i, "assets": {"popup": "play_time"}, "title": "Thưởng thời gian chơi",
             "items": [{**it, "staticdata": hc.item_def(it["itemid"])} for it in items],
             "messages": {"popup": {"name": "Thưởng thời gian chơi", "description":
                 f"Đã chơi {m} phút trong hôm nay. Quà đã vào Túi đồ."}}}, now), "stackable": True}

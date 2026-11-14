@@ -14,7 +14,7 @@ sys.path.insert(0, HERE)
 sys.path.append(os.path.join(W, "pylib"))  # PIL
 
 SERVER = os.path.dirname(os.path.dirname(HERE))
-GAME_DATA = os.path.join(os.path.dirname(SERVER), "data")  # data_3/4 cua game (mat that, giay)
+GAME_DATA = os.environ.get("FO3_GAME_DATA") or os.path.join(os.path.dirname(SERVER), "data")  # data_3/4 cua game (mat that, giay); FO3_GAME_DATA: thu muc do hoa dang dung thu
 ORIG = os.path.join(W, "orig")
 BUILD = os.environ.get("FO3_BUILD") or os.path.join(W, "build")  # FO3_*: chi de test tren ban sao
 CARDS = os.path.join(W, "fo4_cards.json")
@@ -26,7 +26,9 @@ PIDS = os.path.join(W, "build", "fo4_pids.json")
 HEADS = os.path.join(W, "build", "fo4_heads.json")
 SEASON_NAMES = {300: "26 LIVE", 325: "25 LIVE"}
 SEASONS = tuple(SEASON_NAMES)
-ICON_ONLY = (94, 76, 18, 19)  # PRIME, INFINITY (prime_infinity.py), 26 TOTY 18, 26 TOTS 19 (add_toty.py): chi them icon (icon goc FO4 30x24)
+# Mua nhap tu ban CN (tools/cn_import.py, 2026-11-13): icon 35x34 tach tu Label.big CN (cn_icons.py), giu nguyen pixel
+CN_SEASONS = (1, 2, 3, 4, 5, 25, 34, 36, 46, 50, 52, 58, 60, 62, 64, 66, 68, 70, 72, 74, 75, 78, 80)
+ICON_ONLY = (94, 76, 18, 19) + CN_SEASONS  #  PRIME, INFINITY (prime_infinity.py), 26 TOTY 18, 26 TOTS 19 (add_toty.py): chi them icon (icon goc FO4 30x24)
 NEW_PID = 700000
 NAME_FIXES = (239085, 215441, 1397, 20801, 239, 34079, 999906, 999908)  # + Zidane (the WL moi), C. Ronaldo (ten ngan)
 REST_OF_WORLD = (999998, 9998)
@@ -305,6 +307,7 @@ FIFADB_ENTRY = "data/db2/fifadb.db.db2"
 LOCALES = ("chi", "eng", "ind", "kor", "tha", "vie")
 NG_ENTRY, NG_META = "data/db/fifa_ng_db.db", "data/db/fifa_ng_db-meta.xml"
 ENGINE_COPY = ("height", "weight", "nationality", "preferredfoot")
+DROP_COSMETIC = (16, 15)  # mua thuong cu: bo dong theo the chi khac ngoai hinh (xem engine_db)
 # So sao ky thuat / chan khong thuan TRONG TRAN doc tu dong engine: dong chep tu cau thu khac (mat muon, dong theo
 # playerid cua the thuong) phai lay lai gia tri cua chinh the (2026-11-10: PRIME/WL Kroos 5 sao o man thong tin
 # nhung trong tran chi 3 sao cua the 17).
@@ -390,7 +393,8 @@ def build_teamnames():
     for lang in ("eng", "tha"):
         src = os.path.join(GAME_DATA, "ui", "localization", f"{lang}.big")
         out = os.path.join(BUILD, f"{lang}.big")
-        extra = EXTRA_TEAMNAMES.get(lang, {})
+        # + ten doi ao / CLB cua the nhap tu ban CN (cn_teamnames.json, tools/cn_import.py)
+        extra = {**_json_or(os.path.join(W, "cn_teamnames.json"), {}), **EXTRA_TEAMNAMES.get(lang, {})}
         entry = f"data/ui/localization/TEAMNAMES_{lang.upper()}.json"
         if not (teams or extra) or not os.path.isfile(src):
             if os.path.exists(out):
@@ -426,8 +430,22 @@ def locale_db(plain_db, names, trim):
         with closing(sqlite3.connect(FIFADB)) as c:
             cards = [r[0] for r in c.execute("SELECT DISTINCT playerid FROM players")]
 
+    # cau thu chua co ten trong goi ngon ngu cua client (nhap tu ban CN, 2026-11-14: Ian Rush, Dalglish... hien "unknown"):
+    # lay ten tu fifadb cua server, khong de ten client da co
+    with closing(sqlite3.connect(FIFADB)) as c:
+        more = c.execute("SELECT n.playerid, n.full, n.short, n.full_eng, n.short_eng, n.jersey FROM nameseng n "
+                         "WHERE n.playerid IN (SELECT DISTINCT playerid FROM players)").fetchall()
+
     def edit(c):
         c.executemany("INSERT OR REPLACE INTO names (playerid, full, short, full_eng, short_eng, jersey) VALUES (?,?,?,?,?,?)", names)
+        c.executemany("INSERT OR IGNORE INTO names (playerid, full, short, full_eng, short_eng, jersey) VALUES (?,?,?,?,?,?)", more)
+        # ten gia cua goi ngon ngu goc (Fullname_<id> / Shortname_<id> / so ao "unknown", "No.<id>": vd Makelele
+        # hien "Shortname_1668"): thay bang ten that cua server (da lay tu ban CN, 2026-11-14)
+        fake = lambda v: str(v or "").startswith(("Fullname_", "Shortname_", "No.")) or str(v or "").lower() == "unknown"
+        good = [r for r in more if not any(fake(v) for v in r[1:])]
+        c.executemany("UPDATE names SET full=?, short=?, full_eng=?, short_eng=?, jersey=? WHERE playerid=? AND ("
+                      "full LIKE 'Fullname\\_%' ESCAPE '\\' OR short LIKE 'Shortname\\_%' ESCAPE '\\' OR "
+                      "lower(jersey)='unknown' OR jersey LIKE 'No.%')", [(*r[1:], r[0]) for r in good])
         if cards:
             c.execute("CREATE TEMP TABLE keep (playerid INTEGER PRIMARY KEY)")
             c.executemany("INSERT INTO keep VALUES (?)", [(p,) for p in cards])
@@ -565,6 +583,17 @@ def engine_db(db, meta, photo=None):
     pk = fld["playerid"][0]
     by = {t.get(r, pk): r for r in t.rows}
     generic = next(r for r in t.rows if t.get(r, fld["headclasscode"][0]) == 1)
+    # Giai phong cho cho cau thu moi (ban CN, 2026-11-13): dong theo the cua EA o cac mua thuong cu (DROP_COSMETIC) ma chi
+    # khac dong cua cau thu o giay / toc / chi so luu kem (cung sao ky thuat, chan phu, chan thuan) -> bo. Chi so trong
+    # tran lay tu du lieu the (fifadb), khong tu dong nay; the do mang ngoai hinh cua dong cau thu.
+    gp = [fld[n][0] for n in ("skillmoves", "weakfootabilitytypecode", "preferredfoot")]
+    dropped = 0
+    for key in [k for k in by if 1000000 <= k < 100000000 and k // 1000000 in DROP_COSMETIC]:
+        base_row = by.get(key % 1000000)
+        if base_row is not None and all(t.get(by[key], f) == t.get(base_row, f) for f in gp):
+            del by[key]
+            dropped += 1
+    print(f"engine: -{dropped} cosmetic-only card rows of seasons {DROP_COSMETIC} (room for new players)", flush=True)
     with closing(sqlite3.connect(FIFADB)) as c:
         c.row_factory = sqlite3.Row
         mine = {r["playerid"]: r for r in c.execute("SELECT * FROM players WHERE playerid BETWEEN ? AND ? ORDER BY spid",
@@ -634,12 +663,33 @@ def engine_db(db, meta, photo=None):
         by[key] = row
         added_old += 1
     print(f"engine: +{added_old} shipped cards that had no 3D row ({real} with their own head, {fixed_shoes} shoe codes without a model -> 29)", flush=True)
+    # Ngoai hinh tu ban CN (cn_looks.json, tools/cn_import.py looks): cau thu co mat that ben CN -> mat / toc / da / giay
+    # cua CN, chi khi file dau head_<id>_0.rx3 da co trong data_4.big (sau khi nhap do hoa CN) va giay co mo hinh.
+    cn_looks = _json_or(os.path.join(W, "cn_looks.json"), {})
+    n_cn = 0
+    for key in list(by):
+        look = cn_looks.get(str(key % 1000000 if key >= 1000000 else key))
+        if not look or f"data/sceneassets/heads/head_{look.get('headassetid')}_0.rx3" not in heads4:
+            continue
+        row = by[key]
+        for name, v in look.items():
+            if name not in fld or name in ("playerid", "spid"):
+                continue
+            if name == "shoetypecode" and f"data/sceneassets/shoe/shoe_{v}.rx3" not in shoes:
+                continue
+            sn, lo = fld[name]
+            if 0 <= v - lo < 1 << t.fields[sn][2]:
+                row = t.set(row, sn, v - lo)
+        if row != by[key]:
+            by[key] = row
+            n_cn += 1
+    print(f"engine: {n_cn} rows take the CN client's face / hair / boots", flush=True)
     # The huyen thoai (WL, UL, EL, UB, CEL, ENL, WB, PRIME 94, INFINITY 76): dong 3D rieng theo spid (ban sao dong theo
     # playerid, truong spid = the do) -> bang ten trong tran hien dung mua thay vi mua cua dong chung (vd Buffon "17").
     # Chi spid < 1e8 (truong spid/playerid cua engine 27 bit, rangehigh 99.999.999).
     # GIOI HAN: engine dem dong bang u16 va giu them maxinsert=560 dong -> tong dong + 560 phai <= 65535.
     # 65.234 dong (them ca 11 mua) lam game sap luc tai (2026-11-08). Chot ENGINE_MAX_ROWS, uu tien mua quan trong.
-    SEASON_ROWS = (18, 19, 94, 76, 30, 93, 28, 27)  # 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME, UL, WL, UB, EL
+    SEASON_ROWS = (18, 19, 94, 76) + tuple(c for c in CN_SEASONS if c != 2) + (30, 93, 28, 27)  # 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME, mua CN dac biet, UL, WL, UB, EL
     sp = fld["spid"]
     n_photo = photo_heads(t, fld, by, photo)  # GM Tool: mat 3D tu anh (truoc card_looks: mat muon cua the van thang)
     print(f"engine: {n_photo} rows wear a photo head ({len(photo or {})} heads)", flush=True)
@@ -713,11 +763,13 @@ def cmd_client(a):
     files[FIFADB_ENTRY], want[FIFADB_ENTRY] = (packed, usize), plain_db
     log.append(f"{FIFADB_ENTRY}: {usize} B -> {len(packed)} B packed, slot {room[FIFADB_ENTRY]} (cardless names left out)")
     print(log[-1], flush=True)
-    # locale DBs: every name kept (no trimming); one that outgrows its slot is moved into free space
+    # locale DBs: one that outgrows its slot is moved into free space. Since the CN import (2026-11-14) they hold
+    # the names of every server player -> too big for the region: drop names of players the server does not have
+    # (~33k unused FO3 players, same rule as fifadb's names tables)
     for loc in LOCALES:
         entry = f"data/db2/{loc}.db.db2"
         shipped = bigdir.read(data0, entry)
-        plain_db = locale_db(_plain(shipped), names, trim=False)
+        plain_db = locale_db(_plain(shipped), names, trim=True)
         packed, usize = _seal(plain_db, shipped)
         files[entry], want[entry] = (packed, usize), plain_db
         log.append(f"{entry}: {usize} B -> {len(packed)} B packed, slot {room[entry]}")

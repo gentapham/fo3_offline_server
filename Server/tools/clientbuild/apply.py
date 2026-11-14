@@ -81,7 +81,9 @@ def main():
         src = os.path.join(BUILD, name)
         assert os.path.isfile(src), src
         if name == "data_0.big":
-            assert os.path.getsize(src) == os.path.getsize(os.path.join(HERE, "orig", name)), "data_0.big đổi kích thước"
+            # the nhap tu ban CN (2026-11-13): du lieu tran dau noi vao cuoi -> data_0 lon them toi da ~12 MB (them 40 MB thi game treo)
+            grow = os.path.getsize(src) - os.path.getsize(os.path.join(HERE, "orig", name))
+            assert 0 <= grow <= 12_000_000, f"data_0.big đổi kích thước bất thường ({grow:+} B)"
     print("Đã dựng xong build/data_0.big, build/Label.big" + (", build/data_7.big (mặt 3D từ ảnh)" if "data_7.big" in targets else "") + ".", flush=True)
     if not install:
         return

@@ -27,7 +27,9 @@ SEASON_ICONS = os.path.join(HERE, "gamedata", "season_icons")
 CLIENTBUILD = os.path.join(HERE, "tools", "clientbuild")
 STATIC_ROSTER = os.path.join(HERE, "responses", "static_roster.json")
 # ma mua khong co the FO3 nao va khong co icon cua client (< 100: truong spid 27 bit cua engine)
-SEASON_CODES = (18, 19, 25, 50, 72, 80, 1, 2, 3, 4, 5, 34, 36, 46, 52, 58, 60, 62, 64, 66, 68, 70, 74, 75)
+# 2026-11-13: cac ma trong cu da dung cho mua nhap tu ban CN (tools/cn_import.py) -> mua tu tao dung cac ma chua co the nao
+# (client co san icon cho cac ma nay; labelicons.py doi ten khung icon cu de icon moi thay the)
+SEASON_CODES = (12, 54, 56, 59, 79, 84, 86, 90, 92, 96, 98, 99)
 
 STATS = ("acceleration sprintspeed agility balance reactions ballcontrol dribbling positioning finishing shotpower longshots "
          "volleys penalties crossing curve freekickaccuracy shortpassing longpassing vision headingaccuracy marking "

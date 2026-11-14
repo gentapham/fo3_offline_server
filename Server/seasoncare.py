@@ -15,7 +15,7 @@ import re
 import item_ext
 
 hc = None
-LEGEND_SEASONS = "93,30,27,28,91,23,22,24,94,76"  # WL, UL, EL, UB, WB, LP, CP, CC, PRIME, INFINITY
+LEGEND_SEASONS = "93,30,27,28,91,23,22,24,94,76,70,46,64,52"  # WL, UL, EL, UB, WB, LP, CP, CC, PRIME, INFINITY + ICONS, 20/19 WL, USS (ban CN)
 
 
 def _sd(season, mingrade, maxgrade):

@@ -194,9 +194,14 @@ if "--write" in sys.argv:
     n, o, sz, u = E[i]
     lo = -(-(o + sz) // 0x100) * 0x100
     hi = E[i + 1][1]
-    assert lo + len(packed) <= hi, (len(packed), hi - lo)
-    size0 = __import__("os").path.getsize(BIG)
-    bigdir.patch(BIG, {NG: (packed, len(ng))}, in_place=True, at={NG: lo})
-    assert __import__("os").path.getsize(BIG) == size0
+    if lo + len(packed) <= hi:
+        size0 = __import__("os").path.getsize(BIG)
+        bigdir.patch(BIG, {NG: (packed, len(ng))}, in_place=True, at={NG: lo})
+        assert __import__("os").path.getsize(BIG) == size0
+        print("written", len(packed), "B at", hex(lo), "room", hi - lo)
+    else:
+        # the nhap tu ban CN (2026-11-13) lam fifadb.db2 lon hon -> khe sau vie.db.db2 khong du: noi vao cuoi data_0.big
+        # (file lon them ~5 MB; game nap ca data_0 vao bo nho - ban CN 84,7 MB van chay, them 40 MB thi treo)
+        bigdir.patch(BIG, {NG: (packed, len(ng))})
+        print("appended", len(packed), "B, data_0.big now", __import__("os").path.getsize(BIG), "B (room was", hi - lo, ")")
     assert bigdir.read(BIG, NG) == ng
-    print("written", len(packed), "B at", hex(lo), "room", hi - lo)

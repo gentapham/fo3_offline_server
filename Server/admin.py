@@ -356,7 +356,7 @@ def seasons(p):
                         if count.get(c)]}
 
 
-SEASON_NEW = (18, 19, 94, 76)  # 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME: mua moi them, xep dau danh sach
+SEASON_NEW = (18, 19, 94, 76, 2, 70, 36, 72, 62, 68, 46, 64, 78, 52)  # + mua nhap tu ban CN (20 LIVE, ICONS, 19/20 TOTY/TOTS/WL...); 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME: mua moi them, xep dau danh sach
 SEASON_YEARS = (300, 325, 6, 7, 8, 9, 10, 11, 14, 15, 16, 41, 88)  # FO4 26 LIVE, 25 LIVE dau tien (nhu trong game); 2006 .. 2016, 2016 phu, 2017 (nhu static_roster trong game)
 
 
@@ -933,6 +933,19 @@ def daily_set(p):
     with open(hc.DAILY_FILE, "w", encoding="utf-8") as f:
         json.dump(table, f, indent=1)
     return {"table": table}
+
+
+@api("daily_popup")
+def daily_popup(p):
+    """Hien lai popup qua dang nhap hom nay o lan PUT /events/rewards/daily ke tiep (0-2 phut sau khi vao sanh)."""
+    st = hc._state()
+    d = coach(st).setdefault("daily", {"last": "", "streak": 0, "total": 0})
+    if d.get("last") != hc.today_wib():
+        hc.daily_login(st)  # chua nhan qua hom nay: tang luon de popup co qua
+    d = coach(st)["daily"]
+    d.pop("noted", None)
+    hc._save(st)
+    return {"ok": True}
 
 
 @api("daily_reset")

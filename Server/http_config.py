@@ -1359,7 +1359,8 @@ TC_SEASON_NAMES = {91: (18, ("", "ovr", 5)), 93: (100, ("", "ovr", 3)), 95: (19,
                    77: (42, ("", "reactions", 1)), 65: (140, ("", "ovr", 3)), 53: (141, ("", "ovr", 3)),
                    47: (142, ("", "ovr", 3)), 63: (143, ("", "ovr", 3)), 69: (137, ("", "ovr", 3)),
                    67: (138, ("", "ovr", 3)), 35: (145, ("", "ovr", 3)), 27: (20044, ("", "ovr", 3))}
-TC_LEGENDS = (93, 30, 27, 71, 51, 61, 89, 48, 55, 49)  # WL UL EL ML TL VL CL MUL MUA TCO92
+TC_LEGENDS = (93, 30, 27, 71, 51, 61, 89, 48, 55, 49,  # WL UL EL ML TL VL CL MUL MUA TCO92
+              70, 46, 64, 52, 58, 50, 80, 66, 75)  # + mua huyen thoai nhap tu ban CN: ICONS, 20/19 WL, USS, LH, MOG, VTR, HOT, TT
 TC_YEARS = (6, 7, 8, 9, 10, 11, 14, 15, 16, 88, 325, 300)  # + FO4 25 LIVE / 26 LIVE
 
 
@@ -4706,7 +4707,8 @@ def trade3_pool():
 
 # Giao dich / Trao doi: the PRIME (94) va INFINITY PRIME (76) chi ~1.4% kho the -> gan nhu khong bao gio ra.
 # Moi de nghi co PRIME_TRADE_CHANCE co hoi la mot the 2 mua nay gia tri gan nhat.
-PRIME_SEASONS = (94, 76, 18, 19)  # + 26 TOTY / 26 TOTS
+PRIME_SEASONS = (94, 76, 18, 19,  # + 26 TOTY / 26 TOTS
+                 4, 3, 36, 72, 62, 68, 70, 52, 46, 64, 25, 78)  # + ban CN: 21/20/19 TOTY, TOTS, ICONS, USS, WL, BoE, 19 UCL
 PRIME_TRADE_CHANCE = 0.3
 _T3_PRIME = []
 
@@ -4883,6 +4885,12 @@ FA_SEASONS = (
     ("U23", (29,), 8545), ("KXI", (97,), 8546), ("MUL", (48,), 8547), ("VS", (73,), 2000006),
     ("PRM", (94,), 8335), ("IPRM", (76,), 8335),  # PRIME / INFINITY (ma 94/76: ma 838/865 lam treo man Quan ly doi): 2 mua moi cua moi huyen thoai (icon FC Online)
     ("26TY", (18,), 8335), ("26TS", (19,), 8335),  # 26 TOTY / 26 TOTS (FO4 854/866, add_toty.py): the hien hanh +6 / +4
+    # nhap tu ban FIFA Online 3 Trung Quoc 01/2021 (tools/cn_import.py, 2026-11-13); 20L = doi hinh 2019/20 (mua 88 cua CN)
+    ("20L", (2,), 45011), ("21TN", (3,), 8335), ("21TY", (4,), 8335), ("05", (5,), 45004), ("GR", (1,), 8335),
+    ("20BE", (25,), 8335), ("COC", (34,), 8335), ("20TY", (36,), 8335), ("20WL", (46,), 8194), ("MOG", (50,), 8335),
+    ("USS", (52,), 8335), ("LH", (58,), 8194), ("TC", (60,), 8335), ("19TY", (62,), 8335), ("19WL", (64,), 8194),
+    ("HOT", (66,), 8335), ("19TS", (68,), 8335), ("ICON", (70,), 8194), ("20TS", (72,), 8335), ("TB", (74,), 8335),
+    ("TT", (75,), 8335), ("19UCL", (78,), 8335), ("VTR", (80,), 8335),
 )
 OWN_SEASONS_FILE = os.path.join(HERE, "gamedata", "seasons.json")  # GM Tool > Database: mua tu tao (ma < 100)
 
@@ -5614,6 +5622,23 @@ def my_coach(st):
 LOCKER_SHOE_ASSETS = [0, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 123, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 13126, 13127, 13128, 13129, 13130, 13131, 13132, 13133, 13134, 13135, 13136, 13137, 13138, 13139, 13140, 13141, 13142, 13143, 13144, 13145, 13146, 13147, 13148, 13149, 13150, 13152, 13153, 13154, 13155, 13156, 13157, 13158, 13159, 13160, 13170, 13171, 13172, 13173, 13174, 13175, 13176, 13177, 13178, 13182, 13183, 13185, 13186, 13188, 13197, 13198, 13199, 13201, 13202, 13203, 13204, 13205, 13207, 13208, 13209, 13210, 13212, 13213, 13214, 13215, 13216, 13217, 13218, 13219, 15000, 15015, 15016, 15017, 15018, 15019, 15020, 15021, 15022, 15023, 15024, 15025, 15026, 15027, 15028, 15029, 15030, 15031, 15032, 15033, 15034, 15035, 15036, 15037, 15038, 15039, 15040, 15041, 15042, 15043, 15044, 15045, 15046, 15047, 15048, 15049, 15050, 15051, 15052, 15053, 15054, 15055, 15056, 15057, 15058, 15059, 15060, 15061, 15062, 15063, 15064, 15065, 15066, 15067, 15068, 15069, 15070, 15071, 15072, 15073, 15074, 15075, 15076, 15077, 15078, 15079, 15080, 15081, 15082, 15083, 15084, 15085, 15086, 15087, 15088, 15089, 15090, 15091, 15092, 15093, 15094, 15095, 15096, 15097, 15098, 15099, 15100, 15101, 15102, 15103, 15104, 15105, 15106, 15107, 15108, 15109, 15110, 15111, 15112, 15113, 15114, 15115, 15116, 15117, 15126, 15127, 15128, 15129, 15130, 15131, 15132, 15133, 15134, 15135, 15136, 15137, 15138, 15139, 15140, 15141, 15142, 15143, 15144, 15145, 15146, 15147, 15148, 15149, 15150, 15151, 15152, 15153, 15154, 15155, 15156, 15157, 15158, 15159, 15160, 15161, 15162, 15164, 15167, 15168, 15169, 15170, 15171, 15172, 15173, 15174, 15175, 15176, 15177, 15178, 15179, 15180, 15181, 15182, 15183, 15184, 15185, 15186, 15187, 15188, 15189, 15190, 15191, 15192, 15193, 15194, 15195, 15196, 15197, 15198, 15199, 15200, 15201, 15202, 15203, 15204, 15205, 15206, 15207, 15208, 15209, 15210, 15211, 15212, 15213, 15215, 15216, 15217, 15218, 15219, 15220, 15221, 15222, 15223, 15224, 15225, 15226, 15227, 15228, 15229, 15230, 15231, 15232, 15233, 15234, 15235, 15236, 15237, 15238, 15239, 15240, 15241, 15242, 15243, 15244, 15245, 15246, 15247, 15248, 15249, 15250, 15251, 15252, 15253, 15254, 15255, 16131, 16147, 16148]
 
 
+@functools.lru_cache(maxsize=1)
+def locker_shoe_assets():
+    """Giay co mo hinh + mau thiet ke 0 trong data_2.big cua chinh may nay (sau khi nhap do hoa ban CN: 565 mau);
+    khong doc duoc -> danh sach cu (LOCKER_SHOE_ASSETS). Icon: externalAssets/shoe/shoe_<ma>.png (tools/clientbuild/shoe_icons.py)."""
+    try:
+        cb = os.path.join(HERE, "tools", "clientbuild")
+        if cb not in sys.path:
+            sys.path.insert(0, cb)
+        import bigdir
+        names = {n for n, *_ in bigdir.entries(os.path.join(GAME, "data", "data_2.big"))}
+        got = sorted(int(m.group(1)) for n in names for m in [re.fullmatch(r"data/sceneassets/shoe/shoe_(\d+)\.rx3", n)]
+                     if m and f"data/sceneassets/shoe/shoe_{m.group(1)}_0_textures.rx3" in names)
+        return got or list(LOCKER_SHOE_ASSETS)
+    except Exception:
+        return list(LOCKER_SHOE_ASSETS)
+
+
 def locker_catalog():
     rows = {}
     def add(key, kind, category, asset, label, option="", colors=None):
@@ -5628,19 +5653,19 @@ def locker_catalog():
     add(1102, "TOP", "UNIFORMARM", 1, "Tay dài")
     add(1201, "TOP", "TATTOO", 0, "Mặc định")
     add(1301, "TOP", "WRIST", 0, "Không băng cổ tay")
-    add(1302, "TOP", "WRIST", 6, "Băng cổ tay", colors=range(14))
+    add(1302, "TOP", "WRIST", 6, "Băng cổ tay", colors=range(1, 11))
     add(1401, "TOP", "GLOVE", 0, "Không găng tay", "PLAYERGLOVE")
     add(1402, "TOP", "GLOVE", 18, "Găng thủ môn", "GKGLOVE", [1])
     add(2001, "PANTS", "SOCKS", 0, "Tất mặc định")
     add(2002, "PANTS", "SOCKS", 1, "Tất dài")
     add(2003, "PANTS", "SOCKS", 2, "Tất ngắn")
     add(2101, "PANTS", "KNEE", 0, "Không băng đầu gối")
-    add(2102, "PANTS", "KNEE", 10, "Bọc đầu gối", colors=range(14))
-    add(2103, "PANTS", "KNEE", 12, "Băng đầu gối", colors=range(14))
+    add(2102, "PANTS", "KNEE", 10, "Bọc đầu gối", colors=range(1, 11))
+    add(2103, "PANTS", "KNEE", 12, "Băng đầu gối", colors=range(1, 11))
     # The client opens ADIDAS initially. A neutral default row initializes the
     # grid, while actual variants stay in ETC rather than guessing their brand.
     add(99999, "SHOES", "SHOES", 0, "Mặc định", "ADIDAS")
-    for order, asset in enumerate(LOCKER_SHOE_ASSETS):
+    for order, asset in enumerate(locker_shoe_assets()):
         add(100000 + asset, "SHOES", "SHOES", asset,
             "Mặc định" if asset == 0 else f"Mẫu {order:03d}", "ETC")
     return rows

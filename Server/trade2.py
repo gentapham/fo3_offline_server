@@ -15,7 +15,7 @@ import random
 from contextlib import closing
 
 hc = None
-SPECIAL_SEASONS = (93, 30, 27, 28, 91)  # WL, UL, EL, UB, WB
+SPECIAL_SEASONS = (93, 30, 27, 28, 91, 70, 46, 64, 52)  # WL, UL, EL, UB, WB + ICONS, 20/19 WL, USS (ban CN)
 SPECIAL_MIN_OVR = 80
 SPECIAL_BONUS, SPECIAL_GRADE = 1.2, 5
 # 15 buoc: TP toi da (EP) -> cap cao nhat co the nhan

@@ -3584,5 +3584,13 @@
 "Danh sách thẻ không hợp lệ.": "Invalid card list.",
 "Danh sách cần ít nhất 1 thẻ.": "The list needs at least 1 card.",
 "Thẻ {s} không có trong game (không dùng thẻ mùa 0).": "Card {s} is not in the game (season-0 cards not allowed).",
-"Hết chỗ cho mảnh ghép mới (tối đa 99 cầu thủ từng được ghép).": "No room for new pieces (max 99 players ever crafted)."
+"Hết chỗ cho mảnh ghép mới (tối đa 99 cầu thủ từng được ghép).": "No room for new pieces (max 99 players ever crafted).",
+"Chưa cài hosts": "Hosts not installed",
+"Bấm 'Cài ngay ›' ở ô Hosts bên phải": "Click 'Install now ›' on the Hosts box at the right",
+"Đang khởi động máy chủ…": "Starting the server…",
+"Chờ các ô trạng thái chuyển xanh": "Wait for all status boxes to turn green",
+"Bấm ô máy chủ bên dưới để bật": "Click the server box below to start it",
+"HỖ TRỢ": "SUPPORT",
+"TRẠNG THÁI": "STATUS",
+"Bật lại": "Restart"
 }

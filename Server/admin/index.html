@@ -1337,6 +1337,7 @@
         <dl class="facts" id="dailyFacts"></dl>
         <div class="row" style="margin-top:16px">
           <button class="b" id="dailyGrant">Nhận quà ngày kế tiếp ngay</button>
+          <button class="b" id="dailyPopup">Hiện lại popup quà khi vào sảnh</button>
           <button class="b danger" id="dailyReset">Đặt lại chuỗi ngày</button>
         </div>
       </div>
@@ -3006,6 +3007,7 @@ $("#dailyRows").addEventListener("click", e => {
 $("#dailyAdd").addEventListener("click", () => { const t = readDaily(); t.push({ep: 10000}); renderDaily(t); });
 $("#dailySave").addEventListener("click", () => act(async () => { await api("daily_set", {table: readDaily()}); await loaders.harian(); }, "Đã lưu bảng quà."));
 $("#dailyGrant").addEventListener("click", () => act(async () => { const r = await api("daily_grant", {}); await loaders.harian(); say(`Đã gửi "${r.title}" vào Túi.`, "ok"); }));
+$("#dailyPopup").addEventListener("click", () => act(async () => { await api("daily_popup", {}); await loaders.harian(); }, "Xong. Vào sảnh (hoặc thoát game vào lại), popup hiện sau tối đa 2 phút."));
 $("#dailyReset").addEventListener("click", async () => { if (await uiConfirm("Đặt lại chuỗi đăng nhập về 0?")) act(async () => { await api("daily_reset", {}); await loaders.harian(); }, "Đã đặt lại chuỗi ngày."); });
 $("#scoutReset").addEventListener("click", () => act(async () => { await api("scouts_reset", {}); await loaders.scout(); }, "Tất cả tuyển trạch viên đã sẵn sàng."));
 $("#logRefresh").addEventListener("click", () => loaders.log());

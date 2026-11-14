@@ -149,12 +149,16 @@ def label_with_icons(gfx, dds, icons, lossless=()):
             defs[int.from_bytes(data[:2], "little")] = (code, data)
     next_id = max(defs) + 1
     sprites = {sid: next(t for t in tags if t[0] == 39 and int.from_bytes(t[1][:2], "little") == sid) for sid in ICON_SPRITES}
-    new_defs, x = [], 0
+    new_defs, x, row = [], 0, 0
     for season, icon in sorted(icons.items()):
+        if x + 40 > atlas.width:  # het hang (25 icon) -> hang moi ben duoi (moi hang: 1 dai icon lon + 1 dai icon nho)
+            x, row = 0, row + 1
         label = f"{season}season".encode() + b"\0"
         for sid in ICON_SPRITES:
             inner = _tags(sprites[sid][1], 4, len(sprites[sid][1]))
-            assert not any(c == 43 and d == label for c, d in inner), f"{season} already in Label.gfx"
+            # ma da co khung icon (icon goc cua client cho mua khong co the - mua tu tao GM Tool): doi ten khung cu
+            # (gotoAndStop(<ma>season) se toi khung moi them o cuoi)
+            inner = [[c, b"x" + d] if c == 43 and d == label else [c, d] for c, d in inner]
             # the '17 frame's shape and its sub-image size
             i = next(k for k, (c, d) in enumerate(inner) if c == 43 and d.startswith(b"17season"))
             place = next(d for c, d in inner[i:] if c == 26)
@@ -173,7 +177,8 @@ def label_with_icons(gfx, dds, icons, lossless=()):
             if season in lossless:  # anh rieng khong nen (giu dung pixel, khong nhoe DXT5)
                 new_defs += [_lossless(sub, cell), [2, _shape_copy(shape, shp, sub)]]
             else:
-                y = ICON_FREE_Y + (0 if sid == ICON_SPRITES[0] else 48)
+                y = ICON_FREE_Y + 96 * row + (0 if sid == ICON_SPRITES[0] else 48)
+                assert y + h <= atlas.height, "atlas full"
                 assert atlas.crop((x, y, x + w, y + h)).getextrema()[3] == (0, 0), "atlas space not free"
                 _draw(dds, cell, x, y)
                 new_defs += [[1008, sub.to_bytes(2, "little") + bytes(2) + b"".join(v.to_bytes(2, "little") for v in (x, y, x + w, y + h))],
