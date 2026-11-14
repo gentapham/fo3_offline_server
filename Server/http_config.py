@@ -1782,21 +1782,61 @@ def fix_starting(positions, formationid):
     return positions
 
 
-# Phong do (ban Indo 6c8323d, issue #44): mui ten truoc ten cau thu trong danh sach doi hinh
-# (PlayerListItemTeamColorRenderer.getConditionName: <= -5 rat te, <= -2 te, 0 binh thuong, <= 2 tot, hon nua rat tot;
-# khong co condition -> khong co mui ten). Moi the doi phong do moi ngay luc 0 gio (gio WIB nhu today_wib), phan lon
-# binh thuong. Chua kiem chung: native dung condition the nao trong tran.
-FORMS = ((-5, 1), (-2, 3), (0, 8), (2, 3), (5, 1))  # (condition, trong so)
+# Phong do = "condition" cua the trong doi minh (owned_team). TAC DONG THAT trong tran (doc bo nho fifazf 2026-11-14):
+# moi chi so trong tran = clamp((condition + bang tra[chi so]) * he so, 1, 100) -> +5 cong / -5 tru thang vao ca 33
+# chi so (the da cham tran 100 gan nhu khong duoc loi tu phong do tot). Doi may khong co condition (= 0).
+# Giao dien: mui ten (PlayerListUtil.getConditionString: <= -5 rat te, <= -2 te, == 0 binh thuong, <= 2 tot, con lai
+# rat tot -> -1 hien "tot"!) nen chi gui 5 muc -5/-2/0/2/5; SquadUtil.getPositionScore cong condition khi xep doi tu dong.
+# Theo tung tran (2026-11-14, thay cho rut ngau nhien moi ngay): moi the co diem phong do p["form"] (thieu = 0 = binh
+# thuong); het tran cau thu da ra san (da chinh + vao thay) duoc +2 / +1 / 0 / -1 theo rating, the khong ra san troi dan
+# ve 0. Muc thap nhat -2 (khong co -5): the manh (cham tran) khong bi phat qua nang.
+FORM_MIN, FORM_MAX = -4, 8
+FORM_LEVELS = ((6, 5), (2, 2), (-1, 0))  # diem >= nguong -> condition; duoi -1 -> -2
 
 
-def player_form(card_id, day=None):
-    roll = int.from_bytes(hashlib.sha1(f"{day or today_wib()}:{card_id}".encode()).digest()[:4], "big")
-    roll %= sum(w for _, w in FORMS)
-    for form, w in FORMS:
-        if roll < w:
-            return form
-        roll -= w
-    return 0
+def form_condition(p):
+    """Muc phong do gui cho game (-2 / 0 / 2 / 5) tu diem phong do cua the."""
+    pts = _num(p.get("form")) if isinstance(p, dict) else 0
+    for th, cond in FORM_LEVELS:
+        if pts >= th:
+            return cond
+    return -2
+
+
+def form_delta(s):
+    """Diem phong do 1 tran tu dong matchStats cua cau thu (rating / ban thang)."""
+    try:
+        rating = float(s.get("rating") or 0)
+    except (TypeError, ValueError):
+        rating = 0.0
+    goals = _num(s.get("goals"))
+    if rating >= 8.0 or goals >= 2:
+        return 2
+    if rating >= 7.0:
+        return 1
+    if rating >= 6.0 or not rating:  # vao san vai phut (khong co rating): giu nguyen
+        return 0
+    return -1
+
+
+def update_form(st, stats):
+    """Cong diem phong do sau tran cho cac the cua toi; tra ve [(the, truoc, sau)]. Tran khong co cau thu cua toi
+    (Exhibition da bang CLB khac, tran loi) thi khong doi gi."""
+    team = (st.get("teams") or {}).get(str(_default_slot(st)))
+    played = match_cards(st, stats) if team else []
+    if not played:
+        return []
+    out, seen = [], set()
+    for p, s in played:
+        seen.add(iid(p))
+        before = _num(p.get("form"))
+        p["form"] = max(FORM_MIN, min(FORM_MAX, before + form_delta(s)))
+        out.append((p, before, p["form"]))
+    for p in team.get("players") or []:  # khong ra san: troi 1 diem ve binh thuong
+        f = _num(p.get("form"))
+        if iid(p) not in seen and f:
+            p["form"] = f - (1 if f > 0 else -1)
+    return out
 
 
 def owned_team(raw):
@@ -1817,9 +1857,9 @@ def owned_team(raw):
     # SECONDTEAM), set by /player/<id>/move/secondteam (stored as team2); Tukar Scout only
     # lists Tim Cadangan cards.
     team["players"] = [{**({} if p.get("team2") else {"state": "first"}), "grade": 0, "life": 100,
-                        **{k: v for k, v in p.items() if k != "team2"}, "levelinfo": player_levelinfo(p),
+                        **{k: v for k, v in p.items() if k not in ("team2", "form")}, "levelinfo": player_levelinfo(p),
                         "_id": iid(p), "id": iid(p), "price": card_price(p["spid"], grade_of(p)),
-                        "condition": player_form(iid(p))}
+                        "condition": form_condition(p)}
                        for p in team["players"]]
     sq = dict(team["squad"])
     sq["positions"] = [dict(p, id=str(p.get("id") or p["spid"])) for p in sq["positions"]]
@@ -3105,6 +3145,10 @@ def match_reward(st, stats):
         n = pexp + 20 * _num(s.get("goals")) + 10 * _num(s.get("assists"))
         pprev, pcur = gain_exp(p, n, player_need, PLAYER_MAX_LEVEL)
         players.append({"id": iid(p), "spid": p["spid"], "prev": pprev, "current": pcur, "reward": reward(n)})
+    try:  # phong do theo tran (khong de loi phong do lam mat thuong cua tran)
+        update_form(st, stats)
+    except Exception as e:
+        print(f"phong do: {e!r}", flush=True)
     return {"matchRewardBackType": 0, **match_cards_reward(st),
             "coach": {"reward": reward(cexp), "prev": prev, "current": cur},
             "money": {"reward": reward(ep)},
