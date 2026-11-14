@@ -222387,8 +222387,12 @@
   "fifalauncher_offline.exe": {
    "sha256": "a170505dd39aa4dbf182ec32a8b117e479655c346d9cd57fb8dc83d3879eaacd",
    "size": 6656
+  },
+  "memoryfw.ini": {
+   "sha256": "b47af707fddf5f280089c00fab4af00177a71bdac5b082d3947a262b5a3a6b74",
+   "size": 8330
   }
  },
- "version": "2026.11.14-1248",
- "notes": "Nhac nen co san: 4 bai Wavin' Flag, The Cup Of Life, Waka Waka, Dai Dai tu co trong GM Tool > Nhac nen (vao game van la nhac goc, bam Cai Nhac Vao Game de dung; xoa bai nao thi khong tu them lai)."
+ "version": "2026.11.14-1544",
+ "notes": "Sua loi den man hinh + vang game sau tran (Xep hang...): tang vung nho do hoa cua engine (memoryfw.ini, SRenderingPP 91 MB -> 160 MB), het cho khi tai khan gia o sanh."
 }
