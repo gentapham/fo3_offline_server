@@ -222349,7 +222349,7 @@
    "size": 1505040
   },
   "data/ui/components/ScrollingList.big": {
-   "sha256": "f49f84dc10fc2825e51f54c460254f7e2f11086261615f009fd4f3a648179b5e",
+   "sha256": "ef82f171d48931bdccd51fb5b11100042fcac77abb48f391b6e4e75b0513c723",
    "size": 1630736
   },
   "data/ui/components/SmoothList.big": {
@@ -222393,6 +222393,6 @@
    "size": 8330
   }
  },
- "version": "2026.11.15-0154",
- "notes": "Hien so cong the trong danh sach cau thu tran gia lap"
+ "version": "2026.11.15-0156",
+ "notes": "Sua so cong the tran gia lap: tra thanh the luc ve cho cu, icon hien giua ten va chi so"
 }
