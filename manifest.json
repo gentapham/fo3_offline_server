@@ -222349,7 +222349,7 @@
    "size": 1505040
   },
   "data/ui/components/ScrollingList.big": {
-   "sha256": "5b11bc12e5785f86e573724ee5645e0218ee371afc6e2888457de23a687be67a",
+   "sha256": "f49f84dc10fc2825e51f54c460254f7e2f11086261615f009fd4f3a648179b5e",
    "size": 1630736
   },
   "data/ui/components/SmoothList.big": {
@@ -222393,6 +222393,6 @@
    "size": 8330
   }
  },
- "version": "2026.11.14-1544",
- "notes": "Sua loi den man hinh + vang game sau tran (Xep hang...): tang vung nho do hoa cua engine (memoryfw.ini, SRenderingPP 91 MB -> 160 MB), het cho khi tai khan gia o sanh."
+ "version": "2026.11.15-0154",
+ "notes": "Hien so cong the trong danh sach cau thu tran gia lap"
 }
