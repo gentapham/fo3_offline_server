@@ -1341,8 +1341,28 @@
    "size": 29960
   },
   "Server/music.py": {
-   "sha256": "a0d6fe37877c3796782a06f501c873ebb3a1e14d471bf099cfae6ccccc889458",
-   "size": 18174
+   "sha256": "c93f91c27944edd3c9ba22caeb9f8bf5825574362e388cd18e0d43b2bed11607",
+   "size": 19679
+  },
+  "Server/music_default/dai_dai.mp3": {
+   "sha256": "c760ca7e1c8c7350e96083ef0376a45cf52fad179549c357c30337b023711865",
+   "size": 9182022
+  },
+  "Server/music_default/songs.json": {
+   "sha256": "7d6af53dc71d443bc8f63736f04e4be83defc2d05e56634050148dda2006dede",
+   "size": 507
+  },
+  "Server/music_default/the_cup_of_life.mp3": {
+   "sha256": "cddd3278e9b23479360993d79d00774257859a242915706719026184cddbe82c",
+   "size": 10921883
+  },
+  "Server/music_default/waka_waka.mp3": {
+   "sha256": "711098ec13ca91ee8803a6a34ee03e93ebafd9d69bac1d2b640e46ccace106e3",
+   "size": 8392113
+  },
+  "Server/music_default/wavin_flag.mp3": {
+   "sha256": "57d52c0619500ba70fc7c2c922b69b773893e13ada6206fa0f569dc9a3ec8c43",
+   "size": 9044100
   },
   "Server/price_settings.py": {
    "sha256": "fcf7cdcb737d14a25bf7deecc385b00f3ee893731ebb0ee9f0ac5879e024d806",
@@ -222369,6 +222389,6 @@
    "size": 6656
   }
  },
- "version": "2026.11.14-1241",
- "notes": "Phong do cau thu tinh theo tung tran: da tot (rating >= 7, ghi 2 ban) thi len, da kem (rating < 6) thi xuong, khong ra san troi dan ve binh thuong; muc thap nhat Te (-2). Phong do cong / tru thang vao moi chi so trong tran."
+ "version": "2026.11.14-1248",
+ "notes": "Nhac nen co san: 4 bai Wavin' Flag, The Cup Of Life, Waka Waka, Dai Dai tu co trong GM Tool > Nhac nen (vao game van la nhac goc, bam Cai Nhac Vao Game de dung; xoa bai nao thi khong tu them lai)."
 }

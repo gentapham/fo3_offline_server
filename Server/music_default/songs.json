@@ -1,0 +1,34 @@
+[
+ {
+  "file": "wavin_flag.mp3",
+  "name": "Wavin' Flag",
+  "seconds": 220.0,
+  "sr": 44100,
+  "ch": 2,
+  "mb": 8.6
+ },
+ {
+  "file": "the_cup_of_life.mp3",
+  "name": "The Cup Of Life",
+  "seconds": 272.6,
+  "sr": 44100,
+  "ch": 2,
+  "mb": 10.4
+ },
+ {
+  "file": "waka_waka.mp3",
+  "name": "Waka Waka",
+  "seconds": 203.7,
+  "sr": 44100,
+  "ch": 2,
+  "mb": 8.0
+ },
+ {
+  "file": "dai_dai.mp3",
+  "name": "Dai Dai",
+  "seconds": 223.5,
+  "sr": 44100,
+  "ch": 2,
+  "mb": 8.8
+ }
+]

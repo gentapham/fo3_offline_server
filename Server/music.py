@@ -21,6 +21,7 @@ lan cai: tra data_1.big ve goc (cat phan da them) roi noi du lieu moi vao cuoi -
 """
 import json
 import os
+import shutil
 import struct
 import subprocess
 import threading
@@ -314,6 +315,37 @@ def build_bank(streams, slots):
 
 
 # ---------------------------------------------------------------- cau hinh + cai dat
+DEFAULT_DIR = os.path.join(HERE, "music_default")  # nhac co san gui kem ban cap nhat / zip (songs.json + mp3)
+
+
+def seed_defaults(c):
+    """Nap nhac co san (music_default/) vao danh sach cua may nay - MOI BAI 1 LAN (xoa roi thi khong tu them lai),
+    khong them trung ten, con cho moi them. Chi them vao danh sach: game van la nhac goc cho toi khi bam Cai.
+    Tra ve True neu c bi doi."""
+    try:
+        defaults = json.load(open(os.path.join(DEFAULT_DIR, "songs.json"), encoding="utf-8"))
+    except Exception:
+        return False
+    seeded = c.setdefault("defaults_seeded", [])
+    changed = False
+    for s in defaults if isinstance(defaults, list) else []:
+        key = s.get("file") if isinstance(s, dict) else None
+        if not key or key in seeded:
+            continue
+        src = os.path.join(DEFAULT_DIR, key)
+        have = any(x.get("name") == s.get("name") for x in c["songs"])
+        if not have and (len(c["songs"]) >= SLOTS or not os.path.isfile(src)):
+            continue  # het cho / thieu file: de lan sau
+        if not have:
+            os.makedirs(DIR, exist_ok=True)
+            fn = "default_" + key
+            shutil.copyfile(src, os.path.join(DIR, fn))
+            c["songs"].append({**s, "file": fn})
+        seeded.append(key)
+        changed = True
+    return changed
+
+
 def load_conf():
     try:
         c = json.load(open(CONF, encoding="utf-8"))
@@ -322,6 +354,11 @@ def load_conf():
     c.setdefault("songs", [])
     c.setdefault("installed", "original")  # original | custom
     c.setdefault("pending", None)  # None | "install" | "restore"
+    try:
+        if seed_defaults(c):
+            save_conf(c)
+    except Exception as e:
+        print(f"nhac co san: {e!r}", flush=True)
     return c
 
 
