@@ -454,6 +454,9 @@ def locale_db(plain_db, names, trim):
 
 
 ENGINE_MAX_ROWS = 64300  # dong 3D + 560 (maxinsert) <= 65535, else game treo luc tai (2026-11-08)
+# giay mac dinh cho moi cau thu (externalAssets/shoe/shoe_177.png: den tron, co cao); mau = phoi pho bien nhat cua 177
+# trong fifadb. None = giu giay goc tung cau thu.
+DEFAULT_SHOE = {"shoetypecode": 177, "shoedesigncode": 0, "shoecolorcode1": 0, "shoecolorcode2": 31}
 NG_MAX = 99999999  # truong spid/playerid 27 bit
 FACE = ("headassetid", "headtypecode", "headclasscode", "hashighqualityhead", "headscalecode", "skintonecode",
         "skintypecode", "eyecolorcode", "eyebrowcode")
@@ -728,6 +731,21 @@ def engine_db(db, meta, photo=None):
             by[key] = row
             fixed_skill += 1
     print(f"engine: {fixed_skill} spid rows got their own card's skill moves / weak foot", flush=True)
+    # Giay mac dinh cua MOI cau thu = 1 mau giay den (2026-11-15, nguoi dung yeu cau: giay goc nhieu cau thu bi loi).
+    # Giay chon trong Locker Room (GM Tool / client) van de len giay mac dinh nay.
+    n_shoe = 0
+    if DEFAULT_SHOE and f"data/sceneassets/shoe/shoe_{DEFAULT_SHOE['shoetypecode']}.rx3" in shoes:
+        for key, row in by.items():
+            new = row
+            for name, v in DEFAULT_SHOE.items():
+                if name in fld:
+                    sn, lo = fld[name]
+                    if 0 <= v - lo < 1 << t.fields[sn][2]:
+                        new = t.set(new, sn, v - lo)
+            if new != row:
+                by[key] = new
+                n_shoe += 1
+    print(f"engine: {n_shoe} rows set to the default black boot {DEFAULT_SHOE}", flush=True)
     t.rows = [by[k] for k in sorted(by)]
     assert len(t.rows) + 560 <= 65535, f"bang 3D {len(t.rows)} dong: vuot gioi han engine (+560 maxinsert)"
     raws[i] = t.raw()

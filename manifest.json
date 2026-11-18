@@ -2229,8 +2229,8 @@
    "size": 6181
   },
   "Server/tools/clientbuild/season.py": {
-   "sha256": "6328465001f320747d66760dbc61846dd0448fb8ab595074abbe362c5861789b",
-   "size": 51115
+   "sha256": "29ea869f9f66861ef17108b4482787a8a9b61c34b19fbf0756ef476f8930c7af",
+   "size": 52186
   },
   "Server/tools/clientbuild/shoe_icons.py": {
    "sha256": "964dfcd2f5b37f2e4eb131047dbe45fb5e72ca24ed32af1921192d92257c9b00",
@@ -222065,8 +222065,8 @@
    "size": 167
   },
   "data/data_0.big": {
-   "sha256": "7f310b0d6da6ba6f7c51d2027f4ff9b32810d43b11f3aa155156b16c9608f1e7",
-   "size": 79803449
+   "sha256": "08cd2e6cc10e6321738903d516735979ff5546074632e3f150455b8c74d55a37",
+   "size": 79764900
   },
   "data/data_7.big": {
    "sha256": "a42fa2603a9487daed71eef1e734981bc325a1b4f3e50b22374a32dac3e3e80f",
@@ -222393,6 +222393,6 @@
    "size": 8330
   }
  },
- "version": "2026.11.15-0206",
- "notes": "So cong the tran gia lap hien thuong truc o moi hang"
+ "version": "2026.11.18-1215",
+ "notes": "Giay mac dinh cua moi cau thu doi sang giay den (ma 177)"
 }
