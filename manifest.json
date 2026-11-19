@@ -222365,7 +222365,7 @@
    "size": 1442656
   },
   "data/ui/libs/Module.big": {
-   "sha256": "c6fff7bcfd2c8d62b9e47e0e9491e1bf0cdb06534607ff8e02c55e674673859f",
+   "sha256": "99ed3b8476f7125be0a8f131ca6b5c2549c20f69df0b17b8ab72cb3629e9df8a",
    "size": 711936
   },
   "data/ui/localization/TEAMNAMES_ENG.json": {
@@ -222393,6 +222393,6 @@
    "size": 8330
   }
  },
- "version": "2026.11.18-1215",
- "notes": "Giay mac dinh cua moi cau thu doi sang giay den (ma 177)"
+ "version": "2026.11.20-0001",
+ "notes": "Thay nguoi trong tran tro lai toi da 3 luot (engine chi nhan 3; luot 4-5 lam mat cau thu tren san)"
 }
