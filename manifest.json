@@ -1281,8 +1281,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "896f1d0a194acb543e68e9bb0aaea9382ca1e85ba2c0ba61a90969c565a71591",
-   "size": 362569
+   "sha256": "8af60b66d191e3d463abd85a0aec749f38441160557e322ad4b15d8037f8582c",
+   "size": 363048
   },
   "Server/i18n.py": {
    "sha256": "bdc9615cde35a8a59b657e43f025c93b2d063488b2a3b60e9dd71890f9eb0379",
@@ -222393,6 +222393,6 @@
    "size": 8330
   }
  },
- "version": "2026.11.20-0001",
- "notes": "Thay nguoi trong tran tro lai toi da 3 luot (engine chi nhan 3; luot 4-5 lam mat cau thu tren san)"
+ "version": "2026.11.20-2052",
+ "notes": "Sua thong ke giai dau: Chuyen tot hien ti le %, Diem hien diem trung binh"
 }

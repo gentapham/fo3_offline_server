@@ -2803,8 +2803,16 @@ def league_record(st, stats):
 
 def ep_l2_history_players(query, body):
     """GET /league2/history/players/league: [{id: _id the, matches, ratings (tong), goals, assists,
-    passes, tackles, saves}] (LeagueCupRecordTabPage.joinPlayerData; the khong co thi hien 0)."""
-    return _json(list(((_state().get("league2") or {}).get("playerrecords") or {}).values()))
+    passes, tackles, saves}] (LeagueCupRecordTabPage.joinPlayerData; the khong co thi hien 0).
+    Client hien thang ratings.toFixed(1) (-> gui diem TRUNG BINH) va pass = int(passes * 100) % (-> gui TI LE
+    chuyen dung 0..1). Luu tru van la tong (ratings) / so lan chuyen dung + passtries."""
+    out = []
+    for r in ((_state().get("league2") or {}).get("playerrecords") or {}).values():
+        r = dict(r); n = r.get("matches") or 0; tries = r.pop("passtries", 0) or 0
+        r["ratings"] = round(r.get("ratings", 0) / n, 1) if n else 0
+        r["passes"] = round(r.get("passes", 0) / tries, 2) if tries else 0
+        out.append(r)
+    return _json(out)
 
 
 def ep_l2_leaders(query, body):
