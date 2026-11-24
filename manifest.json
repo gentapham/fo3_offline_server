@@ -181,16 +181,16 @@
    "size": 7893
   },
   "Server/admin.py": {
-   "sha256": "66612a70d3cea94ad1216b79a465871988ada7c01dbd7ab9f077e29c22b79193",
-   "size": 82264
+   "sha256": "a707d4089aee18e3f11a72e65603d03c38fce0d4b59398d9568c76d4dd3a2b2a",
+   "size": 83528
   },
   "Server/admin/hud.jpg": {
    "sha256": "5db88804d1c45eed78c23bf2d855f996a2135930a4fb3b2a32c89b50cc33c87b",
    "size": 82661
   },
   "Server/admin/index.html": {
-   "sha256": "36ce38c2dc639f058bf75692136f3a7bb6fe8f874c833bac68b623cd6947cabb",
-   "size": 371943
+   "sha256": "445567c1ea6cdee5f0223f72ed778d1d7df744e774348bc54d5088cf318ddeb3",
+   "size": 376065
   },
   "Server/admin/notice.html": {
    "sha256": "12ab400f36ba46fa96f2dd735f21917883d6a5896786f042e1b9f99b13d52702",
@@ -1281,8 +1281,8 @@
    "size": 8223
   },
   "Server/http_config.py": {
-   "sha256": "8af60b66d191e3d463abd85a0aec749f38441160557e322ad4b15d8037f8582c",
-   "size": 363048
+   "sha256": "b13259a82328c3ff70a37657b857ed412e8b7fc7455d4ee595cb0985927da04b",
+   "size": 364968
   },
   "Server/i18n.py": {
    "sha256": "bdc9615cde35a8a59b657e43f025c93b2d063488b2a3b60e9dd71890f9eb0379",
@@ -1293,8 +1293,8 @@
    "size": 1537
   },
   "Server/lang/en.json": {
-   "sha256": "8edc4a5cc778b86c261647899e35848bbf547a6e579baeab6dba05da656ac5dc",
-   "size": 320692
+   "sha256": "5155c031e8e5a6a825ea7db6f7f7c40b5f97ad5231675c846153bf9038552224",
+   "size": 321434
   },
   "Server/lang/game/LANGUAGESTRING_EN.json": {
    "sha256": "d91c5b535d4507d670a180be2e5a18ce39b6cea6936081fb38066f5e2ae0edde",
@@ -1313,8 +1313,8 @@
    "size": 2980
   },
   "Server/lang/th.json": {
-   "sha256": "48969ed2a3dbc3fe97da327cccf5bc13f4993b31f2330fda8ab372bdd369b4c0",
-   "size": 473165
+   "sha256": "56d98fb25c192a48455505982d0c1571291b8a5488bb3c45ca360da90360d794",
+   "size": 474257
   },
   "Server/levelreward.py": {
    "sha256": "68dbb09cba12fd014466d0661ef862f8e3d6454b1e0307626a71eae9333fc64a",
@@ -2229,8 +2229,8 @@
    "size": 6181
   },
   "Server/tools/clientbuild/season.py": {
-   "sha256": "29ea869f9f66861ef17108b4482787a8a9b61c34b19fbf0756ef476f8930c7af",
-   "size": 52186
+   "sha256": "11408d875619d6cbdf66d9f33a5ef16389ed1c7f1617b2440ddfd0d388b326c3",
+   "size": 52428
   },
   "Server/tools/clientbuild/shoe_icons.py": {
    "sha256": "964dfcd2f5b37f2e4eb131047dbe45fb5e72ca24ed32af1921192d92257c9b00",
@@ -222065,8 +222065,8 @@
    "size": 167
   },
   "data/data_0.big": {
-   "sha256": "08cd2e6cc10e6321738903d516735979ff5546074632e3f150455b8c74d55a37",
-   "size": 79764900
+   "sha256": "8b3fff3db283d61ad16ecfad924e8c90451c215d0e8008209c5e03f20741eb94",
+   "size": 79784263
   },
   "data/data_7.big": {
    "sha256": "a42fa2603a9487daed71eef1e734981bc325a1b4f3e50b22374a32dac3e3e80f",
@@ -222393,6 +222393,6 @@
    "size": 8330
   }
  },
- "version": "2026.11.20-2052",
- "notes": "Sua thong ke giai dau: Chuyen tot hien ti le %, Diem hien diem trung binh"
+ "version": "2026.11.24-1151",
+ "notes": "The WB/Europe Legend hien dung mua trong tran (het hien 17); Goi tu chon loc theo vi tri + top gia/chi so, xem truoc"
 }

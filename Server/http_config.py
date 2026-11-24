@@ -5000,7 +5000,7 @@ def pack_pool(itemid):
     """[(spid, weight)] of the Market cards a pack can give (cached)."""
     if itemid not in _PACK_POOL and PACKS[itemid][1].get("custom"):
         f = PACKS[itemid][1]  # goi tu chon: moi the co co hoi nhu nhau
-        _PACK_POOL[itemid] = [(s, 1.0) for s in custom_pack_cards(f["spids"], f["seasons"])]
+        _PACK_POOL[itemid] = [(s, 1.0) for s in custom_pack_cards(f["spids"], f["seasons"], f.get("filter"))]
     if itemid not in _PACK_POOL:
         f = PACKS[itemid][1]
         lo, hi = POSITIONS.get(f.get("pos"), (0, 27))
@@ -5073,7 +5073,8 @@ def warm_packs():
 
 # --------------------------------------------------------------------------- #
 # Goi tuy chon (GM Tool > Goi tuy chon): gamedata/custom_packs.json
-# [{"id": 96000001, "name", "spids": [...], "seasons": [...], "grade_min", "grade_max", "color": 0..7}]
+# [{"id": 96000001, "name", "spids": [...], "seasons": [...], "filter": {"pos", "top", "by"} (goi theo mua),
+#   "grade_min", "grade_max", "color": 0..7}]
 # Moi goi la mot muc PACKS (itemid 96000000+n) -> tu co trong Cua hang, mo nhu goi thuong.
 # Icon: anh ve san externalAssets/shop/95990001..95990008.png (8 mau "GOI TU CHON").
 # --------------------------------------------------------------------------- #
@@ -5121,6 +5122,7 @@ def custom_packs_sync(force=False):
         PACKS[p["id"]] = (str(p.get("name") or "Gói tự chọn")[:40],
                           {"custom": True, "spids": [int(s) for s in p.get("spids") or []],
                            "seasons": [int(s) for s in p.get("seasons") or []],
+                           "filter": custom_pack_filter(p.get("filter")),
                            "grade_min": gmin, "grade": gmax, "icon": CUSTOM_ICON_BASE + color,
                            **custom_pack_staff_conf(p)})
         _PACK_POOL.pop(p["id"], None)
@@ -5176,14 +5178,51 @@ def ep_pack_staff(st, slot, coach, team, it, stfid):
                   "resources": coach_me_resources(st, slot)})
 
 
-def custom_pack_cards(spids, seasons):
-    """[spid] cua goi tu chon: cau thu chon tay + moi the cua cac mua da chon (the co tren cho)."""
+# Loc goi theo mua (2026-11-24, gop y nguoi choi): vi tri (preferredposition1) + top N theo gia / chi so tren
+# tong cac mua da chon. Nhom vi tri -> ma vi tri cua game (admin.POS_NAMES: GK=0 ... LW=27).
+CP_POS_GROUPS = {"GK": (0,), "CB": (1, 4, 5, 6), "RB": (3,), "LB": (7,), "RWB": (2,), "LWB": (8,),
+                 "CDM": (9, 10, 11), "CM": (13, 14, 15), "CAM": (17, 18, 19), "RM": (12,), "LM": (16,),
+                 "RW": (23,), "LW": (27,), "CF": (20, 21, 22), "ST": (24, 25, 26)}
+CP_TOP_BY = ("price", "ovr")
+CP_TOP_MAX = 5000
+
+
+def custom_pack_filter(f):
+    """Chuan hoa bo loc goi theo mua: {"pos": [nhom], "top": N (0 = khong gioi han), "by": price|ovr}; {} = khong loc."""
+    f = f if isinstance(f, dict) else {}
+    pos = [x for x in dict.fromkeys(str(x).upper() for x in f.get("pos") or []) if x in CP_POS_GROUPS]
+    try:
+        top = min(max(int(f.get("top") or 0), 0), CP_TOP_MAX)
+    except (TypeError, ValueError):
+        top = 0
+    by = f.get("by") if f.get("by") in CP_TOP_BY else "ovr"
+    out = {}
+    if pos and len(pos) < len(CP_POS_GROUPS):
+        out["pos"] = pos
+    if top:
+        out.update(top=top, by=by)
+    return out
+
+
+def custom_pack_cards(spids, seasons, flt=None):
+    """[spid] cua goi tu chon: cau thu chon tay + moi the cua cac mua da chon (the co tren cho), cac the mua
+    loc theo flt (custom_pack_filter: vi tri, top N theo gia +1 / chi so cua the)."""
     out = [s for s in dict.fromkeys(spids)]
     if seasons:
         sset = set(seasons)
+        flt = custom_pack_filter(flt)
+        codes = {c for g in flt.get("pos", ()) for c in CP_POS_GROUPS[g]}
         with closing(_db()) as c:
-            rows = c.execute("SELECT spid FROM players").fetchall()
-        out += [s for (s,) in rows if s >= 1000000 and s // 1000000 in sset and on_market(s)]
+            rows = c.execute("SELECT spid, preferredposition1 FROM players").fetchall()
+        picked = [s for s, pp in rows if s >= 1000000 and s // 1000000 in sset and on_market(s)
+                  and (not codes or pp in codes)]
+        if flt.get("top"):
+            if flt["by"] == "price":
+                key = {s: card_price(s, 1) for s in picked}
+            else:
+                key = card_ovrs(picked)
+            picked = sorted(picked, key=lambda s: (-key.get(s, 0), s))[:flt["top"]]
+        out += picked
     have = set()
     if out:
         with closing(_db()) as c:

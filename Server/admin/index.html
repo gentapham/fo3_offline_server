@@ -675,6 +675,10 @@
   .cp-mode button b { font-size: 14.5px; }
   .cp-panel { margin-top: 14px; padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--card-2); }
   .cp-panel h3 { margin: 0; }
+  .cp-pos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .cp-pos button { min-width: 48px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: inherit; font-weight: 600; cursor: pointer; }
+  .cp-pos button[aria-pressed="true"] { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+  .cp-pos button:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
   .cp-panel-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
   .cp-panel-head .muted { font-size: 12.5px; }
   .cp-pick { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
@@ -1280,6 +1284,18 @@
           <div class="cp-panel-head"><h3>Chọn mùa thẻ</h3><span class="muted">Có thể thêm nhiều mùa</span></div>
           <div class="cp-pick"><label class="f">Mùa<select id="cpSeasonSel"><option value="6">06 — Mùa 2006 (395 thẻ)</option><option value="7">07 — Mùa 2007 (398 thẻ)</option><option value="8">08 — Mùa 2008 (462 thẻ)</option><option value="9">09 — Mùa 2009 (451 thẻ)</option><option value="10">10 — Mùa 2010 (523 thẻ)</option><option value="11">11 — Mùa 2011 (435 thẻ)</option><option value="14">14 — Mùa 2014 (6.117 thẻ)</option><option value="15">15 — Mùa 2015 (5.572 thẻ)</option><option value="16">16 — Mùa 2016 (8.257 thẻ)</option><option value="20">S20 — Mùa đặc biệt (mã 20) (21 thẻ)</option><option value="21">S21 — Mùa đặc biệt (mã 21) (5 thẻ)</option><option value="22">CP — Captain Player (425 thẻ)</option><option value="23">LP — Loyal Player (301 thẻ)</option><option value="24">CC — Continental Champion (535 thẻ)</option><option value="26">S26 — Europe Legend (9 thẻ)</option><option value="27">EL — Mùa EL (17 thẻ)</option><option value="28">UB — Ultimate Best (5 thẻ)</option><option value="29">U23 — Mùa U23 (19 thẻ)</option><option value="30">UL — Ultimate Legend (5 thẻ)</option><option value="31">CEL — Europe Legend 1 (9 thẻ)</option><option value="32">S32 — Europe National Legend (5 thẻ)</option><option value="33">CEL — Europe Legend 2 (5 thẻ)</option><option value="35">16EC — 16 Europe/Copa Season (946 thẻ)</option><option value="37">S37 — Mùa đặc biệt (mã 37) (34 thẻ)</option><option value="38">S38 — China 2002 Legend (3 thẻ)</option><option value="39">S39 — 02 Chinese Legend (24 thẻ)</option><option value="40">NHD — NHD (261 thẻ)</option><option value="41">16B — Mùa 2016 (bộ thẻ phụ) (4 thẻ)</option><option value="42">S42 — ID BEST (3 thẻ)</option><option value="43">S43 — Mùa đặc biệt (mã 43) (3 thẻ)</option><option value="44">17TH — Thailand Best 2017 (23 thẻ)</option><option value="45">16TH — Mùa 16TH (11 thẻ)</option><option value="47">10WC — 10 WC (508 thẻ)</option><option value="48">MUL — Mùa MUL (7 thẻ)</option><option value="49">TCO92 — Man Utd Legend (5 thẻ)</option><option value="51">TL — Mùa TL (3 thẻ)</option><option value="53">14T — 14T (90 thẻ)</option><option value="55">MUA — Mùa MUA (7 thẻ)</option><option value="57">S57 — Đặc biệt (1 thẻ)</option><option value="61">VL — VN Legend (12 thẻ)</option><option value="63">06U — 06U (320 thẻ)</option><option value="65">06WC — 06 WC (540 thẻ)</option><option value="67">08E — Siêu sao Châu Âu 08 (559 thẻ)</option><option value="69">10U — Siêu sao Châu Âu '10 (528 thẻ)</option><option value="71">ML — Mùa ML (3 thẻ)</option><option value="73">VS — VN STAR (17 thẻ)</option><option value="77">14WC — 14 WC (1.041 thẻ)</option><option value="81">S81 — Best China (39 thẻ)</option><option value="82">17 CSL — 17 CSL (168 thẻ)</option><option value="83">S83 — '14 Chinese Super League (49 thẻ)</option><option value="85">S85 — Chinese Super League (170 thẻ)</option><option value="87">16 CSL — 16 CSL (145 thẻ)</option><option value="88">17 — Mùa 2017 (15.274 thẻ)</option><option value="89">CL — Chinese Legend (7 thẻ)</option><option value="91">WB — World Best (43 thẻ)</option><option value="93">WL — World Legend (73 thẻ)</option><option value="95">KL02 — Huyền thoại 2002 (23 thẻ)</option><option value="97">KXI — Huyền thoại (20 thẻ)</option></select></label><button class="b primary" type="button" id="cpSeasonAdd">+ Thêm mùa</button></div>
           <div id="cpSeasons" class="cp-chips"><div class="cp-empty">Chưa chọn mùa nào. Chọn mùa ở trên rồi bấm <b>+ Thêm mùa</b>.</div></div>
+          <div class="cp-panel-head" style="margin-top:14px"><h3>Lọc thẻ</h3><span class="muted">Không bắt buộc · áp dụng trên tất cả các mùa đã chọn</span></div>
+          <div class="f" style="margin-top:6px"><span>Vị trí <span class="muted">(không chọn = mọi vị trí)</span></span><div id="cpPos" class="cp-pos"></div></div>
+          <div class="row" style="margin-top:8px">
+            <label class="f">Chỉ lấy<select id="cpTopBy"><option value="">Tất cả thẻ</option><option value="price">Top giá cao nhất</option><option value="ovr">Top chỉ số cao nhất</option></select></label>
+            <label class="f">Số thẻ top<input id="cpTopN" type="number" min="1" max="5000" value="100" style="width:110px"></label>
+            <button class="b" type="button" id="cpPreview">Xem trước</button>
+            <span class="muted" id="cpPrevN"></span>
+          </div>
+          <div class="table-wrap" id="cpPrevWrap" style="max-height:320px;overflow:auto;margin-top:8px" hidden=""><table>
+            <thead><tr><th>Tên</th><th>Mùa</th><th>Đội bóng</th><th>Vị trí</th><th class="num">OVR</th><th class="num">Giá +1</th></tr></thead>
+            <tbody id="cpPrevRows"></tbody>
+          </table></div>
         </div>
         <div id="cpModePlayer" class="cp-panel" hidden="">
         <h3>Thêm cầu thủ chọn tay</h3>
@@ -2195,7 +2211,16 @@ $("#hcSave").addEventListener("click", () => act(async () => {
 }));
 
 // ===== Goi tu chon (custom pack) =====
-const CP = {id: 0, color: 0, mode: "season", seasons: [], players: [], staffs: [], staffCat: null, ready: false, iconBase: 95990001, iconCount: 8, q: 0};
+const CP = {id: 0, color: 0, mode: "season", seasons: [], players: [], staffs: [], pos: [], staffCat: null, ready: false, iconBase: 95990001, iconCount: 8, q: 0};
+const CP_POS = ["GK", "CB", "LB", "RB", "LWB", "RWB", "CDM", "CM", "CAM", "LM", "RM", "LW", "RW", "CF", "ST"];
+function cpFilter() {
+  const by = $("#cpTopBy").value, top = Math.round(Number($("#cpTopN").value)) || 0;
+  const f = {};
+  if (CP.pos.length) f.pos = CP.pos.slice();
+  if (by && top > 0) Object.assign(f, {top: Math.min(top, 5000), by});
+  return f;
+}
+const cpFilterText = f => [f && f.pos && f.pos.length ? "vị trí " + f.pos.join("/") : "", f && f.top ? `top ${fmt(f.top)} ${f.by === "price" ? "giá" : "chỉ số"}` : ""].filter(Boolean).join(", ");
 const cpStarOpts = val => Array.from({length: 10}, (_, i) => `<option value="${i + 1}"${i + 1 == val ? " selected" : ""}>${starLabel(i + 1)}</option>`).join("");
 async function cpStaffCat() {
   if (!CP.staffCat) {
@@ -2217,6 +2242,8 @@ function cpRender() {
     `<button type="button" class="cp-sw${i === CP.color ? " on" : ""}" data-cpcolor="${i}" aria-label="Màu icon ${i + 1}" aria-pressed="${i === CP.color}"><img src="/shopimg/${CP.iconBase + i}.png" alt=""></button>`).join("");
   $("#cpSeasons").innerHTML = CP.seasons.map(c => `<span class="cp-chip">${seasonBadge(c)}<span class="cp-chip-name">${esc(seasonName(c))}</span>${SEASONS[c] ? `<span class="cp-chip-n">${fmt(SEASONS[c].count)} thẻ</span>` : ""}<button type="button" class="cp-chip-x" data-cpsdel="${c}" aria-label="Bỏ ${esc(seasonName(c))}" title="Bỏ mùa này">×</button></span>`).join("")
     || '<div class="cp-empty">Chưa chọn mùa nào. Chọn mùa ở trên rồi bấm <b>+ Thêm mùa</b>.</div>';
+  $("#cpPos").innerHTML = CP_POS.map(g => `<button type="button" data-cppos="${g}" aria-pressed="${CP.pos.includes(g)}">${g}</button>`).join("");
+  $("#cpTopN").disabled = !$("#cpTopBy").value;
   document.querySelectorAll("[data-cpmode]").forEach(x => x.setAttribute("aria-checked", String(x.dataset.cpmode === CP.mode)));
   $("#cpModeSeason").hidden = CP.mode !== "season"; $("#cpModePlayer").hidden = CP.mode !== "player"; $("#cpStaffPanel").hidden = CP.mode !== "staff";
   $("#cpPickedN").textContent = `(${CP.players.length} cầu thủ)`;
@@ -2227,7 +2254,8 @@ function cpRender() {
     || '<tr><td colspan="6" class="muted">Chưa có cầu thủ nào. Tìm ở bảng phía trên rồi bấm Thêm.</td></tr>';
 }
 function cpReset() {
-  Object.assign(CP, {id: 0, color: 0, mode: "season", seasons: [], players: [], staffs: []});
+  Object.assign(CP, {id: 0, color: 0, mode: "season", seasons: [], players: [], staffs: [], pos: []});
+  $("#cpTopBy").value = ""; $("#cpTopN").value = "100"; $("#cpPrevWrap").hidden = true; $("#cpPrevN").textContent = "";
   $("#cpName").value = ""; $("#cpGmin").value = "1"; $("#cpGmax").value = "5"; $("#cpNote").textContent = "";
   $("#cpSgmin").value = "10"; $("#cpSgmax").value = "10"; $("#cpSrate").value = "100";
   cpRender();
@@ -2262,7 +2290,7 @@ async function cpLoadList() {
   CP.staffInfo = {}; d.packs.forEach(p => (p.staffs || []).forEach(x => { CP.staffInfo[x.stfid] = x; }));
   $("#cpList").innerHTML = d.packs.slice().reverse().map(p => `<tr>
     <td><img src="/shopimg/${d.icon_base + (p.color || 0)}.png" alt="" style="width:68px;height:48px"></td>
-    <td><b>${esc(p.name)}</b><div class="muted">Mã gói ${p.id} · ${p.players.length} cầu thủ chọn tay${p.seasons.length ? " · mùa " + p.seasons.map(c => esc((SEASONS[c] || {}).tag || c)).join(", ") : ""}${(p.staffs || []).length ? ` · ${p.staffs.length} HLV (${p.players.length || p.seasons.length ? p.staff_rate + "% mỗi lần mở" : "luôn ra HLV"})` : ""}</div></td>
+    <td><b>${esc(p.name)}</b><div class="muted">Mã gói ${p.id} · ${p.players.length} cầu thủ chọn tay${p.seasons.length ? " · mùa " + p.seasons.map(c => esc((SEASONS[c] || {}).tag || c)).join(", ") : ""}${cpFilterText(p.filter) ? " · " + esc(cpFilterText(p.filter)) : ""}${(p.staffs || []).length ? ` · ${p.staffs.length} HLV (${p.players.length || p.seasons.length ? p.staff_rate + "% mỗi lần mở" : "luôn ra HLV"})` : ""}</div></td>
     <td>${p.grade_min === p.grade_max ? "+" + p.grade_max : `+${p.grade_min} → +${p.grade_max}`}</td><td class="num">${fmt(p.total)}${(p.staffs || []).length ? `<div class="muted">+ ${p.staffs.length} HLV</div>` : ""}</td>
     <td><button class="b small" type="button" data-cpedit="${p.id}">Sửa</button> <button class="b small primary" type="button" data-cpgive="${p.id}">Gửi 10 gói vào Túi</button> <button class="b small danger" type="button" data-cpremove="${p.id}">Xoá</button></td></tr>`).join("")
     || '<tr><td colspan="5" class="muted">Chưa có gói nào.</td></tr>';
@@ -2272,6 +2300,18 @@ $("#cpQ").addEventListener("input", () => { clearTimeout(CP.t); CP.t = setTimeou
 $("#cpQSeason").addEventListener("change", cpSearch);
 $("#cpSeasonAdd").addEventListener("click", () => { const c = Number($("#cpSeasonSel").value); if (c && !CP.seasons.includes(c)) CP.seasons.push(c); cpRender(); });
 $("#cpCancel").addEventListener("click", cpReset);
+$("#cpTopBy").addEventListener("change", cpRender);
+$("#cpPreview").addEventListener("click", async () => {
+  if (!CP.seasons.length) return say("Chọn ít nhất 1 mùa trước khi xem trước.", "err");
+  try {
+    const d = await api("custom_pack_preview", {seasons: CP.seasons, filter: cpFilter()});
+    $("#cpPrevN").textContent = `${fmt(d.total)} thẻ trong gói${d.total > 30 ? " (hiện 30 thẻ đầu)" : ""}`;
+    $("#cpPrevRows").innerHTML = d.rows.map(r => `<tr><td class="pname">${pimg(r.spid)}${esc(r.name || String(r.spid))} <span class="muted">${r.spid}</span></td>
+      <td>${r.season ? seasonBadge(r.season) : ""}</td><td>${esc(r.team || "")}</td><td>${esc(r.pos || "")}</td><td class="num">${r.ovr || ""}</td><td class="num">${fmt(r.price)}</td></tr>`).join("")
+      || '<tr><td colspan="6" class="muted">Không có thẻ nào khớp bộ lọc.</td></tr>';
+    $("#cpPrevWrap").hidden = false;
+  } catch (e) { say("Lỗi: " + e.message, "err"); }
+});
 $("#cpStaffAdd").addEventListener("click", async () => {
   try { await cpStaffCat(); } catch (e) { return say("Không tải được danh sách HLV: " + e.message, "err"); }
   const id = Number($("#cpStaffSel").value);
@@ -2282,6 +2322,7 @@ $("#goitc").addEventListener("click", async e => {
   const t = e.target.closest("button"); if (!t) return;
   const d = t.dataset;
   if (d.cpcolor !== undefined) { CP.color = Number(d.cpcolor); cpRender(); }
+  else if (d.cppos) { CP.pos = CP.pos.includes(d.cppos) ? CP.pos.filter(x => x !== d.cppos) : CP.pos.concat(d.cppos); cpRender(); }
   else if (d.cpmode) {
     const lost = [d.cpmode !== "season" && CP.seasons.length ? `${CP.seasons.length} mùa` : "", d.cpmode !== "player" && CP.players.length ? `${CP.players.length} cầu thủ` : "", d.cpmode !== "staff" && CP.staffs.length ? `${CP.staffs.length} HLV` : ""].filter(Boolean);
     if (d.cpmode !== CP.mode && lost.length && !await uiConfirm(`Đổi cách chọn sẽ bỏ ${lost.join(", ")} đã chọn. Tiếp tục?`)) return;
@@ -2296,6 +2337,8 @@ $("#goitc").addEventListener("click", async e => {
     const p = (CP.list || []).find(x => x.id === Number(d.cpedit)); if (!p) return;
     Object.assign(CP, {id: p.id, color: p.color || 0, mode: (p.staffs || []).length && !p.players.length && !p.seasons.length ? "staff" : p.players.length && !p.seasons.length ? "player" : "season", seasons: p.seasons.slice(), players: p.players.slice(), staffs: (p.staffs || []).map(x => x.stfid)});
     $("#cpName").value = p.name; $("#cpGmin").value = String(p.grade_min); $("#cpGmax").value = String(p.grade_max);
+    CP.pos = ((p.filter || {}).pos || []).slice(); $("#cpTopBy").value = (p.filter || {}).top ? p.filter.by : ""; $("#cpTopN").value = String((p.filter || {}).top || 100);
+    $("#cpPrevWrap").hidden = true; $("#cpPrevN").textContent = "";
     $("#cpSgmin").value = String(p.staff_gmin || 10); $("#cpSgmax").value = String(p.staff_gmax || 10); $("#cpSrate").value = "100";
     cpRender(); $("#cpTitle").scrollIntoView({behavior: "smooth"});
   }
@@ -2318,7 +2361,7 @@ $("#cpSave").addEventListener("click", async () => {
   const srate = Math.round(Number($("#cpSrate").value));
   if (CP.mode === "staff" && !CP.staffs.length) return say("Chọn ít nhất 1 HLV cho gói.", "err");
   const body = {id: CP.id || undefined, name: $("#cpName").value.trim(), color: CP.color, grade_min: gmin, grade_max: gmax,
-    spids: CP.mode === "player" ? CP.players.map(r => r.spid) : [], seasons: CP.mode === "season" ? CP.seasons : [],
+    spids: CP.mode === "player" ? CP.players.map(r => r.spid) : [], seasons: CP.mode === "season" ? CP.seasons : [], filter: CP.mode === "season" ? cpFilter() : {},
     staffs: CP.mode === "staff" ? CP.staffs : [], staff_rate: 100, staff_gmin: sgmin, staff_gmax: sgmax};
   await act(async () => {
     const r = await api("custom_pack_save", body);

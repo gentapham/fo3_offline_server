@@ -470,7 +470,7 @@ def custom_packs(p):
         rows = [idx.get(s) or {"spid": s, "name": str(s)} for s in spids]
         out.append({"id": c["id"], "name": c.get("name", ""), "grade_min": c.get("grade_min", 1),
                     "grade_max": c.get("grade_max", 1), "color": c.get("color", 0),
-                    "seasons": c.get("seasons") or [],
+                    "seasons": c.get("seasons") or [], "filter": hc.custom_pack_filter(c.get("filter")),
                     "players": [{k: v for k, v in r.items() if not k.startswith("_") and k != "pp"} for r in rows],
                     "staffs": [_staff_brief(s) for s in c.get("staffs") or []],
                     "staff_rate": int(c.get("staff_rate") or 10), "staff_gmin": int(c.get("staff_gmin") or 10),
@@ -511,8 +511,9 @@ def custom_pack_save(p):
         raise AdminError("Hãy thêm ít nhất 1 cầu thủ, 1 mùa hoặc 1 HLV vào gói")
     if spids and seasons:
         raise AdminError("Mỗi gói chỉ chọn một cách: theo mùa hoặc chọn từng cầu thủ")
-    if (spids or seasons) and not hc.custom_pack_cards(spids, seasons):
-        raise AdminError("Không có thẻ nào hợp lệ trong gói")
+    flt = hc.custom_pack_filter(p.get("filter")) if seasons else {}
+    if (spids or seasons) and not hc.custom_pack_cards(spids, seasons, flt):
+        raise AdminError("Không có thẻ nào hợp lệ trong gói" + (" (thử nới bộ lọc vị trí)" if flt.get("pos") else ""))
     packs = hc.custom_packs_load()
     pid = int(p.get("id") or 0)
     row = next((c for c in packs if c["id"] == pid), None)
@@ -521,12 +522,38 @@ def custom_pack_save(p):
         row = {"id": pid}
         packs.append(row)
     row.update(name=name, spids=spids, seasons=seasons, grade_min=gmin, grade_max=gmax, color=color)
+    row.pop("filter", None)
+    if flt:
+        row["filter"] = flt
     for k in ("staffs", "staff_rate", "staff_gmin", "staff_gmax"):
         row.pop(k, None)
     if staffs:  # goi cu (khong HLV) giu nguyen dang du lieu cu
         row.update(staffs=staffs, staff_rate=srate, staff_gmin=sgmin, staff_gmax=sgmax)
     hc.custom_packs_save(packs)
     return {"id": pid, "total": len(hc.pack_pool(pid)), "staffs": len(staffs)}
+
+
+@api("custom_pack_preview")
+def custom_pack_preview(p):
+    """Xem truoc goi theo mua + bo loc: tong so the va 30 the dau (sap theo tieu chi top, hoac chi so)."""
+    try:
+        seasons = list(dict.fromkeys(int(s) for s in p.get("seasons") or []))
+    except (TypeError, ValueError):
+        raise AdminError("Danh sách mùa không hợp lệ") from None
+    if not seasons:
+        return {"total": 0, "rows": []}
+    flt = hc.custom_pack_filter(p.get("filter"))
+    cards = hc.custom_pack_cards([], seasons, flt)
+    if not flt.get("top"):
+        ov = hc.card_ovrs(cards)
+        cards = sorted(cards, key=lambda s: (-ov.get(s, 0), s))
+    idx = {r["spid"]: r for r in card_index()}
+    rows = []
+    for s in cards[:30]:
+        r = {k: v for k, v in (idx.get(s) or {"spid": s, "name": str(s)}).items() if not k.startswith("_") and k != "pp"}
+        r["price"] = hc.card_price(s, 1)
+        rows.append(r)
+    return {"total": len(cards), "rows": rows, "filter": flt}
 
 
 @api("custom_pack_delete")

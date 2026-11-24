@@ -692,7 +692,9 @@ def engine_db(db, meta, photo=None):
     # Chi spid < 1e8 (truong spid/playerid cua engine 27 bit, rangehigh 99.999.999).
     # GIOI HAN: engine dem dong bang u16 va giu them maxinsert=560 dong -> tong dong + 560 phai <= 65535.
     # 65.234 dong (them ca 11 mua) lam game sap luc tai (2026-11-08). Chot ENGINE_MAX_ROWS, uu tien mua quan trong.
-    SEASON_ROWS = (18, 19, 94, 76) + tuple(c for c in CN_SEASONS if c != 2) + (30, 93, 28, 27)  # 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME, mua CN dac biet, UL, WL, UB, EL
+    # 2026-11-24: them WB (91) + Europe Legend (26, 31, 33) + Europe National Legend (32): truoc do thieu -> 212/280 the
+    # WB (va ~930 the EL/ENL) hien "17" trong tran. +1140 dong, van < ENGINE_MAX_ROWS.
+    SEASON_ROWS = (18, 19, 94, 76) + tuple(c for c in CN_SEASONS if c != 2) + (30, 93, 28, 27, 91, 26, 31, 33, 32)  # 26 TOTY, 26 TOTS, PRIME, INFINITY PRIME, mua CN dac biet, UL, WL, UB, EL, WB, EL/ENL
     sp = fld["spid"]
     n_photo = photo_heads(t, fld, by, photo)  # GM Tool: mat 3D tu anh (truoc card_looks: mat muon cua the van thang)
     print(f"engine: {n_photo} rows wear a photo head ({len(photo or {})} heads)", flush=True)

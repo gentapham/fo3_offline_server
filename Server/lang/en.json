@@ -3592,5 +3592,19 @@
 "Bấm ô máy chủ bên dưới để bật": "Click the server box below to start it",
 "HỖ TRỢ": "SUPPORT",
 "TRẠNG THÁI": "STATUS",
-"Bật lại": "Restart"
+"Bật lại": "Restart",
+"Lọc thẻ": "Card filter",
+"Không bắt buộc · áp dụng trên tất cả các mùa đã chọn": "Optional · applies across all selected seasons",
+"(không chọn = mọi vị trí)": "(none selected = all positions)",
+"Chỉ lấy": "Take only",
+"Tất cả thẻ": "All cards",
+"Top giá cao nhất": "Top by price",
+"Top chỉ số cao nhất": "Top by rating",
+"Số thẻ top": "Top count",
+"Xem trước": "Preview",
+"Giá +1": "Price +1",
+"Chọn ít nhất 1 mùa trước khi xem trước.": "Pick at least 1 season before previewing.",
+" thẻ trong gói": " cards in the pack",
+" (hiện 30 thẻ đầu)": " (showing first 30)",
+" (thử nới bộ lọc vị trí)": " (try loosening the position filter)"
 }
